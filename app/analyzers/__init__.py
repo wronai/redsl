@@ -13,6 +13,7 @@ na zunifikowane konteksty DSL do ewaluacji przez DSLEngine.
 
 from __future__ import annotations
 
+import ast
 import logging
 import re
 import subprocess
@@ -400,6 +401,114 @@ class ToonParser:
             return {"index": match.group(1), "description": match.group(2).strip()}
         return None
 
+    def parse_functions_toon(self, content: str) -> dict[str, Any]:
+        """T006: Parsuj project.functions.toon — format YAML per-funkcja z CC.
+
+        Format:
+            project: name
+            modules[N]{path,lang,items}:
+              file.py,python,14
+            function_details:
+              file.py:
+                functions[N]{name,kind,sig,loc,async,lines,cc,does}:
+                  func,method,(),21-35,false,15,7,description
+        """
+        result: dict[str, Any] = {
+            "health": {},
+            "alerts": [],
+            "modules": [],
+            "functions": [],
+        }
+
+        current_file = ""
+        section = ""
+        fields_order: list[str] = []
+
+        for line in content.splitlines():
+            stripped = line.strip()
+
+            if stripped.startswith("project:"):
+                result["health"]["name"] = stripped.split(":", 1)[1].strip()
+                continue
+
+            if re.match(r'modules\[\d+\]', stripped):
+                section = "modules"
+                continue
+
+            if stripped == "function_details:":
+                section = "function_details"
+                continue
+
+            if section == "modules" and "," in stripped:
+                parts = stripped.split(",")
+                if len(parts) >= 2:
+                    result["modules"].append({
+                        "path": parts[0].strip(),
+                        "lines": 0,
+                        "classes": 0,
+                        "functions": int(parts[2]) if len(parts) > 2 and parts[2].strip().isdigit() else 0,
+                        "max_cc": 0,
+                    })
+
+            elif section == "function_details":
+                # Linia pliku: "  file.py:"
+                file_match = re.match(r'^\s{2}([\w./]+\.\w+):\s*$', line)
+                if file_match:
+                    current_file = file_match.group(1)
+                    fields_order = []
+                    continue
+
+                # Nagłówek kolumn: "functions[N]{name,kind,sig,loc,async,lines,cc,does}:"
+                header_match = re.match(r'functions\[\d+\]\{(.+)\}:', stripped)
+                if header_match:
+                    fields_order = [f.strip() for f in header_match.group(1).split(",")]
+                    continue
+
+                # Linia funkcji — CSV wg fields_order
+                if current_file and fields_order and "," in stripped and not stripped.endswith(":"):
+                    func = self._parse_function_csv_line(stripped, fields_order, current_file)
+                    if func:
+                        result["functions"].append(func)
+                        # Aktualizuj max_cc w module
+                        for mod in result["modules"]:
+                            if mod["path"] == current_file:
+                                mod["max_cc"] = max(mod["max_cc"], func.get("cc", 0))
+                                break
+                        # Generuj alert jeśli CC > 10
+                        cc = func.get("cc", 0)
+                        if cc > 10:
+                            result["alerts"].append({
+                                "type": "cc_exceeded",
+                                "name": func["name"].split(".")[-1],
+                                "severity": 3 if cc > 20 else 2 if cc > 15 else 1,
+                                "value": cc,
+                                "limit": 10,
+                                "file": current_file,
+                            })
+
+        return result
+
+    def _parse_function_csv_line(
+        self, line: str, fields: list[str], file_path: str
+    ) -> dict[str, Any] | None:
+        """Parsuj CSV linię funkcji wg pól z nagłówka."""
+        # Uwaga: sig może zawierać przecinki w cudzysłowach
+        parts = re.split(r',(?=(?:[^"]*"[^"]*")*[^"]*$)', line)
+        if len(parts) < len(fields):
+            return None
+        result: dict[str, Any] = {"file": file_path}
+        for i, field_name in enumerate(fields):
+            if i >= len(parts):
+                break
+            val = parts[i].strip().strip('"')
+            if field_name in ("lines", "cc"):
+                result[field_name] = int(val) if val.isdigit() else 0
+            elif field_name == "async":
+                result[field_name] = val.lower() == "true"
+            else:
+                result[field_name] = val
+        return result
+
 
 class CodeAnalyzer:
     """
@@ -417,12 +526,19 @@ class CodeAnalyzer:
         # 1. Szukaj plików toon.yaml
         toon_files = self._find_toon_files(project_dir)
 
+        # 1b. T004: jeśli brak jakichkolwiek toon — fallback na AST Python
+        if not toon_files:
+            return self._analyze_python_files(project_dir)
+
         # 2. Parsuj project_toon — T005: fallback na 'analysis' jeśli brak 'project'
         project_key = "project" if "project" in toon_files else ("analysis" if "analysis" in toon_files else None)
         if project_key:
-            project_data = self.parser.parse_project_toon(
-                toon_files[project_key].read_text(encoding="utf-8")
-            )
+            raw_content = toon_files[project_key].read_text(encoding="utf-8")
+            # T006: wykryj format functions.toon (starts with "project:" = YAML)
+            if raw_content.lstrip().startswith("project:") and "function_details:" in raw_content:
+                project_data = self.parser.parse_functions_toon(raw_content)
+            else:
+                project_data = self.parser.parse_project_toon(raw_content)
             health = project_data.get("health", {})
             result.project_name = health.get("name", str(project_dir))
             result.avg_cc = health.get("CC̄", 0.0)
@@ -575,7 +691,7 @@ class CodeAnalyzer:
         return result
 
     def _find_toon_files(self, project_dir: Path) -> dict[str, Path]:
-        """Znajdź pliki toon.yaml w projekcie."""
+        """Znajdź pliki toon w projekcie — obsługuje wiele wzorców i formatów."""
         files: dict[str, Path] = {}
         for pattern, key in [
             ("*project*toon*", "project"),
@@ -589,8 +705,99 @@ class CodeAnalyzer:
             if found:
                 files[key] = found[0]
 
+        # Tfix1: Fallback — dowolny *.toon jako "project" jeśli żaden wzorzec nie pasuje
+        if "project" not in files and "analysis" not in files:
+            toon_candidates = [
+                f for f in project_dir.glob("*.toon")
+                if "duplication" not in f.name and "validation" not in f.name
+                and "evolution" not in f.name and "map" not in f.name
+            ]
+            if toon_candidates:
+                files["project"] = toon_candidates[0]
+
         logger.info("Found toon files: %s", list(files.keys()))
         return files
+
+    def _analyze_python_files(self, project_dir: Path) -> AnalysisResult:
+        """T004: Fallback — analiza .py przez stdlib ast gdy brak toon plików."""
+        result = AnalysisResult()
+        result.project_name = project_dir.name
+
+        py_files = [
+            f for f in project_dir.rglob("*.py")
+            if not any(part in f.parts for part in (".venv", "venv", "dist", "__pycache__", ".git"))
+        ]
+
+        for py_file in py_files:
+            try:
+                source = py_file.read_text(encoding="utf-8", errors="ignore")
+                tree = ast.parse(source, filename=str(py_file))
+            except SyntaxError:
+                continue
+
+            lines = len(source.splitlines())
+            rel_path = str(py_file.relative_to(project_dir))
+
+            func_count = 0
+            class_count = 0
+            max_cc = 0
+
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    func_count += 1
+                    cc = self._ast_cyclomatic_complexity(node)
+                    max_cc = max(max_cc, cc)
+
+                    if cc > 10:
+                        result.metrics.append(CodeMetrics(
+                            file_path=rel_path,
+                            function_name=node.name,
+                            module_lines=lines,
+                            cyclomatic_complexity=cc,
+                        ))
+                        result.alerts.append({
+                            "type": "cc_exceeded",
+                            "name": node.name,
+                            "severity": 3 if cc > 20 else 2,
+                            "value": cc,
+                            "limit": 10,
+                        })
+
+                elif isinstance(node, ast.ClassDef):
+                    class_count += 1
+
+            result.metrics.append(CodeMetrics(
+                file_path=rel_path,
+                module_lines=lines,
+                function_count=func_count,
+                class_count=class_count,
+                cyclomatic_complexity=max_cc,
+            ))
+
+        result.total_files = len(py_files)
+        result.total_lines = sum(m.module_lines for m in result.metrics if not m.function_name)
+        result.critical_count = sum(1 for a in result.alerts if a.get("severity", 0) >= 2)
+
+        logger.info(
+            "AST fallback: %d py files, %d lines, %d critical CC",
+            result.total_files, result.total_lines, result.critical_count,
+        )
+        return result
+
+    @staticmethod
+    def _ast_cyclomatic_complexity(node: ast.AST) -> int:
+        """Oblicz uproszczone CC dla węzła AST (liczba branchy + 1)."""
+        branch_nodes = (
+            ast.If, ast.For, ast.While, ast.ExceptHandler,
+            ast.With, ast.Assert, ast.comprehension,
+        )
+        count = 1
+        for child in ast.walk(node):
+            if isinstance(child, branch_nodes):
+                count += 1
+            elif isinstance(child, ast.BoolOp):
+                count += len(child.values) - 1
+        return count
 
 
 def _try_number(val: str) -> int | float | str:
