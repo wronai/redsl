@@ -51,7 +51,8 @@ class CodeMetrics:
 
     def to_dsl_context(self) -> dict[str, Any]:
         """Konwertuj na kontekst DSL do ewaluacji reguł."""
-        return {
+        # For module-level metrics, we need to get the detailed quality info
+        context = {
             "file_path": self.file_path,
             "function_name": self.function_name,
             "module_lines": self.module_lines,
@@ -71,6 +72,12 @@ class CodeMetrics:
             "module_execution_block": self.module_execution_block,
             "missing_return_types": self.missing_return_types,
         }
+        
+        # Add detailed lists for direct refactoring
+        if hasattr(self, '_quality_details'):
+            context.update(self._quality_details)
+        
+        return context
 
 
 @dataclass
@@ -835,7 +842,7 @@ class CodeAnalyzer:
                         })
 
             # Metryka modułu (bez duplikowania jeśli już są per-funkcja)
-            result.metrics.append(CodeMetrics(
+            module_metrics = CodeMetrics(
                 file_path=rel_path,
                 module_lines=lines,
                 function_count=func_count,
@@ -845,7 +852,15 @@ class CodeAnalyzer:
                 magic_numbers=quality_metrics["magic_numbers"],
                 module_execution_block=quality_metrics["module_execution_block"],
                 missing_return_types=quality_metrics["missing_return_types"],
-            ))
+            )
+            # Store detailed lists for direct refactoring
+            module_metrics._quality_details = {
+                "unused_import_list": quality_metrics["unused_import_list"],
+                "magic_number_list": quality_metrics["magic_number_list"],
+                "functions_missing_return": quality_metrics["functions_missing_return"],
+                "module_statements": quality_metrics["module_statements"],
+            }
+            result.metrics.append(module_metrics)
 
         result.total_files = len(py_files)
         result.total_lines = sum(m.module_lines for m in result.metrics if not m.function_name)
@@ -989,6 +1004,14 @@ class CodeAnalyzer:
                 m.magic_numbers = quality_metrics["magic_numbers"]
                 m.module_execution_block = quality_metrics["module_execution_block"]
                 m.missing_return_types = quality_metrics["missing_return_types"]
+                
+                # Store detailed lists for direct refactoring
+                m._quality_details = {
+                    "unused_import_list": quality_metrics["unused_import_list"],
+                    "magic_number_list": quality_metrics["magic_number_list"],
+                    "functions_missing_return": quality_metrics["functions_missing_return"],
+                    "module_statements": quality_metrics["module_statements"],
+                }
 
 
 def _try_number(val: str) -> int | float | str:

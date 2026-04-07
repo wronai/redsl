@@ -24,10 +24,11 @@ from typing import Any
 
 from app.analyzers import AnalysisResult, CodeAnalyzer
 from app.config import AgentConfig
-from app.dsl import Decision, DSLEngine
+from app.dsl import Decision, DSLEngine, RefactorAction
 from app.llm import LLMLayer
 from app.memory import AgentMemory
 from app.refactors import RefactorEngine, RefactorProposal, RefactorResult
+from app.refactors.direct import DirectRefactorEngine
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +66,7 @@ class RefactorOrchestrator:
         self.llm = LLMLayer(self.config.llm)
         self.memory = AgentMemory(self.config.memory.persist_dir)
         self.refactor_engine = RefactorEngine(self.llm, self.config.refactor)
+        self.direct_refactor = DirectRefactorEngine()
         self._cycle_count = 0
 
     # ------------------------------------------------------------------
@@ -236,6 +238,15 @@ class RefactorOrchestrator:
             decision.action.value, decision.target_file, decision.score,
         )
 
+        # Handle simple refactorings directly
+        if decision.action in [
+            RefactorAction.REMOVE_UNUSED_IMPORTS,
+            RefactorAction.FIX_MODULE_EXECUTION_BLOCK,
+            RefactorAction.EXTRACT_CONSTANTS,
+            RefactorAction.ADD_RETURN_TYPES,
+        ]:
+            return self._execute_direct_refactor(decision, project_dir)
+
         # Wczytaj kod źródłowy — próbuj rozwiązać ścieżkę jeśli nie istnieje
         source_path = project_dir / decision.target_file
         if not source_path.exists() and decision.target_function:
@@ -311,6 +322,74 @@ class RefactorOrchestrator:
             )
 
         return result
+
+    def _execute_direct_refactor(
+        self,
+        decision: Decision,
+        project_dir: Path,
+    ) -> RefactorResult:
+        """Execute simple refactorings directly without LLM."""
+        source_path = project_dir / decision.target_file
+        
+        if not source_path.exists():
+            return RefactorResult(
+                proposal=None,
+                applied=False,
+                validated=False,
+                errors=[f"File not found: {source_path}"],
+            )
+        
+        success = False
+        errors = []
+        
+        try:
+            if decision.action == RefactorAction.REMOVE_UNUSED_IMPORTS:
+                # Get unused imports from context
+                unused_imports = decision.context.get("unused_import_list", [])
+                success = self.direct_refactor.remove_unused_imports(source_path, unused_imports)
+                
+            elif decision.action == RefactorAction.FIX_MODULE_EXECUTION_BLOCK:
+                success = self.direct_refactor.fix_module_execution_block(source_path)
+                
+            elif decision.action == RefactorAction.EXTRACT_CONSTANTS:
+                # Get magic numbers from context
+                magic_numbers = decision.context.get("magic_number_list", [])
+                success = self.direct_refactor.extract_constants(source_path, magic_numbers)
+                
+            elif decision.action == RefactorAction.ADD_RETURN_TYPES:
+                # Get functions missing return types from context
+                functions_missing_return = decision.context.get("functions_missing_return", [])
+                success = self.direct_refactor.add_return_types(source_path, functions_missing_return)
+            
+            if success:
+                # Remember the action
+                self.memory.remember_action(
+                    action=decision.action.value,
+                    target=str(source_path),
+                    result=f"Direct refactor applied: {decision.action.value}",
+                    success=True,
+                    details={"score": decision.score, "rule": decision.rule_name},
+                )
+                
+                return RefactorResult(
+                    proposal=None,
+                    applied=True,
+                    validated=True,
+                    errors=[],
+                )
+            else:
+                errors.append(f"Direct refactor failed: {decision.action.value}")
+                
+        except Exception as e:
+            errors.append(str(e))
+            logger.error(f"Direct refactor error: {e}")
+        
+        return RefactorResult(
+            proposal=None,
+            applied=False,
+            validated=False,
+            errors=errors,
+        )
 
     def _reflect_on_cycle(self, report: CycleReport) -> None:
         """Refleksja na poziomie całego cyklu — meta-myślenie."""
