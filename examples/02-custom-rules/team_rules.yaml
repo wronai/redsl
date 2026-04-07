@@ -1,0 +1,41 @@
+# Reguły zespołowe — przykład konfiguracji
+# Załaduj: engine.add_rules_from_yaml(yaml.safe_load(open("team_rules.yaml"))["rules"])
+
+rules:
+  - name: enforce_max_module_size
+    description: "Moduł > 600 linii → natychmiastowy split"
+    tags: [team-standard, structure]
+    when:
+      module_lines: {gt: 600}
+    then:
+      action: split_module
+      priority: 0.92
+
+  - name: security_public_api_complexity
+    description: "Publiczne API o CC > 20 → rozbij (priorytet bezpieczeństwa)"
+    tags: [security, critical]
+    when:
+      cyclomatic_complexity: {gt: 20}
+      is_public_api: true
+    then:
+      action: extract_functions
+      priority: 0.95
+
+  - name: naming_convention_check
+    description: "Funkcje z więcej niż 3 słowami → rozważ rename"
+    tags: [readability]
+    when:
+      missing_type_hints: {gt: 3}
+    then:
+      action: add_type_hints
+      priority: 0.45
+
+  - name: aggressive_dedup
+    description: "Duplikaty > 8 linii → deduplikuj (agresywnie)"
+    tags: [duplication, team-standard]
+    when:
+      duplicate_similarity: {gte: 0.85}
+      duplicate_lines: {gt: 8}
+    then:
+      action: deduplicate
+      priority: 0.75

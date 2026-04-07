@@ -16,7 +16,7 @@ COPY app/ ./app/
 COPY config/ ./config/
 
 # Katalog na wyniki refaktoryzacji
-RUN mkdir -p /app/refactor_output /tmp/refactor_memory
+RUN mkdir -p /app/redsl_output /tmp/redsl_memory
 
 ENV PYTHONUNBUFFERED=1
 ENV REFACTOR_DRY_RUN=true

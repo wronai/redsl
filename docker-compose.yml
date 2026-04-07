@@ -11,8 +11,8 @@ services:
       - REFACTOR_DRY_RUN=${REFACTOR_DRY_RUN:-true}
       - REFACTOR_AUTO_APPROVE=false
     volumes:
-      - ./refactor_output:/app/refactor_output
-      - refactor_memory:/tmp/refactor_memory
+      - ./redsl_output:/app/redsl_output
+      - redsl_memory:/tmp/redsl_memory
       - ${PROJECT_PATH:-.}:/mnt/project:ro
     depends_on:
       - chroma
@@ -35,8 +35,8 @@ services:
       - REFACTOR_LLM_MODEL=${REFACTOR_LLM_MODEL:-gpt-4o-mini}
       - REFACTOR_DRY_RUN=true
     volumes:
-      - ./refactor_output:/app/refactor_output
-      - refactor_memory:/tmp/refactor_memory
+      - ./redsl_output:/app/redsl_output
+      - redsl_memory:/tmp/redsl_memory
       - ${PROJECT_PATH:-.}:/mnt/project:ro
     depends_on:
       - chroma
@@ -46,4 +46,4 @@ services:
 
 volumes:
   chroma_data:
-  refactor_memory:
+  redsl_memory:

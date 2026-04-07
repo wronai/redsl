@@ -13,7 +13,7 @@
 
 version: '1.0'
 project:
-  name: conscious_refactor_agent
+  name: redsl
   type:
   - python
   description: Autonomiczny system refaktoryzacji kodu z LLM, pamięcią i DSL
@@ -224,7 +224,7 @@ strategies:
   python:
     test: pytest tests/ -v
     build: python -m build
-    publish: twine upload dist/conscious_refactor_agent-{version}*
+    publish: twine upload dist/redsl-{version}*
     publish_enabled: true
     dependencies:
       file: requirements.txt

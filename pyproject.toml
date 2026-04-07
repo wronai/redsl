@@ -3,10 +3,12 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "conscious_refactor_agent"
-version = "1.0.3"
-description = "Autonomiczny system refaktoryzacji kodu z LLM, pamięcią i DSL"
+name = "redsl"
+version = "1.0.0"
+description = "ReDSL — Refactor + DSL + Self-Learning. LLM-powered autonomous code refactoring."
 requires-python = ">=3.11"
+license = {text = "Apache-2.0"}
+keywords = ["refactoring", "llm", "dsl", "code-quality", "ai"]
 
 dependencies = [
     "fastapi>=0.110.0",
@@ -31,6 +33,9 @@ dev = [
     "costs>=0.1.20",
     "pfix>=0.1.60",
 ]
+
+[project.scripts]
+redsl = "app.main:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
