@@ -48,6 +48,9 @@ python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
 
+[tool.setuptools.packages.find]
+exclude = ["config", "tests"]
+
 [tool.pfix]
 # Self-healing Python configuration
 model = "openrouter/qwen/qwen3-coder-next"
