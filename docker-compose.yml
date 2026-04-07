@@ -7,7 +7,7 @@ services:
       - "8000:8000"
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - REFACTOR_LLM_MODEL=${REFACTOR_LLM_MODEL:-gpt-4o-mini}
+      - REFACTOR_LLM_MODEL=${REFACTOR_LLM_MODEL:-gpt-5.4-mini}
       - REFACTOR_DRY_RUN=${REFACTOR_DRY_RUN:-true}
       - REFACTOR_AUTO_APPROVE=false
     volumes:
@@ -32,7 +32,7 @@ services:
     command: ["python", "-m", "app.consciousness_loop", "--project", "/mnt/project", "--interval", "120"]
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - REFACTOR_LLM_MODEL=${REFACTOR_LLM_MODEL:-gpt-4o-mini}
+      - REFACTOR_LLM_MODEL=${REFACTOR_LLM_MODEL:-gpt-5.4-mini}
       - REFACTOR_DRY_RUN=true
     volumes:
       - ./redsl_output:/app/redsl_output

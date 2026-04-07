@@ -1,0 +1,22 @@
+[
+  {
+    "project": "test_sample_project",
+    "decisions": 1,
+    "changes_applied": 0,
+    "errors": 1,
+    "changes_by_type": {
+      "remove_unused_imports": 0,
+      "fix_module_execution_block": 0,
+      "extract_constants": 0,
+      "add_return_types": 0,
+      "extract_method": 0,
+      "simplify_conditionals": 0,
+      "reduce_complexity": 0,
+      "other": 0
+    },
+    "changes": [],
+    "llm_enabled": true,
+    "before_issues": 4,
+    "after_issues": 4
+  }
+]

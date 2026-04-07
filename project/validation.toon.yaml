@@ -1,0 +1,102 @@
+# vallm batch | 85f | 51✓ 8⚠ 13✗ | 2026-04-07
+
+SUMMARY:
+  scanned: 85  passed: 51 (60.0%)  warnings: 8  errors: 13  unsupported: 21
+
+WARNINGS[8]{path,score}:
+  redsl/analyzers/analyzer.py,0.93
+    issues[3]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,_analyze_python_files has cyclomatic complexity 22 (max: 15),323
+      complexity.lizard_cc,warning,_analyze_python_files: CC=22 exceeds limit 15,323
+      complexity.lizard_length,warning,_analyze_python_files: 103 lines exceeds limit 100,323
+  redsl/refactors/direct.py,0.93
+    issues[4]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,extract_constants has cyclomatic complexity 17 (max: 15),100
+      complexity.cyclomatic,warning,_infer_return_type has cyclomatic complexity 19 (max: 15),249
+      complexity.lizard_cc,warning,extract_constants: CC=16 exceeds limit 15,100
+      complexity.lizard_cc,warning,_infer_return_type: CC=19 exceeds limit 15,249
+  redsl/analyzers/parsers.py,0.97
+    issues[2]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,parse_functions_toon has cyclomatic complexity 24 (max: 15),418
+      complexity.lizard_cc,warning,parse_functions_toon: CC=24 exceeds limit 15,418
+  redsl/analyzers/utils.py,0.97
+    issues[2]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,_should_ignore_file has cyclomatic complexity 19 (max: 15),63
+      complexity.lizard_cc,warning,_should_ignore_file: CC=19 exceeds limit 15,63
+  redsl/commands/hybrid.py,0.97
+    issues[2]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,run_hybrid_batch has cyclomatic complexity 18 (max: 15),98
+      complexity.lizard_cc,warning,run_hybrid_batch: CC=18 exceeds limit 15,98
+  redsl/dsl/engine.py,0.97
+    issues[1]{rule,severity,message,line}:
+      complexity.lizard_length,warning,_load_default_rules: 138 lines exceeds limit 100,188
+  redsl/main.py,0.97
+    issues[2]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,cmd_analyze has cyclomatic complexity 22 (max: 15),38
+      complexity.lizard_cc,warning,cmd_analyze: CC=21 exceeds limit 15,38
+  redsl/orchestrator.py,0.97
+    issues[2]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,_execute_decision has cyclomatic complexity 20 (max: 15),230
+      complexity.lizard_cc,warning,_execute_decision: CC=19 exceeds limit 15,230
+
+ERRORS[13]{path,score}:
+  project_toon.yaml,0.00
+    issues[1]{rule,severity,message,line}:
+      syntax.tree_sitter,error,tree-sitter found 1 parse error(s) in yaml,
+  archive/legacy_scripts/debug_decisions.py,0.79
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'app.orchestrator' not found,5
+      python.import.resolvable,error,Module 'app.config' not found,6
+      python.import.resolvable,error,Module 'app.analyzers' not found,7
+  tests/test_dsl_engine.py,0.79
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,3
+  tests/test_memory.py,0.79
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,3
+  archive/legacy_scripts/debug_llm_config.py,0.83
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'app.config' not found,5
+      python.import.resolvable,error,Module 'app.llm' not found,6
+  archive/legacy_scripts/batch_quality_refactor.py,0.84
+    issues[4]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'app.orchestrator' not found,11
+      python.import.resolvable,error,Module 'app.config' not found,12
+      python.import.resolvable,error,Module 'app.dsl' not found,13
+      python.import.resolvable,error,Module 'app.analyzers' not found,14
+  archive/legacy_scripts/hybrid_quality_refactor.py,0.84
+    issues[4]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'app.orchestrator' not found,11
+      python.import.resolvable,error,Module 'app.config' not found,12
+      python.import.resolvable,error,Module 'app.dsl' not found,13
+      python.import.resolvable,error,Module 'app.analyzers' not found,14
+  archive/legacy_scripts/apply_semcod_refactor.py,0.86
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'app.orchestrator' not found,10
+      python.import.resolvable,error,Module 'app.config' not found,11
+  tests/test_analyzer.py,0.86
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,3
+  archive/legacy_scripts/hybrid_llm_refactor.py,0.88
+    issues[4]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'app.orchestrator' not found,16
+      python.import.resolvable,error,Module 'app.config' not found,17
+      python.import.resolvable,error,Module 'app.dsl' not found,18
+      python.import.resolvable,error,Module 'app.analyzers' not found,19
+  archive/legacy_scripts/batch_refactor_semcod.py,0.89
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'app.orchestrator' not found,11
+      python.import.resolvable,error,Module 'app.config' not found,12
+  tests/test_llm_execution.py,0.95
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,6
+  tests/test_integration.py,0.97
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,6
+
+UNSUPPORTED[5]{bucket,count}:
+  *.md,9
+  Dockerfile*,1
+  *.txt,2
+  *.yml,1
+  other,8

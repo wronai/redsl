@@ -1,0 +1,51 @@
+# redsl | 205 func | 28f | 7878L | python | 2026-04-07
+
+HEALTH:
+  CC̄=5.1  critical=30 (limit:10)  dup=0  cycles=0
+
+ALERTS[20]:
+  !!! high_fan_out     create_app = 39 (limit:10)
+  !!! cc_exceeded      main = 27 (limit:15)
+  !!! high_fan_out     main = 26 (limit:10)
+  !!! high_fan_out     CodeAnalyzer._analyze_python_files = 26 (limit:10)
+  !!! high_fan_out     main = 22 (limit:10)
+  !!! high_fan_out     DirectRefactorEngine.extract_constants = 21 (limit:10)
+  !!  cc_exceeded      ToonParser.parse_functions_toon = 24 (limit:15)
+  !!  cc_exceeded      CodeAnalyzer._analyze_python_files = 22 (limit:15)
+  !!  cc_exceeded      cmd_analyze = 22 (limit:15)
+  !!  cc_exceeded      main = 21 (limit:15)
+
+MODULES[36] (top by size):
+  M[redsl/analyzers/analyzer.py] 592L C:1 F:20 CC↑22 D:0 (python)
+  M[redsl/analyzers/parsers.py] 524L C:1 F:22 CC↑24 D:0 (python)
+  M[redsl/commands/pyqual.py] 505L C:1 F:14 CC↑13 D:0 (python)
+  M[redsl/orchestrator.py] 490L C:2 F:9 CC↑20 D:0 (python)
+  M[redsl/dsl/engine.py] 417L C:6 F:12 CC↑10 D:0 (python)
+  M[redsl/api.py] 358L C:11 F:1 CC↑1 D:0 (python)
+  M[redsl/refactors/direct.py] 336L C:3 F:14 CC↑19 D:0 (python)
+  M[redsl/refactors/engine.py] 279L C:1 F:7 CC↑7 D:0 (python)
+  M[archive/legacy_scripts/hybrid_llm_refactor.py] 275L C:0 F:2 CC↑27 D:0 (python)
+  M[redsl/main.py] 243L C:0 F:15 CC↑22 D:0 (python)
+  M[redsl/formatters.py] 235L C:0 F:10 CC↑13 D:2 (python)
+  M[redsl/memory/__init__.py] 235L C:4 F:18 CC↑8 D:0 (python)
+  M[redsl/refactors/prompts.py] 217L C:0 F:0 CC↑0 D:0 (python)
+  M[redsl/cli.py] 201L C:0 F:11 CC↑7 D:0 (python)
+  M[archive/legacy_scripts/hybrid_quality_refactor.py] 198L C:0 F:2 CC↑21 D:0 (python)
+  LANGS: python:35/shell:1
+
+HOTSPOTS[10]:
+  ★ create_app fan=39  // Tworzenie aplikacji FastAPI.
+  ★ main fan=26  // Process semcod projects with hybrid refactoring.
+  ★ CodeAnalyzer._analyze_python_files fan=26  // Analysis pipeline, 26 stages
+  ★ main fan=22  // Process semcod projects with hybrid refactoring.
+  ★ DirectRefactorEngine.extract_constants fan=21  // Extract magic numbers into named constants.
+
+REFACTOR[15]:
+  [1] H/L Split main (CC=27 → target CC<10)
+  [2] H/H Split god module redsl/analyzers/parsers.py (524L, 1 classes)
+  [3] H/H Split god module redsl/analyzers/analyzer.py (592L, 1 classes)
+  [4] H/H Split god module redsl/commands/pyqual.py (505L, 1 classes)
+  [5] M/L Split apply_changes_with_llm_supervision (CC=16 → target CC<10)
+
+EVOLUTION:
+  2026-04-07 CC̄=5.1 crit=30 7878L // Automated analysis

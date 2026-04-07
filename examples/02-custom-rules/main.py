@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from app.dsl import Condition, DSLEngine, Operator, RefactorAction, Rule
+from redsl.dsl import Condition, DSLEngine, Operator, RefactorAction, Rule
 
 
 def main():

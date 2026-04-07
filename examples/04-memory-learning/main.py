@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from app.memory import AgentMemory, InMemoryCollection
+from redsl.memory import AgentMemory, InMemoryCollection
 
 
 def main():

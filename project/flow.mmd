@@ -1,0 +1,39 @@
+flowchart TD
+
+    %% Entry points (blue)
+    classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
+
+    subgraph CLI
+        redsl__cli__cli["cli"]
+        redsl__cli__refactor["refactor"]
+        redsl__cli__batch["batch"]
+        redsl__cli__batch_semcod["batch_semcod"]
+        redsl__cli__batch_hybrid["batch_hybrid"]
+        redsl__cli__pyqual["pyqual"]
+        redsl__cli__pyqual_analyze["pyqual_analyze"]
+        redsl__cli__pyqual_fix["pyqual_fix"]
+        redsl__cli__debug["debug"]
+        redsl__cli__debug_config["debug_config"]
+        redsl__cli__debug_decisions["debug_decisions"]
+    end
+
+    subgraph Core
+        refactor_output__refactor_extract_functions_20260407_143102__00_app__models__main_function["main_function"]
+        redsl__consciousness_loop__ConsciousnessLoop__run["run"]
+        redsl__consciousness_loop__ConsciousnessLoop___inner_thought["_inner_thought"]
+        redsl__consciousness_loop__ConsciousnessLoop___self_assessment["_self_assessment"]
+        redsl__consciousness_loop__ConsciousnessLoop__stop["stop"]
+        redsl__consciousness_loop__main_loop["main_loop"]
+        redsl__formatters__format_refactor_plan["format_refactor_plan"]
+        redsl__formatters___format_yaml["_format_yaml"]
+        redsl__formatters___get_timestamp["_get_timestamp"]
+        redsl__formatters__format_debug_info["format_debug_info"]
+        redsl__config__AgentConfig__from_env["from_env"]
+        redsl__commands__pyqual__PyQualAnalyzer___load_config["_load_config"]
+        redsl__commands__pyqual__PyQualAnalyzer___get_default_config["_get_default_config"]
+        redsl__commands__pyqual__PyQualAnalyzer__analyze_project["analyze_project"]
+        redsl__commands__pyqual__PyQualAnalyzer___find_python_files["_find_python_files"]
+        ...["+130 more"]
+    end
+
+    class refactor_output__refactor_extract_functions_20260407_143102__00_app__models__main_function,redsl__consciousness_loop__ConsciousnessLoop__run,redsl__consciousness_loop__ConsciousnessLoop___inner_thought,redsl__consciousness_loop__ConsciousnessLoop___self_assessment,redsl__consciousness_loop__ConsciousnessLoop__stop,redsl__consciousness_loop__main_loop,redsl__cli__cli,redsl__cli__refactor,redsl__cli__batch,redsl__cli__batch_semcod entry

@@ -19,8 +19,8 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from app.config import AgentConfig
-from app.orchestrator import RefactorOrchestrator
+from redsl.config import AgentConfig
+from redsl.orchestrator import RefactorOrchestrator
 
 
 # ──────────────────────────────────────────────────────────
@@ -93,7 +93,7 @@ MODULES[1]:
 
 
 def main():
-    model = "gpt-4o-mini"
+    model = "gpt-5.4-mini"
     if "--model" in sys.argv:
         idx = sys.argv.index("--model")
         if idx + 1 < len(sys.argv):

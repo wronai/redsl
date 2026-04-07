@@ -1,0 +1,38 @@
+[
+  {
+    "project": "test_sample_project",
+    "decisions": 3,
+    "changes_applied": 3,
+    "errors": 0,
+    "changes_by_type": {
+      "remove_unused_imports": 1,
+      "fix_module_execution_block": 1,
+      "extract_constants": 1,
+      "add_return_types": 0,
+      "extract_method": 0,
+      "simplify_conditionals": 0,
+      "reduce_complexity": 0,
+      "other": 0
+    },
+    "changes": [
+      {
+        "file": "test_sample_project/sample.py",
+        "action": "remove_unused_imports",
+        "details": "Removed: os, sys, json, datetime"
+      },
+      {
+        "file": "test_sample_project/sample.py",
+        "action": "fix_module_execution_block",
+        "details": "Wrapped 3 lines in main guard"
+      },
+      {
+        "file": "test_sample_project/sample.py",
+        "action": "extract_constants",
+        "details": "Extracted 6 constants"
+      }
+    ],
+    "llm_enabled": false,
+    "before_issues": 1,
+    "after_issues": 4
+  }
+]

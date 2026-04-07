@@ -1,7 +1,7 @@
 """Testy silnika DSL — ewaluacja reguł, scoring, decyzje."""
 
 import pytest
-from app.dsl import Condition, Decision, DSLEngine, Operator, RefactorAction, Rule
+from redsl.dsl import Condition, Decision, DSLEngine, Operator, RefactorAction, Rule
 
 
 class TestCondition:

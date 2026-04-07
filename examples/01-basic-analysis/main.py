@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from app.analyzers import CodeAnalyzer
-from app.dsl import DSLEngine
+from redsl.analyzers import CodeAnalyzer
+from redsl.dsl import DSLEngine
 
 # ──────────────────────────────────────────────────────────
 # 1. Dane wejściowe — content z project_toon.yaml

@@ -1,0 +1,24 @@
+issues:
+  bandit: []
+  magic_numbers: []
+  missing_docstrings: []
+  mypy: []
+  print_statements: []
+  unused_imports: []
+metrics:
+  average_complexity: 0.0
+  average_maintainability: 70.60714720191118
+  max_complexity: 0
+  total_lines: 6705617
+project_root: /home/tom/github/wronai/redsl
+recommendations: []
+summary:
+  complexity_violations: 0
+  magic_numbers: 0
+  maintainability_violations: 9591
+  missing_docstrings: 0
+  mypy_issues: 0
+  print_statements: 0
+  total_files: 20088
+  unused_imports: 0
+timestamp: '2026-04-07T20:03:07.605602'

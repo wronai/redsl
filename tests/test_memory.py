@@ -1,7 +1,7 @@
 """Testy systemu pamięci — episodic, semantic, procedural."""
 
 import pytest
-from app.memory import AgentMemory, InMemoryCollection, MemoryEntry, MemoryLayer
+from redsl.memory import AgentMemory, InMemoryCollection, MemoryEntry, MemoryLayer
 
 
 def _make_inmemory_layer(name: str) -> MemoryLayer:

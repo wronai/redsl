@@ -4,11 +4,26 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "redsl"
-version = "1.0.7"
+version = "1.2.1"
 description = "ReDSL — Refactor + DSL + Self-Learning. LLM-powered autonomous code refactoring."
+readme = "README_EN.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
 keywords = ["refactoring", "llm", "dsl", "code-quality", "ai"]
+authors = [
+    {name = "ReDSL Team", email = "redsl@example.com"},
+    {name = "Tom Sapletta", email = "tom@sapletta.com"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 
 dependencies = [
     "fastapi>=0.110.0",
@@ -19,6 +34,8 @@ dependencies = [
     "pyyaml>=6.0.1",
     "rich>=13.7.0",
     "httpx>=0.27.0",
+    "click>=8.1.0",
+    "python-dotenv>=1.0.0",
     "goal>=2.1.0",
     "costs>=0.1.20",
     "pfix>=0.1.60",
@@ -35,7 +52,7 @@ dev = [
 ]
 
 [project.scripts]
-redsl = "app.main:main"
+redsl = "redsl.cli:cli"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

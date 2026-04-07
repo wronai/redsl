@@ -1,7 +1,7 @@
 """Testy analizatora kodu — parser toon.yaml + metryki."""
 
 import pytest
-from app.analyzers import CodeAnalyzer, CodeMetrics, ToonParser
+from redsl.analyzers import CodeAnalyzer, CodeMetrics, ToonParser
 
 
 SAMPLE_PROJECT_TOON = """
@@ -134,7 +134,7 @@ class TestIntegrationAnalyzerDSL:
     """Test integracji Analyzer → DSL Engine."""
 
     def test_full_pipeline(self):
-        from app.dsl import DSLEngine
+        from redsl.dsl import DSLEngine
 
         analyzer = CodeAnalyzer()
         result = analyzer.analyze_from_toon_content(

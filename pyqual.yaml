@@ -1,0 +1,211 @@
+project_root: .
+package_name: redsl
+include:
+- '**/*.py'
+exclude:
+- '**/__pycache__/**'
+- '**/node_modules/**'
+- '**/.venv/**'
+- '**/venv/**'
+- '**/.git/**'
+- '**/build/**'
+- '**/dist/**'
+- '**/*.egg-info/**'
+- '**/tests/**'
+tools:
+  parallel: true
+  cache: true
+  ruff:
+    enabled: true
+    max_line_length: 88
+    select:
+    - E
+    - F
+    - W
+    - I
+    - C
+    - B
+    - A
+    - COM
+    - C4
+    - DTZ
+    - T10
+    - EM
+    - EXE
+    - FA
+    - ISC
+    - ICN
+    - G
+    - INP
+    - PIE
+    - T20
+    - PT
+    - Q
+    - RSE
+    - RET
+    - SIM
+    - TID
+    - TCH
+    - ARG
+    - PTH
+    - ERA
+    - PGH
+    - PL
+    - TRY
+    - FLAKE8-PYTESTSTYLE
+    - RUF
+    ignore:
+    - E501
+    - PLR0913
+    - PLR0915
+  mypy:
+    enabled: true
+    strict: false
+    ignore_missing_imports: true
+    disallow_untyped_defs: false
+    disallow_incomplete_defs: false
+    check_untyped_defs: true
+    disallow_untyped_decorators: false
+    no_implicit_optional: true
+    warn_redundant_casts: true
+    warn_unused_ignores: true
+    warn_no_return: true
+    warn_unreachable: true
+    strict_equality: true
+  isort:
+    enabled: true
+    profile: black
+    multi_line_output: 3
+    line_length: 88
+  bandit:
+    enabled: true
+    exclude_dirs:
+    - tests
+  coverage:
+    enabled: true
+    fail_under: 80
+  pydocstyle:
+    enabled: true
+    convention: google
+  vulture:
+    enabled: true
+    min_confidence: 60
+performance:
+  max_workers: 4
+  cache_size: 104857600
+  chunk_size: 10
+metrics:
+  complexity:
+    enabled: true
+    max_complexity: 10
+    tools:
+    - radon
+    - xenon
+  maintainability:
+    enabled: true
+    min_maintainability: 70
+    tools:
+    - radon
+  duplication:
+    enabled: true
+    min_similarity: 0.85
+    tools:
+    - jscpd
+  test_coverage:
+    enabled: true
+    min_coverage: 80
+    tools:
+    - coverage
+rules:
+  unused-imports:
+    enabled: true
+    tools:
+    - ruff
+    - autoflake
+    severity: error
+  magic-numbers:
+    enabled: true
+    threshold: 2
+    exclude:
+    - 0
+    - 1
+    - -1
+    - 2
+    severity: warning
+  print-statements:
+    enabled: true
+    severity: warning
+  TODO-comments:
+    enabled: true
+    severity: info
+  long-lines:
+    enabled: true
+    max_length: 88
+    severity: warning
+  missing-docstrings:
+    enabled: true
+    public_only: true
+    severity: warning
+  type-hints:
+    enabled: true
+    require_return_type: true
+    require_param_types: false
+    severity: warning
+  security-issues:
+    enabled: true
+    tools:
+    - bandit
+    severity: error
+  code-smells:
+    enabled: true
+    tools:
+    - ruff
+    - mypy
+    severity: warning
+plugins:
+  enabled: true
+  directories:
+  - ~/.pyqual/plugins
+  - ./.pyqual/plugins
+environments:
+  development:
+    rules:
+      print-statements:
+        enabled: true
+      magic-numbers:
+        enabled: false
+      TODO-comments:
+        severity: warning
+    performance:
+      max_workers: 2
+  production:
+    rules:
+      print-statements:
+        enabled: false
+      magic-numbers:
+        enabled: true
+      TODO-comments:
+        severity: error
+    performance:
+      max_workers: 8
+  testing:
+    rules:
+      print-statements:
+        enabled: true
+      magic-numbers:
+        enabled: false
+      missing-docstrings:
+        enabled: false
+    metrics:
+      test_coverage:
+        enabled: true
+        min_coverage: 90
+reporting:
+  output_formats:
+  - yaml
+  - json
+  - html
+  include_summary: true
+  include_details: true
+  include_recommendations: true
+  output_file: pyqual_report

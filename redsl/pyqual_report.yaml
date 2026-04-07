@@ -1,0 +1,1623 @@
+issues:
+  bandit: []
+  magic_numbers:
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/analyzer.py
+    line: 353
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/analyzer.py
+    line: 384
+    message: 'Magic number: 20'
+    value: 20
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/analyzer.py
+    line: 384
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/analyzer.py
+    line: 405
+    message: 'Magic number: 20'
+    value: 20
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/analyzer.py
+    line: 405
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 59
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 225
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 226
+    message: 'Magic number: 4'
+    value: 4
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 227
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 228
+    message: 'Magic number: 6'
+    value: 6
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 242
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 241
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 272
+    message: 'Magic number: 4'
+    value: 4
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 278
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 278
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 340
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 341
+    message: 'Magic number: 4'
+    value: 4
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 341
+    message: 'Magic number: 4'
+    value: 4
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 377
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 378
+    message: 'Magic number: 4'
+    value: 4
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 379
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 406
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 408
+    message: 'Magic number: 4'
+    value: 4
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 497
+    message: 'Magic number: 20'
+    value: 20
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 497
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 497
+    message: 'Magic number: 15'
+    value: 15
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 53
+    message: 'Magic number: 30'
+    value: 30
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 62
+    message: 'Magic number: 20'
+    value: 20
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 157
+    message: 'Magic number: 20'
+    value: 20
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 225
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 304
+    message: 'Magic number: 20'
+    value: 20
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 85
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 122
+    message: 'Magic number: 30'
+    value: 30
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 166
+    message: 'Magic number: 4'
+    value: 4
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 173
+    message: 'Magic number: 4'
+    value: 4
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 178
+    message: 'Magic number: 20'
+    value: 20
+  - file: /home/tom/github/wronai/redsl/redsl/commands/batch.py
+    line: 36
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/commands/batch.py
+    line: 38
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/commands/batch.py
+    line: 57
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/commands/hybrid.py
+    line: 18
+    message: 'Magic number: 50'
+    value: 50
+  - file: /home/tom/github/wronai/redsl/redsl/commands/hybrid.py
+    line: 20
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/commands/hybrid.py
+    line: 22
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/commands/hybrid.py
+    line: 98
+    message: 'Magic number: 30'
+    value: 30
+  - file: /home/tom/github/wronai/redsl/redsl/commands/hybrid.py
+    line: 143
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/commands/hybrid.py
+    line: 145
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/commands/hybrid.py
+    line: 166
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 64
+    message: 'Magic number: 70'
+    value: 70
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 185
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 186
+    message: 'Magic number: 4'
+    value: 4
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 190
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 364
+    message: 'Magic number: 70'
+    value: 70
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 423
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 424
+    message: 'Magic number: 4'
+    value: 4
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 455
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 457
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 473
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 17
+    message: 'Magic number: 4096'
+    value: 4096
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 35
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 42
+    message: 'Magic number: 15'
+    value: 15
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 44
+    message: 'Magic number: 400'
+    value: 400
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 45
+    message: 'Magic number: 15'
+    value: 15
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 54
+    message: 'Magic number: 200'
+    value: 200
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 58
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 40
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 72
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 82
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 93
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 111
+    message: 'Magic number: 200'
+    value: 200
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 116
+    message: 'Magic number: 500'
+    value: 500
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 143
+    message: 'Magic number: 300'
+    value: 300
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 147
+    message: 'Magic number: 500'
+    value: 500
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 160
+    message: 'Magic number: 4'
+    value: 4
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 160
+    message: 'Magic number: 4'
+    value: 4
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 160
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 129
+    message: 'Magic number: 30'
+    value: 30
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 131
+    message: 'Magic number: 20'
+    value: 20
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 132
+    message: 'Magic number: 1.5'
+    value: 1.5
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 135
+    message: 'Magic number: 500'
+    value: 500
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 136
+    message: 'Magic number: 1.8'
+    value: 1.8
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 137
+    message: 'Magic number: 300'
+    value: 300
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 138
+    message: 'Magic number: 1.3'
+    value: 1.3
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 141
+    message: 'Magic number: 20'
+    value: 20
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 142
+    message: 'Magic number: 1.5'
+    value: 1.5
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 145
+    message: 'Magic number: 30'
+    value: 30
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 146
+    message: 'Magic number: 1.6'
+    value: 1.6
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 148
+    message: 'Magic number: 5.0'
+    value: 5.0
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 194
+    message: 'Magic number: 30'
+    value: 30
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 204
+    message: 'Magic number: 15'
+    value: 15
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 214
+    message: 'Magic number: 400'
+    value: 400
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 215
+    message: 'Magic number: 15'
+    value: 15
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 237
+    message: 'Magic number: 15'
+    value: 15
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 247
+    message: 'Magic number: 15'
+    value: 15
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 268
+    message: 'Magic number: 4'
+    value: 4
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 278
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 319
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/formatters.py
+    line: 87
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/formatters.py
+    line: 88
+    message: 'Magic number: 6'
+    value: 6
+  - file: /home/tom/github/wronai/redsl/redsl/formatters.py
+    line: 95
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/formatters.py
+    line: 111
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 53
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 55
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 62
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 72
+    message: 'Magic number: 8'
+    value: 8
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 73
+    message: 'Magic number: 30'
+    value: 30
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 73
+    message: 'Magic number: 15'
+    value: 15
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 80
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 85
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 92
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 114
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 123
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 128
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 156
+    message: 'Magic number: 8000'
+    value: 8000
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 82
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 132
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 189
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 207
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 224
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 79
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 122
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 168
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 264
+    message: 'Magic number: 15'
+    value: 15
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 413
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 428
+    message: 'Magic number: 200'
+    value: 200
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 433
+    message: 'Magic number: 200'
+    value: 200
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 472
+    message: 'Magic number: 400'
+    value: 400
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 473
+    message: 'Magic number: 400'
+    value: 400
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 474
+    message: 'Magic number: 400'
+    value: 400
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/direct.py
+    line: 102
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 53
+    message: 'Magic number: 30'
+    value: 30
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 55
+    message: 'Magic number: 20'
+    value: 20
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 57
+    message: 'Magic number: 15'
+    value: 15
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 65
+    message: 'Magic number: 500'
+    value: 500
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 70
+    message: 'Magic number: 3'
+    value: 3
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 88
+    message: 'Magic number: 8000'
+    value: 8000
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 163
+    message: 'Magic number: 3000'
+    value: 3000
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 168
+    message: 'Magic number: 3000'
+    value: 3000
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 174
+    message: 'Magic number: 500'
+    value: 500
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 201
+    message: 'Magic number: 50000'
+    value: 50000
+  missing_docstrings:
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/analyzer.py
+    line: 29
+    message: Missing docstring for FunctionDef
+    name: __init__
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/analyzer.py
+    line: 460
+    message: Missing docstring for FunctionDef
+    name: _walk
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 344
+    message: Missing docstring for FunctionDef
+    name: _parse_alert_line
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 363
+    message: Missing docstring for FunctionDef
+    name: _parse_hotspot_line
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 412
+    message: Missing docstring for FunctionDef
+    name: _parse_refactor_line
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/quality_visitor.py
+    line: 12
+    message: Missing docstring for FunctionDef
+    name: __init__
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 31
+    message: Missing docstring for ClassDef
+    name: AnalyzeRequest
+    type: ClassDef
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 38
+    message: Missing docstring for ClassDef
+    name: RefactorRequest
+    type: ClassDef
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 45
+    message: Missing docstring for ClassDef
+    name: BatchSemcodRequest
+    type: ClassDef
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 51
+    message: Missing docstring for ClassDef
+    name: BatchHybridRequest
+    type: ClassDef
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 56
+    message: Missing docstring for ClassDef
+    name: DebugConfigRequest
+    type: ClassDef
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 60
+    message: Missing docstring for ClassDef
+    name: DebugDecisionsRequest
+    type: ClassDef
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 65
+    message: Missing docstring for ClassDef
+    name: PyQualAnalyzeRequest
+    type: ClassDef
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 71
+    message: Missing docstring for ClassDef
+    name: PyQualFixRequest
+    type: ClassDef
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 76
+    message: Missing docstring for ClassDef
+    name: RulesRequest
+    type: ClassDef
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 80
+    message: Missing docstring for ClassDef
+    name: DecisionResponse
+    type: ClassDef
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 89
+    message: Missing docstring for ClassDef
+    name: CycleResponse
+    type: ClassDef
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 23
+    message: Missing docstring for FunctionDef
+    name: is_local
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 37
+    message: Missing docstring for FunctionDef
+    name: __init__
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 31
+    message: Missing docstring for ClassDef
+    name: Operator
+    type: ClassDef
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 42
+    message: Missing docstring for ClassDef
+    name: RefactorAction
+    type: ClassDef
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 97
+    message: Missing docstring for FunctionDef
+    name: __repr__
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 168
+    message: Missing docstring for FunctionDef
+    name: should_execute
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 184
+    message: Missing docstring for FunctionDef
+    name: __init__
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/llm/__init__.py
+    line: 42
+    message: Missing docstring for FunctionDef
+    name: __init__
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/llm/__init__.py
+    line: 174
+    message: Missing docstring for FunctionDef
+    name: total_calls
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 31
+    message: Missing docstring for FunctionDef
+    name: _get_orchestrator
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 37
+    message: Missing docstring for FunctionDef
+    name: __init__
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 124
+    message: Missing docstring for FunctionDef
+    name: __init__
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 128
+    message: Missing docstring for FunctionDef
+    name: add
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 132
+    message: Missing docstring for FunctionDef
+    name: query
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 140
+    message: Missing docstring for FunctionDef
+    name: count
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 157
+    message: Missing docstring for FunctionDef
+    name: __init__
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 230
+    message: Missing docstring for FunctionDef
+    name: stats
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 62
+    message: Missing docstring for FunctionDef
+    name: __init__
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/direct.py
+    line: 14
+    message: Missing docstring for FunctionDef
+    name: __init__
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/direct.py
+    line: 222
+    message: Missing docstring for FunctionDef
+    name: __init__
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/direct.py
+    line: 306
+    message: Missing docstring for FunctionDef
+    name: __init__
+    type: FunctionDef
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 39
+    message: Missing docstring for FunctionDef
+    name: __init__
+    type: FunctionDef
+  mypy:
+  - file: redsl/refactors/direct.py
+    line: 15
+    message: 'Need type annotation for "applied_changes" (hint: "applied_changes:
+      list[<type>] = ...")  [var-annotated]'
+    type: error
+  - file: redsl/config.py
+    line: 18
+    message: Incompatible types in assignment (expression has type "str | None", variable
+      has type "str")  [assignment]
+    type: error
+  - file: redsl/config.py
+    line: 20
+    message: Incompatible types in assignment (expression has type "str | None", variable
+      has type "str")  [assignment]
+    type: error
+  - file: redsl/config.py
+    line: 84
+    message: Argument "model" to "LLMConfig" has incompatible type "str | None"; expected
+      "str"  [arg-type]
+    type: error
+  - file: redsl/config.py
+    line: 85
+    message: Argument "api_key" to "LLMConfig" has incompatible type "str | None";
+      expected "str"  [arg-type]
+    type: error
+  - file: redsl/memory/__init__.py
+    line: 51
+    message: Cannot find implementation or library stub for module named "chromadb"  [import-not-found]
+    type: error
+  - file: redsl/memory/__init__.py
+    line: 108
+    message: Returning Any from function declared to return "int"  [no-any-return]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 80
+    message: Returning Any from function declared to return "bool"  [no-any-return]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 82
+    message: Returning Any from function declared to return "bool"  [no-any-return]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 84
+    message: Returning Any from function declared to return "bool"  [no-any-return]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 86
+    message: Returning Any from function declared to return "bool"  [no-any-return]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 88
+    message: Returning Any from function declared to return "bool"  [no-any-return]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 90
+    message: Returning Any from function declared to return "bool"  [no-any-return]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 383
+    message: 'Need type annotation for "decision_types" (hint: "decision_types: dict[<type>,
+      <type>] = ...")  [var-annotated]'
+    type: error
+  - file: redsl/analyzers/analyzer.py
+    line: 423
+    message: '"CodeMetrics" has no attribute "_quality_details"  [attr-defined]'
+    type: error
+  - file: redsl/analyzers/analyzer.py
+    line: 587
+    message: '"CodeMetrics" has no attribute "_quality_details"  [attr-defined]'
+    type: error
+  - file: redsl/llm/__init__.py
+    line: 55
+    message: Cannot find implementation or library stub for module named "litellm"  [import-not-found]
+    type: error
+  - file: redsl/llm/__init__.py
+    line: 121
+    message: Returning Any from function declared to return "dict[str, Any]"  [no-any-return]
+    type: error
+  - file: redsl/llm/__init__.py
+    line: 129
+    message: Returning Any from function declared to return "dict[str, Any]"  [no-any-return]
+    type: error
+  - file: redsl/formatters.py
+    line: 6
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/formatters.py
+    line: 47
+    message: Returning Any from function declared to return "str"  [no-any-return]
+    type: error
+  - file: redsl/formatters.py
+    line: 127
+    message: Incompatible return value type (got "None", expected "dict[str, Any]")  [return-value]
+    type: error
+  - file: redsl/formatters.py
+    line: 173
+    message: 'Need type annotation for "types" (hint: "types: dict[<type>, <type>]
+      = ...")  [var-annotated]'
+    type: error
+  - file: redsl/formatters.py
+    line: 189
+    message: Returning Any from function declared to return "str"  [no-any-return]
+    type: error
+  - file: redsl/formatters.py
+    line: 216
+    message: Returning Any from function declared to return "str"  [no-any-return]
+    type: error
+  - file: redsl/orchestrator.py
+    line: 336
+    message: Argument "proposal" to "RefactorResult" has incompatible type "None";
+      expected "RefactorProposal"  [arg-type]
+    type: error
+  - file: redsl/orchestrator.py
+    line: 375
+    message: Argument "proposal" to "RefactorResult" has incompatible type "None";
+      expected "RefactorProposal"  [arg-type]
+    type: error
+  - file: redsl/orchestrator.py
+    line: 388
+    message: Argument "proposal" to "RefactorResult" has incompatible type "None";
+      expected "RefactorProposal"  [arg-type]
+    type: error
+  - file: redsl/commands/pyqual.py
+    line: 12
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/commands/pyqual.py
+    line: 44
+    message: Returning Any from function declared to return "dict[str, Any]"  [no-any-return]
+    type: error
+  - file: redsl/commands/pyqual.py
+    line: 242
+    message: 'Need type annotation for "ast_issues" (hint: "ast_issues: list[<type>]
+      = ...")  [var-annotated]'
+    type: error
+  - file: redsl/commands/pyqual.py
+    line: 291
+    message: Item Module of "FunctionDef | ClassDef | Module" has no attribute "lineno"  [union-attr]
+    type: error
+  - file: redsl/commands/pyqual.py
+    line: 313
+    message: Cannot find implementation or library stub for module named "radon.complexity"  [import-not-found]
+    type: error
+  - file: redsl/commands/pyqual.py
+    line: 313
+    message: Cannot find implementation or library stub for module named "radon"  [import-not-found]
+    type: error
+  - file: redsl/commands/pyqual.py
+    line: 315
+    message: Cannot find implementation or library stub for module named "radon.metrics"  [import-not-found]
+    type: error
+  - file: redsl/commands/pyqual.py
+    line: 403
+    message: 'Dict entry 3 has incompatible type "str": "None"; expected "str": "str"  [dict-item]'
+    type: error
+  - file: redsl/commands/pyqual.py
+    line: 411
+    message: 'Dict entry 3 has incompatible type "str": "None"; expected "str": "str"  [dict-item]'
+    type: error
+  - file: redsl/commands/pyqual.py
+    line: 419
+    message: 'Dict entry 3 has incompatible type "str": "None"; expected "str": "str"  [dict-item]'
+    type: error
+  - file: redsl/commands/pyqual.py
+    line: 498
+    message: '"RefactorConfig" has no attribute "apply_changes"  [attr-defined]'
+    type: error
+  - file: redsl/commands/hybrid.py
+    line: 26
+    message: '"RefactorConfig" has no attribute "apply_changes"  [attr-defined]'
+    type: error
+  - file: redsl/commands/batch.py
+    line: 67
+    message: Unsupported operand types for + ("object" and "int")  [operator]
+    type: error
+  - file: redsl/commands/batch.py
+    line: 70
+    message: Unsupported operand types for + ("object" and "int")  [operator]
+    type: error
+  - file: redsl/commands/batch.py
+    line: 72
+    message: '"object" has no attribute "append"  [attr-defined]'
+    type: error
+  - file: redsl/commands/batch.py
+    line: 82
+    message: Unsupported operand types for + ("object" and "int")  [operator]
+    type: error
+  - file: redsl/api.py
+    line: 189
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/api.py
+    line: 189
+    message: 'Hint: "python3 -m pip install types-PyYAML"'
+    type: note
+  - file: redsl/api.py
+    line: 189
+    message: (or run "mypy --install-types" to install all missing stub packages)
+    type: note
+  - file: redsl/api.py
+    line: 189
+    message: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
+    type: note
+  - file: redsl/api.py
+    line: 290
+    message: '"RefactorConfig" has no attribute "max_actions"; maybe "max_iterations"?  [attr-defined]'
+    type: error
+  print_statements:
+  - file: /home/tom/github/wronai/redsl/redsl/__init__.py
+    line: 3
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/__init__.py
+    line: 8
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/__init__.py
+    line: 24
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/analyzer.py
+    line: 20
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/analyzer.py
+    line: 20
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/analyzer.py
+    line: 471
+    message: 'Module execution block detected: Expr'
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/analyzer.py
+    line: 471
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/metrics.py
+    line: 74
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/metrics.py
+    line: 75
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/metrics.py
+    line: 76
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/metrics.py
+    line: 77
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/utils.py
+    line: 12
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/utils.py
+    line: 12
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/utils.py
+    line: 16
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 24
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 24
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 32
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 33
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 34
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 35
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 39
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 40
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 41
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 42
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 46
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 47
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 48
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 52
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 53
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 57
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 61
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 62
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 66
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 67
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 68
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 72
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 73
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 77
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 358
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 358
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 11
+    message: 'Module execution block detected: Expr'
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 11
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 25
+    message: 'Module execution block detected: Expr'
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 25
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 29
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 29
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/commands/batch.py
+    line: 13
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/commands/batch.py
+    line: 13
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/commands/hybrid.py
+    line: 15
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/commands/hybrid.py
+    line: 15
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 18
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 18
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 18
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 18
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 18
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 20
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 20
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 20
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 31
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 31
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 60
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 60
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 67
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 68
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 69
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 70
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 27
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 27
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/__init__.py
+    line: 12
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 24
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 24
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 32
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 33
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 34
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 35
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 36
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 37
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 38
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 39
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 43
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 44
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 45
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 46
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 47
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 48
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 49
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 50
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 51
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 52
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 53
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 54
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 55
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 56
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 57
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 110
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 164
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/formatters.py
+    line: 16
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/formatters.py
+    line: 16
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/llm/__init__.py
+    line: 20
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/llm/__init__.py
+    line: 20
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/llm/__init__.py
+    line: 30
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 24
+    message: 'Module execution block detected: Expr'
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 24
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 28
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 28
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 20
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 20
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 28
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 29
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 30
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 30
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 33
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 33
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 46
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 47
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/__init__.py
+    line: 20
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 26
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 26
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/models.py
+    line: 32
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/models.py
+    line: 36
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/models.py
+    line: 37
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/models.py
+    line: 37
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/models.py
+    line: 48
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/models.py
+    line: 49
+    message: 'Module execution block detected: Call'
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/prompts.py
+    line: 9
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/prompts.py
+    line: 187
+    message: 'Module execution block detected: Assign'
+  ruff: []
+  unused_imports:
+  - file: /home/tom/github/wronai/redsl/redsl/__init__.py
+    line: 5
+    message: 'Unused import: RefactorOrchestrator'
+    name: RefactorOrchestrator
+  - file: /home/tom/github/wronai/redsl/redsl/__init__.py
+    line: 6
+    message: 'Unused import: AgentConfig'
+    name: AgentConfig
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/__init__.py
+    line: 16
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/__init__.py
+    line: 19
+    message: 'Unused import: CodeAnalyzer'
+    name: CodeAnalyzer
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/__init__.py
+    line: 20
+    message: 'Unused import: AnalysisResult'
+    name: AnalysisResult
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/__init__.py
+    line: 20
+    message: 'Unused import: CodeMetrics'
+    name: CodeMetrics
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/__init__.py
+    line: 21
+    message: 'Unused import: ToonParser'
+    name: ToonParser
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/__init__.py
+    line: 22
+    message: 'Unused import: _load_gitignore_patterns'
+    name: _load_gitignore_patterns
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/__init__.py
+    line: 22
+    message: 'Unused import: _should_ignore_file'
+    name: _should_ignore_file
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/__init__.py
+    line: 22
+    message: 'Unused import: _try_number'
+    name: _try_number
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/analyzer.py
+    line: 7
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/analyzer.py
+    line: 13
+    message: 'Unused import: Any'
+    name: Any
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/metrics.py
+    line: 5
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/parsers.py
+    line: 14
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/quality_visitor.py
+    line: 3
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/utils.py
+    line: 5
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/analyzers/utils.py
+    line: 10
+    message: 'Unused import: Any'
+    name: Any
+  - file: /home/tom/github/wronai/redsl/redsl/api.py
+    line: 15
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 3
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 6
+    message: 'Unused import: sys'
+    name: sys
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 8
+    message: 'Unused import: Any'
+    name: Any
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 17
+    message: 'Unused import: RefactorAction'
+    name: RefactorAction
+  - file: /home/tom/github/wronai/redsl/redsl/cli.py
+    line: 22
+    message: 'Unused import: format_debug_info'
+    name: format_debug_info
+  - file: /home/tom/github/wronai/redsl/redsl/commands/batch.py
+    line: 3
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/commands/batch.py
+    line: 6
+    message: 'Unused import: sys'
+    name: sys
+  - file: /home/tom/github/wronai/redsl/redsl/commands/hybrid.py
+    line: 3
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 3
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 9
+    message: 'Unused import: sys'
+    name: sys
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 11
+    message: 'Unused import: Tuple'
+    name: Tuple
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 313
+    message: 'Unused import: rc'
+    name: rc
+  - file: /home/tom/github/wronai/redsl/redsl/commands/pyqual.py
+    line: 315
+    message: 'Unused import: rm'
+    name: rm
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 3
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/config.py
+    line: 8
+    message: 'Unused import: Literal'
+    name: Literal
+  - file: /home/tom/github/wronai/redsl/redsl/consciousness_loop.py
+    line: 16
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/__init__.py
+    line: 3
+    message: 'Unused import: Condition'
+    name: Condition
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/__init__.py
+    line: 3
+    message: 'Unused import: Decision'
+    name: Decision
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/__init__.py
+    line: 3
+    message: 'Unused import: DSLEngine'
+    name: DSLEngine
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/__init__.py
+    line: 3
+    message: 'Unused import: Operator'
+    name: Operator
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/__init__.py
+    line: 3
+    message: 'Unused import: RefactorAction'
+    name: RefactorAction
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/__init__.py
+    line: 3
+    message: 'Unused import: Rule'
+    name: Rule
+  - file: /home/tom/github/wronai/redsl/redsl/dsl/engine.py
+    line: 17
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/formatters.py
+    line: 3
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/formatters.py
+    line: 8
+    message: 'Unused import: Path'
+    name: Path
+  - file: /home/tom/github/wronai/redsl/redsl/formatters.py
+    line: 12
+    message: 'Unused import: Panel'
+    name: Panel
+  - file: /home/tom/github/wronai/redsl/redsl/formatters.py
+    line: 13
+    message: 'Unused import: Tree'
+    name: Tree
+  - file: /home/tom/github/wronai/redsl/redsl/llm/__init__.py
+    line: 11
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/main.py
+    line: 13
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/memory/__init__.py
+    line: 11
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 17
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 19
+    message: 'Unused import: json'
+    name: json
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 25
+    message: 'Unused import: AnalysisResult'
+    name: AnalysisResult
+  - file: /home/tom/github/wronai/redsl/redsl/orchestrator.py
+    line: 30
+    message: 'Unused import: RefactorProposal'
+    name: RefactorProposal
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/__init__.py
+    line: 14
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/__init__.py
+    line: 17
+    message: 'Unused import: RefactorEngine'
+    name: RefactorEngine
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/__init__.py
+    line: 18
+    message: 'Unused import: FileChange'
+    name: FileChange
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/__init__.py
+    line: 18
+    message: 'Unused import: RefactorProposal'
+    name: RefactorProposal
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/__init__.py
+    line: 18
+    message: 'Unused import: RefactorResult'
+    name: RefactorResult
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/direct.py
+    line: 3
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/engine.py
+    line: 12
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/models.py
+    line: 5
+    message: 'Unused import: annotations'
+    name: annotations
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/models.py
+    line: 9
+    message: 'Unused import: Any'
+    name: Any
+  - file: /home/tom/github/wronai/redsl/redsl/refactors/prompts.py
+    line: 5
+    message: 'Unused import: annotations'
+    name: annotations
+metrics:
+  average_complexity: 0.0
+  average_maintainability: 61.2665554916171
+  max_complexity: 0
+  total_lines: 5892
+project_root: /home/tom/github/wronai/redsl
+recommendations:
+- action: REMOVE_UNUSED_IMPORTS
+  message: Remove 62 unused imports
+  priority: high
+  type: cleanup
+- action: EXTRACT_CONSTANTS
+  message: Extract 138 magic numbers to constants
+  priority: medium
+  type: quality
+- action: FIX_MODULE_EXECUTION_BLOCK
+  message: Remove or replace 126 print statements
+  priority: medium
+  type: quality
+- action: null
+  message: Add docstrings to 39 functions/classes
+  priority: low
+  type: documentation
+summary:
+  complexity_violations: 0
+  magic_numbers: 138
+  maintainability_violations: 19
+  missing_docstrings: 39
+  mypy_issues: 49
+  print_statements: 126
+  ruff_errors: 0
+  ruff_warnings: 0
+  total_files: 27
+  unused_imports: 62
+timestamp: '2026-04-07T20:24:28.928403'

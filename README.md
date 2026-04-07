@@ -2,9 +2,9 @@
 
 ## AI Cost Tracking
 
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$1.80-green) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fopenai%2Fgpt-5-mini-lightgrey)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$2.25-green) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fopenai%2Fgpt-5-mini-lightgrey)
 
-This project uses AI-generated code. Total cost: **$1.8000** with **12** AI commits.
+This project uses AI-generated code. Total cost: **$2.2500** with **15** AI commits.
 
 Generated on 2026-04-07 using [openrouter/openai/gpt-5-mini](https://openrouter.ai/models/openrouter/openai/gpt-5-mini)
 
@@ -14,38 +14,53 @@ Generated on 2026-04-07 using [openrouter/openai/gpt-5-mini](https://openrouter.
 
 **Re**factor + **DSL** + **S**elf-**L**earning — autonomiczna refaktoryzacja kodu z LLM, pamięcią i DSL.
 
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$0.45-brightgreen) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fqwen%2Fqwen3-coder-next-lightgrey)
+ReDSL to system refaktoryzacji kodu, który łączy analizę statyczną, reguły DSL i inteligencję LLM do automatycznego poprawiania jakości kodu Python.
+
+## Funkcje
+
+- 🔍 **Analiza statyczna** - Integracja z popularnymi linterami i narzędziami metryk
+- 🧠 **LLM z refleksją** - Generowanie propozycji refaktoryzacji z pętlą samorefleksji
+- ⚡ **Hybrydowy silnik** - Bezpośrednie refaktoryzacje dla prostych zmian, LLM dla złożonych
+- 📊 **DSL Engine** - Definicja reguł refaktoryzacji w czytelnym formacie YAML
+- 💾 **System pamięci** - Uczenie się z historii refaktoryzacji
+- 🚀 **Skalowalność** - Przetwarzanie wielu projektów jednocześnie
+
+## Instalacja
 
 ```bash
-pip install redsl
+pip install -e .
 ```
 
 ## Szybki start
 
-```bash
-redsl analyze  --project ./my-project           # Analiza metryk
-redsl explain  --project ./my-project           # Wyjaśnij decyzje
-redsl refactor --project ./my-project           # Dry-run
-redsl refactor --project ./my-project --live    # Aplikuj zmiany
-```
-
-## Docker
+### Podstawowe użycie CLI
 
 ```bash
-docker-compose up --build                        # API na :8000
-docker-compose --profile autonomous up           # Agent autonomiczny
+# Refaktoryzacja pojedynczego projektu
+redsl refactor ./my-project --max-actions 5 --dry-run
+
+# Refaktoryzacja bez trybu testowego
+redsl refactor ./my-project --max-actions 10
 ```
 
-## DSL — język decyzji
+### Przetwarzanie wsadowe
 
-```yaml
-rules:
-  - name: split_high_cc
-    when:
-      cyclomatic_complexity: {gt: 15}
-    then:
-      action: extract_functions
-      priority: 0.85
+```bash
+# Przetwarzanie projektów semcod z LLM
+redsl batch semcod /path/to/semcod --max-actions 10
+
+# Hybrydowa refaktoryzacja (bez LLM) dla projektów semcod
+redsl batch hybrid /path/to/semcod --max-changes 30
+```
+
+### Debugowanie
+
+```bash
+# Sprawdź konfigurację
+redsl debug config --show-env
+
+# Zobacz decyzje DSL dla projektu
+redsl debug decisions ./my-project --limit 20
 ```
 
 ## Przykłady
@@ -56,19 +71,8 @@ rules:
 | `examples/02-custom-rules/` | Definiowanie własnych reguł DSL |
 | `examples/03-full-pipeline/` | Pełny cykl: analyze → decide → refactor → reflect |
 | `examples/04-memory-learning/` | System pamięci: episodic, semantic, procedural |
-| `examples/05-api-integration/` | REST API + curl/httpx examples |
 
 ## Architektura
-
-```
-PERCEIVE → DECIDE → PLAN → EXECUTE → REFLECT → REMEMBER
-   ↑                                              │
-   └──────────── continuous learning ──────────────┘
-```
-
-## Szczegóły techniczne
-
-### Warstwy systemu
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -80,6 +84,10 @@ PERCEIVE → DECIDE → PLAN → EXECUTE → REFLECT → REMEMBER
 │  ─ linters  │  ─ scoring   │   ─ validation         │
 │  ─ metrics  │  ─ planning  │   ─ application        │
 ├─────────────┴──────────────┴────────────────────────┤
+│            HYBRID REFACTOR ENGINES                  │
+│  ─ DirectRefactorEngine (bez LLM)                   │
+│  ─ LLM RefactorEngine (z refleksją)                 │
+├─────────────────────────────────────────────────────┤
 │                  LLM LAYER (LiteLLM)                │
 │   ─ code generation  ─ reflection  ─ self-critique  │
 ├─────────────────────────────────────────────────────┤
@@ -90,24 +98,64 @@ PERCEIVE → DECIDE → PLAN → EXECUTE → REFLECT → REMEMBER
 └─────────────────────────────────────────────────────┘
 ```
 
-### Pętla Świadomości (Consciousness Loop)
+## Dostępne akcje refaktoryzacji
 
-```
-1. PERCEIVE  → analiza kodu (toon.yaml, linters, metryki)
-2. DECIDE    → DSL engine wybiera strategię refaktoryzacji
-3. PLAN      → LLM generuje plan zmian
-4. EXECUTE   → generowanie patchy + walidacja
-5. REFLECT   → LLM ocenia własne zmiany (self-critique)
-6. REMEMBER  → zapis doświadczenia do pamięci
-7. IMPROVE   → korekta na podstawie refleksji
-```
+### Proste akcje (bez LLM)
+- `REMOVE_UNUSED_IMPORTS` - Usuwanie nieużywanych importów
+- `FIX_MODULE_EXECUTION_BLOCK` - Poprawa bloków wykonania modułu
+- `EXTRACT_CONSTANTS` - Ekstrakcja magic numbers do stałych
+- `ADD_RETURN_TYPES` - Dodawanie adnotacji typów zwracanych
+
+### Złożone akcje (z LLM)
+- `EXTRACT_FUNCTIONS` - Ekstrakcja funkcji o wysokiej złożoności
+- `SPLIT_MODULE` - Podział dużych modułów
+- `REDUCE_COMPLEXITY` - Redukcja złożoności cyklomatycznej
+- `SIMPLIFY_CONDITIONALS` - Upraszczanie warunków
+- `DEDUPLICATE` - Usuwanie duplikacji kodu
 
 ## Konfiguracja
 
-Zmienne środowiskowe:
-- `OPENAI_API_KEY` lub `OPENROUTER_API_KEY` — klucz API
-- `REFACTOR_LLM_MODEL` — model LLM (np. `openrouter/openai/gpt-4o-mini`)
-- `REFACTOR_DRY_RUN` — tryb testowy (`true`/`false`)
+Utwórz plik `.env` w katalogu projektu:
+
+```bash
+# Klucz API (wymagany dla LLM)
+OPENROUTER_API_KEY=
+
+# Model LLM (opcjonalny)
+LLM_MODEL=openrouter/openai/gpt-4o-mini
+
+# Zachowanie refaktoryzacji
+REFACTOR_DRY_RUN=true
+REFACTOR_AUTO_APPROVE=false
+```
+
+## Opcje CLI
+
+```bash
+python3 hybrid_llm_refactor.py --help
+
+Options:
+  --max-changes N    Maksymalna liczba zmian na projekt (domyślnie: 50)
+  --no-llm          Wyłącz LLM (tylko proste refaktoryzacje)
+  --no-validation   Wyłącz walidację zmian LLM
+```
+
+## Struktura projektu
+
+```
+redsl/
+├── app/
+│   ├── analyzers/      # Analiza kodu i metryki
+│   ├── dsl/           # Silnik reguł DSL
+│   ├── llm/           # Warstwa LLM z LiteLLM
+│   ├── memory/        # System pamięci
+│   ├── refactors/     # Silniki refaktoryzacji
+│   └── orchestrator.py # Główny koordynator
+├── examples/          # Przykłady użycia
+├── tests/            # Testy jednostkowe
+├── hybrid_llm_refactor.py  # Główny skrypt hybrydowy
+└── config/           # Konfiguracja domyślna
+```
 
 ## License
 
