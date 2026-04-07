@@ -1,0 +1,215 @@
+"""T015 — Testy integracyjne na prawdziwych projektach semcod."""
+
+import os
+from pathlib import Path
+
+import pytest
+
+from app.analyzers import CodeAnalyzer
+from app.dsl.engine import DSLEngine
+
+SEMCOD = Path("/home/tom/github/semcod")
+CODE2LLM = SEMCOD / "code2llm"
+GOAL = SEMCOD / "goal"
+PFIX = SEMCOD / "pfix"
+
+skip_if_no_semcod = pytest.mark.skipif(
+    not SEMCOD.exists(),
+    reason="semcod directory not available",
+)
+
+
+@pytest.fixture(scope="module")
+def analyzer() -> CodeAnalyzer:
+    return CodeAnalyzer()
+
+
+@pytest.fixture(scope="module")
+def dsl() -> DSLEngine:
+    return DSLEngine()
+
+
+# ---------------------------------------------------------------------------
+# code2llm — analysis.toon (HEALTH[N] emoji + LAYERS)
+# ---------------------------------------------------------------------------
+
+@skip_if_no_semcod
+class TestCode2llmAnalysis:
+    def test_analyzes_nonzero_files(self, analyzer: CodeAnalyzer) -> None:
+        result = analyzer.analyze_project(CODE2LLM)
+        assert result.total_files > 0, "should find files in code2llm"
+        assert result.total_lines > 0
+
+    def test_detects_critical_alerts(self, analyzer: CodeAnalyzer) -> None:
+        result = analyzer.analyze_project(CODE2LLM)
+        assert result.critical_count > 0
+        assert len(result.alerts) > 0
+        cc_alerts = [a for a in result.alerts if a["type"] == "cc_exceeded"]
+        assert len(cc_alerts) > 0, "should have CC-exceeded alerts"
+
+    def test_resolves_function_to_real_path(self, analyzer: CodeAnalyzer) -> None:
+        resolved = analyzer.resolve_file_path(CODE2LLM, "analyze_typescript_js")
+        assert resolved is not None, "should resolve analyze_typescript_js"
+        assert (CODE2LLM / resolved).exists()
+
+    def test_extracts_function_source(self, analyzer: CodeAnalyzer) -> None:
+        resolved = analyzer.resolve_file_path(CODE2LLM, "analyze_typescript_js")
+        assert resolved is not None
+        src = analyzer.extract_function_source(CODE2LLM / resolved, "analyze_typescript_js")
+        assert len(src) > 50, "should extract meaningful function source"
+        assert "def analyze_typescript_js" in src
+
+    def test_dsl_generates_decisions(
+        self, analyzer: CodeAnalyzer, dsl: DSLEngine
+    ) -> None:
+        result = analyzer.analyze_project(CODE2LLM)
+        decisions = dsl.top_decisions(result.to_dsl_contexts(), limit=10)
+        assert len(decisions) > 0, "DSL should generate refactoring decisions"
+        # At least some decisions should have resolvable file paths
+        has_real_path = any(
+            (CODE2LLM / d.target_file).exists() for d in decisions
+        )
+        assert has_real_path, "at least one decision should point to a real file"
+
+
+# ---------------------------------------------------------------------------
+# goal — project.functions.toon (YAML format z CC per funkcja)
+# ---------------------------------------------------------------------------
+
+@skip_if_no_semcod
+class TestGoalFunctionsToon:
+    def test_analyzes_nonzero_files(self, analyzer: CodeAnalyzer) -> None:
+        result = analyzer.analyze_project(GOAL)
+        assert result.total_files > 0
+
+    def test_detects_high_cc_functions(self, analyzer: CodeAnalyzer) -> None:
+        result = analyzer.analyze_project(GOAL)
+        assert len(result.alerts) > 0, "goal should have CC alerts from functions.toon"
+        cc_alerts = [a for a in result.alerts if a.get("value", 0) > 15]
+        assert len(cc_alerts) > 0, "should have functions with CC > 15"
+
+    def test_decisions_have_real_paths(
+        self, analyzer: CodeAnalyzer, dsl: DSLEngine
+    ) -> None:
+        result = analyzer.analyze_project(GOAL)
+        decisions = dsl.top_decisions(result.to_dsl_contexts(), limit=5)
+        assert len(decisions) > 0
+        real = [d for d in decisions if (GOAL / d.target_file).exists()]
+        assert len(real) > 0, "some decisions should reference real files"
+
+    def test_find_worst_function_in_cli(self, analyzer: CodeAnalyzer) -> None:
+        cli_path = GOAL / "goal" / "cli.py"
+        if not cli_path.exists():
+            pytest.skip("goal/cli.py not found")
+        worst = analyzer.find_worst_function(cli_path)
+        assert worst is not None, "should find at least one function in cli.py"
+        name, cc = worst
+        assert len(name) > 0, "function name should be non-empty"
+        assert cc >= 1, "CC should be at least 1"
+
+    def test_extract_worst_function_source(self, analyzer: CodeAnalyzer) -> None:
+        cli_path = GOAL / "goal" / "cli.py"
+        if not cli_path.exists():
+            pytest.skip("goal/cli.py not found")
+        worst = analyzer.find_worst_function(cli_path)
+        assert worst is not None
+        name, _ = worst
+        src = analyzer.extract_function_source(cli_path, name)
+        assert len(src) > 20, "should extract meaningful function source"
+        assert f"def {name}" in src
+
+
+# ---------------------------------------------------------------------------
+# pfix — AST fallback (brak toon pliku)
+# ---------------------------------------------------------------------------
+
+@skip_if_no_semcod
+class TestPfixAstFallback:
+    def test_analyzes_without_toon(self, analyzer: CodeAnalyzer) -> None:
+        result = analyzer.analyze_project(PFIX)
+        assert result.total_files > 0, "AST fallback should find Python files"
+        assert result.total_lines > 0
+
+    def test_cc_not_inflated(self, analyzer: CodeAnalyzer) -> None:
+        result = analyzer.analyze_project(PFIX)
+        # CC should not be absurdly inflated (bug: nested defs counted)
+        max_cc = max(
+            (m.cyclomatic_complexity for m in result.metrics), default=0
+        )
+        assert max_cc < 200, f"CC should not be inflated (got {max_cc})"
+
+    def test_per_function_metrics_have_real_paths(
+        self, analyzer: CodeAnalyzer
+    ) -> None:
+        result = analyzer.analyze_project(PFIX)
+        func_metrics = [m for m in result.metrics if m.function_name]
+        for m in func_metrics[:5]:
+            assert (PFIX / m.file_path).exists(), (
+                f"file_path should exist: {m.file_path}"
+            )
+
+    def test_dsl_targets_real_files(
+        self, analyzer: CodeAnalyzer, dsl: DSLEngine
+    ) -> None:
+        result = analyzer.analyze_project(PFIX)
+        decisions = dsl.top_decisions(result.to_dsl_contexts(), limit=5)
+        # At least check no crash and decisions exist or code is clean
+        assert isinstance(decisions, list)
+
+
+# ---------------------------------------------------------------------------
+# AST helpers — unit tests
+# ---------------------------------------------------------------------------
+
+class TestAstHelpers:
+    def test_cyclomatic_complexity_simple(self) -> None:
+        import ast as ast_mod
+
+        src = "def f(x):\n    if x > 0:\n        return 1\n    return 0\n"
+        tree = ast_mod.parse(src)
+        func = tree.body[0]
+        a = CodeAnalyzer()
+        cc = a._ast_cyclomatic_complexity(func)
+        assert cc == 2, f"simple if → CC=2, got {cc}"
+
+    def test_cyclomatic_complexity_no_inflate_nested(self) -> None:
+        import ast as ast_mod
+
+        src = (
+            "def outer(x):\n"
+            "    if x:\n"
+            "        pass\n"
+            "    def inner(y):\n"
+            "        for i in range(10):\n"
+            "            if i > y:\n"
+            "                pass\n"
+            "    return inner\n"
+        )
+        tree = ast_mod.parse(src)
+        func = tree.body[0]
+        a = CodeAnalyzer()
+        cc = a._ast_cyclomatic_complexity(func)
+        # outer has only 1 if → CC=2, inner's for+if should NOT be counted
+        assert cc == 2, f"nested def should not inflate outer CC, got {cc}"
+
+    def test_extract_function_source_returns_full_def(self, tmp_path: Path) -> None:
+        src = "def foo(x):\n    if x:\n        return 1\n    return 0\n\ndef bar():\n    pass\n"
+        f = tmp_path / "test.py"
+        f.write_text(src)
+        a = CodeAnalyzer()
+        result = a.extract_function_source(f, "foo")
+        assert "def foo" in result
+        assert "def bar" not in result
+
+    def test_resolve_file_path_finds_function(self, tmp_path: Path) -> None:
+        (tmp_path / "module.py").write_text("def my_func(x):\n    pass\n")
+        a = CodeAnalyzer()
+        result = a.resolve_file_path(tmp_path, "my_func")
+        assert result == "module.py"
+
+    def test_resolve_file_path_returns_none_when_missing(
+        self, tmp_path: Path
+    ) -> None:
+        a = CodeAnalyzer()
+        result = a.resolve_file_path(tmp_path, "nonexistent_func_xyz")
+        assert result is None

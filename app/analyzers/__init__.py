@@ -625,6 +625,9 @@ class CodeAnalyzer:
                         else:
                             m.linter_warnings += 1
 
+        # Rozwiąż ścieżki 'detected_from_alert' i krótkie nazwy z LAYERS
+        self.resolve_metrics_paths(result.metrics, project_dir)
+
         # Oblicz totals
         result.total_files = len(result.metrics)
         result.total_lines = sum(m.module_lines for m in result.metrics)
@@ -741,31 +744,54 @@ class CodeAnalyzer:
             func_count = 0
             class_count = 0
             max_cc = 0
+            high_cc_funcs: list[str] = []
 
-            for node in ast.walk(tree):
-                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            # Iteruj tylko po top-level i class-level funkcjach
+            top_nodes = list(ast.iter_child_nodes(tree))
+            for top in top_nodes:
+                if isinstance(top, ast.ClassDef):
+                    class_count += 1
+                    for item in ast.iter_child_nodes(top):
+                        if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                            func_count += 1
+                            cc = self._ast_cyclomatic_complexity(item)
+                            max_cc = max(max_cc, cc)
+                            if cc > 10:
+                                high_cc_funcs.append(item.name)
+                                result.metrics.append(CodeMetrics(
+                                    file_path=rel_path,
+                                    function_name=item.name,
+                                    module_lines=lines,
+                                    cyclomatic_complexity=cc,
+                                ))
+                                result.alerts.append({
+                                    "type": "cc_exceeded",
+                                    "name": item.name,
+                                    "severity": 3 if cc > 20 else 2,
+                                    "value": cc,
+                                    "limit": 10,
+                                })
+                elif isinstance(top, (ast.FunctionDef, ast.AsyncFunctionDef)):
                     func_count += 1
-                    cc = self._ast_cyclomatic_complexity(node)
+                    cc = self._ast_cyclomatic_complexity(top)
                     max_cc = max(max_cc, cc)
-
                     if cc > 10:
+                        high_cc_funcs.append(top.name)
                         result.metrics.append(CodeMetrics(
                             file_path=rel_path,
-                            function_name=node.name,
+                            function_name=top.name,
                             module_lines=lines,
                             cyclomatic_complexity=cc,
                         ))
                         result.alerts.append({
                             "type": "cc_exceeded",
-                            "name": node.name,
+                            "name": top.name,
                             "severity": 3 if cc > 20 else 2,
                             "value": cc,
                             "limit": 10,
                         })
 
-                elif isinstance(node, ast.ClassDef):
-                    class_count += 1
-
+            # Metryka modułu (bez duplikowania jeśli już są per-funkcja)
             result.metrics.append(CodeMetrics(
                 file_path=rel_path,
                 module_lines=lines,
@@ -786,18 +812,97 @@ class CodeAnalyzer:
 
     @staticmethod
     def _ast_cyclomatic_complexity(node: ast.AST) -> int:
-        """Oblicz uproszczone CC dla węzła AST (liczba branchy + 1)."""
-        branch_nodes = (
+        """Oblicz CC dla funkcji — nie wchodzi w zagniedzone definicje funkcji/klas."""
+        branch_types = (
             ast.If, ast.For, ast.While, ast.ExceptHandler,
             ast.With, ast.Assert, ast.comprehension,
         )
         count = 1
-        for child in ast.walk(node):
-            if isinstance(child, branch_nodes):
-                count += 1
-            elif isinstance(child, ast.BoolOp):
-                count += len(child.values) - 1
+
+        def _walk(n: ast.AST) -> None:
+            nonlocal count
+            for child in ast.iter_child_nodes(n):
+                if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                    continue  # nie licz złożoności zagnieżdżonych definicji
+                if isinstance(child, branch_types):
+                    count += 1
+                elif isinstance(child, ast.BoolOp):
+                    count += len(child.values) - 1
+                _walk(child)
+
+        _walk(node)
         return count
+
+    def resolve_file_path(self, project_dir: Path, func_name: str) -> str | None:
+        """Znajdź plik .py zawierający definicję funkcji/metody o podanej nazwie."""
+        short_name = func_name.split(".")[-1]  # handle Class.method
+        pattern = re.compile(
+            rf'^\s*(?:async\s+)?def\s+{re.escape(short_name)}\s*\(',
+            re.MULTILINE,
+        )
+        skip = {".venv", "venv", "dist", "__pycache__", ".git", "node_modules"}
+        for py_file in project_dir.rglob("*.py"):
+            if any(part in py_file.parts for part in skip):
+                continue
+            try:
+                text = py_file.read_text(encoding="utf-8", errors="ignore")
+                if pattern.search(text):
+                    return str(py_file.relative_to(project_dir))
+            except OSError:
+                continue
+        return None
+
+    @staticmethod
+    def extract_function_source(abs_path: Path, func_name: str) -> str:
+        """Wytnij źródło jednej funkcji/metody z pliku używając AST."""
+        short_name = func_name.split(".")[-1]
+        try:
+            source = abs_path.read_text(encoding="utf-8", errors="ignore")
+            tree = ast.parse(source)
+            lines = source.splitlines(keepends=True)
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    if node.name == short_name:
+                        start = node.lineno - 1
+                        end = node.end_lineno if hasattr(node, "end_lineno") else len(lines)
+                        return "".join(lines[start:end])
+        except (OSError, SyntaxError):
+            pass
+        return ""
+
+    def find_worst_function(self, abs_path: Path) -> tuple[str, int] | None:
+        """Znajdź funkcję z najwyższym CC w pliku. Zwraca (name, cc) lub None."""
+        try:
+            source = abs_path.read_text(encoding="utf-8", errors="ignore")
+            tree = ast.parse(source)
+            worst: tuple[str, int] | None = None
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    cc = self._ast_cyclomatic_complexity(node)
+                    if worst is None or cc > worst[1]:
+                        worst = (node.name, cc)
+            return worst
+        except (OSError, SyntaxError):
+            return None
+
+    def resolve_metrics_paths(self, metrics: list[CodeMetrics], project_dir: Path) -> None:
+        """Napraw ścieżki 'detected_from_alert' i krótkie nazwy modułów z LAYERS.
+
+        Przeszukuje project_dir aby znaleźć prawdziwe ścieżki dla funkcji z alertów.
+        Modyfikuje metryki in-place.
+        """
+        _cache: dict[str, str | None] = {}
+        for m in metrics:
+            if m.file_path in ("detected_from_alert", "unknown") or (
+                m.function_name and not Path(project_dir / m.file_path).exists()
+            ):
+                func_name = m.function_name or m.file_path
+                if func_name not in _cache:
+                    _cache[func_name] = self.resolve_file_path(project_dir, func_name)
+                resolved = _cache[func_name]
+                if resolved:
+                    m.file_path = resolved
+                    logger.debug("Resolved %r → %s", func_name, resolved)
 
 
 def _try_number(val: str) -> int | float | str:

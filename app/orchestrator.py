@@ -236,10 +236,37 @@ class RefactorOrchestrator:
             decision.action.value, decision.target_file, decision.score,
         )
 
-        # Wczytaj kod źródłowy
+        # Wczytaj kod źródłowy — próbuj rozwiązać ścieżkę jeśli nie istnieje
         source_path = project_dir / decision.target_file
+        if not source_path.exists() and decision.target_function:
+            resolved = self.analyzer.resolve_file_path(project_dir, decision.target_function)
+            if resolved:
+                source_path = project_dir / resolved
+                logger.info("Resolved missing path %r → %s", decision.target_file, resolved)
+        if not source_path.exists():
+            resolved_mod = self.analyzer.resolve_file_path(project_dir, decision.target_file)
+            if resolved_mod:
+                source_path = project_dir / resolved_mod
+
         if source_path.exists():
-            source_code = source_path.read_text(encoding="utf-8")
+            func_name = decision.target_function
+            if not func_name and decision.context.get("cyclomatic_complexity", 0) > 15:
+                # Brak funkcji docelowej — auto-wykryj najgorszą w pliku
+                worst = self.analyzer.find_worst_function(source_path)
+                if worst:
+                    func_name = worst[0]
+                    logger.info(
+                        "Auto-detected worst function in %s: %r (CC=%d)",
+                        decision.target_file, func_name, worst[1],
+                    )
+            if func_name:
+                # Wytnij tylko żądaną funkcję — lepszy kontekst dla LLM
+                func_src = self.analyzer.extract_function_source(source_path, func_name)
+                source_code = func_src if func_src else source_path.read_text(encoding="utf-8")
+                if func_src:
+                    logger.info("Extracted function %r (%d chars)", func_name, len(func_src))
+            else:
+                source_code = source_path.read_text(encoding="utf-8")
         else:
             source_code = f"# File not found: {decision.target_file}"
             logger.warning("Source file not found: %s", source_path)
