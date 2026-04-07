@@ -1,4 +1,5 @@
-.idea/redsl.iml
+.idea
+dist
 .env.example
 .env
 .env.local
