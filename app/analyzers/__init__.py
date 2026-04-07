@@ -21,6 +21,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from .quality_visitor import CodeQualityVisitor
+
 logger = logging.getLogger(__name__)
 
 
@@ -42,6 +44,10 @@ class CodeMetrics:
     is_public_api: bool = False
     linter_errors: int = 0
     linter_warnings: int = 0
+    unused_imports: int = 0
+    magic_numbers: int = 0
+    module_execution_block: int = 0
+    missing_return_types: int = 0
 
     def to_dsl_context(self) -> dict[str, Any]:
         """Konwertuj na kontekst DSL do ewaluacji reguł."""
@@ -60,6 +66,10 @@ class CodeMetrics:
             "is_public_api": self.is_public_api,
             "linter_errors": self.linter_errors,
             "linter_warnings": self.linter_warnings,
+            "unused_imports": self.unused_imports,
+            "magic_numbers": self.magic_numbers,
+            "module_execution_block": self.module_execution_block,
+            "missing_return_types": self.missing_return_types,
         }
 
 
@@ -635,6 +645,9 @@ class CodeAnalyzer:
             m for m in result.metrics
             if ".py" in m.file_path or (project_dir / m.file_path).exists()
         ]
+        
+        # Always run quality analysis on Python files to detect additional issues
+        self._add_quality_metrics(result, project_dir)
 
         # Oblicz avg_cc z rzeczywistych metryk
         cc_values = [m.cyclomatic_complexity for m in result.metrics if m.cyclomatic_complexity > 0]
@@ -761,6 +774,15 @@ class CodeAnalyzer:
 
             lines = len(source.splitlines())
             rel_path = str(py_file.relative_to(project_dir))
+            
+            # Run quality visitor to detect additional issues
+            quality_visitor = CodeQualityVisitor()
+            quality_visitor.visit(tree)
+            quality_metrics = quality_visitor.get_metrics()
+            
+            # Debug: Log quality metrics for first few files
+            if len(result.metrics) < 3:
+                logger.info(f"Quality metrics for {rel_path}: {quality_metrics}")
 
             func_count = 0
             class_count = 0
@@ -819,6 +841,10 @@ class CodeAnalyzer:
                 function_count=func_count,
                 class_count=class_count,
                 cyclomatic_complexity=max_cc,
+                unused_imports=quality_metrics["unused_imports"],
+                magic_numbers=quality_metrics["magic_numbers"],
+                module_execution_block=quality_metrics["module_execution_block"],
+                missing_return_types=quality_metrics["missing_return_types"],
             ))
 
         result.total_files = len(py_files)
@@ -927,6 +953,42 @@ class CodeAnalyzer:
                 if resolved:
                     m.file_path = resolved
                     logger.debug("Resolved %r → %s", func_name, resolved)
+
+    def _add_quality_metrics(self, result: AnalysisResult, project_dir: Path) -> None:
+        """Add quality metrics to existing analysis results."""
+        # Create a mapping from file path to metrics
+        metrics_by_file: dict[str, CodeMetrics] = {}
+        for m in result.metrics:
+            if not m.function_name:  # Only module-level metrics
+                metrics_by_file[m.file_path] = m
+        
+        # Analyze Python files for quality issues
+        py_files = [
+            f for f in project_dir.rglob("*.py")
+            if not any(part in f.parts for part in (".venv", "venv", "dist", "__pycache__", ".git"))
+        ]
+        
+        for py_file in py_files:
+            try:
+                source = py_file.read_text(encoding="utf-8", errors="ignore")
+                tree = ast.parse(source, filename=str(py_file))
+            except SyntaxError:
+                continue
+            
+            rel_path = str(py_file.relative_to(project_dir))
+            
+            # Run quality visitor
+            quality_visitor = CodeQualityVisitor()
+            quality_visitor.visit(tree)
+            quality_metrics = quality_visitor.get_metrics()
+            
+            # Update existing metrics or create new ones
+            if rel_path in metrics_by_file:
+                m = metrics_by_file[rel_path]
+                m.unused_imports = quality_metrics["unused_imports"]
+                m.magic_numbers = quality_metrics["magic_numbers"]
+                m.module_execution_block = quality_metrics["module_execution_block"]
+                m.missing_return_types = quality_metrics["missing_return_types"]
 
 
 def _try_number(val: str) -> int | float | str:

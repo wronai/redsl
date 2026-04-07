@@ -1,6 +1,7 @@
 .idea
 dist
 refactor_output
+redsl-*
 .env.example
 .env
 .env.local

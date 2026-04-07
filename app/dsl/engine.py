@@ -50,6 +50,10 @@ class RefactorAction(str, Enum):
     SIMPLIFY_CONDITIONALS = "simplify_conditionals"
     EXTRACT_CLASS = "extract_class"
     INLINE_FUNCTION = "inline_function"
+    REMOVE_UNUSED_IMPORTS = "remove_unused_imports"
+    EXTRACT_CONSTANTS = "extract_constants"
+    FIX_MODULE_EXECUTION_BLOCK = "fix_module_execution_block"
+    ADD_RETURN_TYPES = "add_return_types"
     DO_NOTHING = "do_nothing"
 
 
@@ -279,6 +283,46 @@ class DSLEngine:
                 description="Publiczne API bez typów — dodaj type hints",
                 tags=["typing", "quality"],
             ),
+            Rule(
+                name="remove_unused_imports",
+                conditions=[
+                    Condition("unused_imports", Operator.GT, 0),
+                ],
+                action=RefactorAction.REMOVE_UNUSED_IMPORTS,
+                priority=0.88,
+                description="Usuń nieużywane importy — czystość kodu",
+                tags=["cleanup", "imports"],
+            ),
+            Rule(
+                name="extract_magic_numbers",
+                conditions=[
+                    Condition("magic_numbers", Operator.GT, 2),
+                ],
+                action=RefactorAction.EXTRACT_CONSTANTS,
+                priority=0.82,
+                description="Wyodrębnij magic numbers do stałych",
+                tags=["readability", "constants"],
+            ),
+            Rule(
+                name="fix_module_execution_blocks",
+                conditions=[
+                    Condition("module_execution_block", Operator.GT, 0),
+                ],
+                action=RefactorAction.FIX_MODULE_EXECUTION_BLOCK,
+                priority=0.85,
+                description="Obejmuj kod wykonywalny w `if __name__ == '__main__':`",
+                tags=["best-practices", "structure"],
+            ),
+            Rule(
+                name="add_missing_return_types",
+                conditions=[
+                    Condition("missing_return_types", Operator.GT, 3),
+                ],
+                action=RefactorAction.ADD_RETURN_TYPES,
+                priority=0.80,
+                description="Dodaj brakujące typy zwracane z funkcji",
+                tags=["typing", "quality"],
+            ),
         ]
 
     def add_rule(self, rule: Rule) -> None:
@@ -334,6 +378,14 @@ class DSLEngine:
                     ))
 
         decisions.sort(key=lambda d: d.score, reverse=True)
+        
+        # Debug: Log all decision types
+        decision_types = {}
+        for d in decisions:
+            action = d.action.value
+            decision_types[action] = decision_types.get(action, 0) + 1
+        logger.info("Decision types: %s", decision_types)
+        
         logger.info("Evaluated %d contexts → %d decisions", len(contexts), len(decisions))
         return decisions
 

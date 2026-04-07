@@ -362,6 +362,8 @@ class RefactorOrchestrator:
 
     def explain_decisions(self, project_dir: Path, limit: int = 10) -> str:
         """Wyjaśnij decyzje refaktoryzacji bez ich wykonywania."""
+        from app.refactors import RefactorEngine
+
         analysis = self.analyzer.analyze_project(project_dir)
         contexts = analysis.to_dsl_contexts()
         decisions = self.dsl_engine.top_decisions(contexts, limit=limit)
@@ -371,7 +373,28 @@ class RefactorOrchestrator:
 
         lines = [f"Top {len(decisions)} decyzji refaktoryzacji:\n"]
         for i, d in enumerate(decisions, 1):
-            lines.append(f"{i}. {self.dsl_engine.explain(d)}\n")
+            confidence = RefactorEngine.estimate_confidence(d)
+            lines.append(f"{i}. {self.dsl_engine.explain(d)}")
+            lines.append(f"Confidence (metric): {confidence:.2f}")
+
+            # Podgląd kodu źródłowego
+            src_path = project_dir / d.target_file
+            if not src_path.exists() and d.target_function:
+                resolved = self.analyzer.resolve_file_path(project_dir, d.target_function)
+                if resolved:
+                    src_path = project_dir / resolved
+            if src_path.exists():
+                func = d.target_function
+                if not func:
+                    worst = self.analyzer.find_worst_function(src_path)
+                    func = worst[0] if worst else None
+                if func:
+                    src = self.analyzer.extract_function_source(src_path, func)
+                    preview = src[:400].rstrip()
+                    if len(src) > 400:
+                        preview += f"\n    ... (+{len(src)-400} chars)"
+                    lines.append(f"Źródło ({src_path.name}::{func}):\n{preview}")
+            lines.append("")
 
         return "\n".join(lines)
 

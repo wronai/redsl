@@ -303,6 +303,34 @@ class RefactorEngine:
         self.config = config
         self.config.output_dir.mkdir(parents=True, exist_ok=True)
 
+    @staticmethod
+    def estimate_confidence(decision: Decision) -> float:
+        """T007: Oblicz confidence z metryk — bez potrzeby wywołania LLM.
+
+        Wyższe CC i wyższy score reguły → wyższa pewność że refaktoryzacja jest potrzebna.
+        """
+        cc = decision.context.get("cyclomatic_complexity", 0)
+        score = decision.score
+
+        if cc >= 30:
+            cc_conf = 0.90
+        elif cc >= 20:
+            cc_conf = 0.80
+        elif cc >= 15:
+            cc_conf = 0.70
+        elif cc >= 10:
+            cc_conf = 0.60
+        else:
+            cc_conf = 0.50
+
+        lines = decision.context.get("module_lines", 0)
+        if lines > 500:
+            cc_conf = min(0.95, cc_conf + 0.05)
+
+        # Blenduj CC-based confidence ze score reguły DSL (znormalizowanym do 0-1)
+        score_conf = min(1.0, score / 2.0)
+        return round(0.6 * cc_conf + 0.4 * score_conf, 3)
+
     def generate_proposal(
         self,
         decision: Decision,
@@ -349,12 +377,19 @@ class RefactorEngine:
                 description=ch.get("description", ""),
             ))
 
+        llm_confidence = response_data.get("confidence")
+        confidence = (
+            float(llm_confidence)
+            if llm_confidence is not None and llm_confidence != 0.5
+            else self.estimate_confidence(decision)
+        )
+
         proposal = RefactorProposal(
             decision=decision,
             refactor_type=response_data.get("refactor_type", decision.action.value),
             summary=response_data.get("summary", ""),
             changes=changes,
-            confidence=response_data.get("confidence", 0.5),
+            confidence=confidence,
         )
 
         logger.info(

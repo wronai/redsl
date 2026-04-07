@@ -213,3 +213,54 @@ class TestAstHelpers:
         a = CodeAnalyzer()
         result = a.resolve_file_path(tmp_path, "nonexistent_func_xyz")
         assert result is None
+
+
+# ---------------------------------------------------------------------------
+# T007 — Confidence scoring
+# ---------------------------------------------------------------------------
+
+class TestConfidenceScoring:
+    def _make_decision(self, cc: int, score: float = 1.0) -> object:
+        from app.dsl.engine import Decision, RefactorAction
+        return Decision(
+            rule_name="test",
+            action=RefactorAction.EXTRACT_FUNCTIONS,
+            score=score,
+            target_file="test.py",
+            context={"cyclomatic_complexity": cc},
+        )
+
+    def test_high_cc_gives_high_confidence(self) -> None:
+        from app.refactors import RefactorEngine
+        d = self._make_decision(cc=35)
+        conf = RefactorEngine.estimate_confidence(d)
+        assert conf >= 0.70, f"CC=35 should give conf >= 0.70, got {conf}"
+
+    def test_moderate_cc_gives_moderate_confidence(self) -> None:
+        from app.refactors import RefactorEngine
+        d = self._make_decision(cc=12)
+        conf = RefactorEngine.estimate_confidence(d)
+        assert 0.45 <= conf <= 0.75, f"CC=12 should give moderate conf, got {conf}"
+
+    def test_low_cc_gives_low_confidence(self) -> None:
+        from app.refactors import RefactorEngine
+        d = self._make_decision(cc=3, score=0.2)
+        conf = RefactorEngine.estimate_confidence(d)
+        assert conf < 0.65, f"CC=3 should give low conf, got {conf}"
+
+    def test_confidence_monotone_with_cc(self) -> None:
+        from app.refactors import RefactorEngine
+        ccs = [5, 10, 15, 20, 30]
+        confs = [RefactorEngine.estimate_confidence(self._make_decision(cc)) for cc in ccs]
+        for i in range(len(confs) - 1):
+            assert confs[i] <= confs[i + 1], (
+                f"Confidence should be non-decreasing: CC={ccs[i]} conf={confs[i]}, "
+                f"CC={ccs[i+1]} conf={confs[i+1]}"
+            )
+
+    def test_confidence_range_valid(self) -> None:
+        from app.refactors import RefactorEngine
+        for cc in [1, 10, 15, 20, 30, 50]:
+            d = self._make_decision(cc=cc, score=1.9)
+            conf = RefactorEngine.estimate_confidence(d)
+            assert 0.0 <= conf <= 1.0, f"Confidence must be in [0,1], got {conf} for CC={cc}"
