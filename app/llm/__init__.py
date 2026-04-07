@@ -69,9 +69,12 @@ class LLMLayer:
             kwargs["api_key"] = self.config.api_key
 
         # OpenRouter requires specific base_url
-        if model.startswith("openrouter/"):
-            kwargs["base_url"] = "https://openrouter.ai/api/v1"
-            # LiteLLM expects openrouter/ prefix for OpenRouter models
+        if model.startswith("openrouter/") or self.config.model.startswith("openrouter/"):
+            kwargs["api_base"] = "https://openrouter.ai/api/v1"
+            # Ensure we're using the correct API key for OpenRouter
+            if not kwargs.get("api_key"):
+                import os
+                kwargs["api_key"] = os.getenv("OPENROUTER_API_KEY", "")
 
         if json_mode:
             kwargs["response_format"] = {"type": "json_object"}

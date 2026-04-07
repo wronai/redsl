@@ -1,5 +1,6 @@
 .idea
 dist
+refactor_output
 .env.example
 .env
 .env.local
