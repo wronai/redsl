@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.7] - 2026-04-07
+
+### Docs
+- Update README.md
+
+### Test
+- Update tests/test_integration.py
+
+### Other
+- Update .gitignore
+- Update app/__pycache__/__init__.cpython-313.pyc
+- Update app/analyzers/__pycache__/__init__.cpython-313.pyc
+- Update app/dsl/__pycache__/engine.cpython-313.pyc
+- Update apply_semcod_refactor.py
+- Update batch_refactor_semcod.py
+
 ## [1.0.6] - 2026-04-07
 
 ### Docs
