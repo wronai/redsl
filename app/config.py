@@ -15,9 +15,9 @@ class LLMConfig:
     model: str = "gpt-4o-mini"
     temperature: float = 0.3
     max_tokens: int = 4096
-    reflection_model: str = "gpt-4o-mini"
+    reflection_model: str = field(default_factory=lambda: os.getenv("REFACTOR_LLM_MODEL", "gpt-4o-mini"))
     reflection_temperature: float = 0.2
-    api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
+    api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY", ""))
 
     @property
     def is_local(self) -> bool:
