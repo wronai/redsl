@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.4] - 2026-04-07
+
+### Docs
+- Update README.md
+- Update docs/README.md
+
+### Other
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.png
+- Update project/duplication.toon.yaml
+- Update project/index.html
+- Update project/map.toon.yaml
+- Update project/project.toon.yaml
+- Update redsl/analyzers/__init__.py
+- Update redsl/analyzers/analyzer.py
+- Update redsl/analyzers/parsers/__init__.py
+- ... and 18 more files
+
 ## [1.2.3] - 2026-04-07
 
 ### Docs

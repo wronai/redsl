@@ -19,15 +19,25 @@ from __future__ import annotations
 from .analyzer import CodeAnalyzer
 from .metrics import AnalysisResult, CodeMetrics
 from .parsers import ToonParser
+from .python_analyzer import PythonAnalyzer, ast_cyclomatic_complexity
+from .resolver import PathResolver
+from .toon_analyzer import ToonAnalyzer
 from .utils import _load_gitignore_patterns, _should_ignore_file, _try_number
 
 __all__ = [
-    # Classes
+    # Facade
     "CodeAnalyzer",
+    # Specialized analyzers
+    "ToonAnalyzer",
+    "PythonAnalyzer",
+    "PathResolver",
+    # Data classes
     "CodeMetrics",
     "AnalysisResult",
+    # Parsers
     "ToonParser",
-    # Functions
+    # Utilities
+    "ast_cyclomatic_complexity",
     "_load_gitignore_patterns",
     "_should_ignore_file",
     "_try_number",

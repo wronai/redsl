@@ -11,8 +11,8 @@ ALERTS[20]:
   !!! high_fan_out     main = 22 (limit:10)
   !!! high_fan_out     DirectRefactorEngine.extract_constants = 21 (limit:10)
   !!  cc_exceeded      ToonParser.parse_functions_toon = 24 (limit:15)
-  !!  cc_exceeded      cmd_analyze = 22 (limit:15)
   !!  cc_exceeded      CodeAnalyzer._analyze_python_files = 22 (limit:15)
+  !!  cc_exceeded      cmd_analyze = 22 (limit:15)
   !!  cc_exceeded      main = 21 (limit:15)
 
 MODULES[36] (top by size):

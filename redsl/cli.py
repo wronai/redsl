@@ -3,9 +3,14 @@
 from __future__ import annotations
 
 import logging
+import os
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+# Suppress litellm stderr noise before it is imported anywhere
+os.environ.setdefault("LITELLM_LOG", "ERROR")
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -19,71 +24,160 @@ from .analyzers import CodeAnalyzer
 from .commands import batch as batch_commands
 from .commands import hybrid as hybrid_commands
 from .commands import pyqual as pyqual_commands
-from .formatters import format_refactor_plan, format_batch_results, format_debug_info
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+from .formatters import (
+    format_refactor_plan,
+    format_batch_results,
+    format_debug_info,
+    format_plan_yaml,
+    format_cycle_report_yaml,
 )
+
 logger = logging.getLogger(__name__)
+
+_LOG_DIR = Path("logs")
+
+
+def _setup_logging(project_path: Path, verbose: bool = False) -> Path:
+    """Route all logging to a timestamped log file, keep stdout clean."""
+    log_dir = project_path / _LOG_DIR if project_path.is_dir() else _LOG_DIR
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / f"redsl_{datetime.now():%Y%m%d_%H%M%S}.log"
+
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG if verbose else logging.INFO)
+    # Remove any pre-existing handlers (e.g. basicConfig defaults)
+    root.handlers.clear()
+
+    fh = logging.FileHandler(log_file, encoding="utf-8")
+    fh.setLevel(logging.DEBUG if verbose else logging.INFO)
+    fh.setFormatter(logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    ))
+    root.addHandler(fh)
+
+    # Minimal stderr handler for warnings/errors only
+    sh = logging.StreamHandler(sys.stderr)
+    sh.setLevel(logging.WARNING)
+    sh.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+    root.addHandler(sh)
+
+    # Silence litellm's own stderr handler — it logs INFO to stderr directly
+    for name in ("LiteLLM", "litellm", "httpx", "httpcore"):
+        lib_logger = logging.getLogger(name)
+        lib_logger.handlers.clear()
+        lib_logger.addHandler(fh)
+        lib_logger.propagate = False
+
+    # Suppress litellm's verbose / coloredlogs output that bypasses logging
+    try:
+        import litellm
+        litellm.suppress_debug_info = True
+        litellm.set_verbose = False
+    except ImportError:
+        pass
+
+    return log_file
 
 
 @click.group()
 @click.version_option(version="1.2.0")
 @click.option("--verbose", "-v", is_flag=True, help="Enable verbose logging")
-def cli(verbose: bool) -> None:
+@click.pass_context
+def cli(ctx: click.Context, verbose: bool) -> None:
     """reDSL - Automated code refactoring tool."""
-    if verbose:
-        logging.getLogger().setLevel(logging.DEBUG)
+    ctx.ensure_object(dict)
+    ctx.obj["verbose"] = verbose
 
 
 @cli.command()
 @click.argument("project_path", type=click.Path(exists=True, path_type=Path))
 @click.option("--max-actions", "-n", default=10, help="Maximum number of actions to apply")
 @click.option("--dry-run", is_flag=True, help="Show what would be done without applying changes")
-@click.option("--format", "-f", default="text", type=click.Choice(["text", "yaml", "json"]), help="Output format")
-def refactor(project_path: Path, max_actions: int, dry_run: bool, format: str) -> None:
+@click.option("--format", "-f", default="yaml", type=click.Choice(["text", "yaml", "json"]), help="Output format")
+@click.pass_context
+def refactor(ctx: click.Context, project_path: Path, max_actions: int, dry_run: bool, format: str) -> None:
     """Run refactoring on a project."""
+    verbose = ctx.obj.get("verbose", False)
+    log_file = _setup_logging(project_path, verbose)
+    logger.info("reDSL refactor started: %s (max_actions=%d, dry_run=%s)", project_path, max_actions, dry_run)
+
     if format == "text":
-        click.echo(f"Running reDSL on {project_path}")
-    
+        click.echo(f"Running reDSL on {project_path}", err=True)
+        click.echo(f"Log file: {log_file}", err=True)
+
     config = AgentConfig.from_env()
     if dry_run:
         config.refactor.dry_run = True
         config.refactor.reflection_rounds = 0
     else:
         config.refactor.dry_run = False
-    
+
     orchestrator = RefactorOrchestrator(config)
-    
+
     # Get decisions and format output
     analysis = orchestrator.analyzer.analyze_project(project_path)
     contexts = analysis.to_dsl_contexts()
     decisions = orchestrator.dsl_engine.evaluate(contexts)
     decisions = sorted(decisions, key=lambda d: d.score, reverse=True)[:max_actions]
-    
-    # Format and output the plan
-    formatted_output = format_refactor_plan(decisions, format, analysis)
-    click.echo(formatted_output)
-    
-    if not dry_run:
-        if click.confirm("\nApply these changes?"):
-            click.echo("\n=== APPLYING REFACTORING ===")
-            report = orchestrator.run_cycle(project_path, max_actions=max_actions)
-            
-            click.echo(f"\n=== RESULTS ===")
-            click.echo(f"Cycle {report.cycle_number} complete")
-            click.echo(f"Analysis: {report.analysis_summary}")
-            click.echo(f"Decisions: {report.decisions_count}")
-            click.echo(f"Proposals generated: {report.proposals_generated}")
-            click.echo(f"Applied: {report.proposals_applied}")
-            click.echo(f"Rejected: {report.proposals_rejected}")
-            
-            if report.errors:
-                click.echo(f"\nErrors:")
-                for error in report.errors[:5]:
-                    click.echo(f"  - {error}")
+
+    if dry_run:
+        # --- DRY RUN: output plan only ---
+        if format == "yaml":
+            click.echo(format_plan_yaml(decisions, analysis))
+        else:
+            click.echo(format_refactor_plan(decisions, format, analysis))
+        return
+
+    # --- LIVE RUN ---
+    if format == "text":
+        # Show plan preview on stderr, ask confirmation interactively
+        click.echo(format_refactor_plan(decisions, "text", analysis), err=True)
+        if not click.confirm("\nApply these changes?", err=True):
+            return
+        click.echo("\n=== APPLYING REFACTORING ===", err=True)
+    else:
+        # Non-text: auto-confirm (piped usage)
+        pass
+
+    report = orchestrator.run_cycle(project_path, max_actions=max_actions)
+
+    if format == "yaml":
+        click.echo(format_cycle_report_yaml(report, decisions, analysis))
+    elif format == "json":
+        import json as _json
+        from .formatters import _serialize_analysis, _serialize_decision, _get_timestamp
+        data = {
+            "redsl_report": {
+                "timestamp": _get_timestamp(),
+                "cycle": report.cycle_number,
+                "analysis": _serialize_analysis(analysis),
+                "decisions": [_serialize_decision(d) for d in decisions],
+                "execution": {
+                    "proposals_generated": report.proposals_generated,
+                    "proposals_applied": report.proposals_applied,
+                    "proposals_rejected": report.proposals_rejected,
+                },
+                "errors": report.errors,
+            }
+        }
+        click.echo(_json.dumps(data, indent=2, default=str))
+    else:
+        click.echo(f"\n=== RESULTS ===", err=True)
+        click.echo(f"Cycle {report.cycle_number} complete", err=True)
+        click.echo(f"Analysis: {report.analysis_summary}", err=True)
+        click.echo(f"Decisions: {report.decisions_count}", err=True)
+        click.echo(f"Proposals generated: {report.proposals_generated}", err=True)
+        click.echo(f"Applied: {report.proposals_applied}", err=True)
+        click.echo(f"Rejected: {report.proposals_rejected}", err=True)
+        if report.errors:
+            click.echo(f"\nErrors:", err=True)
+            for error in report.errors[:5]:
+                click.echo(f"  - {error}", err=True)
+        # Still emit YAML summary to stdout
+        click.echo(format_cycle_report_yaml(report, decisions, analysis))
+
+    logger.info("reDSL refactor complete. Log: %s", log_file)
+    click.echo(f"# log: {log_file}", err=True)
 
 
 @cli.group()

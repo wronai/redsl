@@ -13,7 +13,7 @@ from rich.panel import Panel
 from rich.tree import Tree
 from rich.syntax import Syntax
 
-console = Console()
+console = Console(stderr=True)
 
 
 def format_refactor_plan(
@@ -73,14 +73,14 @@ def _format_text(decisions: List[Any], analysis: Any = None) -> str:
     
     # Analysis summary
     if analysis:
-        output.append(f"Analysis complete: {len(analysis.files)} files, "
-                     f"{analysis.total_lines} lines, avg CC={analysis.avg_complexity:.1f}, "
-                     f"{len(analysis.critical_alerts)} critical\n")
+        output.append(f"Analysis complete: {analysis.total_files} files, "
+                     f"{analysis.total_lines} lines, avg CC={analysis.avg_cc:.1f}, "
+                     f"{analysis.critical_count} critical\n")
     
     # Decision summary
     decision_types = _count_decision_types(decisions)
     output.append(f"Decision types: {decision_types}\n")
-    output.append(f"Evaluated {len(analysis.files) if analysis else 'N/A'} contexts → {len(decisions)} decisions\n")
+    output.append(f"Evaluated {len(analysis.metrics) if analysis else 'N/A'} contexts → {len(decisions)} decisions\n")
     
     # Top decisions table
     if decisions:
@@ -97,7 +97,7 @@ def _format_text(decisions: List[Any], analysis: Any = None) -> str:
                 str(i),
                 decision.action.value,
                 decision.rule.name if hasattr(decision, 'rule') and decision.rule else "N/A",
-                str(decision.target_path),
+                str(decision.target_file),
                 f"{decision.score:.2f}",
                 f"{getattr(decision, 'confidence', 0):.2f}"
             )
@@ -111,7 +111,7 @@ def _format_text(decisions: List[Any], analysis: Any = None) -> str:
     for i, decision in enumerate(decisions[:5], 1):
         output.append(f"\n{i}. Decision: {decision.action.value}")
         output.append(f"   Rule: {decision.rule.name if hasattr(decision, 'rule') and decision.rule else 'N/A'}")
-        output.append(f"   Target: {decision.target_path}")
+        output.append(f"   Target: {decision.target_file}")
         output.append(f"   Score: {decision.score:.2f}")
         if hasattr(decision, 'rationale') and decision.rationale:
             output.append(f"   Rationale: {decision.rationale}")
@@ -208,6 +208,77 @@ def format_batch_results(results: List[Dict[str, Any]], format: str = "text") ->
         output.append(f"\nSummary: {successful}/{total} projects processed successfully")
         
         return "\n".join(output)
+
+
+def format_cycle_report_yaml(report: Any, decisions: List[Any] = None, analysis: Any = None) -> str:
+    """Format full cycle report as YAML for stdout."""
+    data: Dict[str, Any] = {
+        "redsl_report": {
+            "timestamp": _get_timestamp(),
+            "cycle": report.cycle_number,
+            "analysis": _serialize_analysis(analysis) if analysis else {
+                "summary": report.analysis_summary,
+            },
+            "plan": {
+                "total_decisions": report.decisions_count,
+                "decisions": [_serialize_decision(d) for d in (decisions or [])],
+            },
+            "execution": {
+                "proposals_generated": report.proposals_generated,
+                "proposals_applied": report.proposals_applied,
+                "proposals_rejected": report.proposals_rejected,
+                "success_rate": (
+                    round(report.proposals_applied / report.proposals_generated, 2)
+                    if report.proposals_generated > 0 else 0.0
+                ),
+                "results": [_serialize_result(r) for r in (report.results or [])],
+            },
+            "errors": report.errors if report.errors else [],
+        }
+    }
+    return yaml.dump(data, default_flow_style=False, sort_keys=False, allow_unicode=True)
+
+
+def format_plan_yaml(decisions: List[Any], analysis: Any = None) -> str:
+    """Format dry-run plan as YAML for stdout."""
+    data: Dict[str, Any] = {
+        "redsl_plan": {
+            "timestamp": _get_timestamp(),
+            "analysis": _serialize_analysis(analysis) if analysis else None,
+            "decisions": [_serialize_decision(d) for d in decisions],
+            "summary": {
+                "total_decisions": len(decisions),
+                "decision_types": _count_decision_types(decisions),
+                "estimated_impact": round(sum(d.score for d in decisions), 2),
+            },
+        }
+    }
+    return yaml.dump(data, default_flow_style=False, sort_keys=False, allow_unicode=True)
+
+
+def _serialize_result(result: Any) -> Dict[str, Any]:
+    """Serialize a RefactorResult to dict."""
+    entry: Dict[str, Any] = {
+        "applied": result.applied,
+        "validated": result.validated,
+    }
+    if result.errors:
+        entry["errors"] = result.errors
+    if result.warnings:
+        entry["warnings"] = result.warnings
+
+    proposal = result.proposal
+    if proposal is not None:
+        entry["action"] = proposal.refactor_type
+        entry["target"] = proposal.decision.target_file if proposal.decision else None
+        entry["confidence"] = round(proposal.confidence, 2)
+        entry["summary"] = proposal.summary
+        if proposal.changes:
+            entry["files_changed"] = [c.file_path for c in proposal.changes]
+    else:
+        # Direct refactor — no proposal object
+        entry["action"] = "direct_refactor"
+    return entry
 
 
 def format_debug_info(info: Dict[str, Any], format: str = "text") -> str:

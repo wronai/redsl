@@ -7,24 +7,24 @@ HEALTH[11]:
   🟡 CC    main CC=27 (limit:15)
   🟡 CC    run_hybrid_batch CC=18 (limit:15)
   🟡 CC    _execute_decision CC=20 (limit:15)
-  🟡 CC    cmd_analyze CC=22 (limit:15)
-  🟡 CC    _analyze_python_files CC=22 (limit:15)
   🟡 CC    extract_constants CC=17 (limit:15)
   🟡 CC    _infer_return_type CC=19 (limit:15)
+  🟡 CC    _analyze_python_files CC=22 (limit:15)
   🟡 CC    parse_functions_toon CC=24 (limit:15)
   🟡 CC    _should_ignore_file CC=19 (limit:15)
+  🟡 CC    cmd_analyze CC=22 (limit:15)
 
 REFACTOR[1]:
   1. split 11 high-CC methods  (CC>15)
 
 PIPELINES[169]:
-  [1] Src [main]: main → example_curl_commands
+  [1] Src [main]: main
       PURITY: 100% pure
-  [2] Src [process_order]: process_order → _is_order_terminal
+  [2] Src [main]: main → example_curl_commands
       PURITY: 100% pure
   [3] Src [main]: main
       PURITY: 100% pure
-  [4] Src [main]: main
+  [4] Src [process_order]: process_order → _is_order_terminal
       PURITY: 100% pure
   [5] Src [main]: main → apply_all_quality_changes
       PURITY: 100% pure

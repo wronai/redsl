@@ -15,20 +15,99 @@ class DirectRefactorEngine:
         self.applied_changes = []
     
     def remove_unused_imports(self, file_path: Path, unused_imports: list[str]) -> bool:
-        """Remove unused imports from a Python file."""
+        """Remove unused imports from a Python file.
+        
+        Uses line-based editing to preserve original formatting.
+        """
         if not unused_imports:
             return False
         
         try:
             source = file_path.read_text(encoding="utf-8")
             tree = ast.parse(source)
+            lines = source.splitlines(keepends=True)
+            unused_set = set(unused_imports)
             
-            # Find and remove unused imports
-            transformer = UnusedImportRemover(unused_imports)
-            new_tree = transformer.visit(tree)
+            # Collect line numbers to remove or modify
+            lines_to_remove: set[int] = set()  # 0-indexed
+            line_replacements: dict[int, str] = {}  # 0-indexed -> new content
             
-            # Write back the modified source
-            new_source = ast.unparse(new_tree)
+            for node in ast.iter_child_nodes(tree):
+                if isinstance(node, ast.Import):
+                    kept = [a for a in node.names
+                            if (a.asname or a.name) not in unused_set]
+                    if len(kept) == len(node.names):
+                        continue  # nothing to remove
+                    if not kept:
+                        # Remove entire import statement (may span multiple lines)
+                        for ln in range(node.lineno, node.end_lineno + 1):
+                            lines_to_remove.add(ln - 1)
+                    else:
+                        # Rebuild only the import names, keep the rest of the line style
+                        names_str = ", ".join(
+                            f"{a.name} as {a.asname}" if a.asname else a.name
+                            for a in kept
+                        )
+                        indent = self._get_indent(lines[node.lineno - 1])
+                        line_replacements[node.lineno - 1] = f"{indent}import {names_str}\n"
+                        # Remove continuation lines if it was multi-line
+                        for ln in range(node.lineno + 1, node.end_lineno + 1):
+                            lines_to_remove.add(ln - 1)
+                
+                elif isinstance(node, ast.ImportFrom):
+                    if node.names[0].name == "*":
+                        continue
+                    kept = [a for a in node.names
+                            if (a.asname or a.name) not in unused_set]
+                    if len(kept) == len(node.names):
+                        continue
+                    if not kept:
+                        for ln in range(node.lineno, node.end_lineno + 1):
+                            lines_to_remove.add(ln - 1)
+                    else:
+                        # Preserve original style (single-line vs multi-line)
+                        orig_text = "".join(lines[node.lineno - 1 : node.end_lineno])
+                        is_multiline = node.end_lineno > node.lineno
+                        indent = self._get_indent(lines[node.lineno - 1])
+                        module = node.module or ""
+                        dots = "." * (node.level or 0)
+                        
+                        if is_multiline:
+                            # Keep multi-line style
+                            names_lines = []
+                            for a in kept:
+                                n = f"{a.name} as {a.asname}" if a.asname else a.name
+                                names_lines.append(f"{indent}    {n},")
+                            replacement = f"{indent}from {dots}{module} (\n"
+                            replacement += "\n".join(names_lines) + "\n"
+                            replacement += f"{indent})\n"
+                            line_replacements[node.lineno - 1] = replacement
+                            for ln in range(node.lineno + 1, node.end_lineno + 1):
+                                lines_to_remove.add(ln - 1)
+                        else:
+                            names_str = ", ".join(
+                                f"{a.name} as {a.asname}" if a.asname else a.name
+                                for a in kept
+                            )
+                            line_replacements[node.lineno - 1] = (
+                                f"{indent}from {dots}{module} import {names_str}\n"
+                            )
+            
+            if not lines_to_remove and not line_replacements:
+                return False
+            
+            # Build new source
+            new_lines = []
+            for i, line in enumerate(lines):
+                if i in lines_to_remove:
+                    continue
+                elif i in line_replacements:
+                    new_lines.append(line_replacements[i])
+                else:
+                    new_lines.append(line)
+            
+            # Clean up consecutive blank lines left by removals
+            new_source = self._clean_blank_lines("".join(new_lines))
             file_path.write_text(new_source, encoding="utf-8")
             
             self.applied_changes.append({
@@ -41,6 +120,26 @@ class DirectRefactorEngine:
         except Exception as e:
             print(f"Failed to remove unused imports from {file_path}: {e}")
             return False
+    
+    @staticmethod
+    def _get_indent(line: str) -> str:
+        """Return the leading whitespace of a line."""
+        return line[: len(line) - len(line.lstrip())]
+    
+    @staticmethod
+    def _clean_blank_lines(source: str) -> str:
+        """Remove runs of 3+ consecutive blank lines, keeping max 2."""
+        result: list[str] = []
+        blank_count = 0
+        for line in source.splitlines(keepends=True):
+            if line.strip() == "":
+                blank_count += 1
+                if blank_count <= 2:
+                    result.append(line)
+            else:
+                blank_count = 0
+                result.append(line)
+        return "".join(result)
     
     def fix_module_execution_block(self, file_path: Path) -> bool:
         """Wrap module-level code in if __name__ == '__main__' guard."""
@@ -183,22 +282,60 @@ class DirectRefactorEngine:
             return f"CONSTANT_{int(value)}"
     
     def add_return_types(self, file_path: Path, functions_missing_return: list[tuple[str, int]]) -> bool:
-        """Add return type annotations to functions."""
+        """Add return type annotations to functions.
+        
+        Uses line-based editing to preserve original formatting.
+        """
         if not functions_missing_return:
             return False
         
         try:
             source = file_path.read_text(encoding="utf-8")
             tree = ast.parse(source)
+            lines = source.splitlines(keepends=True)
             
-            # Add return types to functions
-            transformer = ReturnTypeAdder(functions_missing_return)
-            new_tree = transformer.visit(tree)
-            ast.fix_missing_locations(new_tree)
+            # Build lookup: (func_name, lineno) pairs to fix
+            to_fix = {(name, lineno) for name, lineno in functions_missing_return}
             
-            # Write back the modified source
-            new_source = ast.unparse(new_tree)
-            file_path.write_text(new_source, encoding="utf-8")
+            # Infer return types via AST, then apply via line editing
+            inferrer = ReturnTypeAdder(functions_missing_return)
+            replacements: dict[int, str] = {}  # 0-indexed line -> new content
+            
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    if (node.name, node.lineno) not in to_fix:
+                        continue
+                    if node.returns is not None:
+                        continue
+                    
+                    ret_type = inferrer._infer_return_type(node)
+                    if ret_type is None:
+                        continue
+                    type_str = ast.unparse(ret_type)
+                    
+                    # Find the "def ... :" line and insert -> Type before the colon
+                    # The colon ending the signature could be on lineno or a later line
+                    for ln in range(node.lineno - 1, min(node.end_lineno, len(lines))):
+                        line = lines[ln]
+                        # Find the colon that ends the def signature (not inside strings/parens)
+                        colon_idx = self._find_def_colon(line, ln == node.lineno - 1)
+                        if colon_idx is not None:
+                            before = line[:colon_idx].rstrip()
+                            after = line[colon_idx:]  # includes ':'
+                            replacements[ln] = f"{before} -> {type_str}{after}"
+                            break
+            
+            if not replacements:
+                return False
+            
+            new_lines = []
+            for i, line in enumerate(lines):
+                if i in replacements:
+                    new_lines.append(replacements[i])
+                else:
+                    new_lines.append(line)
+            
+            file_path.write_text("".join(new_lines), encoding="utf-8")
             
             self.applied_changes.append({
                 "file": str(file_path),
@@ -210,6 +347,49 @@ class DirectRefactorEngine:
         except Exception as e:
             print(f"Failed to add return types to {file_path}: {e}")
             return False
+    
+    @staticmethod
+    def _find_def_colon(line: str, is_first_line: bool) -> int | None:
+        """Find the index of the colon ending a def signature on this line.
+        
+        Skips colons inside strings and parentheses.
+        Returns None if no signature-ending colon is found.
+        """
+        depth = 0
+        in_string = None
+        i = 0
+        while i < len(line):
+            ch = line[i]
+            # Handle string delimiters
+            if ch in ('"', "'"):
+                triple = line[i:i+3]
+                if triple in ('"""', "'''"):
+                    if in_string == triple:
+                        in_string = None
+                        i += 3
+                        continue
+                    elif in_string is None:
+                        in_string = triple
+                        i += 3
+                        continue
+                if in_string is None:
+                    in_string = ch
+                elif in_string == ch:
+                    in_string = None
+                i += 1
+                continue
+            if in_string:
+                i += 1
+                continue
+            if ch == '(':
+                depth += 1
+            elif ch == ')':
+                depth -= 1
+            elif ch == ':' and depth == 0:
+                # This is the signature-ending colon
+                return i
+            i += 1
+        return None
     
     def get_applied_changes(self) -> list[dict[str, Any]]:
         """Get list of all applied changes."""

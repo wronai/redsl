@@ -45,6 +45,16 @@ class CodeQualityVisitor(ast.NodeVisitor):
             self.used_names.add(node.id)
         self.generic_visit(node)
 
+    def visit_Assign(self, node: ast.Assign) -> None:
+        """Track __all__ assignments to mark re-exported names as used."""
+        for target in node.targets:
+            if isinstance(target, ast.Name) and target.id == "__all__":
+                if isinstance(node.value, (ast.List, ast.Tuple)):
+                    for elt in node.value.elts:
+                        if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
+                            self.used_names.add(elt.value)
+        self.generic_visit(node)
+
     def visit_Attribute(self, node: ast.Attribute) -> None:
         """Track attribute access (e.g., module.function)."""
         # Track the base name for imported modules
@@ -130,8 +140,13 @@ class CodeQualityVisitor(ast.NodeVisitor):
         for name in self.imports:
             if name not in self.used_names:
                 # Skip special cases
-                if name not in ("__future__", "typing"):
-                    unused.append(name)
+                if name in ("__future__", "typing"):
+                    continue
+                # Skip all __future__ imports (e.g. `from __future__ import annotations`)
+                node = self.imports[name]
+                if isinstance(node, ast.ImportFrom) and node.module == "__future__":
+                    continue
+                unused.append(name)
         return unused
 
     def has_module_execution_block(self) -> bool:

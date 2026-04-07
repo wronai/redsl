@@ -6,15 +6,15 @@ SUMMARY:
   dup_groups:    2
   dup_fragments: 4
   saved_lines:   97
-  scan_ms:       6212
+  scan_ms:       5308
 
 DUPLICATES[2] (ranked by impact):
   [c4882b013ff06387] ! STRU  run_hybrid_quality_refactor  L=81 N=2 saved=81 sim=1.00
       redsl/commands/hybrid.py:0-80  (run_hybrid_quality_refactor)
       archive/legacy_scripts/hybrid_quality_refactor.py:0-80  (apply_all_quality_changes)
   [f610b9ef4ffea9ff]   EXAC  measure_todo_reduction  L=16 N=2 saved=16 sim=1.00
-      archive/legacy_scripts/batch_refactor_semcod.py:0-15  (measure_todo_reduction)
       redsl/commands/batch.py:0-15  (measure_todo_reduction)
+      archive/legacy_scripts/batch_refactor_semcod.py:0-15  (measure_todo_reduction)
 
 REFACTOR[2] (ranked by priority):
   [1] ◐ extract_module     → utils/run_hybrid_quality_refactor.py
