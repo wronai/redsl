@@ -240,7 +240,7 @@ def detect_version_mismatch(root: Path) -> list['Issue']:
         r'(?:__version__|VERSION|open.*VERSION|read_text.*VERSION)',
     )
     version_assert_re = re.compile(
-        r'assert\\s+\\w+\\s*==\\s*["\'](\\d+\\.\\d+\\.\\d+)["\']'
+        r'assert\s+\w+\s*==\s*["\'](\d+\.\d+\.\d+)["\']'
     )
     for py in _python_files(tests_dir):
         if py.name == "test_doctor.py":
@@ -303,7 +303,7 @@ def _guess_package_name(root: Path) -> str | None:
     pyproject = root / "pyproject.toml"
     if pyproject.exists():
         for line in pyproject.read_text().splitlines():
-            m = re.match(r'^name\\s*=\\s*"([^"]+)"', line.strip())
+            m = re.match(r'^name\s*=\s*"([^"]+)"', line.strip())
             if m:
                 return m.group(1).replace("-", "_")
     return None

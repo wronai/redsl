@@ -4,11 +4,11 @@
 
 - **Project**: /home/tom/github/semcod/redsl/redsl
 - **Primary Language**: python
-- **Languages**: python: 111
+- **Languages**: python: 122
 - **Analysis Mode**: static
-- **Total Functions**: 668
-- **Total Classes**: 103
-- **Modules**: 111
+- **Total Functions**: 714
+- **Total Classes**: 109
+- **Modules**: 122
 - **Entry Points**: 0
 
 ## Architecture by Module
@@ -20,11 +20,6 @@
 ### batch_1.cli
 - **Functions**: 33
 - **File**: `cli.py`
-
-### commands.doctor
-- **Functions**: 25
-- **Classes**: 2
-- **File**: `doctor.py`
 
 ### awareness.git_timeline
 - **Functions**: 23
@@ -71,6 +66,11 @@
 ### commands.doctor_detectors
 - **Functions**: 16
 - **File**: `doctor_detectors.py`
+
+### autonomy.scheduler
+- **Functions**: 16
+- **Classes**: 2
+- **File**: `scheduler.py`
 
 ### root.awareness
 - **Functions**: 16
@@ -127,6 +127,11 @@ This is a thin facade that delegates
 - **Methods**: 18
 - **Key Methods**: analyzers.parsers.project_parser.ProjectParser.parse_project_toon, analyzers.parsers.project_parser.ProjectParser._parse_header_lines, analyzers.parsers.project_parser.ProjectParser._detect_section_change, analyzers.parsers.project_parser.ProjectParser._parse_section_line, analyzers.parsers.project_parser.ProjectParser._parse_health_line, analyzers.parsers.project_parser.ProjectParser._parse_alerts_line, analyzers.parsers.project_parser.ProjectParser._parse_hotspots_line, analyzers.parsers.project_parser.ProjectParser._parse_modules_line, analyzers.parsers.project_parser.ProjectParser._parse_layers_section_line, analyzers.parsers.project_parser.ProjectParser._parse_refactors_line
 
+### autonomy.scheduler.Scheduler
+> Periodic quality-improvement loop.
+- **Methods**: 16
+- **Key Methods**: autonomy.scheduler.Scheduler.__init__, autonomy.scheduler.Scheduler.run, autonomy.scheduler.Scheduler.stop, autonomy.scheduler.Scheduler.run_once, autonomy.scheduler.Scheduler._has_changes_since_last_check, autonomy.scheduler.Scheduler._git_head, autonomy.scheduler.Scheduler._analyze, autonomy.scheduler.Scheduler._check_trends, autonomy.scheduler.Scheduler._check_proactive, autonomy.scheduler.Scheduler._generate_proposals
+
 ### refactors.direct_imports.DirectImportRefactorer
 > Handles import-related direct refactoring.
 - **Methods**: 15
@@ -171,6 +176,11 @@ This is a thin facade that delegates
 > Basic ecosystem graph for semcod-style project collections.
 - **Methods**: 9
 - **Key Methods**: awareness.ecosystem.EcosystemGraph.build, awareness.ecosystem.EcosystemGraph.summarize, awareness.ecosystem.EcosystemGraph.project, awareness.ecosystem.EcosystemGraph.impacted_projects, awareness.ecosystem.EcosystemGraph._build_node, awareness.ecosystem.EcosystemGraph._link_dependencies, awareness.ecosystem.EcosystemGraph._read_dependencies, awareness.ecosystem.EcosystemGraph._extract_dependency_tokens, awareness.ecosystem.EcosystemGraph._is_project_dir
+
+### autonomy.growth_control.GrowthController
+> Enforce growth budgets on a project.
+- **Methods**: 8
+- **Key Methods**: autonomy.growth_control.GrowthController.__init__, autonomy.growth_control.GrowthController.check_growth, autonomy.growth_control.GrowthController.suggest_consolidation, autonomy.growth_control.GrowthController._measure_weekly_growth, autonomy.growth_control.GrowthController._find_untested_new_modules, autonomy.growth_control.GrowthController._find_oversized_files, autonomy.growth_control.GrowthController._find_tiny_modules, autonomy.growth_control.GrowthController._group_by_prefix
 
 ### memory.AgentMemory
 > Kompletny system pamięci z trzema warstwami.
@@ -218,22 +228,6 @@ Deleguje do ToonAnalyzer (toon), PythonAnalyzer (AST) i PathResolv
 Pozwala pomijać ponowną analizę niezmiennych pl
 - **Methods**: 7
 - **Key Methods**: analyzers.incremental.EvolutionaryCache.__init__, analyzers.incremental.EvolutionaryCache._load, analyzers.incremental.EvolutionaryCache.save, analyzers.incremental.EvolutionaryCache.get, analyzers.incremental.EvolutionaryCache.set, analyzers.incremental.EvolutionaryCache.invalidate, analyzers.incremental.EvolutionaryCache.clear
-
-### analyzers.incremental.IncrementalAnalyzer
-> Analizuje tylko zmienione pliki i scala z cached wynikami.
-
-Gdy nie ma zmian → pełna analiza.
-Gdy są
-- **Methods**: 7
-- **Key Methods**: analyzers.incremental.IncrementalAnalyzer.__init__, analyzers.incremental.IncrementalAnalyzer.analyze_changed, analyzers.incremental.IncrementalAnalyzer._analyze_subset, analyzers.incremental.IncrementalAnalyzer._collect_cached_metrics, analyzers.incremental.IncrementalAnalyzer._calculate_result_stats, analyzers.incremental.IncrementalAnalyzer._merge_with_cache, analyzers.incremental.IncrementalAnalyzer._populate_cache
-
-### dsl.engine.DSLEngine
-> Silnik ewaluacji reguł DSL.
-
-Przyjmuje zbiór reguł i konteksty plików/funkcji,
-zwraca posortowaną li
-- **Methods**: 7
-- **Key Methods**: dsl.engine.DSLEngine.__init__, dsl.engine.DSLEngine._load_default_rules, dsl.engine.DSLEngine.add_rule, dsl.engine.DSLEngine.add_rules_from_yaml, dsl.engine.DSLEngine.evaluate, dsl.engine.DSLEngine.top_decisions, dsl.engine.DSLEngine.explain
 
 ## Data Transformation Functions
 
@@ -304,6 +298,10 @@ Key functions that process and transform data:
 ### diagnostics.perf_bridge._parse_profile_bottlenecks
 - **Output to**: stats_output.splitlines, bottlenecks.sort, line.split, None.isdigit, len
 
+### autonomy.review._parse_changed_files_from_diff
+> Extract changed file paths from a unified diff.
+- **Output to**: diff.splitlines, line.startswith, None.strip, path.endswith, paths.append
+
 ### execution.validation._validate_with_regix
 > Validate changes with regix and update report.
 - **Output to**: regix_bridge.validate_working_tree, regix_bridge.check_gates, regix_report.get, report.errors.append, logger.info
@@ -338,16 +336,11 @@ Returns:
     (valid: bool, message: str)
 - **Output to**: validation.pyqual_bridge.is_available, subprocess.run, logger.warning, str, output.strip
 
-### validation.regix_bridge.validate_no_regression
-> Porównaj HEAD~1 → HEAD i sprawdź czy nie ma regresji metryk.
-
-Typowe użycie PO zacommitowaniu zmian 
-- **Output to**: report.get, report.get, validation.regix_bridge.is_available, logger.debug, validation.regix_bridge.compare
-
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
 
+- `commands.cli_autonomy.register` - 114 calls
 - `commands.pyqual.run_pyqual_analysis` - 35 calls
 - `refactors.engine.RefactorEngine.generate_proposal` - 28 calls
 - `commands.batch.run_semcod_batch` - 27 calls
@@ -370,11 +363,11 @@ Functions exposed as public API (no underscore prefix):
 - `analyzers.redup_bridge.scan_duplicates` - 19 calls
 - `analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content` - 19 calls
 - `cli.doctor_batch` - 19 calls
-- `commands.doctor.detect_version_mismatch` - 18 calls
 - `commands.doctor_detectors.detect_version_mismatch` - 18 calls
+- `autonomy.growth_control.check_module_budget` - 18 calls
+- `autonomy.scheduler.Scheduler.run` - 18 calls
 - `execution.reporter.explain_decisions` - 18 calls
 - `dsl.engine.DSLEngine.add_rules_from_yaml` - 18 calls
-- `commands.doctor.fix_module_level_exit` - 17 calls
 - `commands.doctor_fixers.fix_module_level_exit` - 17 calls
 - `refactors.engine.RefactorEngine.validate_proposal` - 17 calls
 - `refactors.direct_constants.DirectConstantsRefactorer.extract_constants` - 17 calls
@@ -385,9 +378,8 @@ Functions exposed as public API (no underscore prefix):
 - `llm.LLMLayer.call_json` - 16 calls
 - `analyzers.parsers.validation_parser.ValidationParser.parse_validation_toon` - 16 calls
 - `cli.doctor_heal` - 16 calls
-- `execution.cycle.run_from_toon_content` - 15 calls
-- `awareness.timeline_analysis.TimelineAnalyzer.find_degradation_sources` - 15 calls
-- `cli.cost` - 15 calls
+- `autonomy.quality_gate.run_quality_gate` - 15 calls
+- `autonomy.intent.analyze_commit_intent` - 15 calls
 
 ## System Interactions
 

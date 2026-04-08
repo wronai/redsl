@@ -171,7 +171,7 @@ def fix_version_mismatch(root: Path, report: 'DoctorReport') -> None:
             src = path.read_text(encoding="utf-8")
             # Replace old version assertions with dynamic version
             version_pattern = re.compile(
-                r'(assert\\s+.*==\\s*["\'])(\\d+\\.\\d+\\.\\d+)(["\'])'
+                r'(assert\s+.*==\s*["\'])(\d+\.\d+\.\d+)(["\'])'
             )
             new_src = version_pattern.sub(
                 lambda m: m.group(1) + actual_version + m.group(3), src

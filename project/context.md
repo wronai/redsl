@@ -4,23 +4,23 @@
 
 - **Project**: /home/tom/github/semcod/redsl
 - **Primary Language**: python
-- **Languages**: python: 100, shell: 1
+- **Languages**: python: 112, shell: 1
 - **Analysis Mode**: static
-- **Total Functions**: 665
-- **Total Classes**: 101
-- **Modules**: 101
-- **Entry Points**: 443
+- **Total Functions**: 761
+- **Total Classes**: 109
+- **Modules**: 113
+- **Entry Points**: 478
 
 ## Architecture by Module
-
-### redsl.commands.doctor
-- **Functions**: 33
-- **Classes**: 2
-- **File**: `doctor.py`
 
 ### redsl.cli
 - **Functions**: 33
 - **File**: `cli.py`
+
+### redsl.commands.doctor
+- **Functions**: 25
+- **Classes**: 2
+- **File**: `doctor.py`
 
 ### redsl.awareness.git_timeline
 - **Functions**: 23
@@ -30,6 +30,10 @@
 ### redsl.main
 - **Functions**: 22
 - **File**: `main.py`
+
+### redsl.analyzers.radon_analyzer
+- **Functions**: 20
+- **File**: `radon_analyzer.py`
 
 ### redsl.memory
 - **Functions**: 18
@@ -50,6 +54,15 @@
 - **Functions**: 16
 - **File**: `hybrid_llm_refactor.py`
 
+### redsl.commands.scan
+- **Functions**: 16
+- **Classes**: 1
+- **File**: `scan.py`
+
+### redsl.commands.doctor_detectors
+- **Functions**: 16
+- **File**: `doctor_detectors.py`
+
 ### redsl.awareness
 - **Functions**: 16
 - **Classes**: 2
@@ -69,43 +82,29 @@
 - **Functions**: 13
 - **File**: `formatters.py`
 
+### redsl.commands.doctor_indent_fixers
+- **Functions**: 13
+- **File**: `doctor_indent_fixers.py`
+
 ### redsl.analyzers.toon_analyzer
 - **Functions**: 13
 - **Classes**: 1
 - **File**: `toon_analyzer.py`
+
+### redsl.autonomy.growth_control
+- **Functions**: 12
+- **Classes**: 3
+- **File**: `growth_control.py`
 
 ### redsl.llm.llx_router
 - **Functions**: 12
 - **Classes**: 1
 - **File**: `llx_router.py`
 
-### redsl.analyzers.radon_analyzer
-- **Functions**: 12
-- **File**: `radon_analyzer.py`
-
 ### redsl.dsl.engine
 - **Functions**: 12
 - **Classes**: 6
 - **File**: `engine.py`
-
-### redsl.commands.scan
-- **Functions**: 11
-- **Classes**: 1
-- **File**: `scan.py`
-
-### redsl.diagnostics.perf_bridge
-- **Functions**: 11
-- **Classes**: 3
-- **File**: `perf_bridge.py`
-
-### redsl.dsl.rule_generator
-- **Functions**: 11
-- **Classes**: 2
-- **File**: `rule_generator.py`
-
-### archive.legacy_scripts.hybrid_quality_refactor
-- **Functions**: 10
-- **File**: `hybrid_quality_refactor.py`
 
 ## Key Entry Points
 
@@ -140,13 +139,9 @@ Main execution flows into the system:
 ### examples.01-basic-analysis.main.main
 - **Calls**: CodeAnalyzer, analyzer.analyze_from_toon_content, print, print, print, print, print, print
 
-### redsl.commands.doctor.detect_stolen_indent
-> Find files where function/class body lost indentation after guard removal.
-
-Pattern (function body not indented):
-    async def run_rest_server():
-   
-- **Calls**: redsl.commands.doctor._python_files, src.splitlines, str, any, enumerate, py.read_text, ast.parse, py.relative_to
+### redsl.refactors.engine.RefactorEngine.generate_proposal
+> Wygeneruj propozycję refaktoryzacji na podstawie decyzji DSL.
+- **Calls**: PROMPTS.get, redsl.refactors.prompts.build_ecosystem_context, prompt_template.format, self.llm.call_json, response_data.get, self._resolve_confidence, RefactorProposal, logger.info
 
 ### redsl.commands.batch.run_semcod_batch
 > Run batch refactoring on semcod projects.
@@ -168,10 +163,6 @@ Args:
 > Show all decisions generated for a project.
 - **Calls**: print, print, print, AgentConfig.from_env, RefactorOrchestrator, CodeAnalyzer, analyzer.analyze_project, analysis.to_dsl_contexts
 
-### redsl.refactors.engine.RefactorEngine.generate_proposal
-> Wygeneruj propozycję refaktoryzacji na podstawie decyzji DSL.
-- **Calls**: PROMPTS.get, redsl.refactors.prompts.build_ecosystem_context, prompt_template.format, self.llm.call_json, response_data.get, self._resolve_confidence, RefactorProposal, logger.info
-
 ### redsl.cli.refactor
 > Run refactoring on a project.
 - **Calls**: cli.command, click.argument, click.option, click.option, click.option, click.option, click.option, click.option
@@ -179,10 +170,6 @@ Args:
 ### archive.legacy_scripts.debug_llm_config.debug_llm
 > Debug LLM configuration.
 - **Calls**: print, print, print, print, print, print, print, AgentConfig.from_env
-
-### redsl.commands.scan.render_markdown
-> Render a markdown priority report from scan results.
-- **Calls**: None.strftime, enumerate, lines.append, None.join, None.append, _TIER_BADGES.get, lines.append, lines.append
 
 ### redsl.awareness.timeline_analysis.TimelineAnalyzer._analyze_series
 - **Calls**: float, TimelineAnalyzer._linear_regression, max, max, min, TrendAnalysis, TrendAnalysis, float
@@ -232,6 +219,14 @@ Args:
 > Parsuj plik project_toon i zaktualizuj result.
 - **Calls**: toon_file.read_text, project_data.get, health.get, health.get, health.get, project_data.get, health.get, health.get
 
+### redsl.cli.doctor_batch
+> Diagnose and fix issues across all semcod subprojects.
+- **Calls**: doctor.command, click.argument, click.option, click.option, redsl.commands.doctor.heal_batch, redsl.cli._echo_json, click.echo, click.Path
+
+### redsl.commands.doctor.detect_version_mismatch
+> Find tests that hardcode a version string that differs from VERSION file.
+- **Calls**: None.strip, re.compile, re.compile, redsl.commands.doctor._python_files, version_file.exists, tests_dir.is_dir, enumerate, version_file.read_text
+
 ## Process Flows
 
 Key execution flows identified:
@@ -251,11 +246,10 @@ run_pyqual_analysis [redsl.commands.pyqual]
 _load_default_rules [redsl.dsl.engine.DSLEngine]
 ```
 
-### Flow 4: detect_stolen_indent
+### Flow 4: generate_proposal
 ```
-detect_stolen_indent [redsl.commands.doctor]
-  └─> _python_files
-      └─> _should_skip
+generate_proposal [redsl.refactors.engine.RefactorEngine]
+  └─ →> build_ecosystem_context
 ```
 
 ### Flow 5: run_semcod_batch
@@ -278,15 +272,14 @@ parse_duplication_toon [redsl.analyzers.parsers.duplication_parser.DuplicationPa
 debug_decisions [archive.legacy_scripts.debug_decisions]
 ```
 
-### Flow 9: generate_proposal
-```
-generate_proposal [redsl.refactors.engine.RefactorEngine]
-  └─ →> build_ecosystem_context
-```
-
-### Flow 10: refactor
+### Flow 9: refactor
 ```
 refactor [redsl.cli]
+```
+
+### Flow 10: debug_llm
+```
+debug_llm [archive.legacy_scripts.debug_llm_config]
 ```
 
 ## Key Classes
@@ -348,6 +341,11 @@ This is a thin facade that delegates
 - **Methods**: 9
 - **Key Methods**: redsl.awareness.ecosystem.EcosystemGraph.build, redsl.awareness.ecosystem.EcosystemGraph.summarize, redsl.awareness.ecosystem.EcosystemGraph.project, redsl.awareness.ecosystem.EcosystemGraph.impacted_projects, redsl.awareness.ecosystem.EcosystemGraph._build_node, redsl.awareness.ecosystem.EcosystemGraph._link_dependencies, redsl.awareness.ecosystem.EcosystemGraph._read_dependencies, redsl.awareness.ecosystem.EcosystemGraph._extract_dependency_tokens, redsl.awareness.ecosystem.EcosystemGraph._is_project_dir
 
+### redsl.autonomy.growth_control.GrowthController
+> Enforce growth budgets on a project.
+- **Methods**: 8
+- **Key Methods**: redsl.autonomy.growth_control.GrowthController.__init__, redsl.autonomy.growth_control.GrowthController.check_growth, redsl.autonomy.growth_control.GrowthController.suggest_consolidation, redsl.autonomy.growth_control.GrowthController._measure_weekly_growth, redsl.autonomy.growth_control.GrowthController._find_untested_new_modules, redsl.autonomy.growth_control.GrowthController._find_oversized_files, redsl.autonomy.growth_control.GrowthController._find_tiny_modules, redsl.autonomy.growth_control.GrowthController._group_by_prefix
+
 ### redsl.memory.AgentMemory
 > Kompletny system pamięci z trzema warstwami.
 
@@ -402,14 +400,6 @@ Gdy nie ma zmian → pełna analiza.
 Gdy są
 - **Methods**: 7
 - **Key Methods**: redsl.analyzers.incremental.IncrementalAnalyzer.__init__, redsl.analyzers.incremental.IncrementalAnalyzer.analyze_changed, redsl.analyzers.incremental.IncrementalAnalyzer._analyze_subset, redsl.analyzers.incremental.IncrementalAnalyzer._collect_cached_metrics, redsl.analyzers.incremental.IncrementalAnalyzer._calculate_result_stats, redsl.analyzers.incremental.IncrementalAnalyzer._merge_with_cache, redsl.analyzers.incremental.IncrementalAnalyzer._populate_cache
-
-### redsl.dsl.engine.DSLEngine
-> Silnik ewaluacji reguł DSL.
-
-Przyjmuje zbiór reguł i konteksty plików/funkcji,
-zwraca posortowaną li
-- **Methods**: 7
-- **Key Methods**: redsl.dsl.engine.DSLEngine.__init__, redsl.dsl.engine.DSLEngine._load_default_rules, redsl.dsl.engine.DSLEngine.add_rule, redsl.dsl.engine.DSLEngine.add_rules_from_yaml, redsl.dsl.engine.DSLEngine.evaluate, redsl.dsl.engine.DSLEngine.top_decisions, redsl.dsl.engine.DSLEngine.explain
 
 ## Data Transformation Functions
 
@@ -494,6 +484,12 @@ Key functions that process and transform data:
 > Format debug information.
 - **Output to**: yaml.dump, json.dumps, info.items, None.join, isinstance
 
+### redsl.commands.doctor_indent_fixers._process_guard_and_indent
+- **Output to**: len, None.rstrip, _GUARD_RE.match, new_lines.append, redsl.commands.doctor_indent_fixers._handle_guard
+
+### redsl.commands.doctor_fstring_fixers._write_if_parses
+- **Output to**: path.write_text, ast.parse
+
 ### redsl.commands.hybrid._process_single_project
 > Process a single project and return results.
 - **Output to**: redsl.commands.hybrid._count_todo_issues, redsl.commands.hybrid.run_hybrid_quality_refactor, redsl.commands.hybrid._regenerate_todo, redsl.commands.hybrid._count_todo_issues, print
@@ -501,13 +497,6 @@ Key functions that process and transform data:
 ### redsl.commands.pyqual.mypy_analyzer.MypyAnalyzer._parse_mypy_line
 > Parsuj jedną linię wyjścia mypy.
 - **Output to**: line.split, line.strip, len, int, None.strip
-
-### redsl.diagnostics.perf_bridge._parse_metrun_output
-> Parsuj wyjście `metrun inspect` (JSON lub plain text).
-- **Output to**: stdout.strip, PerformanceReport, json.loads, PerformanceReport, Bottleneck
-
-### redsl.diagnostics.perf_bridge._parse_profile_bottlenecks
-- **Output to**: stats_output.splitlines, bottlenecks.sort, line.split, None.isdigit, len
 
 ## Behavioral Patterns
 
@@ -531,24 +520,21 @@ Key functions that process and transform data:
 Functions exposed as public API (no underscore prefix):
 
 - `archive.legacy_scripts.batch_refactor_semcod.main` - 46 calls
-- `redsl.analyzers.radon_analyzer.enhance_metrics_with_radon` - 41 calls
 - `examples.04-memory-learning.main.main` - 39 calls
 - `archive.legacy_scripts.batch_quality_refactor.main` - 38 calls
 - `examples.02-custom-rules.main.main` - 35 calls
 - `redsl.commands.pyqual.run_pyqual_analysis` - 35 calls
 - `archive.legacy_scripts.apply_semcod_refactor.main` - 29 calls
 - `examples.01-basic-analysis.main.main` - 28 calls
-- `redsl.commands.doctor.detect_stolen_indent` - 28 calls
+- `redsl.refactors.engine.RefactorEngine.generate_proposal` - 28 calls
 - `redsl.commands.batch.run_semcod_batch` - 27 calls
 - `redsl.refactors.prompts.build_ecosystem_context` - 27 calls
 - `redsl.analyzers.semantic_chunker.SemanticChunker.chunk_function` - 27 calls
 - `redsl.analyzers.parsers.duplication_parser.DuplicationParser.parse_duplication_toon` - 27 calls
 - `archive.legacy_scripts.debug_decisions.debug_decisions` - 25 calls
 - `archive.legacy_scripts.batch_quality_refactor.apply_quality_refactors` - 25 calls
-- `redsl.refactors.engine.RefactorEngine.generate_proposal` - 25 calls
 - `redsl.cli.refactor` - 25 calls
 - `archive.legacy_scripts.debug_llm_config.debug_llm` - 24 calls
-- `redsl.commands.scan.render_markdown` - 23 calls
 - `archive.legacy_scripts.hybrid_quality_refactor.apply_all_quality_changes` - 21 calls
 - `examples.03-full-pipeline.main.main` - 21 calls
 - `redsl.main.cmd_refactor` - 21 calls
@@ -567,9 +553,12 @@ Functions exposed as public API (no underscore prefix):
 - `redsl.analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content` - 19 calls
 - `redsl.cli.doctor_batch` - 19 calls
 - `redsl.commands.doctor.detect_version_mismatch` - 18 calls
+- `redsl.commands.doctor_detectors.detect_version_mismatch` - 18 calls
+- `redsl.autonomy.growth_control.check_module_budget` - 18 calls
 - `redsl.execution.reporter.explain_decisions` - 18 calls
 - `redsl.dsl.engine.DSLEngine.add_rules_from_yaml` - 18 calls
 - `archive.legacy_scripts.hybrid_llm_refactor.apply_changes_with_llm_supervision` - 17 calls
+- `redsl.commands.doctor.fix_module_level_exit` - 17 calls
 
 ## System Interactions
 
@@ -594,11 +583,10 @@ graph TD
     main --> RefactorOrchestrator
     main --> CodeAnalyzer
     main --> analyze_from_toon_co
-    detect_stolen_indent --> _python_files
-    detect_stolen_indent --> splitlines
-    detect_stolen_indent --> str
-    detect_stolen_indent --> any
-    detect_stolen_indent --> enumerate
+    generate_proposal --> get
+    generate_proposal --> build_ecosystem_cont
+    generate_proposal --> format
+    generate_proposal --> call_json
     run_semcod_batch --> iterdir
     run_semcod_batch --> print
     run_semcod_batch --> sorted
@@ -607,6 +595,7 @@ graph TD
     chunk_function --> join
     chunk_function --> dedent
     chunk_function --> _extract_relevant_im
+    parse_duplication_to --> splitlines
 ```
 
 ## Reverse Engineering Guidelines

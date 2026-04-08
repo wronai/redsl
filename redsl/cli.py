@@ -575,5 +575,13 @@ def doctor_batch(semcod_root: Path, dry_run: bool, format: str) -> None:
         click.echo(f"\nTotal: {total_issues} issues, {total_fixes} fixed, {total_errors} errors across {len(reports)} projects")
 
 
+# ---------------------------------------------------------------------------
+# Autonomy commands (delegated to commands/cli_autonomy.py)
+# ---------------------------------------------------------------------------
+
+from .commands.cli_autonomy import register as _register_autonomy
+_register_autonomy(cli, _setup_logging)
+
+
 if __name__ == "__main__":
     cli()

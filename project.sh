@@ -19,7 +19,7 @@ $PIP install regix --upgrade --quiet
 #$PIP install pyqual --upgrade --quiet
 $PIP install prefact --upgrade --quiet
 $PIP install vallm --upgrade --quiet
-$PIP install redup --upgrade --quiet
+$PIP install redup==0.4.18 --upgrade --quiet
 $PIP install glon --upgrade --quiet
 $PIP install goal --upgrade --quiet
 $PIP install code2logic --upgrade --quiet

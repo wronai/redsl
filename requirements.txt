@@ -32,4 +32,4 @@ httpx>=0.27.0
 # vallm      — REFLECT: multi-validator patch pipeline, security, semantic scoring
 #              pip install vallm
 # redup      — Phase 2: exact/structural duplicate detection
-#              pip install redup
+#              pip install redup==0.4.18

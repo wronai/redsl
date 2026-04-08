@@ -19,6 +19,7 @@ from .review import review_staged_changes
 from .intent import analyze_commit_intent
 from .smart_scorer import smart_score
 from .adaptive_executor import AdaptiveExecutor
+from .scheduler import AutonomyMode, Scheduler
 
 __all__ = [
     "GateVerdict",
@@ -32,4 +33,6 @@ __all__ = [
     "analyze_commit_intent",
     "smart_score",
     "AdaptiveExecutor",
+    "AutonomyMode",
+    "Scheduler",
 ]
