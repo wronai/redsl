@@ -4,12 +4,12 @@
 
 - **Project**: /home/tom/github/semcod/redsl/redsl
 - **Primary Language**: python
-- **Languages**: python: 85
+- **Languages**: python: 105
 - **Analysis Mode**: static
-- **Total Functions**: 596
-- **Total Classes**: 100
-- **Modules**: 85
-- **Entry Points**: 424
+- **Total Functions**: 612
+- **Total Classes**: 101
+- **Modules**: 105
+- **Entry Points**: 0
 
 ## Architecture by Module
 
@@ -18,8 +18,12 @@
 - **Classes**: 2
 - **File**: `doctor.py`
 
-### cli
-- **Functions**: 32
+### root.cli
+- **Functions**: 33
+- **File**: `cli.py`
+
+### batch_1.cli
+- **Functions**: 33
 - **File**: `cli.py`
 
 ### awareness.git_timeline
@@ -27,11 +31,15 @@
 - **Classes**: 1
 - **File**: `git_timeline.py`
 
-### main
+### root.main
 - **Functions**: 22
 - **File**: `main.py`
 
-### memory
+### batch_1.main
+- **Functions**: 22
+- **File**: `main.py`
+
+### root.memory
 - **Functions**: 18
 - **Classes**: 4
 - **File**: `__init__.py`
@@ -41,12 +49,22 @@
 - **Classes**: 1
 - **File**: `project_parser.py`
 
+### batch_1.memory
+- **Functions**: 18
+- **Classes**: 4
+- **File**: `__init__.py`
+
 ### analyzers.incremental
 - **Functions**: 17
 - **Classes**: 2
 - **File**: `incremental.py`
 
-### awareness
+### root.awareness
+- **Functions**: 16
+- **Classes**: 2
+- **File**: `__init__.py`
+
+### batch_1.awareness
 - **Functions**: 16
 - **Classes**: 2
 - **File**: `__init__.py`
@@ -61,7 +79,7 @@
 - **Classes**: 1
 - **File**: `quality_visitor.py`
 
-### formatters
+### root.formatters
 - **Functions**: 13
 - **File**: `formatters.py`
 
@@ -69,6 +87,10 @@
 - **Functions**: 13
 - **Classes**: 1
 - **File**: `toon_analyzer.py`
+
+### batch_1.formatters
+- **Functions**: 13
+- **File**: `formatters.py`
 
 ### llm.llx_router
 - **Functions**: 12
@@ -84,221 +106,13 @@
 - **Classes**: 6
 - **File**: `engine.py`
 
-### dsl.rule_generator
-- **Functions**: 11
-- **Classes**: 2
-- **File**: `rule_generator.py`
-
-### commands.multi_project
-- **Functions**: 10
-- **Classes**: 3
-- **File**: `multi_project.py`
-
-### awareness.ecosystem
-- **Functions**: 10
-- **Classes**: 2
-- **File**: `ecosystem.py`
-
-### awareness.timeline_toon
-- **Functions**: 10
-- **Classes**: 1
-- **File**: `timeline_toon.py`
-
-### commands.hybrid
-- **Functions**: 9
-- **File**: `hybrid.py`
-
 ## Key Entry Points
 
 Main execution flows into the system:
 
-### commands.pyqual.run_pyqual_analysis
-> Run pyqual analysis on a project.
-- **Calls**: PyQualAnalyzer, analyzer.analyze_project, analyzer.save_report, print, print, print, print, print
-
-### dsl.engine.DSLEngine._load_default_rules
-> Załaduj domyślny zestaw reguł refaktoryzacji.
-- **Calls**: Rule, Rule, Rule, Rule, Rule, Rule, Rule, Rule
-
-### commands.doctor.detect_stolen_indent
-> Find files where function/class body lost indentation after guard removal.
-
-Pattern (function body not indented):
-    async def run_rest_server():
-   
-- **Calls**: commands.doctor._python_files, src.splitlines, str, any, enumerate, py.read_text, ast.parse, py.relative_to
-
-### commands.batch.run_semcod_batch
-> Run batch refactoring on semcod projects.
-- **Calls**: semcod_root.iterdir, print, sorted, print, print, print, commands.batch.measure_todo_reduction, print
-
-### analyzers.semantic_chunker.SemanticChunker.chunk_function
-> Wytnij semantyczny chunk dla jednej funkcji.
-
-Args:
-    file_path:         Ścieżka do pliku .py
-    func_name:         Nazwa funkcji (lub Class.method
-- **Calls**: self._find_nodes, source.splitlines, None.join, textwrap.dedent, self._extract_relevant_imports, SemanticChunk, file_path.read_text, ast.parse
-
-### analyzers.parsers.duplication_parser.DuplicationParser.parse_duplication_toon
-> Parsuj duplication_toon — obsługuje formaty legacy i code2llm [hash] ! STRU.
-- **Calls**: content.splitlines, line.strip, duplicates.append, re.search, stripped.startswith, re.search, duplicates.append, re.match
-
-### refactors.engine.RefactorEngine.generate_proposal
-> Wygeneruj propozycję refaktoryzacji na podstawie decyzji DSL.
-- **Calls**: PROMPTS.get, refactors.prompts.build_ecosystem_context, prompt_template.format, self.llm.call_json, response_data.get, self._resolve_confidence, RefactorProposal, logger.info
-
-### cli.refactor
-> Run refactoring on a project.
-- **Calls**: cli.command, click.argument, click.option, click.option, click.option, click.option, click.option, click.option
-
-### awareness.timeline_analysis.TimelineAnalyzer._analyze_series
-- **Calls**: float, TimelineAnalyzer._linear_regression, max, max, min, TrendAnalysis, TrendAnalysis, float
-
-### commands.pyqual.reporter.Reporter.calculate_metrics
-> Oblicz metryki złożoności i utrzymywalności kodu.
-- **Calls**: None.get, None.get, None.update, sum, sum, logger.warning, None.update, file_path.read_text
-
-### awareness.AwarenessManager.build_snapshot
-- **Calls**: None.resolve, self._build_cache_key, GitTimelineAnalyzer, timeline_analyzer.build_timeline, timeline_analyzer.analyze_trends, ChangePatternLearner, pattern_learner.learn_from_timeline, self.health_model.assess
-
-### awareness.health_model.HealthModel.assess
-- **Calls**: trends.get, trends.get, trends.get, self._bounded_score, self._bounded_score, self._bounded_score, self._bounded_score, self._status_for_score
-
-### analyzers.python_analyzer.PythonAnalyzer._scan_top_nodes
-> Iteruj po węzłach top-level i class-level, zbieraj CC, nesting i alerty.
-- **Calls**: rel_path.endswith, ast.iter_child_nodes, isinstance, ast.iter_child_nodes, isinstance, isinstance, analyzers.python_analyzer.ast_cyclomatic_complexity, max
-
-### analyzers.parsers.project_parser.ProjectParser._parse_emoji_alert_line
-> T001: Parsuj linie code2llm v2: 🟡 CC func_name CC=41 (limit:10)
-- **Calls**: None.strip, re.match, match.group, re.search, re.search, alert_type_map.get, match.group, int
-
-### cli.debug_decisions
-> Debug DSL decision making.
-- **Calls**: debug.command, click.argument, click.option, CodeAnalyzer, analyzer.analyze_project, analysis.to_dsl_contexts, RefactorOrchestrator, orchestrator.dsl_engine.evaluate
-
-### commands.pyqual.run_pyqual_fix
-> Run automatic fixes based on pyqual analysis.
-- **Calls**: PyQualAnalyzer, pyqual_analyzer.analyze_project, print, AgentConfig, RefactorOrchestrator, CodeAnalyzer, code_analyzer.analyze_project, analysis.to_dsl_contexts
-
-### execution.cycle.run_cycle
-> Run a complete refactoring cycle.
-- **Calls**: execution.cycle._new_cycle_report, logger.info, execution.cycle._analyze_project, execution.cycle._summarize_analysis, logger.info, execution.decision._select_decisions, len, execution.validation._snapshot_regix_before
-
-### analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content
-> Analizuj z bezpośredniego contentu toon (bez plików).
-- **Calls**: AnalysisResult, len, sum, self.parser.parse_project_toon, data.get, data.get, data.get, self.parser.parse_duplication_toon
-
-### analyzers.toon_analyzer.ToonAnalyzer._process_project_ton
-> Parsuj plik project_toon i zaktualizuj result.
-- **Calls**: toon_file.read_text, project_data.get, health.get, health.get, health.get, project_data.get, health.get, health.get
-
-### cli.doctor_batch
-> Diagnose and fix issues across all semcod subprojects.
-- **Calls**: doctor.command, click.argument, click.option, click.option, commands.doctor.heal_batch, cli._echo_json, click.echo, click.Path
-
-### commands.doctor.detect_version_mismatch
-> Find tests that hardcode a version string that differs from VERSION file.
-- **Calls**: None.strip, re.compile, re.compile, commands.doctor._python_files, version_file.exists, tests_dir.is_dir, enumerate, version_file.read_text
-
-### commands.pyqual.ast_analyzer.AstAnalyzer._analyze_file
-> Przeanalizuj jeden plik AST.
-- **Calls**: CodeQualityVisitor, visitor.visit, visitor.get_unused_imports, ast.walk, unused_imports.append, magic_numbers.append, print_statements.append, isinstance
-
-### dsl.engine.DSLEngine.add_rules_from_yaml
-> Załaduj reguły z formatu YAML/dict.
-- **Calls**: rd.get, when.items, rd.get, Rule, self.add_rule, isinstance, constraint.items, conditions.append
-
-### commands.doctor.fix_module_level_exit
-> Wrap bare sys.exit() calls in if __name__ == '__main__' guards.
-- **Calls**: path.read_text, src.splitlines, line.strip, path.write_text, report.fixes_applied.append, report.errors.append, stripped.startswith, new_lines.append
-
-### refactors.engine.RefactorEngine.validate_proposal
-> Waliduj propozycję: syntax check + basic sanity + vallm pipeline (jeśli dostępny).
-- **Calls**: RefactorResult, vallm_bridge.is_available, vallm_bridge.validate_proposal, len, code.strip, result.errors.append, compile, len
-
-### refactors.direct_constants.DirectConstantsRefactorer.extract_constants
-> Extract magic numbers into named constants.
-- **Calls**: len, file_path.read_text, source.splitlines, self._build_value_to_names_map, ast.parse, self._find_import_end_line, lines.insert, self._replace_magic_numbers
-
-### validation.sandbox.RefactorSandbox.apply_and_test
-> Zaaplikuj propozycję w sandboxie i uruchom testy.
-
-Returns dict:
-  applied: bool
-  tests_pass: bool
-  errors: list[str]
-  output: str
-- **Calls**: getattr, subprocess.run, SandboxError, None.append, getattr, getattr, subprocess.run, None.unlink
-
-### analyzers.parsers.project_parser.ProjectParser._parse_header_line
-> T017: Parsuj nagłówek: # project | 113f 20532L | python:109 | date
-- **Calls**: None.strip, p.strip, re.search, re.search, re.search, re.search, line.lstrip, cleaned.split
-
-### dsl.rule_generator.RuleGenerator._patterns_to_rules
-> Konwertuj wzorce na reguły DSL.
-- **Calls**: patterns.items, dsl.rule_generator._derive_conditions, rules.append, len, len, max, LearnedRule, len
-
-### commands.pyqual.ruff_analyzer.RuffAnalyzer.analyze
-> Run ruff linter i zapisz wyniki do results.
-- **Calls**: None.get, range, sum, sum, len, subprocess.run, logger.warning, None.get
-
 ## Process Flows
 
 Key execution flows identified:
-
-### Flow 1: run_pyqual_analysis
-```
-run_pyqual_analysis [commands.pyqual]
-```
-
-### Flow 2: _load_default_rules
-```
-_load_default_rules [dsl.engine.DSLEngine]
-```
-
-### Flow 3: detect_stolen_indent
-```
-detect_stolen_indent [commands.doctor]
-  └─> _python_files
-      └─> _should_skip
-```
-
-### Flow 4: run_semcod_batch
-```
-run_semcod_batch [commands.batch]
-```
-
-### Flow 5: chunk_function
-```
-chunk_function [analyzers.semantic_chunker.SemanticChunker]
-```
-
-### Flow 6: parse_duplication_toon
-```
-parse_duplication_toon [analyzers.parsers.duplication_parser.DuplicationParser]
-```
-
-### Flow 7: generate_proposal
-```
-generate_proposal [refactors.engine.RefactorEngine]
-  └─ →> build_ecosystem_context
-```
-
-### Flow 8: refactor
-```
-refactor [cli]
-```
-
-### Flow 9: _analyze_series
-```
-_analyze_series [awareness.timeline_analysis.TimelineAnalyzer]
-```
-
-### Flow 10: calculate_metrics
-```
-calculate_metrics [commands.pyqual.reporter.Reporter]
-```
 
 ## Key Classes
 
@@ -482,6 +296,9 @@ Key functions that process and transform data:
 > Parsuj wyjście `metrun inspect` (JSON lub plain text).
 - **Output to**: stdout.strip, PerformanceReport, json.loads, PerformanceReport, Bottleneck
 
+### diagnostics.perf_bridge._parse_profile_bottlenecks
+- **Output to**: stats_output.splitlines, bottlenecks.sort, line.split, None.isdigit, len
+
 ### execution.validation._validate_with_regix
 > Validate changes with regix and update report.
 - **Output to**: regix_bridge.validate_working_tree, regix_bridge.check_gates, regix_report.get, report.errors.append, logger.info
@@ -532,27 +349,6 @@ Używany w run_cycle
 > Parsuj jeden plik .py i zwróć zebrane metryki lub None przy błędzie składni.
 - **Output to**: len, str, CodeQualityVisitor, quality_visitor.visit, quality_visitor.get_metrics
 
-### analyzers.incremental.EvolutionaryCache.invalidate
-> Usuń plik z cache (wymuś ponowną analizę).
-- **Output to**: self._data.pop, str
-
-## Behavioral Patterns
-
-### recursion__flatten_radon_blocks
-- **Type**: recursion
-- **Confidence**: 0.90
-- **Functions**: analyzers.radon_analyzer._flatten_radon_blocks
-
-### state_machine_DirectImportRefactorer
-- **Type**: state_machine
-- **Confidence**: 0.70
-- **Functions**: refactors.direct_imports.DirectImportRefactorer.__init__, refactors.direct_imports.DirectImportRefactorer.remove_unused_imports, refactors.direct_imports.DirectImportRefactorer._collect_unused_import_edits, refactors.direct_imports.DirectImportRefactorer._collect_import_edits, refactors.direct_imports.DirectImportRefactorer._collect_import_from_edits
-
-### state_machine_RefactorSandbox
-- **Type**: state_machine
-- **Confidence**: 0.70
-- **Functions**: validation.sandbox.RefactorSandbox.__init__, validation.sandbox.RefactorSandbox.start, validation.sandbox.RefactorSandbox.apply_and_test, validation.sandbox.RefactorSandbox.stop, validation.sandbox.RefactorSandbox.__enter__
-
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
@@ -566,9 +362,11 @@ Functions exposed as public API (no underscore prefix):
 - `analyzers.parsers.duplication_parser.DuplicationParser.parse_duplication_toon` - 27 calls
 - `refactors.engine.RefactorEngine.generate_proposal` - 25 calls
 - `cli.refactor` - 25 calls
+- `commands.scan.render_markdown` - 23 calls
 - `main.cmd_refactor` - 21 calls
 - `commands.hybrid.run_hybrid_quality_refactor` - 21 calls
 - `commands.pyqual.reporter.Reporter.calculate_metrics` - 21 calls
+- `cli.scan` - 21 calls
 - `awareness.AwarenessManager.build_snapshot` - 20 calls
 - `awareness.health_model.HealthModel.assess` - 20 calls
 - `validation.vallm_bridge.validate_patch` - 20 calls
@@ -595,8 +393,6 @@ Functions exposed as public API (no underscore prefix):
 - `awareness.timeline_analysis.TimelineAnalyzer.find_degradation_sources` - 15 calls
 - `cli.cost` - 15 calls
 - `consciousness_loop.ConsciousnessLoop.run` - 14 calls
-- `commands.pyqual.bandit_analyzer.BanditAnalyzer.analyze` - 14 calls
-- `refactors.diff_manager.create_checkpoint` - 14 calls
 
 ## System Interactions
 
@@ -604,36 +400,6 @@ How components interact:
 
 ```mermaid
 graph TD
-    run_pyqual_analysis --> PyQualAnalyzer
-    run_pyqual_analysis --> analyze_project
-    run_pyqual_analysis --> save_report
-    run_pyqual_analysis --> print
-    _load_default_rules --> Rule
-    detect_stolen_indent --> _python_files
-    detect_stolen_indent --> splitlines
-    detect_stolen_indent --> str
-    detect_stolen_indent --> any
-    detect_stolen_indent --> enumerate
-    run_semcod_batch --> iterdir
-    run_semcod_batch --> print
-    run_semcod_batch --> sorted
-    chunk_function --> _find_nodes
-    chunk_function --> splitlines
-    chunk_function --> join
-    chunk_function --> dedent
-    chunk_function --> _extract_relevant_im
-    parse_duplication_to --> splitlines
-    parse_duplication_to --> strip
-    parse_duplication_to --> append
-    parse_duplication_to --> search
-    parse_duplication_to --> startswith
-    generate_proposal --> get
-    generate_proposal --> build_ecosystem_cont
-    generate_proposal --> format
-    generate_proposal --> call_json
-    refactor --> command
-    refactor --> argument
-    refactor --> option
 ```
 
 ## Reverse Engineering Guidelines

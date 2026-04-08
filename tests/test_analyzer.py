@@ -277,6 +277,47 @@ class TestRadonIntegration:
         assert result.critical_count == 1
         assert any(alert["name"] == "inner" for alert in result.alerts)
 
+    def test_enhance_metrics_with_radon_marks_init_file_functions_public(
+        self, tmp_path: Path, monkeypatch
+    ):
+        from redsl.analyzers import radon_analyzer
+        from redsl.analyzers.radon_analyzer import enhance_metrics_with_radon
+
+        project_dir = tmp_path / "project"
+        project_dir.mkdir()
+
+        result = AnalysisResult(
+            project_name="project",
+            metrics=[
+                CodeMetrics(
+                    file_path="pkg/__init__.py",
+                    module_lines=2,
+                    function_count=1,
+                    class_count=0,
+                    cyclomatic_complexity=1,
+                )
+            ],
+        )
+
+        radon_results = {
+            str(project_dir / "pkg" / "__init__.py"): [
+                {
+                    "type": "function",
+                    "name": "boot",
+                    "complexity": 12,
+                }
+            ]
+        }
+
+        monkeypatch.setattr(radon_analyzer, "run_radon_cc", lambda project_dir: radon_results)
+
+        enhance_metrics_with_radon(result, project_dir)
+
+        boot_metric = next(m for m in result.metrics if m.function_name == "boot")
+
+        assert boot_metric.is_public_api is True
+        assert any(alert["name"] == "boot" for alert in result.alerts)
+
 
 class TestIntegrationAnalyzerDSL:
     """Test integracji Analyzer → DSL Engine."""

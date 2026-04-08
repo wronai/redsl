@@ -1,27 +1,48 @@
-# code2llm/evolution | 578 func | 80f | 2026-04-08
+# code2llm/evolution | 651 func | 82f | 2026-04-08
 
-NEXT[4] (ranked by impact):
-  [1] !  REDUCE-FANOUT   _fallback_profile               fan=24
-      WHY: remaining fan-out hotspot
-      EFFORT: ~1h  IMPACT: 240
-  [2] !  REDUCE-FANOUT   SemanticChunker.chunk_function  fan=21
-      WHY: remaining fan-out hotspot
-      EFFORT: ~1h  IMPACT: 210
-  [3] !  REDUCE-FANOUT   _register_refactor_routes       fan=20
-      WHY: new route-group helper still above threshold
-      EFFORT: ~1h  IMPACT: 200
-  [4] !  REDUCE-FANOUT   _register_debug_routes          fan=20
-      WHY: new route-group helper still above threshold
-      EFFORT: ~1h  IMPACT: 200
+NEXT[8] (ranked by impact):
+  [1] !! SPLIT           redsl/commands/doctor.py
+      WHY: 1114L, 2 classes, max CC=36
+      EFFORT: ~4h  IMPACT: 40104
+
+  [2] !! SPLIT           redsl/cli.py
+      WHY: 579L, 0 classes, max CC=10
+      EFFORT: ~4h  IMPACT: 5790
+
+  [3] !! SPLIT-FUNC      enhance_metrics_with_radon  CC=46  fan=29
+      WHY: CC=46 exceeds 15
+      EFFORT: ~1h  IMPACT: 1334
+
+  [4] !! SPLIT-FUNC      _fix_guard_with_excess_indent  CC=36  fan=22
+      WHY: CC=36 exceeds 15
+      EFFORT: ~1h  IMPACT: 792
+
+  [5] !! SPLIT-FUNC      _fix_stolen_indent  CC=27  fan=18
+      WHY: CC=27 exceeds 15
+      EFFORT: ~1h  IMPACT: 486
+
+  [6] !  SPLIT-FUNC      detect_stolen_indent  CC=15  fan=21
+      WHY: CC=15 exceeds 15
+      EFFORT: ~1h  IMPACT: 315
+
+  [7] !  SPLIT-FUNC      _fix_guard_in_try_block  CC=17  fan=16
+      WHY: CC=17 exceeds 15
+      EFFORT: ~1h  IMPACT: 272
+
+  [8] !  SPLIT-FUNC      render_markdown  CC=23  fan=11
+      WHY: CC=23 exceeds 15
+      EFFORT: ~1h  IMPACT: 253
 
 
-RISKS[0]: none
+RISKS[2]:
+  ⚠ Splitting redsl/commands/doctor.py may break 33 import paths
+  ⚠ Splitting redsl/cli.py may break 33 import paths
 
 METRICS-TARGET:
-  CC̄:          3.9 → ≤2.7
-  max-CC:      16 → ≤8
-  god-modules: 0 → 0
-  high-CC(≥15): 1 → ≤0
+  CC̄:          4.2 → ≤2.9
+  max-CC:      46 → ≤20
+  god-modules: 2 → 0
+  high-CC(≥15): 7 → ≤3
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -49,9 +70,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  2026-04-08: T007 DONE — LLM confidence extraction (redsl/refactors/engine.py:129-134)
-  2026-04-08: T008 DONE — Radon CC enrichment + nested closures (redsl/analyzers/radon_analyzer.py)
-  2026-04-08: Split redsl/awareness/git_timeline.py → 4 modules
-  2026-04-08: Split redsl/execution/executor.py → 5 modules
-  2026-04-08: Split redsl/refactors/direct.py → 4 modules
-  prev CC̄=4.1 → now CC̄=3.9, god-modules: 3 → 0
+  prev CC̄=3.9 → now CC̄=4.2

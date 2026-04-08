@@ -1,18 +1,24 @@
-# code2llm | 93f 14715L | python:92,shell:1 | 2026-04-08
-# CC̄=3.9 | critical:0/592 | dups:0 | cycles:0
+# code2llm | 95f 16521L | python:94,shell:1 | 2026-04-08
+# CC̄=4.2 | critical:7/665 | dups:0 | cycles:0
 
-HEALTH[1]:
-  🟢 CC    no functions exceed CC=15 after splitting apply_changes_with_llm_supervision
+HEALTH[7]:
+  🟡 CC    detect_stolen_indent CC=15 (limit:15)
+  🟡 CC    _fix_guard_in_try_block CC=17 (limit:15)
+  🟡 CC    _fix_guard_with_excess_indent CC=36 (limit:15)
+  🟡 CC    _fix_stolen_indent CC=27 (limit:15)
+  🟡 CC    _escape_fstring_body_braces CC=15 (limit:15)
+  🟡 CC    render_markdown CC=23 (limit:15)
+  🟡 CC    enhance_metrics_with_radon CC=46 (limit:15)
 
 REFACTOR[1]:
-  1. reduce fan-out hotspots  (_fallback_profile, SemanticChunker.chunk_function, _register_refactor_routes, _register_debug_routes)
+  1. split 7 high-CC methods  (CC>15)
 
-PIPELINES[387]:
-  [1] Src [main]: main → example_curl_commands
+PIPELINES[412]:
+  [1] Src [main]: main
       PURITY: 100% pure
-  [2] Src [process_order]: process_order → _is_order_terminal
+  [2] Src [main]: main → example_curl_commands
       PURITY: 100% pure
-  [3] Src [main]: main
+  [3] Src [process_order]: process_order → _is_order_terminal
       PURITY: 100% pure
   [4] Src [main]: main
       PURITY: 100% pure
@@ -20,8 +26,8 @@ PIPELINES[387]:
       PURITY: 100% pure
 
 LAYERS:
-  archive/                        CC̄=5.6    ←in:0  →out:0
-  │ hybrid_llm_refactor          387L  0C   10m  CC=2      ←0
+  archive/                        CC̄=4.8    ←in:0  →out:0
+  │ hybrid_llm_refactor        386L  0C   16m  CC=10     ←1
   │ hybrid_quality_refactor    253L  0C   10m  CC=10     ←0
   │ batch_quality_refactor     167L  0C    2m  CC=14     ←0
   │ batch_refactor_semcod      154L  0C    3m  CC=12     ←0
@@ -29,19 +35,22 @@ LAYERS:
   │ debug_decisions             62L  0C    1m  CC=7      ←0
   │ debug_llm_config            55L  0C    1m  CC=5      ←0
   │
-  redsl/                          CC̄=3.8    ←in:5  →out:11  !! split
-  │ cli                        473L  0C   28m  CC=7      ←0
+  redsl/                          CC̄=4.1    ←in:5  →out:14  !! split
+  │ !! doctor                    1114L  2C   33m  CC=36     ←1
+  │ !! cli                        579L  0C   33m  CC=10     ←0
   │ engine                     417L  6C   12m  CC=10     ←0
-  │ api                        385L  11C    1m  CC=1      ←0
+  │ api                        386L  11C    7m  CC=1      ←0
   │ engine                     329L  1C    9m  CC=12     ←1
   │ __init__                   325L  2C   16m  CC=10     ←0
   │ regix_bridge               317L  0C    8m  CC=9      ←1
+  │ !! radon_analyzer             317L  0C   12m  CC=46     ←1
   │ formatters                 306L  0C   13m  CC=13     ←2
   │ project_parser             300L  1C   18m  CC=12     ←0
+  │ !! scan                       295L  1C   11m  CC=23     ←0
+  │ perf_bridge                295L  3C   11m  CC=6      ←2
   │ toon_analyzer              294L  1C   13m  CC=14     ←0
-  │ incremental                291L  2C   17m  CC=8      ←11
+  │ incremental                291L  2C   17m  CC=8      ←13
   │ diff_manager               283L  0C    9m  CC=9      ←0
-  │ perf_bridge                275L  3C    7m  CC=7      ←2
   │ rule_generator             271L  2C   11m  CC=6      ←0
   │ main                       268L  0C   22m  CC=6      ←0
   │ prompts                    266L  0C    1m  CC=13     ←1
@@ -58,7 +67,7 @@ LAYERS:
   │ direct_imports             213L  1C   15m  CC=7      ←0
   │ vallm_bridge               212L  0C    5m  CC=10     ←1
   │ consciousness_loop         204L  1C    7m  CC=5      ←0
-  │ body_restorer              203L  0C    7m  CC=11     ←0
+  │ body_restorer              203L  0C    7m  CC=11     ←1
   │ decision                   190L  0C    4m  CC=8      ←3
   │ code2llm_bridge            178L  0C    5m  CC=5      ←1
   │ __init__                   176L  2C    4m  CC=11     ←0
@@ -72,14 +81,13 @@ LAYERS:
   │ health_model               151L  3C    6m  CC=9      ←0
   │ functions_parser           148L  1C    6m  CC=9      ←0
   │ orchestrator               142L  2C    4m  CC=2      ←0
-  │ utils                      140L  0C    9m  CC=7      ←3
+  │ utils                      140L  0C    9m  CC=7      ←4
   │ proactive                  138L  2C    5m  CC=7      ←0
   │ reporter                   136L  1C    4m  CC=11     ←0
   │ ecosystem                  134L  2C   10m  CC=10     ←0
   │ direct_constants           132L  1C    7m  CC=9      ←0
   │ ast_transformers           131L  2C    9m  CC=8      ←0
   │ pyqual_bridge              129L  0C    5m  CC=8      ←0
-  │ radon_analyzer             128L  0C    4m  CC=10     ←1
   │ direct_types               127L  1C    6m  CC=8      ←0
   │ timeline_git               127L  1C    7m  CC=8      ←1
   │ change_patterns            125L  2C    6m  CC=12     ←0
@@ -123,26 +131,27 @@ LAYERS:
   │
 
 COUPLING:
-                                 redsl.execution                   redsl         redsl.analyzers         redsl.refactors          redsl.commands        redsl.validation  archive.legacy_scripts               redsl.llm       redsl.diagnostics         redsl.awareness               redsl.dsl
-         redsl.execution                      ──                      ←8                       1                       1                      ←2                       3                                               4                                                                          hub
-                   redsl                       8                      ──                                                                      ←2                                              ←3                                               3                                                  hub
-         redsl.analyzers                      ←1                                              ──                      ←5                      ←3                                              ←1                                                                      ←1                      ←1  hub
-         redsl.refactors                      ←1                                               5                      ──                                               3                                                                                                                          !! fan-out
-          redsl.commands                       2                       2                       3                                              ──                                                                                                                                                
-        redsl.validation                      ←3                                                                      ←3                                              ──                                                                                                                          hub
-  archive.legacy_scripts                                               3                       1                                                                                              ──                                                                                                
+                                 redsl.execution                   redsl         redsl.analyzers          redsl.commands         redsl.refactors        redsl.validation  archive.legacy_scripts               redsl.llm       redsl.diagnostics         redsl.awareness               redsl.dsl
+         redsl.execution                      ──                      ←8                       1                      ←2                       1                       3                       1                       4                                                                          hub
+                   redsl                       8                      ──                                               3                                                                      ←3                                               3                                                  hub
+         redsl.analyzers                      ←1                                              ──                      ←6                      ←5                                              ←1                                                                      ←1                      ←1  hub
+          redsl.commands                       2                       2                       6                      ──                       1                                                                                                                                                  !! fan-out
+         redsl.refactors                      ←1                                               5                      ←1                      ──                       3                                                                                                                          !! fan-out
+        redsl.validation                      ←3                                                                                              ←3                      ──                                                                                                                          hub
+  archive.legacy_scripts                      ←1                       3                       1                                                                                              ──                                                                                                
                redsl.llm                      ←4                                                                                                                                                                      ──                                                                        
        redsl.diagnostics                                              ←3                                                                                                                                                                      ──                                                
          redsl.awareness                                                                       1                                                                                                                                                                      ──                        
                redsl.dsl                                                                       1                                                                                                                                                                                              ──
   CYCLES: none
-  HUB: redsl.analyzers/ (fan-in=12)
-  HUB: redsl.validation/ (fan-in=6)
   HUB: redsl/ (fan-in=5)
+  HUB: redsl.analyzers/ (fan-in=15)
   HUB: redsl.execution/ (fan-in=10)
-  SMELL: redsl/ fan-out=11 → split needed
+  HUB: redsl.validation/ (fan-in=6)
+  SMELL: redsl/ fan-out=14 → split needed
+  SMELL: redsl.commands/ fan-out=11 → split needed
+  SMELL: redsl.execution/ fan-out=10 → split needed
   SMELL: redsl.refactors/ fan-out=8 → split needed
-  SMELL: redsl.execution/ fan-out=9 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

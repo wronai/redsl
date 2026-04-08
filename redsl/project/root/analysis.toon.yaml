@@ -1,14 +1,14 @@
-# code2llm | 86f 15353L | python:105 | 2026-04-08
+# code2llm | 86f 15301L | python:86 | 2026-04-08
 # CC̄=4.1 | critical:7/612 | dups:0 | cycles:0
 
 HEALTH[7]:
-  🟡 CC    enhance_metrics_with_radon CC=46 (limit:15)
+  🟡 CC    detect_stolen_indent CC=15 (limit:15)
+  🟡 CC    _fix_guard_in_try_block CC=17 (limit:15)
   🟡 CC    _fix_guard_with_excess_indent CC=36 (limit:15)
   🟡 CC    _fix_stolen_indent CC=27 (limit:15)
-  🟡 CC    render_markdown CC=23 (limit:15)
-  🟡 CC    _fix_guard_in_try_block CC=17 (limit:15)
-  🟡 CC    detect_stolen_indent CC=15 (limit:15)
   🟡 CC    _escape_fstring_body_braces CC=15 (limit:15)
+  🟡 CC    render_markdown CC=23 (limit:15)
+  🟡 CC    enhance_metrics_with_radon CC=46 (limit:15)
 
 REFACTOR[1]:
   1. split 7 high-CC methods  (CC>15)
@@ -41,7 +41,7 @@ LAYERS:
   │ bandit_analyzer             47L  1C    1m  CC=9      ←0
   │
   analyzers/                      CC̄=4.8    ←in:15  →out:0
-  │ !! radon_analyzer             369L  0C   12m  CC=46     ←1
+  │ !! radon_analyzer             317L  0C   12m  CC=46     ←1
   │ project_parser             300L  1C   18m  CC=12     ←0
   │ toon_analyzer              294L  1C   13m  CC=14     ←0
   │ incremental                291L  2C   17m  CC=8      ←12

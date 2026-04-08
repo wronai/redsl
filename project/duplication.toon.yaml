@@ -1,12 +1,12 @@
-# redup/duplication | 11 groups | 85f 14807L | 2026-04-08
+# redup/duplication | 11 groups | 87f 16613L | 2026-04-08
 
 SUMMARY:
-  files_scanned: 85
-  total_lines:   14807
+  files_scanned: 87
+  total_lines:   16613
   dup_groups:    11
   dup_fragments: 32
   saved_lines:   184
-  scan_ms:       5786
+  scan_ms:       5896
 
 DUPLICATES[11] (ranked by impact):
   [3a375ee1bbd58afc] ! STRU  _metrun_available  L=13 N=4 saved=39 sim=1.00
@@ -23,9 +23,9 @@ DUPLICATES[11] (ranked by impact):
       archive/legacy_scripts/hybrid_llm_refactor.py:0-8  (_count_todo_issues)
   [099664487637c86c]   STRU  is_available  L=6 N=4 saved=18 sim=1.00
       redsl/validation/vallm_bridge.py:0-5  (is_available)
-      redsl/analyzers/radon_analyzer.py:0-5  (is_radon_available)
       redsl/analyzers/redup_bridge.py:0-5  (is_available)
       redsl/analyzers/code2llm_bridge.py:0-5  (is_available)
+      redsl/analyzers/radon_analyzer.py:0-5  (is_radon_available)
   [f610b9ef4ffea9ff]   EXAC  measure_todo_reduction  L=16 N=2 saved=16 sim=1.00
       redsl/commands/batch.py:0-15  (measure_todo_reduction)
       archive/legacy_scripts/batch_refactor_semcod.py:0-15  (measure_todo_reduction)
@@ -34,13 +34,13 @@ DUPLICATES[11] (ranked by impact):
       redsl/commands/hybrid.py:0-6  (_regenerate_todo)
       archive/legacy_scripts/hybrid_llm_refactor.py:0-7  (_regenerate_todo)
   [59ffcfccc57a16ff]   EXAC  get_applied_changes  L=5 N=4 saved=15 sim=1.00
-      redsl/refactors/direct_guard.py:0-4  (get_applied_changes)
       redsl/refactors/direct_types.py:0-4  (get_applied_changes)
+      redsl/refactors/direct_guard.py:0-4  (get_applied_changes)
       redsl/refactors/direct_imports.py:0-4  (get_applied_changes)
       redsl/refactors/direct_constants.py:0-4  (get_applied_changes)
   [dc2e4f2c3146b468]   EXAC  __init__  L=4 N=4 saved=12 sim=1.00
-      redsl/refactors/direct_guard.py:0-3  (__init__)
       redsl/refactors/direct_types.py:0-3  (__init__)
+      redsl/refactors/direct_guard.py:0-3  (__init__)
       redsl/refactors/direct_imports.py:0-3  (__init__)
       redsl/refactors/direct_constants.py:0-3  (__init__)
   [828e958c9979cd9c]   EXAC  _extract_json  L=11 N=2 saved=11 sim=1.00

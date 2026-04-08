@@ -1,16 +1,16 @@
-# redsl | 93f 14715L | shell:1,python:92 | 2026-04-08
-# stats: 578 func | 0 cls | 93 mod | CC̄=3.9 | critical:1 | cycles:0
-# alerts[5]: fan-out create_app=39; fan-out _fallback_profile=24; fan-out SemanticChunker.chunk_function=21; fan-out apply_changes_with_llm_supervision=19; fan-out main=19
-# hotspots[5]: create_app fan=39; _fallback_profile fan=24; SemanticChunker.chunk_function fan=21; apply_changes_with_llm_supervision fan=19; main fan=19
-# evolution: CC̄ 3.9→3.9 (flat 0.0)
+# redsl | 95f 16521L | shell:1,python:94 | 2026-04-08
+# stats: 651 func | 0 cls | 95 mod | CC̄=4.2 | critical:7 | cycles:0
+# alerts[5]: CC enhance_metrics_with_radon=46; CC _fix_guard_with_excess_indent=36; fan-out enhance_metrics_with_radon=29; CC _fix_stolen_indent=27; fan-out _register_refactor_routes=25
+# hotspots[5]: enhance_metrics_with_radon fan=29; _register_refactor_routes fan=25; _fix_guard_with_excess_indent fan=22; detect_stolen_indent fan=21; SemanticChunker.chunk_function fan=21
+# evolution: CC̄ 3.9→4.2 (regressed +0.3)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[93]:
+M[95]:
   archive/legacy_scripts/apply_semcod_refactor.py,79
   archive/legacy_scripts/batch_quality_refactor.py,167
   archive/legacy_scripts/batch_refactor_semcod.py,154
   archive/legacy_scripts/debug_decisions.py,62
   archive/legacy_scripts/debug_llm_config.py,55
-  archive/legacy_scripts/hybrid_llm_refactor.py,331
+  archive/legacy_scripts/hybrid_llm_refactor.py,386
   archive/legacy_scripts/hybrid_quality_refactor.py,253
   project.sh,35
   redsl/__init__.py,15
@@ -27,13 +27,13 @@ M[93]:
   redsl/analyzers/parsers/validation_parser.py,40
   redsl/analyzers/python_analyzer.py,260
   redsl/analyzers/quality_visitor.py,167
-  redsl/analyzers/radon_analyzer.py,128
+  redsl/analyzers/radon_analyzer.py,317
   redsl/analyzers/redup_bridge.py,242
   redsl/analyzers/resolver.py,97
   redsl/analyzers/semantic_chunker.py,227
   redsl/analyzers/toon_analyzer.py,294
   redsl/analyzers/utils.py,140
-  redsl/api.py,359
+  redsl/api.py,386
   redsl/awareness/__init__.py,325
   redsl/awareness/change_patterns.py,125
   redsl/awareness/ecosystem.py,134
@@ -47,8 +47,9 @@ M[93]:
   redsl/awareness/timeline_toon.py,173
   redsl/ci/__init__.py,15
   redsl/ci/github_actions.py,260
-  redsl/cli.py,473
+  redsl/cli.py,579
   redsl/commands/batch.py,116
+  redsl/commands/doctor.py,1114
   redsl/commands/hybrid.py,222
   redsl/commands/multi_project.py,251
   redsl/commands/planfile_bridge.py,169
@@ -58,10 +59,11 @@ M[93]:
   redsl/commands/pyqual/mypy_analyzer.py,61
   redsl/commands/pyqual/reporter.py,136
   redsl/commands/pyqual/ruff_analyzer.py,49
+  redsl/commands/scan.py,295
   redsl/config.py,99
   redsl/consciousness_loop.py,204
   redsl/diagnostics/__init__.py,17
-  redsl/diagnostics/perf_bridge.py,275
+  redsl/diagnostics/perf_bridge.py,295
   redsl/dsl/__init__.py,22
   redsl/dsl/engine.py,417
   redsl/dsl/rule_generator.py,271
@@ -99,18 +101,69 @@ M[93]:
   redsl/validation/vallm_bridge.py,212
   refactor_output/refactor_extract_functions_20260407_143102/00_app__models.py,29
 D:
-  archive/legacy_scripts/hybrid_llm_refactor.py:
-    e: apply_changes_with_llm_supervision,_parse_args,_find_projects,_count_todo_issues,_regenerate_todo,_process_single_project,_calculate_summary_stats,_print_summary,_save_results,main
-    apply_changes_with_llm_supervision(project_path;max_changes;enable_llm;validate_direct_changes)
-    _parse_args()
-    _find_projects(semcod_root)
-    _count_todo_issues(todo_file)
-    _regenerate_todo(project)
-    _process_single_project(project;max_changes;enable_llm;validate_direct)
-    _calculate_summary_stats(all_results;enable_llm)
-    _print_summary(stats;all_results;enable_llm)
-    _save_results(all_results;semcod_root;enable_llm)
-    main()
+  redsl/analyzers/radon_analyzer.py:
+    e: is_radon_available,_normalize_radon_path,_flatten_radon_blocks,_radon_block_name,_radon_block_type,_radon_block_complexity,_is_reasonable_radon_complexity,_radon_module_line_count,_alert_signature,run_radon_cc,extract_max_cc_per_file,enhance_metrics_with_radon
+    is_radon_available()
+    _normalize_radon_path(path_value;project_dir)
+    _flatten_radon_blocks(entries)
+    _radon_block_name(entry)
+    _radon_block_type(entry)
+    _radon_block_complexity(entry)
+    _is_reasonable_radon_complexity(cc)
+    _radon_module_line_count(project_dir;normalized_path)
+    _alert_signature(alert)
+    run_radon_cc(project_dir;excludes)
+    extract_max_cc_per_file(radon_results;project_dir)
+    enhance_metrics_with_radon(metrics;project_dir)
+  redsl/commands/doctor.py:
+    e: Issue,DoctorReport,_should_skip,_python_files,detect_broken_guards,detect_stolen_indent,detect_broken_fstrings,detect_stale_pycache,detect_missing_install,detect_module_level_exit,detect_version_mismatch,detect_pytest_cli_collision,fix_broken_guards,fix_stolen_indent,fix_broken_fstrings,fix_stale_pycache,fix_missing_install,fix_module_level_exit,fix_version_mismatch,fix_pytest_collision,_guess_package_name,_is_sys_exit_call,_find_pip,_fix_via_git_revert,_fix_guard_in_try_block,_fix_guard_with_excess_indent,_fix_stolen_indent,_fix_broken_fstring,_fix_multiline_fstring_braces,_escape_fstring_body_braces,_is_fstring_expr,diagnose,heal,heal_batch
+    Issue:  # A single detected issue...
+    DoctorReport: summary_dict(0)  # Aggregated report for one project...
+    _should_skip(path)
+    _python_files(root)
+    detect_broken_guards(root)
+    detect_stolen_indent(root)
+    detect_broken_fstrings(root)
+    detect_stale_pycache(root)
+    detect_missing_install(root)
+    detect_module_level_exit(root)
+    detect_version_mismatch(root)
+    detect_pytest_cli_collision(root)
+    fix_broken_guards(root;report)
+    fix_stolen_indent(root;report)
+    fix_broken_fstrings(root;report)
+    fix_stale_pycache(root;report)
+    fix_missing_install(root;report)
+    fix_module_level_exit(root;report)
+    fix_version_mismatch(root;report)
+    fix_pytest_collision(root;report)
+    _guess_package_name(root)
+    _is_sys_exit_call(func)
+    _find_pip(root)
+    _fix_via_git_revert(path;root)
+    _fix_guard_in_try_block(path)
+    _fix_guard_with_excess_indent(path)
+    _fix_stolen_indent(path)
+    _fix_broken_fstring(path)
+    _fix_multiline_fstring_braces(src)
+    _escape_fstring_body_braces(body)
+    _is_fstring_expr(inner)
+    diagnose(root)
+    heal(root;dry_run)
+    heal_batch(semcod_root;dry_run)
+  redsl/commands/scan.py:
+    e: ProjectScanResult,_count_python_files,_detect_languages,_git_activity,_extract_hotspots,_compute_priority,_analyze_single_project,_is_project_dir,scan_folder,render_markdown,_build_recommendations
+    ProjectScanResult: is_ok(0)  # Scan result for a single project...
+    _count_python_files(project_path)
+    _detect_languages(project_path)
+    _git_activity(project_path;days)
+    _extract_hotspots(result;top_n)
+    _compute_priority(result)
+    _analyze_single_project(project_path;analyzer)
+    _is_project_dir(path)
+    scan_folder(folder;progress)
+    render_markdown(results;folder)
+    _build_recommendations(tiers)
   archive/legacy_scripts/batch_quality_refactor.py:
     e: apply_quality_refactors,main
     apply_quality_refactors(project_path)
@@ -169,15 +222,15 @@ D:
     get_refactor_suggestions(project_dir)
     _extract_json(text)
     _strip_progress_output(text)
+  redsl/analyzers/parsers/project_parser.py:
+    e: ProjectParser
+    ProjectParser: parse_project_toon(1),_parse_header_lines(2),_detect_section_change(1),_parse_section_line(5),_parse_health_line(2),_parse_alerts_line(2),_parse_hotspots_line(2),_parse_modules_line(4),_parse_layers_section_line(3),_parse_refactors_line(2),_parse_header_line(1),_parse_emoji_alert_line(1),_parse_alert_line(1),_parse_hotspot_line(1),_parse_module_line(1),_parse_module_list_line(1),_parse_layers_line(1),_parse_refactor_line(1)  # Parser sekcji project_toon...
   redsl/analyzers/parsers/validation_parser.py:
     e: ValidationParser
     ValidationParser: parse_validation_toon(1)  # Parser sekcji validation_toon...
   redsl/analyzers/parsers/duplication_parser.py:
     e: DuplicationParser
     DuplicationParser: parse_duplication_toon(1)  # Parser sekcji duplication_toon...
-  redsl/analyzers/parsers/project_parser.py:
-    e: ProjectParser
-    ProjectParser: parse_project_toon(1),_parse_header_lines(2),_detect_section_change(1),_parse_section_line(5),_parse_health_line(2),_parse_alerts_line(2),_parse_hotspots_line(2),_parse_modules_line(4),_parse_layers_section_line(3),_parse_refactors_line(2),_parse_header_line(1),_parse_emoji_alert_line(1),_parse_alert_line(1),_parse_hotspot_line(1),_parse_module_line(1),_parse_module_list_line(1),_parse_layers_line(1),_parse_refactor_line(1)  # Parser sekcji project_toon...
   redsl/commands/hybrid.py:
     e: _count_todo_issues,_regenerate_todo,_calculate_summary_stats,_print_summary,_save_results,run_hybrid_quality_refactor,_find_projects,_process_single_project,run_hybrid_batch
     _count_todo_issues(todo_file)
@@ -242,6 +295,24 @@ D:
     _print_summary(stats;all_results)
     _save_results(all_results;semcod_root)
     main()
+  archive/legacy_scripts/hybrid_llm_refactor.py:
+    e: _build_config,_select_decisions,_group_decisions_by_file,_build_changes_by_type,_apply_decision,_process_decisions_for_file,apply_changes_with_llm_supervision,_parse_args,_find_projects,_count_todo_issues,_regenerate_todo,_process_single_project,_calculate_summary_stats,_print_summary,_save_results,main
+    _build_config(enable_llm)
+    _select_decisions(orchestrator;analysis;enable_llm;max_changes)
+    _group_decisions_by_file(decisions)
+    _build_changes_by_type()
+    _apply_decision(orchestrator;decision;project_path;changes_by_type)
+    _process_decisions_for_file(orchestrator;file_path;decisions;project_path;max_changes;total_applied;total_errors;changes_by_type)
+    apply_changes_with_llm_supervision(project_path;max_changes;enable_llm;validate_direct_changes)
+    _parse_args()
+    _find_projects(semcod_root)
+    _count_todo_issues(todo_file)
+    _regenerate_todo(project)
+    _process_single_project(project;max_changes;enable_llm;validate_direct)
+    _calculate_summary_stats(all_results;enable_llm)
+    _print_summary(stats;all_results;enable_llm)
+    _save_results(all_results;semcod_root;enable_llm)
+    main()
   redsl/commands/planfile_bridge.py:
     e: is_available,_build_ticket_cmd,_extract_ticket_id,create_ticket,list_tickets,report_refactor_results,_safe_json
     is_available()
@@ -269,12 +340,6 @@ D:
     validate_patch(file_path;refactored_code)
     validate_proposal(proposal)
     blend_confidence(base_confidence;vallm_score)
-  redsl/analyzers/radon_analyzer.py:
-    e: is_radon_available,run_radon_cc,extract_max_cc_per_file,enhance_metrics_with_radon
-    is_radon_available()
-    run_radon_cc(project_dir;excludes)
-    extract_max_cc_per_file(radon_results;project_dir)
-    enhance_metrics_with_radon(metrics;project_dir)  # metrics: list[CodeMetrics] | AnalysisResult
   redsl/dsl/engine.py:
     e: Operator,RefactorAction,Condition,Rule,Decision,DSLEngine
     Operator(str,Enum):
@@ -285,6 +350,41 @@ D:
     DSLEngine: __init__(0),_load_default_rules(0),add_rule(1),add_rules_from_yaml(1),evaluate(1),top_decisions(2),explain(1)  # Silnik ewaluacji reguł DSL.
 
 Przyjmuje zbiór reguł i konteks...
+  redsl/cli.py:
+    e: _setup_logging,cli,_build_awareness_manager,_echo_json,history,scan,ecosystem,health,predict,self_assess,_build_refactor_config,_collect_refactor_analysis_and_decisions,_emit_refactor_dry_run,_build_refactor_report_payload,_emit_refactor_text_summary,_emit_refactor_live_output,_prepare_refactor_application,refactor,batch,batch_semcod,batch_hybrid,pyqual,pyqual_analyze,pyqual_fix,debug,debug_config,debug_decisions,perf,cost,doctor,doctor_check,doctor_heal,doctor_batch
+    _setup_logging(project_path;verbose)
+    cli(ctx;verbose)
+    _build_awareness_manager()
+    _echo_json(payload)
+    history(ctx;project_path;depth)
+    scan(ctx;folder;output_path;quiet)
+    ecosystem(ctx;root_path)
+    health(ctx;project_path;depth)
+    predict(ctx;project_path;depth)
+    self_assess(ctx;top_k)
+    _build_refactor_config(dry_run)
+    _collect_refactor_analysis_and_decisions(orchestrator;project_path;max_actions)
+    _emit_refactor_dry_run(format;decisions;analysis)
+    _build_refactor_report_payload(report;decisions;analysis)
+    _emit_refactor_text_summary(report)
+    _emit_refactor_live_output(report;decisions;analysis;format)
+    _prepare_refactor_application(format;sandbox;decisions;analysis)
+    refactor(ctx;project_path;max_actions;dry_run;format;use_code2llm;validate_regix;rollback;sandbox)
+    batch()
+    batch_semcod(semcod_root;max_actions;format)
+    batch_hybrid(semcod_root;max_changes)
+    pyqual()
+    pyqual_analyze(project_path;config;format)
+    pyqual_fix(project_path;config)
+    debug()
+    debug_config(show_env)
+    debug_decisions(project_path;limit)
+    perf(ctx;project_path)
+    cost(ctx;project_path;max_actions)
+    doctor()
+    doctor_check(project_path;format)
+    doctor_heal(project_path;dry_run;format)
+    doctor_batch(semcod_root;dry_run;format)
   redsl/commands/pyqual/bandit_analyzer.py:
     e: BanditAnalyzer
     BanditAnalyzer: analyze(3)  # Uruchamia bandit i zbiera wyniki bezpieczeństwa...
@@ -396,18 +496,6 @@ Pozwala...
   redsl/commands/pyqual/ast_analyzer.py:
     e: AstAnalyzer
     AstAnalyzer: analyze(3),_analyze_file(6)  # Analizuje pliki Python przez AST w poszukiwaniu typowych pro...
-  redsl/diagnostics/perf_bridge.py:
-    e: Bottleneck,CriticalStep,PerformanceReport,_metrun_available,_parse_metrun_output,_fallback_profile,profile_refactor_cycle,profile_llm_latency,profile_memory_operations,generate_optimization_report
-    Bottleneck:
-    CriticalStep:
-    PerformanceReport:
-    _metrun_available()
-    _parse_metrun_output(stdout)
-    _fallback_profile(project_dir)
-    profile_refactor_cycle(project_dir)
-    profile_llm_latency()
-    profile_memory_operations()
-    generate_optimization_report(project_dir)
   redsl/refactors/direct_imports.py:
     e: DirectImportRefactorer
     DirectImportRefactorer: __init__(0),remove_unused_imports(2),_collect_unused_import_edits(3),_collect_import_edits(5),_collect_import_from_edits(5),_is_star_import(0),_build_import_from_replacement(3),_alias_name(0),_format_alias(0),_remove_statement_lines(1),_remove_replaced_statement_lines(1),_apply_line_edits(3),_get_indent(0),_clean_blank_lines(0),get_applied_changes(0)  # Handles import-related direct refactoring...
@@ -426,36 +514,6 @@ Pozwala...
     _matches_gitignore_literal_pattern(pattern;rel_str)
     _matches_gitignore_patterns(file_path;project_dir;gitignore_patterns)
     _try_number(val)
-  redsl/cli.py:
-    e: _setup_logging,cli,_build_awareness_manager,_echo_json,history,ecosystem,health,predict,self_assess,_build_refactor_config,_collect_refactor_analysis_and_decisions,_emit_refactor_dry_run,_build_refactor_report_payload,_emit_refactor_text_summary,_emit_refactor_live_output,_prepare_refactor_application,refactor,batch,batch_semcod,batch_hybrid,pyqual,pyqual_analyze,pyqual_fix,debug,debug_config,debug_decisions,perf,cost
-    _setup_logging(project_path;verbose)
-    cli(ctx;verbose)
-    _build_awareness_manager()
-    _echo_json(payload)
-    history(ctx;project_path;depth)
-    ecosystem(ctx;root_path)
-    health(ctx;project_path;depth)
-    predict(ctx;project_path;depth)
-    self_assess(ctx;top_k)
-    _build_refactor_config(dry_run)
-    _collect_refactor_analysis_and_decisions(orchestrator;project_path;max_actions)
-    _emit_refactor_dry_run(format;decisions;analysis)
-    _build_refactor_report_payload(report;decisions;analysis)
-    _emit_refactor_text_summary(report)
-    _emit_refactor_live_output(report;decisions;analysis;format)
-    _prepare_refactor_application(format;sandbox;decisions;analysis)
-    refactor(ctx;project_path;max_actions;dry_run;format;use_code2llm;validate_regix;rollback;sandbox)
-    batch()
-    batch_semcod(semcod_root;max_actions;format)
-    batch_hybrid(semcod_root;max_changes)
-    pyqual()
-    pyqual_analyze(project_path;config;format)
-    pyqual_fix(project_path;config)
-    debug()
-    debug_config(show_env)
-    debug_decisions(project_path;limit)
-    perf(ctx;project_path)
-    cost(ctx;project_path;max_actions)
   redsl/main.py:
     e: _get_orchestrator,_analysis_source_method,_analysis_function_metrics,_print_analysis_summary,_print_top_functions,_print_alerts,_print_duplicates,_print_analysis_plan,cmd_analyze,cmd_explain,cmd_refactor,cmd_memory_stats,cmd_serve,_print_usage,_get_arg,_has_flag,_dispatch_analyze,_dispatch_explain,_dispatch_refactor,_dispatch_memory_stats,_dispatch_serve,main
     _get_orchestrator(model)
@@ -480,6 +538,22 @@ Pozwala...
     _dispatch_memory_stats(args)
     _dispatch_serve(args)
     main()
+  redsl/diagnostics/perf_bridge.py:
+    e: Bottleneck,CriticalStep,PerformanceReport,_metrun_available,_parse_metrun_output,_render_profile_stats,_profile_fallback_target,_parse_profile_bottlenecks,_build_fallback_suggestions,_fallback_profile,profile_refactor_cycle,profile_llm_latency,profile_memory_operations,generate_optimization_report
+    Bottleneck:
+    CriticalStep:
+    PerformanceReport:
+    _metrun_available()
+    _parse_metrun_output(stdout)
+    _render_profile_stats(pr)
+    _profile_fallback_target(project_dir)
+    _parse_profile_bottlenecks(stats_output)
+    _build_fallback_suggestions(bottlenecks)
+    _fallback_profile(project_dir)
+    profile_refactor_cycle(project_dir)
+    profile_llm_latency()
+    profile_memory_operations()
+    generate_optimization_report(project_dir)
   redsl/execution/validation.py:
     e: _snapshot_regix_before,_validate_with_regix
     _snapshot_regix_before(project_dir;validate_regix)
@@ -599,7 +673,7 @@ Agent nie czeka na polec...
 
 Deleguje do ToonAnalyzer (...
   redsl/api.py:
-    e: AnalyzeRequest,RefactorRequest,BatchSemcodRequest,BatchHybridRequest,DebugConfigRequest,DebugDecisionsRequest,PyQualAnalyzeRequest,PyQualFixRequest,RulesRequest,DecisionResponse,CycleResponse,create_app
+    e: AnalyzeRequest,RefactorRequest,BatchSemcodRequest,BatchHybridRequest,DebugConfigRequest,DebugDecisionsRequest,PyQualAnalyzeRequest,PyQualFixRequest,RulesRequest,DecisionResponse,CycleResponse,_build_api_orchestrator,_register_health_route,_register_refactor_routes,_register_batch_routes,_register_debug_routes,_register_pyqual_routes,create_app
     AnalyzeRequest(BaseModel):
     RefactorRequest(BaseModel):
     BatchSemcodRequest(BaseModel):
@@ -611,6 +685,12 @@ Deleguje do ToonAnalyzer (...
     RulesRequest(BaseModel):
     DecisionResponse(BaseModel):
     CycleResponse(BaseModel):
+    _build_api_orchestrator()
+    _register_health_route(app;orchestrator)
+    _register_refactor_routes(app;orchestrator)
+    _register_batch_routes(app)
+    _register_debug_routes(app;orchestrator)
+    _register_pyqual_routes(app)
     create_app()
   project.sh:
   redsl/__init__.py:

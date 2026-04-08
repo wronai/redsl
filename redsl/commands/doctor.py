@@ -692,6 +692,15 @@ def _fix_guard_with_excess_indent(path: Path) -> bool:
         return False
 
     lines = src.splitlines(keepends=True)
+    new_lines, changed = _process_guard_and_indent(lines)
+
+    if changed:
+        result = "".join(new_lines)
+        path.write_text(result, encoding="utf-8")
+        return _iterative_fix(path, src)
+    return False
+
+def _process_guard_and_indent(lines: list[str]) -> tuple[list[str], bool]:
     new_lines: list[str] = []
     i = 0
     changed = False
@@ -699,105 +708,137 @@ def _fix_guard_with_excess_indent(path: Path) -> bool:
     while i < len(lines):
         stripped = lines[i].rstrip()
 
-        # Step 1: Remove if __name__ guard, emit body at module level
         if _GUARD_RE.match(stripped):
-            guard_body: list[str] = []
-            j = i + 1
-            while j < len(lines):
-                bl = lines[j]
-                if bl.strip() == "" or bl.startswith("    ") or bl.startswith("\t"):
-                    guard_body.append(bl)
-                    j += 1
-                else:
-                    break
-            while guard_body and not guard_body[-1].strip():
-                guard_body.pop()
-            # Un-indent guard body to module level
-            for bl in guard_body:
-                if bl.startswith("    "):
-                    new_lines.append(bl[4:])
-                elif bl.startswith("\t"):
-                    new_lines.append(bl[1:])
-                else:
-                    new_lines.append(bl)
-            if guard_body:
-                new_lines.append("\n")
-            i = j
-            changed = True
+            new_lines, i, changed = _handle_guard(lines, i, new_lines)
             continue
 
-        # Step 2: Fix excess indent in function bodies
         if _DEF_RE.match(stripped.lstrip()) and stripped.endswith(":"):
-            def_indent = len(lines[i]) - len(lines[i].lstrip())
-            new_lines.append(lines[i])
-            i += 1
-            # Check for excess indent pattern
-            peek = i
-            while peek < len(lines) and not lines[peek].strip():
-                peek += 1
-            if peek < len(lines):
-                actual = len(lines[peek]) - len(lines[peek].lstrip())
-                expected = def_indent + 4
-                if actual == expected:
-                    # Scan up to 10 body lines for a jump to expected+4
-                    has_excess = False
-                    scan = peek + 1
-                    while scan < min(peek + 10, len(lines)):
-                        if not lines[scan].strip():
-                            scan += 1
-                            continue
-                        scan_indent = len(lines[scan]) - len(lines[scan].lstrip())
-                        if scan_indent == expected + 4:
-                            has_excess = True
-                            break
-                        elif scan_indent <= def_indent:
-                            break
-                        scan += 1
-                    if has_excess:
-                        # Emit correct-indent lines as-is, un-indent excess lines
-                        while i < len(lines):
-                            bl = lines[i]
-                            bl_indent = len(bl) - len(bl.lstrip()) if bl.strip() else -1
-                            if not bl.strip():
-                                new_lines.append(bl)
-                                i += 1
-                                continue
-                            if bl_indent <= def_indent and i > peek:
-                                break
-                            if bl_indent >= expected + 4:
-                                new_lines.append(bl[4:])
-                                changed = True
-                            else:
-                                new_lines.append(bl)
-                            i += 1
-                        continue
+            new_lines, i, changed = _handle_function_indent(lines, i, new_lines, changed)
             continue
 
         new_lines.append(lines[i])
         i += 1
 
-    if changed:
-        result = "".join(new_lines)
-        # Write intermediate result, then chain stolen-indent fixer
-        # to handle any remaining un-indented nested bodies
-        path.write_text(result, encoding="utf-8")
-        # Apply stolen-indent fix iteratively (up to 5 passes)
-        for _ in range(5):
-            try:
-                ast.parse(path.read_text(encoding="utf-8"))
-                return True
-            except SyntaxError:
-                if not _fix_stolen_indent(path):
-                    break
-        # Final check
+    return new_lines, changed
+
+def _handle_guard(lines: list[str], i: int, new_lines: list[str]) -> tuple[list[str], int, bool]:
+    guard_body: list[str] = []
+    j = i + 1
+    while j < len(lines):
+        bl = lines[j]
+        if bl.strip() == "" or bl.startswith("    ") or bl.startswith("\t"):
+            guard_body.append(bl)
+            j += 1
+        else:
+            break
+    while guard_body and not guard_body[-1].strip():
+        guard_body.pop()
+    for bl in guard_body:
+        if bl.startswith("    "):
+            new_lines.append(bl[4:])
+        elif bl.startswith("\t"):
+            new_lines.append(bl[1:])
+        else:
+            new_lines.append(bl)
+    if guard_body:
+        new_lines.append("\n")
+    return new_lines, j, True
+
+def _handle_function_indent(lines: list[str], i: int, new_lines: list[str], changed: bool) -> tuple[list[str], int, bool]:
+    def_indent = len(lines[i]) - len(lines[i].lstrip())
+    expected = def_indent + 4
+    new_lines.append(lines[i])
+    i += 1
+
+    peek = i
+    while peek < len(lines) and not lines[peek].strip():
+        peek += 1
+
+    if peek < len(lines):
+        next_line = lines[peek]
+        actual = len(next_line) - len(next_line.lstrip())
+
+        if actual == def_indent and next_line.strip():
+            new_lines, i, changed = _fix_body_indent(lines, i, new_lines, def_indent, expected, changed)
+        elif actual == expected:
+            new_lines, i, changed = _check_excess_indent(lines, i, new_lines, def_indent, expected, changed)
+    return new_lines, i, changed
+
+def _fix_body_indent(lines: list[str], i: int, new_lines: list[str], def_indent: int, expected: int, changed: bool) -> tuple[list[str], int, bool]:
+    saw_blank = False
+    while i < len(lines):
+        bl = lines[i]
+        bl_stripped = bl.rstrip()
+        bl_indent = len(bl) - len(bl.lstrip()) if bl.strip() else -1
+
+        if not bl.strip():
+            saw_blank = True
+            new_lines.append(bl)
+            i += 1
+            continue
+
+        if bl_indent < def_indent:
+            break
+
+        if bl_indent == def_indent and saw_blank and _DEF_RE.match(bl_stripped.lstrip()):
+            break
+
+        saw_blank = False
+        if bl_indent <= def_indent:
+            new_lines.append(" " * expected + bl.lstrip())
+            changed = True
+        else:
+            new_lines.append(bl)
+        i += 1
+    return new_lines, i, changed
+
+def _check_excess_indent(lines: list[str], i: int, new_lines: list[str], def_indent: int, expected: int, changed: bool) -> tuple[list[str], int, bool]:
+    has_excess = False
+    scan = i + 1
+    while scan < min(i + 10, len(lines)):
+        if not lines[scan].strip():
+            scan += 1
+            continue
+        scan_indent = len(lines[scan]) - len(lines[scan].lstrip())
+        if scan_indent == expected + 4:
+            has_excess = True
+            break
+        elif scan_indent <= def_indent:
+            break
+        scan += 1
+
+    if has_excess:
+        while i < len(lines):
+            bl = lines[i]
+            bl_indent = len(bl) - len(bl.lstrip()) if bl.strip() else -1
+            if not bl.strip():
+                new_lines.append(bl)
+                i += 1
+                continue
+            if bl_indent <= def_indent and i > scan:
+                break
+            if bl_indent >= expected + 4:
+                new_lines.append(bl[4:])
+                changed = True
+            else:
+                new_lines.append(bl)
+            i += 1
+    return new_lines, i, changed
+
+def _iterative_fix(path: Path, original_src: str) -> bool:
+    for _ in range(5):
         try:
             ast.parse(path.read_text(encoding="utf-8"))
             return True
         except SyntaxError:
-            # Revert to original
-            path.write_text(src, encoding="utf-8")
-            return False
-    return False
+            if not _fix_stolen_indent(path):
+                break
+    try:
+        ast.parse(path.read_text(encoding="utf-8"))
+        return True
+    except SyntaxError:
+        path.write_text(original_src, encoding="utf-8")
+        return False
 
 
 def _fix_stolen_indent(path: Path) -> bool:
@@ -827,7 +868,6 @@ def _fix_stolen_indent(path: Path) -> bool:
             new_lines.append(line)
             i += 1
 
-            # Peek at next non-blank line
             peek = i
             while peek < len(lines) and not lines[peek].strip():
                 peek += 1
@@ -837,66 +877,9 @@ def _fix_stolen_indent(path: Path) -> bool:
                 actual = len(next_line) - len(next_line.lstrip())
 
                 if actual == def_indent and next_line.strip():
-                    # Body not indented — add 4 spaces to each body line
-                    # Track blank-line state to detect end of function
-                    saw_blank = False
-                    while i < len(lines):
-                        bl = lines[i]
-                        bl_stripped = bl.rstrip()
-                        bl_indent = len(bl) - len(bl.lstrip()) if bl.strip() else -1
-
-                        if not bl.strip():
-                            saw_blank = True
-                            new_lines.append(bl)
-                            i += 1
-                            continue
-
-                        if bl_indent < def_indent:
-                            break
-
-                        # A def/class at same indent after a blank line = new function
-                        if bl_indent == def_indent and saw_blank and _DEF_RE.match(bl_stripped.lstrip()):
-                            break
-
-                        saw_blank = False
-                        if bl_indent <= def_indent:
-                            new_lines.append(" " * expected + bl.lstrip())
-                            changed = True
-                        else:
-                            # Indent sub-lines too (e.g. nested blocks)
-                            new_lines.append(" " * 4 + bl)
-                            changed = True
-                        i += 1
-                    continue
-
+                    new_lines, i, changed = _fix_body_indent(lines, i, new_lines, def_indent, expected, changed)
                 elif actual > expected + 4 and next_line.strip():
-                    # Excess indent — remove 4 spaces from body lines
-                    excess = actual - expected
-                    while i < len(lines):
-                        bl = lines[i]
-                        bl_indent = len(bl) - len(bl.lstrip()) if bl.strip() else -1
-
-                        if not bl.strip():
-                            new_lines.append(bl)
-                            i += 1
-                            continue
-
-                        if bl_indent <= def_indent:
-                            break
-
-                        if bl_indent >= actual:
-                            new_lines.append(bl[excess:] if bl[:excess].strip() == "" else bl)
-                            changed = True
-                        else:
-                            new_lines.append(bl)
-                        i += 1
-                    continue
-        else:
-            new_lines.append(line)
-            i += 1
-
-    if changed:
-        path.write_text("".join(new_lines), encoding="utf-8")
+                    new_lines, i, changed = _check_excess_indent(lines, i, new_lines, def_indent, expected, changed)
     return changed
 
 
@@ -916,11 +899,9 @@ def _fix_broken_fstring(path: Path) -> bool:
     new_src = src
     changed = False
 
-    # Strategy 1: Fix multiline f-strings with unescaped braces
     new_src, s1 = _fix_multiline_fstring_braces(new_src)
     changed = changed or s1
 
-    # Strategy 2: Fix single-line f-strings with missing open brace
     single_close = re.compile(r'(f["\'].*?)(\b\w+)(})')
     for line in new_src.splitlines():
         if not ('f"' in line or "f'" in line):
@@ -993,7 +974,6 @@ def _escape_fstring_body_braces(body: str) -> str:
                 result.append("{{")
                 i += 2
                 continue
-            # Find matching }
             depth = 1
             j = i + 1
             while j < len(body) and depth > 0:
@@ -1087,7 +1067,6 @@ def heal(root: Path, dry_run: bool = False) -> DoctorReport:
     if dry_run or not report.issues:
         return report
 
-    # Group issues by category and apply fixers
     categories = {i.category for i in report.issues if i.auto_fixable}
     for category in categories:
         fixer = _FIXERS.get(category)

@@ -39,6 +39,22 @@ class TestPerfBridge:
         assert report.bottlenecks[0].func == "foo.bar"
         assert report.critical_path[0].cumulative_ms == 200.0
 
+    def test_parse_profile_bottlenecks_and_suggestions(self):
+        from redsl.diagnostics.perf_bridge import (
+            _build_fallback_suggestions,
+            _parse_profile_bottlenecks,
+        )
+
+        stats_output = "3 0.003 0.001 0.500 0.000 somefunc\n"
+        bottlenecks = _parse_profile_bottlenecks(stats_output)
+
+        assert len(bottlenecks) == 1
+        assert bottlenecks[0].func == "somefunc"
+        assert bottlenecks[0].calls == 3
+
+        suggestions = _build_fallback_suggestions(bottlenecks)
+        assert suggestions == ["Hottest function: somefunc (500ms, 3 calls)"]
+
     def test_parse_metrun_output_valid_json(self):
         import json
         from redsl.diagnostics.perf_bridge import _parse_metrun_output

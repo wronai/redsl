@@ -94,11 +94,18 @@ def _parse_metrun_output(stdout: str) -> PerformanceReport:
         return PerformanceReport(total_time_ms=0.0, source="metrun-parse-error")
 
 
-def _fallback_profile(project_dir: Path) -> PerformanceReport:
-    """Fallback — cProfile-based profiling when metrun is unavailable."""
-    import cProfile
+def _render_profile_stats(pr: Any) -> str:
     import io
     import pstats
+
+    buf = io.StringIO()
+    ps = pstats.Stats(pr, stream=buf).sort_stats("cumulative")
+    ps.print_stats(10)
+    return buf.getvalue()
+
+
+def _profile_fallback_target(project_dir: Path) -> tuple[float, str]:
+    import cProfile
     import time
 
     pr = cProfile.Profile()
@@ -107,6 +114,7 @@ def _fallback_profile(project_dir: Path) -> PerformanceReport:
 
     try:
         from redsl.analyzers import CodeAnalyzer
+
         CodeAnalyzer().analyze_project(project_dir)
     except Exception as exc:
         logger.debug("Fallback profile target failed: %s", exc)
@@ -114,37 +122,49 @@ def _fallback_profile(project_dir: Path) -> PerformanceReport:
     elapsed_ms = (time.perf_counter() - start) * 1000
     pr.disable()
 
-    buf = io.StringIO()
-    ps = pstats.Stats(pr, stream=buf).sort_stats("cumulative")
-    ps.print_stats(10)
+    return elapsed_ms, _render_profile_stats(pr)
 
+
+def _parse_profile_bottlenecks(stats_output: str) -> list[Bottleneck]:
     bottlenecks: list[Bottleneck] = []
-    for line in buf.getvalue().splitlines():
+
+    for line in stats_output.splitlines():
         parts = line.split()
         if len(parts) >= 6 and parts[0].replace(".", "", 1).isdigit():
             try:
                 calls = int(parts[0])
                 cumtime = float(parts[3])
                 func_name = parts[-1]
-                score = cumtime * calls
                 bottlenecks.append(
                     Bottleneck(
                         func=func_name,
                         time_ms=cumtime * 1000,
                         calls=calls,
-                        score=score,
+                        score=cumtime * calls,
                     )
                 )
             except (ValueError, IndexError):
                 continue
 
     bottlenecks.sort(key=lambda b: b.score, reverse=True)
-    suggestions = []
+    return bottlenecks
+
+
+def _build_fallback_suggestions(bottlenecks: list[Bottleneck]) -> list[str]:
+    suggestions: list[str] = []
     if bottlenecks:
         top = bottlenecks[0]
         suggestions.append(
             f"Hottest function: {top.func} ({top.time_ms:.0f}ms, {top.calls} calls)"
         )
+    return suggestions
+
+
+def _fallback_profile(project_dir: Path) -> PerformanceReport:
+    """Fallback — cProfile-based profiling when metrun is unavailable."""
+    elapsed_ms, stats_output = _profile_fallback_target(project_dir)
+    bottlenecks = _parse_profile_bottlenecks(stats_output)
+    suggestions = _build_fallback_suggestions(bottlenecks)
 
     return PerformanceReport(
         total_time_ms=elapsed_ms,

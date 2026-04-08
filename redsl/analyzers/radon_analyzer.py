@@ -195,6 +195,19 @@ def enhance_metrics_with_radon(
         return
 
     max_cc_by_file = extract_max_cc_per_file(radon_results, project_dir)
+    existing_function_metrics, existing_module_metrics = _collect_existing_metrics(metric_list)
+    existing_alerts = _collect_existing_alerts(result)
+    allowed_paths = _get_allowed_paths(existing_module_metrics, existing_function_metrics)
+
+    updated, added, alert_count = _process_radon_results(
+        radon_results, project_dir, metric_list, max_cc_by_file, existing_function_metrics, 
+        existing_module_metrics, allowed_paths, result, existing_alerts
+    )
+
+    _update_result_stats(result, metric_list, updated, added, alert_count)
+
+
+def _collect_existing_metrics(metric_list: list[Any]) -> tuple[dict[tuple[str, str], CodeMetrics], dict[str, CodeMetrics]]:
     existing_function_metrics: dict[tuple[str, str], CodeMetrics] = {}
     existing_module_metrics: dict[str, CodeMetrics] = {}
 
@@ -206,14 +219,25 @@ def enhance_metrics_with_radon(
         else:
             existing_module_metrics[metric.file_path] = metric
 
+    return existing_function_metrics, existing_module_metrics
+
+def _collect_existing_alerts(result: AnalysisResult | None) -> set[tuple[str, str, int, int]]:
     existing_alerts: set[tuple[str, str, int, int]] = set()
     if result is not None:
         for alert in result.alerts:
             existing_alerts.add(_alert_signature(alert))
+    return existing_alerts
 
+def _get_allowed_paths(existing_module_metrics: dict[str, CodeMetrics], existing_function_metrics: dict[tuple[str, str], CodeMetrics]) -> set[str]:
     allowed_paths = set(existing_module_metrics)
     allowed_paths.update(path for path, _ in existing_function_metrics)
+    return allowed_paths
 
+def _process_radon_results(
+    radon_results: dict[str, Any], project_dir: Path, metric_list: list[Any], max_cc_by_file: dict[str, int],
+    existing_function_metrics: dict[tuple[str, str], CodeMetrics], existing_module_metrics: dict[str, CodeMetrics],
+    allowed_paths: set[str], result: AnalysisResult | None, existing_alerts: set[tuple[str, str, int, int]]
+) -> tuple[int, int, int]:
     updated = 0
     added = 0
     alert_count = 0
@@ -231,76 +255,105 @@ def enhance_metrics_with_radon(
         module_cc = max_cc_by_file.get(normalized_path, 0)
         direct_blocks = [entry for entry in entries if isinstance(entry, dict)]
         all_blocks = _flatten_radon_blocks(entries)
-        function_count = 0
-        class_count = 0
+        function_count, class_count = _count_blocks(direct_blocks)
         is_init_file = normalized_path.endswith("__init__.py")
 
-        for entry in direct_blocks:
-            if "class" in _radon_block_type(entry):
-                class_count += 1
-            else:
-                function_count += 1
+        updated, added, alert_count = _update_function_metrics(
+            all_blocks, normalized_path, module_lines, module_cc, is_init_file, 
+            existing_function_metrics, metric_list, result, existing_alerts, 
+            updated, added, alert_count
+        )
 
-        for entry in all_blocks:
-            name = _radon_block_name(entry)
-            if not name:
-                continue
+        updated = _update_module_metrics(normalized_path, module_lines, module_cc, function_count, class_count, existing_module_metrics, updated)
 
-            cc = _radon_block_complexity(entry)
-            if not _is_reasonable_radon_complexity(cc):
-                continue
-            if cc > module_cc:
-                module_cc = cc
+    return updated, added, alert_count
 
-            if "class" in _radon_block_type(entry):
-                continue
+def _count_blocks(direct_blocks: list[dict[str, Any]]) -> tuple[int, int]:
+    function_count = 0
+    class_count = 0
 
-            metric_key = (normalized_path, name)
-            metric = existing_function_metrics.get(metric_key)
-            if metric is None:
-                if cc <= 10:
-                    continue
-                metric = CodeMetrics(
-                    file_path=normalized_path,
-                    function_name=name,
-                    module_lines=module_lines,
-                    cyclomatic_complexity=cc,
-                    is_public_api=is_init_file or not name.startswith("_"),
-                )
-                metric_list.append(metric)
-                existing_function_metrics[metric_key] = metric
-                added += 1
-            elif cc > metric.cyclomatic_complexity:
-                metric.cyclomatic_complexity = cc
-                updated += 1
+    for entry in direct_blocks:
+        if "class" in _radon_block_type(entry):
+            class_count += 1
+        else:
+            function_count += 1
 
-            if result is None or cc <= 10:
-                continue
+    return function_count, class_count
 
-            alert = {
-                "type": "cc_exceeded",
-                "name": name,
-                "severity": 3 if cc > 20 else 2,
-                "value": cc,
-                "limit": 10,
-            }
-            signature = _alert_signature(alert)
-            if signature not in existing_alerts:
-                result.alerts.append(alert)
-                existing_alerts.add(signature)
-                alert_count += 1
-
-        module_metric = existing_module_metrics.get(normalized_path)
-        if module_metric is None:
+def _update_function_metrics(
+    all_blocks: list[dict[str, Any]], normalized_path: str, module_lines: int, module_cc: int, is_init_file: bool,
+    existing_function_metrics: dict[tuple[str, str], CodeMetrics], metric_list: list[Any], result: AnalysisResult | None, 
+    existing_alerts: set[tuple[str, str, int, int]], updated: int, added: int, alert_count: int
+) -> tuple[int, int, int]:
+    for entry in all_blocks:
+        name = _radon_block_name(entry)
+        if not name:
             continue
 
-        module_metric.module_lines = max(module_metric.module_lines, module_lines)
-        module_metric.function_count = max(module_metric.function_count, function_count)
-        module_metric.class_count = max(module_metric.class_count, class_count)
-        if module_cc > module_metric.cyclomatic_complexity:
-            module_metric.cyclomatic_complexity = module_cc
+        cc = _radon_block_complexity(entry)
+        if not _is_reasonable_radon_complexity(cc):
+            continue
+        if cc > module_cc:
+            module_cc = cc
+
+        if "class" in _radon_block_type(entry):
+            continue
+
+        metric_key = (normalized_path, name)
+        metric = existing_function_metrics.get(metric_key)
+        if metric is None:
+            if cc <= 10:
+                continue
+            metric = CodeMetrics(
+                file_path=normalized_path,
+                function_name=name,
+                module_lines=module_lines,
+                cyclomatic_complexity=cc,
+                is_public_api=is_init_file or not name.startswith("_"),
+            )
+            metric_list.append(metric)
+            existing_function_metrics[metric_key] = metric
+            added += 1
+        elif cc > metric.cyclomatic_complexity:
+            metric.cyclomatic_complexity = cc
             updated += 1
 
+        if result is None or cc <= 10:
+            continue
+
+        alert = {
+            "type": "cc_exceeded",
+            "name": name,
+            "severity": 3 if cc > 20 else 2,
+            "value": cc,
+            "limit": 10,
+        }
+        signature = _alert_signature(alert)
+        if signature not in existing_alerts:
+            result.alerts.append(alert)
+            existing_alerts.add(signature)
+            alert_count += 1
+
+    return updated, added, alert_count
+
+def _update_module_metrics(
+    normalized_path: str, module_lines: int, module_cc: int, function_count: int, class_count: int,
+    existing_module_metrics: dict[str, CodeMetrics], updated: int
+) -> int:
+    module_metric = existing_module_metrics.get(normalized_path)
+    if module_metric is None:
+        return updated
+
+    module_metric.module_lines = max(module_metric.module_lines, module_lines)
+    module_metric.function_count = max(module_metric.function_count, function_count)
+    module_metric.class_count = max(module_metric.class_count, class_count)
+    if module_cc > module_metric.cyclomatic_complexity:
+        module_metric.cyclomatic_complexity = module_cc
+        updated += 1
+
+    return updated
+
+def _update_result_stats(result: AnalysisResult | None, metric_list: list[Any], updated: int, added: int, alert_count: int) -> None:
     if result is not None:
         result.total_files = len({m.file_path for m in metric_list if not m.function_name})
         result.total_lines = sum(m.module_lines for m in metric_list if not m.function_name)

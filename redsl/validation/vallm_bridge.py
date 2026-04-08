@@ -44,8 +44,17 @@ def _extract_json(text: str) -> str:
 
 
 def is_available() -> bool:
-    """Sprawdź czy vallm jest zainstalowane i dostępne w PATH."""
-    return shutil.which("vallm") is not None
+    """Sprawdź czy vallm jest zainstalowane i w pełni działa (nie tylko czy jest w PATH)."""
+    if shutil.which("vallm") is None:
+        return False
+    try:
+        result = subprocess.run(
+            ["vallm", "--help"],
+            capture_output=True, text=True, timeout=5,
+        )
+        return result.returncode == 0
+    except Exception:
+        return False
 
 
 def validate_patch(file_path: str | Path, refactored_code: str) -> dict:
