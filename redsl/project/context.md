@@ -6,12 +6,17 @@
 - **Primary Language**: python
 - **Languages**: python: 85
 - **Analysis Mode**: static
-- **Total Functions**: 584
+- **Total Functions**: 596
 - **Total Classes**: 100
 - **Modules**: 85
-- **Entry Points**: 420
+- **Entry Points**: 424
 
 ## Architecture by Module
+
+### commands.doctor
+- **Functions**: 33
+- **Classes**: 2
+- **File**: `doctor.py`
 
 ### cli
 - **Functions**: 32
@@ -25,11 +30,6 @@
 ### main
 - **Functions**: 22
 - **File**: `main.py`
-
-### commands.doctor
-- **Functions**: 22
-- **Classes**: 2
-- **File**: `doctor.py`
 
 ### memory
 - **Functions**: 18
@@ -75,14 +75,14 @@
 - **Classes**: 1
 - **File**: `llx_router.py`
 
+### analyzers.radon_analyzer
+- **Functions**: 12
+- **File**: `radon_analyzer.py`
+
 ### dsl.engine
 - **Functions**: 12
 - **Classes**: 6
 - **File**: `engine.py`
-
-### analyzers.radon_analyzer
-- **Functions**: 11
-- **File**: `radon_analyzer.py`
 
 ### dsl.rule_generator
 - **Functions**: 11
@@ -119,6 +119,14 @@ Main execution flows into the system:
 ### dsl.engine.DSLEngine._load_default_rules
 > Załaduj domyślny zestaw reguł refaktoryzacji.
 - **Calls**: Rule, Rule, Rule, Rule, Rule, Rule, Rule, Rule
+
+### commands.doctor.detect_stolen_indent
+> Find files where function/class body lost indentation after guard removal.
+
+Pattern (function body not indented):
+    async def run_rest_server():
+   
+- **Calls**: commands.doctor._python_files, src.splitlines, str, any, enumerate, py.read_text, ast.parse, py.relative_to
 
 ### commands.batch.run_semcod_batch
 > Run batch refactoring on semcod projects.
@@ -235,10 +243,6 @@ Returns dict:
 > Run ruff linter i zapisz wyniki do results.
 - **Calls**: None.get, range, sum, sum, len, subprocess.run, logger.warning, None.get
 
-### analyzers.parsers.validation_parser.ValidationParser.parse_validation_toon
-> Parsuj validation_toon.yaml — błędy walidacji.
-- **Calls**: content.splitlines, line.strip, stripped.split, stripped.startswith, len, None.strip, stripped.split, len
-
 ## Process Flows
 
 Key execution flows identified:
@@ -253,45 +257,47 @@ run_pyqual_analysis [commands.pyqual]
 _load_default_rules [dsl.engine.DSLEngine]
 ```
 
-### Flow 3: run_semcod_batch
+### Flow 3: detect_stolen_indent
+```
+detect_stolen_indent [commands.doctor]
+  └─> _python_files
+      └─> _should_skip
+```
+
+### Flow 4: run_semcod_batch
 ```
 run_semcod_batch [commands.batch]
 ```
 
-### Flow 4: chunk_function
+### Flow 5: chunk_function
 ```
 chunk_function [analyzers.semantic_chunker.SemanticChunker]
 ```
 
-### Flow 5: parse_duplication_toon
+### Flow 6: parse_duplication_toon
 ```
 parse_duplication_toon [analyzers.parsers.duplication_parser.DuplicationParser]
 ```
 
-### Flow 6: generate_proposal
+### Flow 7: generate_proposal
 ```
 generate_proposal [refactors.engine.RefactorEngine]
   └─ →> build_ecosystem_context
 ```
 
-### Flow 7: refactor
+### Flow 8: refactor
 ```
 refactor [cli]
 ```
 
-### Flow 8: _analyze_series
+### Flow 9: _analyze_series
 ```
 _analyze_series [awareness.timeline_analysis.TimelineAnalyzer]
 ```
 
-### Flow 9: calculate_metrics
+### Flow 10: calculate_metrics
 ```
 calculate_metrics [commands.pyqual.reporter.Reporter]
-```
-
-### Flow 10: build_snapshot
-```
-build_snapshot [awareness.AwarenessManager]
 ```
 
 ## Key Classes
@@ -551,8 +557,9 @@ Używany w run_cycle
 
 Functions exposed as public API (no underscore prefix):
 
-- `analyzers.radon_analyzer.enhance_metrics_with_radon` - 40 calls
+- `analyzers.radon_analyzer.enhance_metrics_with_radon` - 41 calls
 - `commands.pyqual.run_pyqual_analysis` - 35 calls
+- `commands.doctor.detect_stolen_indent` - 28 calls
 - `commands.batch.run_semcod_batch` - 27 calls
 - `refactors.prompts.build_ecosystem_context` - 27 calls
 - `analyzers.semantic_chunker.SemanticChunker.chunk_function` - 27 calls
@@ -590,7 +597,6 @@ Functions exposed as public API (no underscore prefix):
 - `consciousness_loop.ConsciousnessLoop.run` - 14 calls
 - `commands.pyqual.bandit_analyzer.BanditAnalyzer.analyze` - 14 calls
 - `refactors.diff_manager.create_checkpoint` - 14 calls
-- `cli.batch_semcod` - 14 calls
 
 ## System Interactions
 
@@ -603,6 +609,11 @@ graph TD
     run_pyqual_analysis --> save_report
     run_pyqual_analysis --> print
     _load_default_rules --> Rule
+    detect_stolen_indent --> _python_files
+    detect_stolen_indent --> splitlines
+    detect_stolen_indent --> str
+    detect_stolen_indent --> any
+    detect_stolen_indent --> enumerate
     run_semcod_batch --> iterdir
     run_semcod_batch --> print
     run_semcod_batch --> sorted
@@ -623,11 +634,6 @@ graph TD
     refactor --> command
     refactor --> argument
     refactor --> option
-    _analyze_series --> float
-    _analyze_series --> _linear_regression
-    _analyze_series --> max
-    _analyze_series --> min
-    calculate_metrics --> get
 ```
 
 ## Reverse Engineering Guidelines

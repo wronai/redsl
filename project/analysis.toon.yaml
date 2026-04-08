@@ -5,7 +5,7 @@ HEALTH[1]:
   🟢 CC    no functions exceed CC=15 after splitting apply_changes_with_llm_supervision
 
 REFACTOR[1]:
-  1. reduce fan-out hotspots  (create_app, _fallback_profile, SemanticChunker.chunk_function)
+  1. reduce fan-out hotspots  (_fallback_profile, SemanticChunker.chunk_function, _register_refactor_routes, _register_debug_routes)
 
 PIPELINES[387]:
   [1] Src [main]: main → example_curl_commands
@@ -32,7 +32,7 @@ LAYERS:
   redsl/                          CC̄=3.8    ←in:5  →out:11  !! split
   │ cli                        473L  0C   28m  CC=7      ←0
   │ engine                     417L  6C   12m  CC=10     ←0
-  │ api                        359L  11C    1m  CC=1      ←0
+  │ api                        385L  11C    1m  CC=1      ←0
   │ engine                     329L  1C    9m  CC=12     ←1
   │ __init__                   325L  2C   16m  CC=10     ←0
   │ regix_bridge               317L  0C    8m  CC=9      ←1

@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.15] - 2026-04-08
+
+### Docs
+- Update README.md
+- Update redsl/project/README.md
+- Update redsl/project/context.md
+
+### Test
+- Update tests/test_doctor.py
+
+### Other
+- Update project/analysis.toon.yaml
+- Update project/evolution.toon.yaml
+- Update project/project.toon.yaml
+- Update redsl/api.py
+- Update redsl/commands/doctor.py
+- Update redsl/project/analysis.toon.yaml
+
 ## [1.2.14] - 2026-04-08
 
 ### Docs

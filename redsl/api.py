@@ -108,10 +108,12 @@ def _register_health_route(app: Any, orchestrator: Any) -> None:
 
     @app.get("/health")
     async def health():
+        from redsl import __version__
+
         return {
             "status": "ok",
             "agent": "conscious-refactor",
-            "version": "1.1.0",
+            "version": __version__,
             "memory": get_memory_stats(orchestrator),
         }
 

@@ -1,24 +1,24 @@
 # redsl | 578 func | 80f | 19529L | python | 2026-04-08
 
 HEALTH:
-  CC̄=3.9  critical=39 (limit:10)  dup=0  cycles=0
+  CC̄=3.9  critical=41 (limit:10)  dup=0  cycles=0
 
 ALERTS[20]:
-  !!! high_fan_out     create_app = 39 (limit:10)
   !!! high_fan_out     _fallback_profile = 24 (limit:10)
   !!! high_fan_out     SemanticChunker.chunk_function = 21 (limit:10)
+  !!  high_fan_out     _register_refactor_routes = 20 (limit:10)
+  !!  high_fan_out     _register_debug_routes = 20 (limit:10)
   !!  high_fan_out     apply_changes_with_llm_supervision = 19 (limit:10)
   !!  high_fan_out     main = 19 (limit:10)
   !!  high_fan_out     apply_quality_refactors = 18 (limit:10)
   !!  high_fan_out     main = 17 (limit:10)
   !!  high_fan_out     repair_file = 16 (limit:10)
   !!  high_fan_out     AwarenessManager.build_snapshot = 16 (limit:10)
-  !!  high_fan_out     _setup_logging = 16 (limit:10)
 
 MODULES[93] (top by size):
   M[redsl/cli.py] 473L C:0 F:28 CC↑7 D:0 (python)
   M[redsl/dsl/engine.py] 417L C:6 F:12 CC↑10 D:0 (python)
-  M[redsl/api.py] 359L C:11 F:1 CC↑1 D:0 (python)
+  M[redsl/api.py] 385L C:11 F:7 CC↑1 D:0 (python)
   M[archive/legacy_scripts/hybrid_llm_refactor.py] 331L C:0 F:10 CC↑16 D:0 (python)
   M[redsl/refactors/engine.py] 329L C:1 F:9 CC↑12 D:0 (python)
   M[redsl/awareness/__init__.py] 325L C:2 F:16 CC↑10 D:0 (python)
@@ -34,20 +34,22 @@ MODULES[93] (top by size):
   LANGS: python:92/shell:1
 
 HOTSPOTS[10]:
-  ★ create_app fan=39  // Tworzenie aplikacji FastAPI.
   ★ _fallback_profile fan=24  // Fallback — cProfile-based profiling when metrun is unavailable.
   ★ SemanticChunker.chunk_function fan=21  // Wytnij semantyczny chunk dla jednej funkcji.
-
-Args:
-    file_path:         Ścież
+  ★ _register_refactor_routes fan=20  // Register refactor endpoints.
+  ★ _register_debug_routes fan=20  // Register debug endpoints.
   ★ apply_changes_with_llm_supervision fan=19  // Apply refactorings with optional LLM supervision.
   ★ main fan=19  // Process semcod projects.
+  ★ apply_quality_refactors fan=18  // Apply quality refactors.
+  ★ main fan=17  // Process semcod projects.
+  ★ repair_file fan=16  // Repair a single file.
+  ★ AwarenessManager.build_snapshot fan=16  // Build awareness snapshot.
 
 REFACTOR[4]:
-  [1] M/M Reduce create_app fan-out (currently 39)
-  [2] M/M Reduce _fallback_profile fan-out (currently 24)
-  [3] M/M Reduce SemanticChunker.chunk_function fan-out (currently 21)
-  [4] M/M Reduce apply_changes_with_llm_supervision fan-out (currently 19)
+  [1] M/M Reduce _fallback_profile fan-out (currently 24)
+  [2] M/M Reduce SemanticChunker.chunk_function fan-out (currently 21)
+  [3] M/M Reduce _register_refactor_routes fan-out (currently 20)
+  [4] M/M Reduce _register_debug_routes fan-out (currently 20)
 
 EVOLUTION:
-  2026-04-08 CC̄=3.9 crit=39 19529L // Automated analysis
+  2026-04-08 CC̄=3.9 crit=41 19529L // Automated analysis

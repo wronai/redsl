@@ -1,15 +1,18 @@
 # code2llm/evolution | 578 func | 80f | 2026-04-08
 
-NEXT[3] (ranked by impact):
-  [1] !  REDUCE-FANOUT   create_app                      fan=39
-      WHY: remaining top fan-out hotspot
-      EFFORT: ~1-2h  IMPACT: 390
-  [2] !  REDUCE-FANOUT   _fallback_profile               fan=24
+NEXT[4] (ranked by impact):
+  [1] !  REDUCE-FANOUT   _fallback_profile               fan=24
       WHY: remaining fan-out hotspot
       EFFORT: ~1h  IMPACT: 240
-  [3] !  REDUCE-FANOUT   SemanticChunker.chunk_function  fan=21
+  [2] !  REDUCE-FANOUT   SemanticChunker.chunk_function  fan=21
       WHY: remaining fan-out hotspot
       EFFORT: ~1h  IMPACT: 210
+  [3] !  REDUCE-FANOUT   _register_refactor_routes       fan=20
+      WHY: new route-group helper still above threshold
+      EFFORT: ~1h  IMPACT: 200
+  [4] !  REDUCE-FANOUT   _register_debug_routes          fan=20
+      WHY: new route-group helper still above threshold
+      EFFORT: ~1h  IMPACT: 200
 
 
 RISKS[0]: none

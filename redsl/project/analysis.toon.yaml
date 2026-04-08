@@ -1,14 +1,18 @@
-# code2llm | 85f 14377L | python:85 | 2026-04-08
-# CC̄=3.9 | critical:2/584 | dups:0 | cycles:0
+# code2llm | 85f 14935L | python:85 | 2026-04-08
+# CC̄=4.1 | critical:6/596 | dups:0 | cycles:0
 
-HEALTH[2]:
+HEALTH[6]:
+  🟡 CC    detect_stolen_indent CC=15 (limit:15)
   🟡 CC    _fix_guard_in_try_block CC=17 (limit:15)
-  🟡 CC    enhance_metrics_with_radon CC=45 (limit:15)
+  🟡 CC    _fix_guard_with_excess_indent CC=36 (limit:15)
+  🟡 CC    _fix_stolen_indent CC=27 (limit:15)
+  🟡 CC    _escape_fstring_body_braces CC=15 (limit:15)
+  🟡 CC    enhance_metrics_with_radon CC=46 (limit:15)
 
 REFACTOR[1]:
-  1. split 2 high-CC methods  (CC>15)
+  1. split 6 high-CC methods  (CC>15)
 
-PIPELINES[390]:
+PIPELINES[394]:
   [1] Src [__init__]: __init__
       PURITY: 100% pure
   [2] Src [run]: run
@@ -21,8 +25,8 @@ PIPELINES[390]:
       PURITY: 100% pure
 
 LAYERS:
-  commands/                       CC̄=4.9    ←in:3  →out:6
-  │ !! doctor                     555L  2C   22m  CC=17     ←1
+  commands/                       CC̄=6.0    ←in:3  →out:6
+  │ !! doctor                    1099L  2C   33m  CC=36     ←1
   │ multi_project              251L  3C   10m  CC=5      ←0
   │ __init__                   247L  1C    8m  CC=11     ←0
   │ hybrid                     222L  0C    9m  CC=11     ←0
@@ -34,9 +38,9 @@ LAYERS:
   │ ruff_analyzer               49L  1C    1m  CC=10     ←0
   │ bandit_analyzer             47L  1C    1m  CC=9      ←0
   │
-  analyzers/                      CC̄=4.9    ←in:12  →out:0
+  analyzers/                      CC̄=4.8    ←in:12  →out:0
+  │ !! radon_analyzer             308L  0C   12m  CC=46     ←1
   │ project_parser             300L  1C   18m  CC=12     ←0
-  │ !! radon_analyzer             296L  0C   11m  CC=45     ←1
   │ toon_analyzer              294L  1C   13m  CC=14     ←0
   │ incremental                291L  2C   17m  CC=8      ←11
   │ python_analyzer            260L  1C    8m  CC=12     ←2
@@ -118,7 +122,7 @@ LAYERS:
   │
   ./                              CC̄=2.8    ←in:0  →out:0
   │ !! cli                        552L  0C   32m  CC=10     ←0
-  │ api                        384L  11C    7m  CC=1      ←0
+  │ api                        386L  11C    7m  CC=1      ←0
   │ formatters                 306L  0C   13m  CC=13     ←2
   │ main                       268L  0C   22m  CC=6      ←0
   │ consciousness_loop         204L  1C    7m  CC=5      ←0
@@ -154,10 +158,10 @@ COUPLING:
   HUB: execution/ (fan-in=10)
   HUB: validation/ (fan-in=6)
   HUB: formatters/ (fan-in=15)
+  SMELL: api/ fan-out=12 → split needed
   SMELL: refactors/ fan-out=8 → split needed
   SMELL: execution/ fan-out=9 → split needed
   SMELL: cli/ fan-out=18 → split needed
-  SMELL: api/ fan-out=12 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon
