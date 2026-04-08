@@ -7,6 +7,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+from redsl.refactors.ast_transformers import ReturnTypeAdder, UnusedImportRemover
+
 
 class DirectRefactorEngine:
     """Applies simple refactorings directly via AST manipulation."""
@@ -27,87 +29,15 @@ class DirectRefactorEngine:
             tree = ast.parse(source)
             lines = source.splitlines(keepends=True)
             unused_set = set(unused_imports)
-            
-            # Collect line numbers to remove or modify
-            lines_to_remove: set[int] = set()  # 0-indexed
-            line_replacements: dict[int, str] = {}  # 0-indexed -> new content
-            
-            for node in ast.iter_child_nodes(tree):
-                if isinstance(node, ast.Import):
-                    kept = [a for a in node.names
-                            if (a.asname or a.name) not in unused_set]
-                    if len(kept) == len(node.names):
-                        continue  # nothing to remove
-                    if not kept:
-                        # Remove entire import statement (may span multiple lines)
-                        for ln in range(node.lineno, node.end_lineno + 1):
-                            lines_to_remove.add(ln - 1)
-                    else:
-                        # Rebuild only the import names, keep the rest of the line style
-                        names_str = ", ".join(
-                            f"{a.name} as {a.asname}" if a.asname else a.name
-                            for a in kept
-                        )
-                        indent = self._get_indent(lines[node.lineno - 1])
-                        line_replacements[node.lineno - 1] = f"{indent}import {names_str}\n"
-                        # Remove continuation lines if it was multi-line
-                        for ln in range(node.lineno + 1, node.end_lineno + 1):
-                            lines_to_remove.add(ln - 1)
-                
-                elif isinstance(node, ast.ImportFrom):
-                    if node.names[0].name == "*":
-                        continue
-                    kept = [a for a in node.names
-                            if (a.asname or a.name) not in unused_set]
-                    if len(kept) == len(node.names):
-                        continue
-                    if not kept:
-                        for ln in range(node.lineno, node.end_lineno + 1):
-                            lines_to_remove.add(ln - 1)
-                    else:
-                        # Preserve original style (single-line vs multi-line)
-                        orig_text = "".join(lines[node.lineno - 1 : node.end_lineno])
-                        is_multiline = node.end_lineno > node.lineno
-                        indent = self._get_indent(lines[node.lineno - 1])
-                        module = node.module or ""
-                        dots = "." * (node.level or 0)
-                        
-                        if is_multiline:
-                            # Keep multi-line style
-                            names_lines = []
-                            for a in kept:
-                                n = f"{a.name} as {a.asname}" if a.asname else a.name
-                                names_lines.append(f"{indent}    {n},")
-                            replacement = f"{indent}from {dots}{module} (\n"
-                            replacement += "\n".join(names_lines) + "\n"
-                            replacement += f"{indent})\n"
-                            line_replacements[node.lineno - 1] = replacement
-                            for ln in range(node.lineno + 1, node.end_lineno + 1):
-                                lines_to_remove.add(ln - 1)
-                        else:
-                            names_str = ", ".join(
-                                f"{a.name} as {a.asname}" if a.asname else a.name
-                                for a in kept
-                            )
-                            line_replacements[node.lineno - 1] = (
-                                f"{indent}from {dots}{module} import {names_str}\n"
-                            )
+
+            lines_to_remove, line_replacements = self._collect_unused_import_edits(
+                tree, lines, unused_set
+            )
             
             if not lines_to_remove and not line_replacements:
                 return False
             
-            # Build new source
-            new_lines = []
-            for i, line in enumerate(lines):
-                if i in lines_to_remove:
-                    continue
-                elif i in line_replacements:
-                    new_lines.append(line_replacements[i])
-                else:
-                    new_lines.append(line)
-            
-            # Clean up consecutive blank lines left by removals
-            new_source = self._clean_blank_lines("".join(new_lines))
+            new_source = self._apply_line_edits(lines, lines_to_remove, line_replacements)
             file_path.write_text(new_source, encoding="utf-8")
             
             self.applied_changes.append({
@@ -120,6 +50,124 @@ class DirectRefactorEngine:
         except Exception as e:
             print(f"Failed to remove unused imports from {file_path}: {e}")
             return False
+
+    def _collect_unused_import_edits(
+        self,
+        tree: ast.Module,
+        lines: list[str],
+        unused_set: set[str],
+    ) -> tuple[set[int], dict[int, str]]:
+        """Collect line removals and replacements for unused import cleanup."""
+        lines_to_remove: set[int] = set()  # 0-indexed
+        line_replacements: dict[int, str] = {}  # 0-indexed -> new content
+
+        for node in ast.iter_child_nodes(tree):
+            if isinstance(node, ast.Import):
+                self._collect_import_edits(node, lines, unused_set, lines_to_remove, line_replacements)
+            elif isinstance(node, ast.ImportFrom):
+                self._collect_import_from_edits(node, lines, unused_set, lines_to_remove, line_replacements)
+
+        return lines_to_remove, line_replacements
+
+    def _collect_import_edits(
+        self,
+        node: ast.Import,
+        lines: list[str],
+        unused_set: set[str],
+        lines_to_remove: set[int],
+        line_replacements: dict[int, str],
+    ) -> None:
+        kept = [alias for alias in node.names if self._alias_name(alias) not in unused_set]
+        if len(kept) == len(node.names):
+            return
+
+        if not kept:
+            self._remove_statement_lines(node, lines_to_remove)
+            return
+
+        names_str = ", ".join(self._format_alias(alias) for alias in kept)
+        indent = self._get_indent(lines[node.lineno - 1])
+        line_replacements[node.lineno - 1] = f"{indent}import {names_str}\n"
+        self._remove_replaced_statement_lines(node, lines_to_remove)
+
+    def _collect_import_from_edits(
+        self,
+        node: ast.ImportFrom,
+        lines: list[str],
+        unused_set: set[str],
+        lines_to_remove: set[int],
+        line_replacements: dict[int, str],
+    ) -> None:
+        if node.names[0].name == "*":
+            return
+
+        kept = [alias for alias in node.names if self._alias_name(alias) not in unused_set]
+        if len(kept) == len(node.names):
+            return
+
+        if not kept:
+            self._remove_statement_lines(node, lines_to_remove)
+            return
+
+        indent = self._get_indent(lines[node.lineno - 1])
+        module = node.module or ""
+        dots = "." * (node.level or 0)
+        end_lineno = getattr(node, "end_lineno", node.lineno)
+
+        if end_lineno > node.lineno:
+            names_lines = [
+                f"{indent}    {self._format_alias(alias)},"
+                for alias in kept
+            ]
+            replacement = (
+                f"{indent}from {dots}{module} import (\n"
+                + "\n".join(names_lines)
+                + f"\n{indent})\n"
+            )
+            line_replacements[node.lineno - 1] = replacement
+            self._remove_replaced_statement_lines(node, lines_to_remove)
+        else:
+            names_str = ", ".join(self._format_alias(alias) for alias in kept)
+            line_replacements[node.lineno - 1] = (
+                f"{indent}from {dots}{module} import {names_str}\n"
+            )
+
+    @staticmethod
+    def _alias_name(alias: ast.alias) -> str:
+        return alias.asname or alias.name
+
+    @staticmethod
+    def _format_alias(alias: ast.alias) -> str:
+        return f"{alias.name} as {alias.asname}" if alias.asname else alias.name
+
+    @staticmethod
+    def _remove_statement_lines(node: ast.AST, lines_to_remove: set[int]) -> None:
+        end_lineno = getattr(node, "end_lineno", node.lineno)
+        for ln in range(node.lineno - 1, end_lineno):
+            lines_to_remove.add(ln)
+
+    @staticmethod
+    def _remove_replaced_statement_lines(node: ast.AST, lines_to_remove: set[int]) -> None:
+        end_lineno = getattr(node, "end_lineno", node.lineno)
+        for ln in range(node.lineno, end_lineno):
+            lines_to_remove.add(ln)
+
+    def _apply_line_edits(
+        self,
+        lines: list[str],
+        lines_to_remove: set[int],
+        line_replacements: dict[int, str],
+    ) -> str:
+        new_lines = []
+        for i, line in enumerate(lines):
+            if i in lines_to_remove:
+                continue
+            if i in line_replacements:
+                new_lines.append(line_replacements[i])
+            else:
+                new_lines.append(line)
+
+        return self._clean_blank_lines("".join(new_lines))
     
     @staticmethod
     def _is_main_guard_node(node: ast.If) -> bool:
@@ -415,121 +463,4 @@ class DirectRefactorEngine:
         return self.applied_changes
 
 
-class ReturnTypeAdder(ast.NodeTransformer):
-    """AST transformer to add return type annotations."""
-    
-    def __init__(self, functions_missing_return: list[tuple[str, int]]) -> None:
-        self.functions_to_fix = {name for name, _ in functions_missing_return}
-    
-    def visit_FunctionDef(self, node: ast.FunctionDef) -> ast.FunctionDef:
-        """Add return type annotation to function."""
-        self.generic_visit(node)
-        
-        if node.name in self.functions_to_fix and node.returns is None:
-            # Analyze function body to infer return type
-            return_type = self._infer_return_type(node)
-            if return_type:
-                node.returns = return_type
-        
-        return node
-    
-    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> ast.AsyncFunctionDef:
-        """Add return type annotation to async function."""
-        self.generic_visit(node)
-        
-        if node.name in self.functions_to_fix and node.returns is None:
-            # Analyze function body to infer return type
-            return_type = self._infer_return_type(node)
-            if return_type:
-                node.returns = return_type
-        
-        return node
-    
-    def _infer_return_type(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> ast.expr | None:
-        """Infer return type from function body."""
-        # Look for return statements
-        return_statements = []
-        for child in ast.walk(node):
-            if isinstance(child, ast.Return):
-                if child.value is not None:
-                    return_statements.append(child.value)
-        
-        # No explicit returns -> None
-        if not return_statements:
-            return ast.Name(id='None', ctx=ast.Load())
-        
-        # Check if all returns are the same type
-        types = set()
-        for ret in return_statements:
-            if isinstance(ret, ast.Constant):
-                if isinstance(ret.value, bool):
-                    types.add('bool')
-                elif isinstance(ret.value, int):
-                    types.add('int')
-                elif isinstance(ret.value, float):
-                    types.add('float')
-                elif isinstance(ret.value, str):
-                    types.add('str')
-                elif ret.value is None:
-                    types.add('None')
-            elif isinstance(ret, ast.Name):
-                types.add(ret.id)
-            elif isinstance(ret, ast.List):
-                types.add('list')
-            elif isinstance(ret, ast.Dict):
-                types.add('dict')
-            elif isinstance(ret, ast.Tuple):
-                types.add('tuple')
-            else:
-                # Too complex to infer safely
-                return None
-        
-        # If mixed types, don't infer
-        if len(types) > 1:
-            return None
-        
-        # Return the inferred type
-        if types:
-            type_name = types.pop()
-            if type_name == 'None':
-                return ast.Name(id='None', ctx=ast.Load())
-            else:
-                return ast.Name(id=type_name, ctx=ast.Load())
-        
-        return None
-
-
-class UnusedImportRemover(ast.NodeTransformer):
-    """AST transformer to remove unused imports."""
-    
-    def __init__(self, unused_imports: list[str]) -> None:
-        self.unused_imports = set(unused_imports)
-    
-    def visit_Import(self, node: ast.Import) -> ast.Import | None:
-        """Remove unused imports from import statements."""
-        new_aliases = []
-        for alias in node.names:
-            name = alias.asname if alias.asname else alias.name
-            if name not in self.unused_imports:
-                new_aliases.append(alias)
-        
-        if new_aliases:
-            node.names = new_aliases
-            return node
-        return None
-    
-    def visit_ImportFrom(self, node: ast.ImportFrom) -> ast.ImportFrom | None:
-        """Remove unused imports from from...import statements."""
-        if node.names[0].name == "*":
-            return node  # Can't handle star imports
-        
-        new_aliases = []
-        for alias in node.names:
-            name = alias.asname if alias.asname else alias.name
-            if name not in self.unused_imports:
-                new_aliases.append(alias)
-        
-        if new_aliases:
-            node.names = new_aliases
-            return node
-        return None
+__all__ = ["DirectRefactorEngine", "ReturnTypeAdder", "UnusedImportRemover"]

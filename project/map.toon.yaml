@@ -1,10 +1,10 @@
-# redsl | 67f 11684L | shell:1,python:66 | 2026-04-08
-# stats: 375 func | 0 cls | 67 mod | CC̄=4.7 | critical:13 | cycles:0
-# alerts[5]: fan-out create_app=39; CC DirectRefactorEngine.remove_unused_imports=35; CC main=27; fan-out main=26; fan-out _fallback_profile=24
+# redsl | 68f 11800L | shell:1,python:67 | 2026-04-08
+# stats: 399 func | 0 cls | 68 mod | CC̄=4.5 | critical:9 | cycles:0
+# alerts[5]: fan-out create_app=39; CC main=27; fan-out main=26; fan-out _fallback_profile=24; fan-out refactor=24
 # hotspots[5]: create_app fan=39; main fan=26; _fallback_profile fan=24; refactor fan=24; main fan=22
-# evolution: CC̄ 4.7→4.7 (flat 0.0)
+# evolution: CC̄ 4.7→4.5 (improved -0.2)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[67]:
+M[68]:
   archive/legacy_scripts/apply_semcod_refactor.py,79
   archive/legacy_scripts/batch_quality_refactor.py,167
   archive/legacy_scripts/batch_refactor_semcod.py,154
@@ -31,7 +31,7 @@ M[67]:
   redsl/analyzers/resolver.py,97
   redsl/analyzers/semantic_chunker.py,227
   redsl/analyzers/toon_analyzer.py,294
-  redsl/analyzers/utils.py,115
+  redsl/analyzers/utils.py,116
   redsl/api.py,358
   redsl/ci/__init__.py,15
   redsl/ci/github_actions.py,260
@@ -56,65 +56,36 @@ M[67]:
   redsl/formatters.py,306
   redsl/llm/__init__.py,175
   redsl/llm/llx_router.py,242
-  redsl/main.py,243
+  redsl/main.py,267
   redsl/memory/__init__.py,235
-  redsl/orchestrator.py,651
+  redsl/orchestrator.py,688
   redsl/refactors/__init__.py,39
+  redsl/refactors/ast_transformers.py,117
   redsl/refactors/body_restorer.py,203
   redsl/refactors/diff_manager.py,283
-  redsl/refactors/direct.py,535
+  redsl/refactors/direct.py,466
   redsl/refactors/engine.py,298
   redsl/refactors/models.py,49
   redsl/refactors/prompts.py,217
   redsl/validation/__init__.py,28
   redsl/validation/pyqual_bridge.py,129
-  redsl/validation/regix_bridge.py,311
+  redsl/validation/regix_bridge.py,317
   redsl/validation/sandbox.py,224
   redsl/validation/vallm_bridge.py,212
   refactor_output/refactor_extract_functions_20260407_143102/00_app__models.py,29
 D:
-  redsl/refactors/direct.py:
-    e: DirectRefactorEngine,ReturnTypeAdder,UnusedImportRemover
-    DirectRefactorEngine: __init__(0),remove_unused_imports(2),_is_main_guard_node(0),_get_indent(0),_clean_blank_lines(0),fix_module_execution_block(1),extract_constants(2),_generate_constant_name(2),add_return_types(2),_find_def_colon(1),get_applied_changes(0)  # Applies simple refactorings directly via AST manipulation...
-    ReturnTypeAdder(ast.NodeTransformer): __init__(1),visit_FunctionDef(1),visit_AsyncFunctionDef(1),_infer_return_type(1)  # AST transformer to add return type annotations...
-    UnusedImportRemover(ast.NodeTransformer): __init__(1),visit_Import(1),visit_ImportFrom(1)  # AST transformer to remove unused imports...
   archive/legacy_scripts/hybrid_llm_refactor.py:
     e: apply_changes_with_llm_supervision,main
     apply_changes_with_llm_supervision(project_path;max_changes;enable_llm;validate_direct_changes)
-    main()
-  redsl/main.py:
-    e: _get_orchestrator,cmd_analyze,cmd_explain,cmd_refactor,cmd_memory_stats,cmd_serve,_print_usage,_get_arg,_has_flag,_dispatch_analyze,_dispatch_explain,_dispatch_refactor,_dispatch_memory_stats,_dispatch_serve,main
-    _get_orchestrator(model)
-    cmd_analyze(project_dir)
-    cmd_explain(project_dir)
-    cmd_refactor(project_dir;dry_run;auto;max_actions;model)
-    cmd_memory_stats()
-    cmd_serve(port;host)
-    _print_usage()
-    _get_arg(args;name;default)
-    _has_flag(args;name)
-    _dispatch_analyze(args)
-    _dispatch_explain(args)
-    _dispatch_refactor(args)
-    _dispatch_memory_stats(args)
-    _dispatch_serve(args)
     main()
   archive/legacy_scripts/hybrid_quality_refactor.py:
     e: apply_all_quality_changes,main
     apply_all_quality_changes(project_path;max_changes)
     main()
-  redsl/analyzers/utils.py:
-    e: _load_gitignore_patterns,_should_ignore_file,_try_number
-    _load_gitignore_patterns(project_dir)
-    _should_ignore_file(file_path;project_dir;gitignore_patterns)
-    _try_number(val)
-  redsl/orchestrator.py:
-    e: CycleReport,RefactorOrchestrator
-    CycleReport:  # Raport z jednego cyklu refaktoryzacji...
-    RefactorOrchestrator: __init__(1),run_cycle(6),run_from_toon_content(5),_execute_decision(2),_resolve_source_path(2),_load_source_code(2),_resolve_target_function(2),_consult_memory(1),_remember_decision_result(3),_validate_with_regix(4),_execute_direct_refactor(2),_reflect_on_cycle(1),_auto_learn_rules(1),explain_decisions(2),get_memory_stats(0),estimate_cycle_cost(2),execute_sandboxed(2),add_custom_rules(1)  # Główny orkiestrator — „mózg" systemu.
-
-Łączy:
-- CodeAnalyzer...
+  redsl/refactors/ast_transformers.py:
+    e: ReturnTypeAdder,UnusedImportRemover
+    ReturnTypeAdder(ast.NodeTransformer): __init__(1),visit_FunctionDef(1),visit_AsyncFunctionDef(1),_infer_return_type(1)  # AST transformer to add return type annotations...
+    UnusedImportRemover(ast.NodeTransformer): __init__(1),visit_Import(1),visit_ImportFrom(1)  # AST transformer to remove unused imports...
   redsl/commands/hybrid.py:
     e: run_hybrid_quality_refactor,run_hybrid_batch
     run_hybrid_quality_refactor(project_path;max_changes)
@@ -126,6 +97,9 @@ D:
     list_tickets(project_dir;status)
     report_refactor_results(project_dir;decisions_applied;files_modified;avg_cc_before;avg_cc_after)
     _safe_json(text)
+  redsl/refactors/direct.py:
+    e: DirectRefactorEngine
+    DirectRefactorEngine: __init__(0),remove_unused_imports(2),_collect_unused_import_edits(3),_collect_import_edits(5),_collect_import_from_edits(5),_alias_name(0),_format_alias(0),_remove_statement_lines(1),_remove_replaced_statement_lines(1),_apply_line_edits(3),_is_main_guard_node(0),_get_indent(0),_clean_blank_lines(0),fix_module_execution_block(1),extract_constants(2),_generate_constant_name(2),add_return_types(2),_find_def_colon(1),get_applied_changes(0)  # Applies simple refactorings directly via AST manipulation...
   redsl/analyzers/incremental.py:
     e: EvolutionaryCache,IncrementalAnalyzer,get_changed_files,get_staged_files,_file_hash
     EvolutionaryCache: __init__(1),_load(0),save(0),get(1),set(2),invalidate(1),clear(0)  # Cache wyników analizy per-plik oparty o hash pliku.
@@ -159,6 +133,13 @@ Pozwala...
     format_plan_yaml(decisions;analysis)
     _serialize_result(result)
     format_debug_info(info;format)
+  redsl/analyzers/utils.py:
+    e: _load_gitignore_patterns,_should_ignore_file,_matches_default_patterns,_matches_gitignore_patterns,_try_number
+    _load_gitignore_patterns(project_dir)
+    _should_ignore_file(file_path;project_dir;gitignore_patterns)
+    _matches_default_patterns(file_path)
+    _matches_gitignore_patterns(file_path;project_dir;gitignore_patterns)
+    _try_number(val)
   redsl/cli.py:
     e: _setup_logging,cli,refactor,batch,batch_semcod,batch_hybrid,pyqual,pyqual_analyze,pyqual_fix,debug,debug_config,debug_decisions,perf,cost
     _setup_logging(project_path;verbose)
@@ -208,6 +189,13 @@ Pozwala...
   redsl/analyzers/parsers/duplication_parser.py:
     e: DuplicationParser
     DuplicationParser: parse_duplication_toon(1)  # Parser sekcji duplication_toon...
+  redsl/orchestrator.py:
+    e: CycleReport,RefactorOrchestrator
+    CycleReport:  # Raport z jednego cyklu refaktoryzacji...
+    RefactorOrchestrator: __init__(1),run_cycle(6),_new_cycle_report(0),_analyze_project(2),_summarize_analysis(0),_select_decisions(2),_snapshot_regix_before(2),_consult_memory_for_decisions(1),_execute_decisions(4),run_from_toon_content(5),_execute_decision(2),_resolve_source_path(2),_load_source_code(2),_resolve_target_function(2),_consult_memory(1),_remember_decision_result(3),_validate_with_regix(4),_execute_direct_refactor(2),_reflect_on_cycle(1),_auto_learn_rules(1),explain_decisions(2),get_memory_stats(0),estimate_cycle_cost(2),execute_sandboxed(2),add_custom_rules(1)  # Główny orkiestrator — „mózg" systemu.
+
+Łączy:
+- CodeAnalyzer...
   redsl/commands/pyqual/reporter.py:
     e: Reporter
     Reporter: calculate_metrics(3),_collect_file_metrics(5),generate_recommendations(1),save_report(2)  # Generuje rekomendacje i zapisuje raporty analizy jakości...
@@ -340,6 +328,30 @@ Przyjmuje zbiór reguł i konteks...
     profile_llm_latency()
     profile_memory_operations()
     generate_optimization_report(project_dir)
+  redsl/main.py:
+    e: _get_orchestrator,_analysis_source_method,_analysis_function_metrics,_print_analysis_summary,_print_top_functions,_print_alerts,_print_duplicates,_print_analysis_plan,cmd_analyze,cmd_explain,cmd_refactor,cmd_memory_stats,cmd_serve,_print_usage,_get_arg,_has_flag,_dispatch_analyze,_dispatch_explain,_dispatch_refactor,_dispatch_memory_stats,_dispatch_serve,main
+    _get_orchestrator(model)
+    _analysis_source_method(orch;path)
+    _analysis_function_metrics(result)
+    _print_analysis_summary(result;path;source_method)
+    _print_top_functions(func_metrics)
+    _print_alerts(result;func_metrics)
+    _print_duplicates(result)
+    _print_analysis_plan(result;path)
+    cmd_analyze(project_dir)
+    cmd_explain(project_dir)
+    cmd_refactor(project_dir;dry_run;auto;max_actions;model)
+    cmd_memory_stats()
+    cmd_serve(port;host)
+    _print_usage()
+    _get_arg(args;name;default)
+    _has_flag(args;name)
+    _dispatch_analyze(args)
+    _dispatch_explain(args)
+    _dispatch_refactor(args)
+    _dispatch_memory_stats(args)
+    _dispatch_serve(args)
+    main()
   redsl/ci/github_actions.py:
     e: WorkflowConfig,generate_github_workflow,install_github_workflow,_build_workflow,_build_steps,_build_gate_script,_pr_comment_script
     WorkflowConfig:  # Konfiguracja generowanego workflow...

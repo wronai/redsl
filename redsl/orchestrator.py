@@ -97,32 +97,17 @@ class RefactorOrchestrator:
         4. REFLECT + REMEMBER: samoocena i zapis do pamięci
         """
         self._cycle_count += 1
-        report = CycleReport(
-            cycle_number=self._cycle_count,
-            analysis_summary="",
-            decisions_count=0,
-            proposals_generated=0,
-            proposals_applied=0,
-            proposals_rejected=0,
-        )
+        report = self._new_cycle_report()
 
         try:
             # == PERCEIVE ==
             logger.info("=== CYCLE %d: PERCEIVE ===", self._cycle_count)
-            if use_code2llm:
-                analysis = code2llm_bridge.maybe_analyze(project_dir, self.analyzer) \
-                    or self.analyzer.analyze_project(project_dir)
-            else:
-                analysis = self.analyzer.analyze_project(project_dir)
-            report.analysis_summary = (
-                f"{analysis.total_files} files, {analysis.total_lines} lines, "
-                f"avg CC={analysis.avg_cc:.1f}, {analysis.critical_count} critical"
-            )
+            analysis = self._analyze_project(project_dir, use_code2llm)
+            report.analysis_summary = self._summarize_analysis(analysis)
 
             # == DECIDE ==
             logger.info("=== CYCLE %d: DECIDE ===", self._cycle_count)
-            contexts = analysis.to_dsl_contexts()
-            decisions = self.dsl_engine.top_decisions(contexts, limit=max_actions)
+            decisions = self._select_decisions(analysis, max_actions)
             report.decisions_count = len(decisions)
 
             if not decisions:
@@ -130,48 +115,14 @@ class RefactorOrchestrator:
                 return report
 
             # Regix snapshot PRZED zmianami (working tree baseline)
-            regix_before: dict | None = None
-            if validate_regix:
-                regix_before = regix_bridge.snapshot(project_dir, ref="HEAD")
-                if regix_before:
-                    logger.info("regix: snapshot taken before cycle")
+            regix_before = self._snapshot_regix_before(project_dir, validate_regix)
 
             # Konsultuj pamięć — czy robiliśmy coś podobnego?
-            for decision in decisions:
-                similar = self.memory.recall_similar_actions(
-                    f"{decision.action.value} {decision.target_file}",
-                    limit=3,
-                )
-                if similar:
-                    logger.info(
-                        "Memory: found %d similar past actions for %s",
-                        len(similar), decision.target_file,
-                    )
+            self._consult_memory_for_decisions(decisions)
 
             # == PLAN + EXECUTE ==
             logger.info("=== CYCLE %d: PLAN + EXECUTE ===", self._cycle_count)
-            for decision in decisions:
-                if not decision.should_execute:
-                    continue
-
-                try:
-                    if use_sandbox:
-                        result = self.execute_sandboxed(decision, project_dir)
-                    else:
-                        result = self._execute_decision(decision, project_dir)
-                    report.results.append(result)
-
-                    if result.applied or result.validated:
-                        report.proposals_generated += 1
-                        if result.applied:
-                            report.proposals_applied += 1
-                    else:
-                        report.proposals_rejected += 1
-                        report.errors.extend(result.errors)
-
-                except Exception as e:
-                    logger.error("Failed to execute decision %s: %s", decision.rule_name, e)
-                    report.errors.append(f"{decision.rule_name}: {e}")
+            self._execute_decisions(decisions, project_dir, use_sandbox, report)
 
             # == VALIDATE (regix regression check) ==
             if validate_regix and report.proposals_applied > 0:
@@ -188,6 +139,84 @@ class RefactorOrchestrator:
 
         return report
 
+    def _new_cycle_report(self) -> CycleReport:
+        return CycleReport(
+            cycle_number=self._cycle_count,
+            analysis_summary="",
+            decisions_count=0,
+            proposals_generated=0,
+            proposals_applied=0,
+            proposals_rejected=0,
+        )
+
+    def _analyze_project(self, project_dir: Path, use_code2llm: bool) -> AnalysisResult:
+        if use_code2llm:
+            return code2llm_bridge.maybe_analyze(project_dir, self.analyzer) \
+                or self.analyzer.analyze_project(project_dir)
+        return self.analyzer.analyze_project(project_dir)
+
+    @staticmethod
+    def _summarize_analysis(analysis: AnalysisResult) -> str:
+        return (
+            f"{analysis.total_files} files, {analysis.total_lines} lines, "
+            f"avg CC={analysis.avg_cc:.1f}, {analysis.critical_count} critical"
+        )
+
+    def _select_decisions(self, analysis: AnalysisResult, max_actions: int) -> list[Decision]:
+        contexts = analysis.to_dsl_contexts()
+        return self.dsl_engine.top_decisions(contexts, limit=max_actions)
+
+    def _snapshot_regix_before(self, project_dir: Path, validate_regix: bool) -> dict | None:
+        if not validate_regix:
+            return None
+
+        regix_before = regix_bridge.snapshot(project_dir, ref="HEAD")
+        if regix_before:
+            logger.info("regix: snapshot taken before cycle")
+        return regix_before
+
+    def _consult_memory_for_decisions(self, decisions: list[Decision]) -> None:
+        for decision in decisions:
+            similar = self.memory.recall_similar_actions(
+                f"{decision.action.value} {decision.target_file}",
+                limit=3,
+            )
+            if similar:
+                logger.info(
+                    "Memory: found %d similar past actions for %s",
+                    len(similar), decision.target_file,
+                )
+
+    def _execute_decisions(
+        self,
+        decisions: list[Decision],
+        project_dir: Path,
+        use_sandbox: bool,
+        report: CycleReport,
+    ) -> None:
+        for decision in decisions:
+            if not decision.should_execute:
+                continue
+
+            try:
+                if use_sandbox:
+                    result = self.execute_sandboxed(decision, project_dir)
+                else:
+                    result = self._execute_decision(decision, project_dir)
+                report.results.append(result)
+
+                if result.applied or result.validated:
+                    report.proposals_generated += 1
+                    if result.applied:
+                        report.proposals_applied += 1
+                else:
+                    report.proposals_rejected += 1
+                    report.errors.extend(result.errors)
+
+            except Exception as e:
+                logger.error("Failed to execute decision %s: %s", decision.rule_name, e)
+                report.errors.append(f"{decision.rule_name}: {e}")
+
     def run_from_toon_content(
         self,
         project_toon: str = "",
@@ -201,14 +230,7 @@ class RefactorOrchestrator:
         Przydatne do integracji z API.
         """
         self._cycle_count += 1
-        report = CycleReport(
-            cycle_number=self._cycle_count,
-            analysis_summary="",
-            decisions_count=0,
-            proposals_generated=0,
-            proposals_applied=0,
-            proposals_rejected=0,
-        )
+        report = self._new_cycle_report()
 
         # PERCEIVE
         analysis = self.analyzer.analyze_from_toon_content(

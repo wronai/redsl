@@ -35,21 +35,20 @@ def _get_orchestrator(model: str | None = None) -> RefactorOrchestrator:
     return RefactorOrchestrator(config)
 
 
-def cmd_analyze(project_dir: str) -> None:
-    """Analiza projektu — wyświetl metryki i alerty."""
-    from redsl.dsl.engine import DSLEngine
-
-    orch = _get_orchestrator()
-    path = Path(project_dir)
-
-    if not path.exists():
-        print(f"Katalog nie istnieje: {path}")
-        sys.exit(1)
-
-    result = orch.analyzer.analyze_project(path)
+def _analysis_source_method(orch: RefactorOrchestrator, path: Path) -> str:
     toon_files = orch.analyzer._find_toon_files(path)
-    source_method = f"toon ({', '.join(toon_files.keys())})" if toon_files else "AST fallback"
+    return f"toon ({', '.join(toon_files.keys())})" if toon_files else "AST fallback"
 
+
+def _analysis_function_metrics(result) -> list:
+    return sorted(
+        [m for m in result.metrics if m.function_name and m.cyclomatic_complexity > 0],
+        key=lambda m: m.cyclomatic_complexity,
+        reverse=True,
+    )
+
+
+def _print_analysis_summary(result, path: Path, source_method: str) -> None:
     print("\n" + "=" * 60)
     print("  ANALIZA PROJEKTU")
     print("=" * 60)
@@ -61,18 +60,18 @@ def cmd_analyze(project_dir: str) -> None:
     print(f"  Krytyczne:  {result.critical_count}")
     print("=" * 60)
 
-    # Top funkcje wg CC
-    func_metrics = sorted(
-        [m for m in result.metrics if m.function_name and m.cyclomatic_complexity > 0],
-        key=lambda m: m.cyclomatic_complexity,
-        reverse=True,
-    )
-    if func_metrics:
-        print("\n  TOP FUNKCJE (CC):")
-        for m in func_metrics[:8]:
-            tag = "!!!" if m.cyclomatic_complexity > 30 else ("!!" if m.cyclomatic_complexity > 15 else "! ")
-            print(f"    {tag} CC={m.cyclomatic_complexity:<4} {m.file_path}::{m.function_name}")
 
+def _print_top_functions(func_metrics) -> None:
+    if not func_metrics:
+        return
+
+    print("\n  TOP FUNKCJE (CC):")
+    for m in func_metrics[:8]:
+        tag = "!!!" if m.cyclomatic_complexity > 30 else ("!!" if m.cyclomatic_complexity > 15 else "! ")
+        print(f"    {tag} CC={m.cyclomatic_complexity:<4} {m.file_path}::{m.function_name}")
+
+
+def _print_alerts(result, func_metrics) -> None:
     if result.alerts and not func_metrics:
         print("\n  ALERTY:")
         for alert in result.alerts[:10]:
@@ -80,6 +79,8 @@ def cmd_analyze(project_dir: str) -> None:
             severity = "!!!" if sev >= 3 else ("!!" if sev >= 2 else "! ")
             print(f"    {severity} {alert.get('type', '?')}: {alert.get('name', '?')} CC={alert.get('value', '?')}")
 
+
+def _print_duplicates(result) -> None:
     if result.duplicates:
         print(f"\n  DUPLIKATY: {len(result.duplicates)} grup")
         for dup in result.duplicates[:5]:
@@ -87,7 +88,10 @@ def cmd_analyze(project_dir: str) -> None:
                   f"{dup.get('lines', 0)}L x{dup.get('occurrences', 0)} "
                   f"(oszczędność: {dup.get('saved_lines', 0)}L)")
 
-    # Podgląd DSL decisions
+
+def _print_analysis_plan(result, path: Path) -> None:
+    from redsl.dsl.engine import DSLEngine
+
     dsl = DSLEngine()
     decisions = dsl.top_decisions(result.to_dsl_contexts(), limit=5)
     if decisions:
@@ -97,6 +101,26 @@ def cmd_analyze(project_dir: str) -> None:
             exists = "✓" if (path / d.target_file).exists() else "?"
             print(f"    [{exists}] {d.action.value:<22} {d.target_file}{fn}  (CC={d.context.get('cyclomatic_complexity',0)}, score={d.score:.2f})")
     print()
+
+
+def cmd_analyze(project_dir: str) -> None:
+    """Analiza projektu — wyświetl metryki i alerty."""
+    orch = _get_orchestrator()
+    path = Path(project_dir)
+
+    if not path.exists():
+        print(f"Katalog nie istnieje: {path}")
+        sys.exit(1)
+
+    result = orch.analyzer.analyze_project(path)
+    source_method = _analysis_source_method(orch, path)
+    func_metrics = _analysis_function_metrics(result)
+
+    _print_analysis_summary(result, path, source_method)
+    _print_top_functions(func_metrics)
+    _print_alerts(result, func_metrics)
+    _print_duplicates(result)
+    _print_analysis_plan(result, path)
 
 
 def cmd_explain(project_dir: str) -> None:

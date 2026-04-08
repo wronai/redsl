@@ -128,6 +128,41 @@ class TestExtractConstantsMultiLineImport:
 
 
 # ---------------------------------------------------------------------------
+# DirectRefactorEngine — REMOVE_UNUSED_IMPORTS regression
+# ---------------------------------------------------------------------------
+
+
+class TestRemoveUnusedImportsMultiLineImport:
+    """Multiline imports must keep the `import` keyword after cleanup."""
+
+    @pytest.fixture()
+    def engine(self) -> DirectRefactorEngine:
+        return DirectRefactorEngine()
+
+    def test_multiline_from_import_keeps_import_keyword(self, tmp_path, engine):
+        code = (
+            "from foo import (\n"
+            "    Alpha,\n"
+            "    Beta,\n"
+            ")\n"
+            "\n"
+            "def work(x):\n"
+            "    return Alpha + x\n"
+        )
+        p = tmp_path / "src.py"
+        p.write_text(code)
+
+        changed = engine.remove_unused_imports(p, ["Beta"])
+
+        assert changed is True
+        result = p.read_text()
+        assert "from foo import (" in result
+        assert "Beta" not in result
+        import ast
+        ast.parse(result)
+
+
+# ---------------------------------------------------------------------------
 # DirectRefactorEngine — FIX_MODULE_EXECUTION_BLOCK bug fix
 # ---------------------------------------------------------------------------
 

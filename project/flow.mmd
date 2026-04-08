@@ -30,13 +30,13 @@ flowchart TD
         redsl__consciousness_loop__main_loop["main_loop"]
         redsl__formatters__format_debug_info["format_debug_info"]
         redsl__config__AgentConfig__from_env["from_env"]
-        redsl__main__cmd_analyze{{cmd_analyze CC=22}}
         redsl__main___dispatch_analyze["_dispatch_analyze"]
         redsl__main___dispatch_explain["_dispatch_explain"]
         redsl__main___dispatch_refactor["_dispatch_refactor"]
         redsl__main___dispatch_memory_stats["_dispatch_memory_stats"]
         redsl__main___dispatch_serve["_dispatch_serve"]
-        ...["+231 more"]
+        redsl__main__main["main"]
+        ...["+244 more"]
     end
 
     class refactor_output__refactor_extract_functions_20260407_143102__00_app__models__main_function,redsl__consciousness_loop__ConsciousnessLoop__run,redsl__consciousness_loop__ConsciousnessLoop___inner_thought,redsl__consciousness_loop__ConsciousnessLoop___self_assessment,redsl__consciousness_loop__ConsciousnessLoop___profile_performance,redsl__consciousness_loop__ConsciousnessLoop__stop,redsl__consciousness_loop__main_loop,redsl__formatters__format_debug_info,redsl__config__AgentConfig__from_env,redsl__main___dispatch_analyze entry

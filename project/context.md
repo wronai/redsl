@@ -4,38 +4,38 @@
 
 - **Project**: /home/tom/github/semcod/redsl
 - **Primary Language**: python
-- **Languages**: python: 72, shell: 1
+- **Languages**: python: 73, shell: 1
 - **Analysis Mode**: static
-- **Total Functions**: 389
+- **Total Functions**: 413
 - **Total Classes**: 73
-- **Modules**: 73
-- **Entry Points**: 286
+- **Modules**: 74
+- **Entry Points**: 301
 
 ## Architecture by Module
 
 ### redsl.orchestrator
-- **Functions**: 18
+- **Functions**: 25
 - **Classes**: 2
 - **File**: `orchestrator.py`
+
+### redsl.main
+- **Functions**: 22
+- **File**: `main.py`
+
+### redsl.refactors.direct
+- **Functions**: 19
+- **Classes**: 1
+- **File**: `direct.py`
 
 ### redsl.memory
 - **Functions**: 18
 - **Classes**: 4
 - **File**: `__init__.py`
 
-### redsl.refactors.direct
-- **Functions**: 18
-- **Classes**: 3
-- **File**: `direct.py`
-
 ### redsl.analyzers.parsers.project_parser
 - **Functions**: 18
 - **Classes**: 1
 - **File**: `project_parser.py`
-
-### redsl.main
-- **Functions**: 15
-- **File**: `main.py`
 
 ### redsl.analyzers.incremental
 - **Functions**: 15
@@ -143,12 +143,6 @@ Main execution flows into the system:
 > Process semcod projects.
 - **Calls**: Path, semcod_root.iterdir, print, sorted, print, print, print, sum
 
-### redsl.refactors.direct.DirectRefactorEngine.remove_unused_imports
-> Remove unused imports from a Python file.
-
-Uses line-based editing to preserve original formatting.
-- **Calls**: file_path.read_text, ast.parse, source.splitlines, redsl.analyzers.incremental.EvolutionaryCache.set, redsl.analyzers.incremental.EvolutionaryCache.set, ast.iter_child_nodes, enumerate, self._clean_blank_lines
-
 ### examples.02-custom-rules.main.main
 - **Calls**: DSLEngine, print, print, print, print, engine.add_rule, engine.add_rule, print
 
@@ -160,22 +154,13 @@ Uses line-based editing to preserve original formatting.
 > Załaduj domyślny zestaw reguł refaktoryzacji.
 - **Calls**: Rule, Rule, Rule, Rule, Rule, Rule, Rule, Rule
 
-### redsl.refactors.direct.ReturnTypeAdder._infer_return_type
+### redsl.refactors.ast_transformers.ReturnTypeAdder._infer_return_type
 > Infer return type from function body.
 - **Calls**: ast.walk, redsl.analyzers.incremental.EvolutionaryCache.set, isinstance, ast.Name, isinstance, len, types.pop, isinstance
 
 ### archive.legacy_scripts.apply_semcod_refactor.main
 > Apply reDSL to a semcod project.
 - **Calls**: Path, logger.info, AgentConfig, RefactorOrchestrator, print, orchestrator.explain_decisions, print, len
-
-### redsl.orchestrator.RefactorOrchestrator.run_cycle
-> Jeden pełny cykl refaktoryzacji.
-
-1. PERCEIVE: analiza projektu
-2. DECIDE: ewaluacja reguł DSL
-3. PLAN + EXECUTE: generowanie i aplikowanie zmian
-4. R
-- **Calls**: CycleReport, logger.info, logger.info, analysis.to_dsl_contexts, self.dsl_engine.top_decisions, len, logger.info, logger.info
 
 ### examples.01-basic-analysis.main.main
 - **Calls**: CodeAnalyzer, analyzer.analyze_from_toon_content, print, print, print, print, print, print
@@ -216,15 +201,15 @@ Args:
 > Wrap module-level code in if __name__ == '__main__' guard.
 - **Calls**: file_path.read_text, ast.parse, redsl.analyzers.incremental.EvolutionaryCache.set, source.splitlines, min, lines.insert, sorted, file_path.write_text
 
-### redsl.analyzers.incremental.IncrementalAnalyzer._merge_with_cache
-> Scal świeżo przeanalizowane pliki z cached poprzednimi wynikami.
-- **Calls**: self._analyze_subset, AnalysisResult, merged.metrics.extend, project_dir.rglob, self._populate_cache, cache.save, len, sum
-
 ### redsl.refactors.direct.DirectRefactorEngine.add_return_types
 > Add return type annotations to functions.
 
 Uses line-based editing to preserve original formatting.
 - **Calls**: file_path.read_text, ast.parse, source.splitlines, ReturnTypeAdder, ast.walk, enumerate, file_path.write_text, self.applied_changes.append
+
+### redsl.analyzers.incremental.IncrementalAnalyzer._merge_with_cache
+> Scal świeżo przeanalizowane pliki z cached poprzednimi wynikami.
+- **Calls**: self._analyze_subset, AnalysisResult, merged.metrics.extend, project_dir.rglob, self._populate_cache, cache.save, len, sum
 
 ### examples.03-full-pipeline.main.main
 - **Calls**: AgentConfig.from_env, RefactorOrchestrator, print, print, print, print, orchestrator.run_from_toon_content, print
@@ -240,6 +225,14 @@ Uses line-based editing to preserve original formatting.
 ### redsl.analyzers.python_analyzer.PythonAnalyzer._scan_top_nodes
 > Iteruj po węzłach top-level i class-level, zbieraj CC, nesting i alerty.
 - **Calls**: rel_path.endswith, ast.iter_child_nodes, isinstance, ast.iter_child_nodes, isinstance, isinstance, redsl.analyzers.python_analyzer.ast_cyclomatic_complexity, max
+
+### redsl.analyzers.parsers.project_parser.ProjectParser._parse_emoji_alert_line
+> T001: Parsuj linie code2llm v2: 🟡 CC func_name CC=41 (limit:10)
+- **Calls**: None.strip, re.match, match.group, re.search, re.search, alert_type_map.get, match.group, int
+
+### redsl.cli.debug_decisions
+> Debug DSL decision making.
+- **Calls**: debug.command, click.argument, click.option, CodeAnalyzer, analyzer.analyze_project, analysis.to_dsl_contexts, RefactorOrchestrator, orchestrator.dsl_engine.evaluate
 
 ## Process Flows
 
@@ -265,40 +258,36 @@ refactor [redsl.cli]
 run_hybrid_batch [redsl.commands.hybrid]
 ```
 
-### Flow 5: remove_unused_imports
-```
-remove_unused_imports [redsl.refactors.direct.DirectRefactorEngine]
-  └─ →> set
-      └─ →> _file_hash
-  └─ →> set
-      └─ →> _file_hash
-```
-
-### Flow 6: run_pyqual_analysis
+### Flow 5: run_pyqual_analysis
 ```
 run_pyqual_analysis [redsl.commands.pyqual]
 ```
 
-### Flow 7: _load_default_rules
+### Flow 6: _load_default_rules
 ```
 _load_default_rules [redsl.dsl.engine.DSLEngine]
 ```
 
-### Flow 8: _infer_return_type
+### Flow 7: _infer_return_type
 ```
-_infer_return_type [redsl.refactors.direct.ReturnTypeAdder]
+_infer_return_type [redsl.refactors.ast_transformers.ReturnTypeAdder]
   └─ →> set
       └─ →> _file_hash
 ```
 
-### Flow 9: run_cycle
-```
-run_cycle [redsl.orchestrator.RefactorOrchestrator]
-```
-
-### Flow 10: run_semcod_batch
+### Flow 8: run_semcod_batch
 ```
 run_semcod_batch [redsl.commands.batch]
+```
+
+### Flow 9: chunk_function
+```
+chunk_function [redsl.analyzers.semantic_chunker.SemanticChunker]
+```
+
+### Flow 10: parse_duplication_toon
+```
+parse_duplication_toon [redsl.analyzers.parsers.duplication_parser.DuplicationParser]
 ```
 
 ## Key Classes
@@ -310,8 +299,13 @@ run_semcod_batch [redsl.commands.batch]
 - CodeAnalyzer (percepcja)
 - DSLEngine (decyzje)
 - Ref
-- **Methods**: 18
-- **Key Methods**: redsl.orchestrator.RefactorOrchestrator.__init__, redsl.orchestrator.RefactorOrchestrator.run_cycle, redsl.orchestrator.RefactorOrchestrator.run_from_toon_content, redsl.orchestrator.RefactorOrchestrator._execute_decision, redsl.orchestrator.RefactorOrchestrator._resolve_source_path, redsl.orchestrator.RefactorOrchestrator._load_source_code, redsl.orchestrator.RefactorOrchestrator._resolve_target_function, redsl.orchestrator.RefactorOrchestrator._consult_memory, redsl.orchestrator.RefactorOrchestrator._remember_decision_result, redsl.orchestrator.RefactorOrchestrator._validate_with_regix
+- **Methods**: 25
+- **Key Methods**: redsl.orchestrator.RefactorOrchestrator.__init__, redsl.orchestrator.RefactorOrchestrator.run_cycle, redsl.orchestrator.RefactorOrchestrator._new_cycle_report, redsl.orchestrator.RefactorOrchestrator._analyze_project, redsl.orchestrator.RefactorOrchestrator._summarize_analysis, redsl.orchestrator.RefactorOrchestrator._select_decisions, redsl.orchestrator.RefactorOrchestrator._snapshot_regix_before, redsl.orchestrator.RefactorOrchestrator._consult_memory_for_decisions, redsl.orchestrator.RefactorOrchestrator._execute_decisions, redsl.orchestrator.RefactorOrchestrator.run_from_toon_content
+
+### redsl.refactors.direct.DirectRefactorEngine
+> Applies simple refactorings directly via AST manipulation.
+- **Methods**: 19
+- **Key Methods**: redsl.refactors.direct.DirectRefactorEngine.__init__, redsl.refactors.direct.DirectRefactorEngine.remove_unused_imports, redsl.refactors.direct.DirectRefactorEngine._collect_unused_import_edits, redsl.refactors.direct.DirectRefactorEngine._collect_import_edits, redsl.refactors.direct.DirectRefactorEngine._collect_import_from_edits, redsl.refactors.direct.DirectRefactorEngine._alias_name, redsl.refactors.direct.DirectRefactorEngine._format_alias, redsl.refactors.direct.DirectRefactorEngine._remove_statement_lines, redsl.refactors.direct.DirectRefactorEngine._remove_replaced_statement_lines, redsl.refactors.direct.DirectRefactorEngine._apply_line_edits
 
 ### redsl.analyzers.parsers.project_parser.ProjectParser
 > Parser sekcji project_toon.
@@ -328,11 +322,6 @@ run_semcod_batch [redsl.commands.batch]
 > Analizator plików toon — przetwarza dane z code2llm.
 - **Methods**: 13
 - **Key Methods**: redsl.analyzers.toon_analyzer.ToonAnalyzer.__init__, redsl.analyzers.toon_analyzer.ToonAnalyzer.analyze_project, redsl.analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content, redsl.analyzers.toon_analyzer.ToonAnalyzer._find_toon_files, redsl.analyzers.toon_analyzer.ToonAnalyzer._select_project_key, redsl.analyzers.toon_analyzer.ToonAnalyzer._process_project_ton, redsl.analyzers.toon_analyzer.ToonAnalyzer._convert_modules_to_metrics, redsl.analyzers.toon_analyzer.ToonAnalyzer._process_hotspots, redsl.analyzers.toon_analyzer.ToonAnalyzer._process_alerts, redsl.analyzers.toon_analyzer.ToonAnalyzer._process_duplicates
-
-### redsl.refactors.direct.DirectRefactorEngine
-> Applies simple refactorings directly via AST manipulation.
-- **Methods**: 11
-- **Key Methods**: redsl.refactors.direct.DirectRefactorEngine.__init__, redsl.refactors.direct.DirectRefactorEngine.remove_unused_imports, redsl.refactors.direct.DirectRefactorEngine._is_main_guard_node, redsl.refactors.direct.DirectRefactorEngine._get_indent, redsl.refactors.direct.DirectRefactorEngine._clean_blank_lines, redsl.refactors.direct.DirectRefactorEngine.fix_module_execution_block, redsl.refactors.direct.DirectRefactorEngine.extract_constants, redsl.refactors.direct.DirectRefactorEngine._generate_constant_name, redsl.refactors.direct.DirectRefactorEngine.add_return_types, redsl.refactors.direct.DirectRefactorEngine._find_def_colon
 
 ### redsl.commands.multi_project.MultiProjectReport
 > Zbiorczy raport z analizy wielu projektów.
@@ -505,6 +494,8 @@ Key functions that process and transform data:
 > Waliduj propozycję: syntax check + basic sanity + vallm pipeline (jeśli dostępny).
 - **Output to**: RefactorResult, vallm_bridge.is_available, vallm_bridge.validate_proposal, len, code.strip
 
+### redsl.refactors.direct.DirectRefactorEngine._format_alias
+
 ### redsl.validation.vallm_bridge.validate_patch
 > Waliduj wygenerowany kod przez pipeline vallm.
 
@@ -531,18 +522,17 @@ Returns:
 Typowe użycie PO zacommitowaniu zmian 
 - **Output to**: report.get, report.get, redsl.validation.regix_bridge.is_available, logger.debug, redsl.validation.regix_bridge.compare
 
-### redsl.validation.regix_bridge.validate_working_tree
-> Porównaj snapshot 'przed' ze stanem working tree (po zmianach, przed commitem).
-
-Używany w run_cycle
-- **Output to**: report.get, report.get, redsl.validation.regix_bridge.is_available, logger.debug, redsl.validation.regix_bridge.snapshot
-
 ## Behavioral Patterns
 
 ### recursion_estimate_cycle_cost
 - **Type**: recursion
 - **Confidence**: 0.90
 - **Functions**: redsl.orchestrator.RefactorOrchestrator.estimate_cycle_cost
+
+### state_machine_DirectRefactorEngine
+- **Type**: state_machine
+- **Confidence**: 0.70
+- **Functions**: redsl.refactors.direct.DirectRefactorEngine.__init__, redsl.refactors.direct.DirectRefactorEngine.remove_unused_imports, redsl.refactors.direct.DirectRefactorEngine._collect_unused_import_edits, redsl.refactors.direct.DirectRefactorEngine._collect_import_edits, redsl.refactors.direct.DirectRefactorEngine._collect_import_from_edits
 
 ### state_machine_RefactorSandbox
 - **Type**: state_machine
@@ -559,15 +549,12 @@ Functions exposed as public API (no underscore prefix):
 - `redsl.cli.refactor` - 52 calls
 - `redsl.commands.hybrid.run_hybrid_batch` - 51 calls
 - `archive.legacy_scripts.batch_refactor_semcod.main` - 46 calls
-- `redsl.main.cmd_analyze` - 45 calls
 - `examples.04-memory-learning.main.main` - 39 calls
 - `archive.legacy_scripts.batch_quality_refactor.main` - 38 calls
-- `redsl.refactors.direct.DirectRefactorEngine.remove_unused_imports` - 37 calls
 - `examples.02-custom-rules.main.main` - 35 calls
 - `redsl.commands.pyqual.run_pyqual_analysis` - 35 calls
 - `archive.legacy_scripts.hybrid_llm_refactor.apply_changes_with_llm_supervision` - 34 calls
 - `archive.legacy_scripts.apply_semcod_refactor.main` - 29 calls
-- `redsl.orchestrator.RefactorOrchestrator.run_cycle` - 29 calls
 - `examples.01-basic-analysis.main.main` - 28 calls
 - `redsl.commands.batch.run_semcod_batch` - 27 calls
 - `redsl.analyzers.semantic_chunker.SemanticChunker.chunk_function` - 27 calls
@@ -588,11 +575,14 @@ Functions exposed as public API (no underscore prefix):
 - `redsl.validation.vallm_bridge.validate_patch` - 20 calls
 - `redsl.cli.debug_decisions` - 20 calls
 - `redsl.formatters.format_batch_results` - 19 calls
+- `redsl.orchestrator.RefactorOrchestrator.run_cycle` - 19 calls
 - `redsl.commands.pyqual.run_pyqual_fix` - 19 calls
 - `redsl.refactors.body_restorer.repair_file` - 19 calls
 - `redsl.analyzers.redup_bridge.scan_duplicates` - 19 calls
 - `redsl.analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content` - 19 calls
 - `redsl.dsl.engine.DSLEngine.add_rules_from_yaml` - 18 calls
+- `redsl.commands.planfile_bridge.create_ticket` - 17 calls
+- `redsl.refactors.engine.RefactorEngine.validate_proposal` - 17 calls
 
 ## System Interactions
 
@@ -618,10 +608,6 @@ graph TD
     run_hybrid_batch --> sorted
     main --> AgentMemory
     main --> InMemoryCollection
-    remove_unused_import --> read_text
-    remove_unused_import --> parse
-    remove_unused_import --> splitlines
-    remove_unused_import --> set
     main --> DSLEngine
     run_pyqual_analysis --> PyQualAnalyzer
     run_pyqual_analysis --> analyze_project
@@ -630,6 +616,10 @@ graph TD
     _load_default_rules --> Rule
     _infer_return_type --> walk
     _infer_return_type --> set
+    _infer_return_type --> isinstance
+    _infer_return_type --> Name
+    main --> info
+    main --> AgentConfig
 ```
 
 ## Reverse Engineering Guidelines

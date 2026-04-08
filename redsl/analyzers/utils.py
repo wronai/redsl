@@ -64,43 +64,44 @@ def _should_ignore_file(
     file_path: Path, project_dir: Path, gitignore_patterns: set[str]
 ) -> bool:
     """Check if file should be ignored based on default patterns and .gitignore."""
-    # Check default patterns (match against path parts)
+    if _matches_default_patterns(file_path):
+        return True
+    if gitignore_patterns and _matches_gitignore_patterns(file_path, project_dir, gitignore_patterns):
+        return True
+    return False
+
+
+def _matches_default_patterns(file_path: Path) -> bool:
+    """Return True if any path part matches DEFAULT_IGNORE_PATTERNS."""
     for part in file_path.parts:
         if part in DEFAULT_IGNORE_PATTERNS:
             return True
-        # Check wildcard patterns like *.egg-info
         for pattern in DEFAULT_IGNORE_PATTERNS:
             if pattern.startswith("*") and fnmatch.fnmatch(part, pattern):
                 return True
+    return False
 
-    # Check gitignore patterns
-    if gitignore_patterns:
-        try:
-            rel_path = file_path.relative_to(project_dir)
-            rel_str = str(rel_path).replace("\\", "/")
 
-            for pattern in gitignore_patterns:
-                # Handle directory patterns (ending with /)
-                if pattern.endswith("/"):
-                    dir_pattern = pattern.rstrip("/")
-                    if any(part == dir_pattern for part in rel_path.parts):
-                        return True
-                # Handle wildcard patterns
-                elif "*" in pattern or "?" in pattern or "[" in pattern:
-                    # Match against full path or filename
-                    if fnmatch.fnmatch(rel_str, pattern):
-                        return True
-                    if fnmatch.fnmatch(rel_path.name, pattern):
-                        return True
-                # Handle exact matches
-                else:
-                    if pattern in rel_str.split("/"):
-                        return True
-                    if rel_str.startswith(pattern + "/"):
-                        return True
-        except ValueError:
-            pass  # file_path is not relative to project_dir
-
+def _matches_gitignore_patterns(
+    file_path: Path, project_dir: Path, gitignore_patterns: set[str]
+) -> bool:
+    """Return True if the file matches any .gitignore pattern."""
+    try:
+        rel_path = file_path.relative_to(project_dir)
+        rel_str = str(rel_path).replace("\\", "/")
+        for pattern in gitignore_patterns:
+            if pattern.endswith("/"):
+                dir_pattern = pattern.rstrip("/")
+                if any(part == dir_pattern for part in rel_path.parts):
+                    return True
+            elif "*" in pattern or "?" in pattern or "[" in pattern:
+                if fnmatch.fnmatch(rel_str, pattern) or fnmatch.fnmatch(rel_path.name, pattern):
+                    return True
+            else:
+                if pattern in rel_str.split("/") or rel_str.startswith(pattern + "/"):
+                    return True
+    except ValueError:
+        pass
     return False
 
 

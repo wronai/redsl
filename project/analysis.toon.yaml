@@ -1,25 +1,21 @@
-# code2llm | 67f 11684L | python:66,shell:1 | 2026-04-08
-# CC̄=4.7 | critical:13/389 | dups:0 | cycles:0
+# code2llm | 68f 11800L | python:67,shell:1 | 2026-04-08
+# CC̄=4.5 | critical:9/413 | dups:0 | cycles:0
 
-HEALTH[13]:
+HEALTH[9]:
   🟡 CC    main CC=21 (limit:15)
   🟡 CC    apply_changes_with_llm_supervision CC=16 (limit:15)
   🟡 CC    main CC=27 (limit:15)
-  🟡 CC    cmd_analyze CC=22 (limit:15)
   🟡 CC    create_ticket CC=15 (limit:15)
-  🟡 CC    run_cycle CC=18 (limit:15)
   🟡 CC    run_hybrid_batch CC=18 (limit:15)
-  🟡 CC    _merge_with_cache CC=15 (limit:15)
-  🟡 CC    remove_unused_imports CC=35 (limit:15)
   🟡 CC    fix_module_execution_block CC=15 (limit:15)
   🟡 CC    extract_constants CC=15 (limit:15)
+  🟡 CC    _merge_with_cache CC=15 (limit:15)
   🟡 CC    _infer_return_type CC=19 (limit:15)
-  🟡 CC    _should_ignore_file CC=19 (limit:15)
 
 REFACTOR[1]:
-  1. split 13 high-CC methods  (CC>15)
+  1. split 9 high-CC methods  (CC>15)
 
-PIPELINES[274]:
+PIPELINES[286]:
   [1] Src [main]: main
       PURITY: 100% pure
   [2] Src [main]: main → example_curl_commands
@@ -41,26 +37,26 @@ LAYERS:
   │ debug_decisions             62L  0C    1m  CC=7      ←0
   │ debug_llm_config            55L  0C    1m  CC=5      ←0
   │
-  redsl/                          CC̄=4.5    ←in:5  →out:12  !! split
-  │ !! orchestrator               651L  2C   18m  CC=18     ←0
-  │ !! direct                     535L  3C   18m  CC=35     ←0
+  redsl/                          CC̄=4.3    ←in:5  →out:12  !! split
+  │ !! orchestrator               688L  2C   25m  CC=11     ←0
+  │ !! direct                     466L  1C   19m  CC=15     ←0
   │ engine                     417L  6C   12m  CC=10     ←0
   │ api                        358L  11C    1m  CC=1      ←0
   │ cli                        352L  0C   14m  CC=13     ←0
-  │ regix_bridge               311L  0C    8m  CC=9      ←1
+  │ regix_bridge               317L  0C    8m  CC=9      ←1
   │ formatters                 306L  0C   13m  CC=13     ←2
   │ project_parser             300L  1C   18m  CC=12     ←0
   │ engine                     298L  1C    7m  CC=12     ←1
   │ toon_analyzer              294L  1C   13m  CC=14     ←0
   │ diff_manager               283L  0C    9m  CC=9      ←0
   │ perf_bridge                275L  3C    7m  CC=7      ←2
-  │ !! incremental                271L  2C   15m  CC=15     ←8
+  │ !! incremental                271L  2C   15m  CC=15     ←9
   │ rule_generator             271L  2C   11m  CC=6      ←0
+  │ main                       267L  0C   22m  CC=6      ←0
   │ github_actions             260L  1C    6m  CC=6      ←0
   │ python_analyzer            256L  1C    8m  CC=12     ←2
   │ multi_project              251L  3C   10m  CC=5      ←0
   │ __init__                   246L  1C    8m  CC=11     ←0
-  │ !! main                       243L  0C   15m  CC=22     ←0
   │ llx_router                 242L  1C   12m  CC=5      ←1
   │ redup_bridge               242L  0C    7m  CC=12     ←0
   │ __init__                   235L  4C   18m  CC=8      ←0
@@ -78,8 +74,9 @@ LAYERS:
   │ functions_parser           148L  1C    6m  CC=9      ←0
   │ reporter                   136L  1C    4m  CC=11     ←0
   │ pyqual_bridge              129L  0C    5m  CC=8      ←0
+  │ !! ast_transformers           117L  2C    7m  CC=19     ←0
   │ batch                      116L  0C    3m  CC=8      ←0
-  │ !! utils                      115L  0C    3m  CC=19     ←3
+  │ utils                      116L  0C    5m  CC=13     ←3
   │ resolver                    97L  1C    4m  CC=8      ←1
   │ config                      91L  5C    1m  CC=3      ←11
   │ ast_analyzer                88L  1C    2m  CC=7      ←0
@@ -120,11 +117,11 @@ COUPLING:
        redsl.diagnostics                      ←3                                                                                                                                                                      ──                        
                redsl.dsl                                               1                                                                                                                                                                      ──
   CYCLES: none
+  HUB: redsl/ (fan-in=5)
   HUB: redsl.validation/ (fan-in=6)
   HUB: redsl.analyzers/ (fan-in=11)
-  HUB: redsl/ (fan-in=5)
-  SMELL: redsl.refactors/ fan-out=8 → split needed
   SMELL: redsl/ fan-out=12 → split needed
+  SMELL: redsl.refactors/ fan-out=8 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon
