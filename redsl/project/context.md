@@ -316,6 +316,13 @@ Key functions that process and transform data:
 
 ### refactors.direct_imports.DirectImportRefactorer._format_alias
 
+### validation.pyqual_bridge.validate_config
+> Run `pyqual validate` to check pyqual.yaml is well-formed.
+
+Returns:
+    (valid: bool, message: str)
+- **Output to**: validation.pyqual_bridge.is_available, subprocess.run, logger.warning, str, output.strip
+
 ### validation.vallm_bridge.validate_patch
 > Waliduj wygenerowany kod przez pipeline vallm.
 
@@ -328,13 +335,6 @@ Zapisuje kod do tymczasowego workspace, uruchamia va
 Args:
     proposal: Propozycja z listą FileCh
 - **Output to**: validation.vallm_bridge.is_available, Path, analyzers.incremental.EvolutionaryCache.set, validation.vallm_bridge.validate_patch, scores.append
-
-### validation.pyqual_bridge.validate_config
-> Run `pyqual validate` to check pyqual.yaml is well-formed.
-
-Returns:
-    (valid: bool, message: str)
-- **Output to**: validation.pyqual_bridge.is_available, subprocess.run, logger.warning, str, output.strip
 
 ## Public API Surface
 
@@ -365,8 +365,8 @@ Functions exposed as public API (no underscore prefix):
 - `analyzers.redup_bridge.scan_duplicates` - 19 calls
 - `analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content` - 19 calls
 - `commands.doctor_detectors.detect_version_mismatch` - 18 calls
-- `autonomy.growth_control.check_module_budget` - 18 calls
 - `autonomy.scheduler.Scheduler.run` - 18 calls
+- `autonomy.growth_control.check_module_budget` - 18 calls
 - `execution.reporter.explain_decisions` - 18 calls
 - `dsl.engine.DSLEngine.add_rules_from_yaml` - 18 calls
 - `commands.doctor_fixers.fix_module_level_exit` - 17 calls
