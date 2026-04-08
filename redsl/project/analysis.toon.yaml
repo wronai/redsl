@@ -1,4 +1,4 @@
-# code2llm | 85f 14950L | python:85 | 2026-04-08
+# code2llm | 85f 14959L | python:85 | 2026-04-08
 # CC̄=4.1 | critical:6/596 | dups:0 | cycles:0
 
 HEALTH[6]:
@@ -39,7 +39,7 @@ LAYERS:
   │ bandit_analyzer             47L  1C    1m  CC=9      ←0
   │
   analyzers/                      CC̄=4.8    ←in:12  →out:0
-  │ !! radon_analyzer             308L  0C   12m  CC=46     ←1
+  │ !! radon_analyzer             317L  0C   12m  CC=46     ←1
   │ project_parser             300L  1C   18m  CC=12     ←0
   │ toon_analyzer              294L  1C   13m  CC=14     ←0
   │ incremental                291L  2C   17m  CC=8      ←11
@@ -154,13 +154,13 @@ COUPLING:
    analyzers.parsers                                                                               1                                                                                                                                                                                                                          ──
   CYCLES: none
   HUB: config/ (fan-in=12)
+  HUB: formatters/ (fan-in=15)
   HUB: analyzers/ (fan-in=12)
   HUB: validation/ (fan-in=6)
   HUB: execution/ (fan-in=10)
-  HUB: formatters/ (fan-in=15)
+  SMELL: api/ fan-out=12 → split needed
   SMELL: refactors/ fan-out=8 → split needed
   SMELL: cli/ fan-out=18 → split needed
-  SMELL: api/ fan-out=12 → split needed
   SMELL: execution/ fan-out=9 → split needed
 
 EXTERNAL:

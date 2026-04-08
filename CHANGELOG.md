@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.16] - 2026-04-08
+
+### Docs
+- Update README.md
+
+### Other
+- Update redsl/analyzers/radon_analyzer.py
+- Update redsl/project/analysis.toon.yaml
+
 ## [1.2.15] - 2026-04-08
 
 ### Docs

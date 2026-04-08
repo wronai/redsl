@@ -106,6 +106,15 @@ def run_radon_cc(project_dir: Path, excludes: list[str] | None = None) -> dict[s
 
     cmd = ["radon", "cc", "-j", str(project_dir)]
 
+    # Always exclude virtual-env and build directories to avoid scanning
+    # third-party code that inflates CC values.
+    # radon uses --ignore for directory names and --exclude for file globs.
+    _default_ignore_dirs = [
+        "venv", ".venv", ".tox", "node_modules",
+        "build", "dist", ".git", "__pycache__",
+    ]
+    cmd.extend(["-i", ",".join(_default_ignore_dirs)])
+
     if excludes:
         for pattern in excludes:
             cmd.extend(["--exclude", pattern])
