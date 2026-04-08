@@ -315,7 +315,7 @@ def refactor(
         max_actions=max_actions,
         use_code2llm=use_code2llm,
         validate_regix=validate_regix,
-        rollback_on_regression=rollback,
+        rollback_on_failure=rollback,
         use_sandbox=sandbox,
     )
 

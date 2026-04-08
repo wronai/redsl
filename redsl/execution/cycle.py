@@ -52,7 +52,7 @@ def run_cycle(
     max_actions: int = 5,
     use_code2llm: bool = False,
     validate_regix: bool = False,
-    rollback_on_regression: bool = False,
+    rollback_on_failure: bool = False,
     use_sandbox: bool = False,
 ) -> "CycleReport":
     """Run a complete refactoring cycle."""
@@ -86,7 +86,7 @@ def run_cycle(
 
         if validate_regix and report.proposals_applied > 0:
             logger.info("=== CYCLE %d: VALIDATE (regix) ===", orchestrator._cycle_count)
-            _validate_with_regix(project_dir, regix_before, rollback_on_regression, report)
+            _validate_with_regix(project_dir, regix_before, rollback_on_failure, report)
 
         logger.info("=== CYCLE %d: REFLECT ===", orchestrator._cycle_count)
         _reflect_on_cycle(orchestrator, report)

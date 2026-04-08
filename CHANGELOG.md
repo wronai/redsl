@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.12] - 2026-04-08
+
+### Docs
+- Update README.md
+
+### Test
+- Update tests/test_cli_refactor.py
+
+### Other
+- Update examples/03-full-pipeline/main.py
+- Update project/evolution.toon.yaml
+- Update redsl/awareness/__init__.py
+- Update redsl/cli.py
+- Update redsl/execution/cycle.py
+- Update redsl/execution/validation.py
+- Update redsl/orchestrator.py
+- Update redsl/project/analysis.toon.yaml
+
 ## [1.2.11] - 2026-04-08
 
 ### Docs

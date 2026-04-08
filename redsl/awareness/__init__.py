@@ -11,7 +11,7 @@ from redsl.memory import AgentMemory
 
 from .change_patterns import ChangePattern, ChangePatternLearner
 from .ecosystem import EcosystemGraph, ProjectNode
-from .git_timeline import GitTimelineAnalyzer, MetricPoint, TimelineSummary, TrendAnalysis
+from .git_timeline import GitTimelineAnalyzer
 from .health_model import HealthDimension, HealthModel, UnifiedHealth
 from .proactive import ProactiveAlert, ProactiveAnalyzer
 from .self_model import AgentCapabilityProfile, CapabilityStat, SelfModel

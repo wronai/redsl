@@ -144,15 +144,15 @@ COUPLING:
      commands.pyqual                                                                               2                                                                                                                                                                                                      ──                    
    analyzers.parsers                                                                               1                                                                                                                                                                                                                          ──
   CYCLES: none
-  HUB: execution/ (fan-in=10)
   HUB: formatters/ (fan-in=15)
-  HUB: validation/ (fan-in=6)
-  HUB: config/ (fan-in=12)
   HUB: analyzers/ (fan-in=12)
-  SMELL: execution/ fan-out=9 → split needed
+  HUB: validation/ (fan-in=6)
+  HUB: execution/ (fan-in=10)
+  HUB: config/ (fan-in=12)
   SMELL: refactors/ fan-out=8 → split needed
-  SMELL: api/ fan-out=12 → split needed
+  SMELL: execution/ fan-out=9 → split needed
   SMELL: cli/ fan-out=15 → split needed
+  SMELL: api/ fan-out=12 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

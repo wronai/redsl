@@ -95,7 +95,7 @@ class RefactorOrchestrator:
         max_actions: int = 5,
         use_code2llm: bool = False,
         validate_regix: bool = False,
-        rollback_on_regression: bool = False,
+        rollback_on_failure: bool = False,
         use_sandbox: bool = False,
     ) -> CycleReport:
         return _run_cycle(
@@ -104,7 +104,7 @@ class RefactorOrchestrator:
             max_actions=max_actions,
             use_code2llm=use_code2llm,
             validate_regix=validate_regix,
-            rollback_on_regression=rollback_on_regression,
+            rollback_on_failure=rollback_on_failure,
             use_sandbox=use_sandbox,
         )
 

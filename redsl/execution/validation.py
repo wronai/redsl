@@ -28,21 +28,21 @@ def _snapshot_regix_before(project_dir: Path, validate_regix: bool) -> dict | No
 def _validate_with_regix(
     project_dir: Path,
     before_snapshot: dict | None,
-    rollback_on_regression: bool,
+    rollback_on_failure: bool,
     report: "CycleReport",
 ) -> None:
     """Validate changes with regix and update report."""
     passed, regix_report = regix_bridge.validate_working_tree(
         project_dir,
         before_snapshot=before_snapshot,
-        rollback_on_failure=rollback_on_regression,
+        rollback_on_failure=rollback_on_failure,
     )
     if not passed:
         regressions = regix_report.get("regressions", [])
         report.errors.append(
             f"regix: regression detected — {len(regressions)} metric(s) degraded"
         )
-        if rollback_on_regression:
+        if rollback_on_failure:
             report.errors.append("regix: changes rolled back")
             report.proposals_applied = 0
     else:

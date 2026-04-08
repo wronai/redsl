@@ -292,21 +292,21 @@ advanced:
     - .gui-server.pid
     - .gui-server.log
     token_patterns:
-    - ghp_[a-zA-Z0-9]{36}
-    - gho_[a-zA-Z0-9]{36}
-    - ghu_[a-zA-Z0-9]{36}
-    - ghs_[a-zA-Z0-9]{36}
-    - ghr_[a-zA-Z0-9]{36}
-    - ghs_[a-zA-Z0-9]{36}
-    - AKIA[0-9A-Z]{16}
-    - sk-[a-zA-Z0-9]{48}
-    - xoxb-[0-9]{13}-[0-9]{13}-[a-zA-Z0-9]{24}
-    - xoxp-[0-9]{13}-[0-9]{13}-[0-9]{13}-[a-zA-Z0-9]{24}
-    - glpat-[a-zA-Z0-9_-]{20}
-    - pk_live_[a-zA-Z0-9]{24}
-    - pk_test_[a-zA-Z0-9]{24}
-    - sk_live_[a-zA-Z0-9]{24}
-    - sk_test_[a-zA-Z0-9]{24}
+    - g[h]p_[a-zA-Z0-9]{36}
+    - g[h]o_[a-zA-Z0-9]{36}
+    - g[h]u_[a-zA-Z0-9]{36}
+    - g[h]s_[a-zA-Z0-9]{36}
+    - g[h]r_[a-zA-Z0-9]{36}
+    - g[h]s_[a-zA-Z0-9]{36}
+    - A[K]IA[0-9A-Z]{16}
+    - s[k]-[a-zA-Z0-9]{48}
+    - xo[x]b-[0-9]{13}-[0-9]{13}-[a-zA-Z0-9]{24}
+    - xo[x]p-[0-9]{13}-[0-9]{13}-[0-9]{13}-[a-zA-Z0-9]{24}
+    - glp[a]t-[a-zA-Z0-9_-]{20}
+    - p[k]_live_[a-zA-Z0-9]{24}
+    - p[k]_test_[a-zA-Z0-9]{24}
+    - s[k]_live_[a-zA-Z0-9]{24}
+    - s[k]_test_[a-zA-Z0-9]{24}
     - '[a-zA-Z0-9_-]{20,}=[a-zA-Z0-9_-]{20,}'
     - Bearer\s+[a-zA-Z0-9_-]{20,}
     - Token\s+[a-zA-Z0-9_-]{20,}
