@@ -148,8 +148,8 @@ def apply_changes_with_llm_supervision(
     }
 
 
-def main() -> None:
-    """Process semcod projects with hybrid refactoring."""
+def _parse_args() -> tuple[Path, int, bool, bool]:
+    """Parse command line arguments."""
     if len(sys.argv) < 2 or sys.argv[1] in ["-h", "--help", "help"]:
         print("Usage: python hybrid_llm_refactor.py <semcod_root> [--max-changes N] [--no-llm] [--no-validation]")
         print("")
@@ -162,7 +162,7 @@ def main() -> None:
         print("Examples:")
         print("  python hybrid_llm_refactor.py /home/tom/github/semcod --max-changes 30")
         print("  python hybrid_llm_refactor.py /home/tom/github/semcod --no-llm")
-        sys.exit(0 if sys.argv[1] in ["-h", "--help", "help"] else 1)
+        sys.exit(0 if len(sys.argv) >= 2 and sys.argv[1] in ["-h", "--help", "help"] else 1)
     
     semcod_root = Path(sys.argv[1])
     max_changes = 50
@@ -180,95 +180,151 @@ def main() -> None:
     if "--no-validation" in sys.argv:
         validate_direct = False
     
-    # Find all projects with TODO.md
+    return semcod_root, max_changes, enable_llm, validate_direct
+
+
+def _find_projects(semcod_root: Path) -> list[Path]:
+    """Find all projects with TODO.md in the semcod root."""
+    # Special case: if semcod_root itself is a project with TODO.md
+    if (semcod_root / "TODO.md").exists():
+        return [semcod_root]
+    
     projects = []
     for item in semcod_root.iterdir():
         if item.is_dir() and (item / "TODO.md").exists():
             projects.append(item)
+    return projects
+
+
+def _count_todo_issues(todo_file: Path) -> int:
+    """Count TODO issues in a project."""
+    if not todo_file.exists():
+        return 0
+    content = todo_file.read_text(encoding="utf-8")
+    return sum(1 for line in content.splitlines() if line.startswith("- [ ]"))
+
+
+def _regenerate_todo(project: Path) -> None:
+    """Regenerate TODO.md with prefact."""
+    print(f"  Regenerating TODO.md with prefact...")
+    import subprocess
+    subprocess.run(["prefact", "-a"], cwd=project, capture_output=True, text=True)
+
+
+def _process_single_project(
+    project: Path,
+    max_changes: int,
+    enable_llm: bool,
+    validate_direct: bool
+) -> dict[str, Any]:
+    """Process a single project and return results."""
+    todo_file = project / "TODO.md"
+    before_issues = _count_todo_issues(todo_file)
     
-    # Special case: if semcod_root itself is a project with TODO.md
-    if (semcod_root / "TODO.md").exists():
-        projects = [semcod_root]
+    result = apply_changes_with_llm_supervision(
+        project, max_changes, enable_llm, validate_direct
+    )
+    result["before_issues"] = before_issues
     
-    print(f"Found {len(projects)} projects with TODO.md")
-    print(f"Max changes per project: {max_changes}")
+    _regenerate_todo(project)
     
-    # Process each project
-    all_results = []
-    total_before = 0
-    total_after = 0
+    after_issues = _count_todo_issues(todo_file)
+    result["after_issues"] = after_issues
     
-    for project in sorted(projects):
-        # Count TODO issues before
-        todo_file = project / "TODO.md"
-        if todo_file.exists():
-            content = todo_file.read_text(encoding="utf-8")
-            before_issues = sum(1 for line in content.splitlines() if line.startswith("- [ ]"))
-            total_before += before_issues
-        else:
-            before_issues = 0
-        
-        # Apply refactoring
-        result = apply_changes_with_llm_supervision(
-            project, max_changes, enable_llm, validate_direct
-        )
-        result["before_issues"] = before_issues
-        all_results.append(result)
-        
-        # Regenerate TODO.md with prefact
-        print(f"  Regenerating TODO.md with prefact...")
-        import subprocess
-        result_prefact = subprocess.run(["prefact", "-a"], cwd=project, capture_output=True, text=True)
-        
-        # Count issues after
-        if todo_file.exists():
-            content = todo_file.read_text(encoding="utf-8")
-            after_issues = sum(1 for line in content.splitlines() if line.startswith("- [ ]"))
-            total_after += after_issues
-            result["after_issues"] = after_issues
-            reduction = before_issues - after_issues
-            print(f"  TODO reduction: {before_issues} → {after_issues} ({reduction} fewer)")
+    reduction = before_issues - after_issues
+    if reduction > 0:
+        print(f"  TODO reduction: {before_issues} → {after_issues} ({reduction} fewer)")
     
-    # Summary
-    print(f"\n{'='*60}")
-    print(f"HYBRID REFACTORING SUMMARY (LLM: {enable_llm})")
-    print(f"{'='*60}")
-    
+    return result
+
+
+def _calculate_summary_stats(all_results: list[dict], enable_llm: bool) -> dict[str, Any]:
+    """Calculate summary statistics from all results."""
+    total_before = sum(r["before_issues"] for r in all_results)
+    total_after = sum(r.get("after_issues", 0) for r in all_results)
     total_applied = sum(r["changes_applied"] for r in all_results)
     
-    print(f"Total projects: {len(all_results)}")
-    print(f"Total issues before: {total_before}")
-    print(f"Total issues after: {total_after}")
-    print(f"Total reduction: {total_before - total_after}")
-    print(f"\nTotal changes applied: {total_applied}")
-    
-    # Show breakdown by type
+    # Collect all change types
     all_types = set()
     for r in all_results:
         all_types.update(r["changes_by_type"].keys())
     
-    for change_type in sorted(all_types):
+    type_counts = {}
+    for change_type in all_types:
         count = sum(r["changes_by_type"].get(change_type, 0) for r in all_results)
         if count > 0:
-            print(f"  - {change_type}: {count}")
+            type_counts[change_type] = count
     
-    # Show projects with most improvements
-    print(f"\nTop improvements:")
+    # Find top improvements
     sorted_results = sorted(
-        all_results, 
-        key=lambda r: r.get("before_issues", 0) - r.get("after_issues", 0), 
+        all_results,
+        key=lambda r: r.get("before_issues", 0) - r.get("after_issues", 0),
         reverse=True
     )
-    for r in sorted_results[:5]:
-        reduction = r.get("before_issues", 0) - r.get("after_issues", 0)
-        if reduction > 0:
-            print(f"  {r['project']}: {reduction} fewer TODOs ({r['changes_applied']} changes)")
+    top_improvements = [
+        r for r in sorted_results[:5]
+        if r.get("before_issues", 0) - r.get("after_issues", 0) > 0
+    ]
     
-    # Save results
+    return {
+        "total_before": total_before,
+        "total_after": total_after,
+        "total_reduction": total_before - total_after,
+        "total_applied": total_applied,
+        "type_counts": type_counts,
+        "top_improvements": top_improvements,
+    }
+
+
+def _print_summary(stats: dict[str, Any], all_results: list[dict], enable_llm: bool) -> None:
+    """Print the refactoring summary."""
+    print(f"\n{'='*60}")
+    print(f"HYBRID REFACTORING SUMMARY (LLM: {enable_llm})")
+    print(f"{'='*60}")
+    
+    print(f"Total projects: {len(all_results)}")
+    print(f"Total issues before: {stats['total_before']}")
+    print(f"Total issues after: {stats['total_after']}")
+    print(f"Total reduction: {stats['total_reduction']}")
+    print(f"\nTotal changes applied: {stats['total_applied']}")
+    
+    for change_type, count in sorted(stats["type_counts"].items()):
+        print(f"  - {change_type}: {count}")
+    
+    if stats["top_improvements"]:
+        print(f"\nTop improvements:")
+        for r in stats["top_improvements"]:
+            reduction = r.get("before_issues", 0) - r.get("after_issues", 0)
+            print(f"  {r['project']}: {reduction} fewer TODOs ({r['changes_applied']} changes)")
+
+
+def _save_results(all_results: list[dict], semcod_root: Path, enable_llm: bool) -> None:
+    """Save results to JSON file."""
     import json
     results_file = semcod_root / f"hybrid_llm_refactor_results_{('llm' if enable_llm else 'direct')}.json"
     results_file.write_text(json.dumps(all_results, indent=2))
     print(f"\nResults saved to: {results_file}")
+
+
+def main() -> None:
+    """Process semcod projects with hybrid refactoring."""
+    semcod_root, max_changes, enable_llm, validate_direct = _parse_args()
+    
+    projects = _find_projects(semcod_root)
+    print(f"Found {len(projects)} projects with TODO.md")
+    print(f"Max changes per project: {max_changes}")
+    
+    all_results = []
+    
+    for project in sorted(projects):
+        result = _process_single_project(
+            project, max_changes, enable_llm, validate_direct
+        )
+        all_results.append(result)
+    
+    stats = _calculate_summary_stats(all_results, enable_llm)
+    _print_summary(stats, all_results, enable_llm)
+    _save_results(all_results, semcod_root, enable_llm)
 
 
 if __name__ == "__main__":

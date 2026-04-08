@@ -1,8 +1,8 @@
-# redsl | 68f 11800L | shell:1,python:67 | 2026-04-08
+# redsl | 68f 11806L | shell:1,python:67 | 2026-04-08
 # stats: 399 func | 0 cls | 68 mod | CC̄=4.5 | critical:9 | cycles:0
 # alerts[5]: fan-out create_app=39; CC main=27; fan-out main=26; fan-out _fallback_profile=24; fan-out refactor=24
 # hotspots[5]: create_app fan=39; main fan=26; _fallback_profile fan=24; refactor fan=24; main fan=22
-# evolution: CC̄ 4.7→4.5 (improved -0.2)
+# evolution: CC̄ 4.5→4.5 (flat 0.0)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
 M[68]:
   archive/legacy_scripts/apply_semcod_refactor.py,79
@@ -59,8 +59,8 @@ M[68]:
   redsl/main.py,267
   redsl/memory/__init__.py,235
   redsl/orchestrator.py,688
-  redsl/refactors/__init__.py,39
-  redsl/refactors/ast_transformers.py,117
+  redsl/refactors/__init__.py,42
+  redsl/refactors/ast_transformers.py,120
   redsl/refactors/body_restorer.py,203
   redsl/refactors/diff_manager.py,283
   redsl/refactors/direct.py,466

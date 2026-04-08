@@ -146,7 +146,24 @@ Content outside the markers is preserved when regenerating. Enable this with `sy
 
 ```
 redsl/
-├── project        ├── main        ├── main        ├── main        ├── hybrid_quality_refactor        ├── apply_semcod_refactor        ├── debug_llm_config        ├── hybrid_llm_refactor        ├── debug_decisions        ├── batch_refactor_semcod        ├── batch_quality_refactor    ├── consciousness_loop        ├── main├── redsl/    ├── __main__        ├── main    ├── config    ├── formatters    ├── main        ├── planfile_bridge        ├── multi_project        ├── hybrid        ├── batch            ├── ruff_analyzer            ├── mypy_analyzer            ├── reporter        ├── pyqual/            ├── bandit_analyzer    ├── orchestrator    ├── diagnostics/            ├── ast_analyzer        ├── perf_bridge    ├── memory/    ├── llm/        ├── llx_router        ├── engine        ├── diff_manager        ├── prompts        ├── direct        ├── body_restorer    ├── refactors/        ├── models    ├── ci/        ├── github_actions        ├── sandbox    ├── validation/        ├── vallm_bridge        ├── pyqual_bridge        ├── regix_bridge        ├── python_analyzer        ├── incremental        ├── analyzer        ├── ast_transformers    ├── analyzers/        ├── metrics        ├── redup_bridge        ├── toon_analyzer        ├── quality_visitor        ├── utils        ├── resolver        ├── semantic_chunker        ├── code2llm_bridge        ├── parsers/            ├── functions_parser            ├── validation_parser            ├── duplication_parser            ├── project_parser    ├── dsl/        ├── rule_generator        ├── engine    ├── api    ├── cli```
+├── redsl/                      # Main package
+│   ├── __main__.py            # Entry point
+│   ├── cli.py                 # Click CLI interface
+│   ├── api.py                 # FastAPI REST API
+│   ├── config.py              # AgentConfig, LLMConfig
+│   ├── orchestrator.py        # RefactorOrchestrator
+│   ├── analyzers/             # Code analysis and metrics
+│   ├── commands/              # CLI commands
+│   ├── dsl/                   # DSL Engine - refactoring rules
+│   ├── llm/                   # LLM Layer (LiteLLM)
+│   ├── memory/                # Memory system (3 layers)
+│   ├── refactors/             # Refactoring engines
+│   ├── validation/            # Validation layer
+│   └── ci/                    # CI/CD integration
+├── tests/                     # 328 unit tests
+├── examples/                  # Usage examples
+└── config/                    # Default DSL rules
+```
 
 ## API Overview
 
@@ -158,16 +175,16 @@ redsl/
 - **`AnalyzerConfig`** — Konfiguracja analizatora kodu.
 - **`RefactorConfig`** — Konfiguracja silnika refaktoryzacji.
 - **`AgentConfig`** — Główna konfiguracja agenta.
+- **`CycleReport`** — Raport z jednego cyklu refaktoryzacji.
+- **`RefactorOrchestrator`** — Główny orkiestrator — „mózg" systemu.
+- **`RuffAnalyzer`** — Uruchamia ruff i zbiera wyniki.
 - **`ProjectAnalysis`** — Wyniki analizy pojedynczego projektu.
 - **`MultiProjectReport`** — Zbiorczy raport z analizy wielu projektów.
 - **`MultiProjectRunner`** — Uruchamia ReDSL na wielu projektach.
-- **`RuffAnalyzer`** — Uruchamia ruff i zbiera wyniki.
 - **`MypyAnalyzer`** — Uruchamia mypy i zbiera wyniki.
 - **`Reporter`** — Generuje rekomendacje i zapisuje raporty analizy jakości.
-- **`PyQualAnalyzer`** — Python code quality analyzer — fasada nad wyspecjalizowanymi analizatorami.
 - **`BanditAnalyzer`** — Uruchamia bandit i zbiera wyniki bezpieczeństwa.
-- **`CycleReport`** — Raport z jednego cyklu refaktoryzacji.
-- **`RefactorOrchestrator`** — Główny orkiestrator — „mózg" systemu.
+- **`PyQualAnalyzer`** — Python code quality analyzer — fasada nad wyspecjalizowanymi analizatorami.
 - **`AstAnalyzer`** — Analizuje pliki Python przez AST w poszukiwaniu typowych problemów jakości.
 - **`Bottleneck`** — —
 - **`CriticalStep`** — —
@@ -178,7 +195,7 @@ redsl/
 - **`AgentMemory`** — Kompletny system pamięci z trzema warstwami.
 - **`LLMResponse`** — Odpowiedź z modelu LLM.
 - **`LLMLayer`** — Warstwa abstrakcji nad LLM z obsługą:
-- **`ModelSelection`** — —
+- **`ModelSelection`** — Wybór modelu LLM z uzasadnieniem i szacowanym kosztem.
 - **`RefactorEngine`** — Silnik refaktoryzacji z pętlą refleksji.
 - **`DirectRefactorEngine`** — Applies simple refactorings directly via AST manipulation.
 - **`FileChange`** — Zmiana w pojedynczym pliku.
@@ -197,15 +214,15 @@ redsl/
 - **`CodeMetrics`** — Metryki pojedynczej funkcji/modułu.
 - **`AnalysisResult`** — Wynik analizy projektu.
 - **`ToonAnalyzer`** — Analizator plików toon — przetwarza dane z code2llm.
-- **`CodeQualityVisitor`** — Detects common code quality issues in Python AST.
-- **`PathResolver`** — Resolver ścieżek i kodu źródłowego funkcji.
 - **`SemanticChunk`** — Wycięty semantyczny fragment kodu gotowy do wysłania do LLM.
 - **`SemanticChunker`** — Buduje semantyczne chunki kodu dla LLM.
+- **`PathResolver`** — Resolver ścieżek i kodu źródłowego funkcji.
+- **`ProjectParser`** — Parser sekcji project_toon.
 - **`ToonParser`** — Parser plików toon — fasada nad wyspecjalizowanymi parserami.
+- **`CodeQualityVisitor`** — Detects common code quality issues in Python AST.
 - **`FunctionsParser`** — Parser sekcji functions_toon — per-funkcja CC.
 - **`ValidationParser`** — Parser sekcji validation_toon.
 - **`DuplicationParser`** — Parser sekcji duplication_toon.
-- **`ProjectParser`** — Parser sekcji project_toon.
 - **`LearnedRule`** — Reguła DSL wygenerowana z wzorców w pamięci.
 - **`RuleGenerator`** — Generuje nowe reguły DSL z historii refaktoryzacji w pamięci agenta.
 - **`Operator`** — —
@@ -228,18 +245,18 @@ redsl/
 
 ### Functions
 
+- `main()` — —
+- `main()` — —
 - `example_curl_commands()` — Wydrukuj przykładowe komendy curl.
 - `example_python_client()` — Przykład klienta Python z httpx.
 - `example_websocket()` — Przykład klienta WebSocket.
 - `main()` — —
-- `main()` — —
-- `main()` — —
 - `apply_all_quality_changes(project_path, max_changes)` — Apply ALL quality refactorings to a project without LLM.
+- `main()` — Process semcod projects with hybrid refactoring.
+- `apply_changes_with_llm_supervision(project_path, max_changes, enable_llm, validate_direct_changes)` — Apply refactorings with optional LLM supervision.
 - `main()` — Process semcod projects with hybrid refactoring.
 - `main()` — Apply reDSL to a semcod project.
 - `debug_llm()` — Debug LLM configuration.
-- `apply_changes_with_llm_supervision(project_path, max_changes, enable_llm, validate_direct_changes)` — Apply refactorings with optional LLM supervision.
-- `main()` — Process semcod projects with hybrid refactoring.
 - `debug_decisions(project_path)` — Show all decisions generated for a project.
 - `apply_refactor(project_path, max_actions)` — Apply reDSL to a project and return the report.
 - `measure_todo_reduction(project_path)` — Measure TODO.md before and after refactoring.
@@ -264,12 +281,12 @@ redsl/
 - `create_ticket(project_dir, title, description, priority)` — Create a planfile ticket for a refactoring action.
 - `list_tickets(project_dir, status)` — List planfile tickets, optionally filtered by status.
 - `report_refactor_results(project_dir, decisions_applied, files_modified, avg_cc_before)` — Create a summary ticket for a completed refactor cycle.
-- `run_multi_analysis(project_dirs, config)` — Convenience function — analiza wielu projektów.
 - `run_hybrid_quality_refactor(project_path, max_changes)` — Apply ALL quality refactorings to a project without LLM.
 - `run_hybrid_batch(semcod_root, max_changes)` — Run hybrid refactoring on all semcod projects.
 - `run_semcod_batch(semcod_root, max_actions)` — Run batch refactoring on semcod projects.
 - `apply_refactor(project_path, max_actions)` — Apply reDSL to a project and return the report.
 - `measure_todo_reduction(project_path)` — Measure TODO.md before and after refactoring.
+- `run_multi_analysis(project_dirs, config)` — Convenience function — analiza wielu projektów.
 - `run_pyqual_analysis(project_path, config_path, output_format)` — Run pyqual analysis on a project.
 - `run_pyqual_fix(project_path, config_path)` — Run automatic fixes based on pyqual analysis.
 - `profile_refactor_cycle(project_dir)` — Profiluj jeden cykl analizy/refaktoryzacji za pomocą metrun (lub fallback).

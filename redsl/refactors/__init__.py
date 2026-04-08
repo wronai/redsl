@@ -21,12 +21,15 @@ from .diff_manager import (
     rollback_single_file,
     rollback_to_checkpoint,
 )
+from .ast_transformers import ReturnTypeAdder, UnusedImportRemover
 from .engine import RefactorEngine
 from .models import FileChange, RefactorProposal, RefactorResult
 
 __all__ = [
     # Classes
     "RefactorEngine",
+    "ReturnTypeAdder",
+    "UnusedImportRemover",
     "RefactorProposal",
     "FileChange",
     "RefactorResult",

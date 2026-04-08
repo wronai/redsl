@@ -2,9 +2,9 @@
 
 ## AI Cost Tracking
 
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$3.45-green) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fopenai%2Fgpt-5-mini-lightgrey)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$3.60-green) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fopenai%2Fgpt-5-mini-lightgrey)
 
-This project uses AI-generated code. Total cost: **$3.4500** with **23** AI commits.
+This project uses AI-generated code. Total cost: **$3.6000** with **24** AI commits.
 
 Generated on 2026-04-08 using [openrouter/openai/gpt-5-mini](https://openrouter.ai/models/openrouter/openai/gpt-5-mini)
 
@@ -16,7 +16,7 @@ Generated on 2026-04-08 using [openrouter/openai/gpt-5-mini](https://openrouter.
 
 ReDSL to zaawansowany system refaktoryzacji kodu Python, który łączy analizę statyczną, reguły DSL (Domain Specific Language), pamięć agenta i inteligencję LLM do automatycznego poprawiania jakości kodu.
 
-![Version](https://img.shields.io/badge/version-1.2.9-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-329%20passing-green)
+![Version](https://img.shields.io/badge/version-1.2.10-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-329%20passing-green)
 
 ---
 
@@ -149,23 +149,41 @@ redsl cost ./my-project --max-actions 10
 
 ## Dostępne akcje refaktoryzacji
 
-### Proste akcje (DirectRefactorEngine - bez LLM, natychmiastowe)
-| Akcja | Opis | Detekcja |
-|-------|------|----------|
-| `REMOVE_UNUSED_IMPORTS` | Usuwa nieużywane importy (zachowuje `__future__` i `__all__`) | `CodeQualityVisitor` |
-| `FIX_MODULE_EXECUTION_BLOCK` | Poprawia bloki `if __name__ == "__main__"` w środku pliku | `CodeQualityVisitor` |
-| `EXTRACT_CONSTANTS` | Ekstrahuje magic numbers do stałych (CONSTANT_NAME = value) | `CodeQualityVisitor` |
-| `ADD_RETURN_TYPES` | Dodaje adnotacje `-> None` dla funkcji bez return | `CodeQualityVisitor` |
+### Proste akcje (bez LLM)
+- `REMOVE_UNUSED_IMPORTS` - Usuwanie nieużywanych importów
+- `FIX_MODULE_EXECUTION_BLOCK` - Poprawa bloków wykonania modułu
+- `EXTRACT_CONSTANTS` - Ekstrakcja magic numbers do stałych
+- `ADD_RETURN_TYPES` - Dodawanie adnotacji typów zwracanych
 
-### Złożone akcje (LLM RefactorEngine - z refleksją)
-| Akcja | Opis | Priorytet modelu |
-|-------|------|------------------|
-| `EXTRACT_FUNCTIONS` | Ekstrahuje funkcje o wysokiej złożoności (CC > 15) | gpt-4o / gpt-4o-mini |
-| `SPLIT_MODULE` | Dzieli duże moduły (>500 linii) na mniejsze | gpt-4o |
-| `REDUCE_COMPLEXITY` | Redukuje CC przez extrakcję i upraszczanie | gpt-4o-mini |
-| `SIMPLIFY_CONDITIONALS` | Upraszcza zagnieżdżone warunki | gpt-4o / gpt-4o-mini |
-| `DEDUPLICATE` | Usuwa duplikację kodu (integracja z redup) | gpt-4o-mini |
-| `ADD_TYPE_HINTS` | Dodaje pełne adnotacje typów | gpt-4o-mini |
+> **Uwaga implementacyjna:** deterministyczne helpery AST znajdują się teraz w `redsl/refactors/ast_transformers.py`, a `redsl.refactors` oraz `redsl.refactors.direct` re-exportują je dla zachowania kompatybilności.
+
+### Złożone akcje (z LLM)
+- `EXTRACT_FUNCTIONS` - Ekstrakcja funkcji o wysokiej złożoności
+- `SPLIT_MODULE` - Podział dużych modułów
+- `REDUCE_COMPLEXITY` - Redukcja złożoności cyklomatycznej
+- `SIMPLIFY_CONDITIONALS` - Upraszczanie warunków
+- `DEDUPLICATE` - Usuwanie duplikacji kodu
+
+## Smoke test na świeżym projekcie
+
+Jeśli chcesz szybko sprawdzić, czy ReDSL uruchamia się poprawnie w nowym projekcie, użyj minimalnego projektu z jednym plikiem:
+
+```bash
+mkdir -p /tmp/redsl-smoke
+cat > /tmp/redsl-smoke/main.py <<'PY'
+import os
+
+
+def main() -> None:
+    return None
+
+
+main()
+PY
+
+python3 -m redsl analyze /tmp/redsl-smoke
+python3 -m redsl refactor /tmp/redsl-smoke --dry-run --max-actions 5
+```
 
 ## Ekosystem Semcod (opcjonalne narzędzia)
 

@@ -1,6 +1,6 @@
 """ReDSL — Refactor + DSL + Self-Learning. LLM-powered autonomous code refactoring."""
 
-__version__ = "1.2.9"
+__version__ = "1.2.10"
 
 from .orchestrator import RefactorOrchestrator
 from .config import AgentConfig

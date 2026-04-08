@@ -1,4 +1,4 @@
-# code2llm | 68f 11800L | python:67,shell:1 | 2026-04-08
+# code2llm | 68f 11806L | python:67,shell:1 | 2026-04-08
 # CC̄=4.5 | critical:9/413 | dups:0 | cycles:0
 
 HEALTH[9]:
@@ -74,7 +74,7 @@ LAYERS:
   │ functions_parser           148L  1C    6m  CC=9      ←0
   │ reporter                   136L  1C    4m  CC=11     ←0
   │ pyqual_bridge              129L  0C    5m  CC=8      ←0
-  │ !! ast_transformers           117L  2C    7m  CC=19     ←0
+  │ !! ast_transformers           120L  2C    7m  CC=19     ←0
   │ batch                      116L  0C    3m  CC=8      ←0
   │ utils                      116L  0C    5m  CC=13     ←3
   │ resolver                    97L  1C    4m  CC=8      ←1
@@ -88,8 +88,8 @@ LAYERS:
   │ ruff_analyzer               49L  1C    1m  CC=10     ←0
   │ models                      49L  3C    0m  CC=0.0    ←0
   │ bandit_analyzer             47L  1C    1m  CC=9      ←0
+  │ __init__                    42L  0C    0m  CC=0.0    ←0
   │ validation_parser           40L  1C    1m  CC=12     ←0
-  │ __init__                    39L  0C    0m  CC=0.0    ←0
   │ __init__                    29L  1C    0m  CC=0.0    ←0
   │ __init__                    28L  0C    0m  CC=0.0    ←0
   │ __init__                    22L  0C    0m  CC=0.0    ←0
@@ -117,9 +117,9 @@ COUPLING:
        redsl.diagnostics                      ←3                                                                                                                                                                      ──                        
                redsl.dsl                                               1                                                                                                                                                                      ──
   CYCLES: none
-  HUB: redsl/ (fan-in=5)
   HUB: redsl.validation/ (fan-in=6)
   HUB: redsl.analyzers/ (fan-in=11)
+  HUB: redsl/ (fan-in=5)
   SMELL: redsl/ fan-out=12 → split needed
   SMELL: redsl.refactors/ fan-out=8 → split needed
 

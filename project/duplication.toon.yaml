@@ -1,35 +1,35 @@
-# redup/duplication | 5 groups | 61f 11867L | 2026-04-08
+# redup/duplication | 5 groups | 61f 11870L | 2026-04-08
 
 SUMMARY:
   files_scanned: 61
-  total_lines:   11867
+  total_lines:   11870
   dup_groups:    5
   dup_fragments: 13
   saved_lines:   147
-  scan_ms:       6203
+  scan_ms:       6062
 
 DUPLICATES[5] (ranked by impact):
-  [c4882b013ff06387] ! STRU  run_hybrid_quality_refactor  L=81 N=2 saved=81 sim=1.00
-      redsl/commands/hybrid.py:0-80  (run_hybrid_quality_refactor)
+  [c4882b013ff06387] ! STRU  apply_all_quality_changes  L=81 N=2 saved=81 sim=1.00
       archive/legacy_scripts/hybrid_quality_refactor.py:0-80  (apply_all_quality_changes)
+      redsl/commands/hybrid.py:0-80  (run_hybrid_quality_refactor)
   [3a375ee1bbd58afc]   STRU  _llx_available  L=9 N=4 saved=27 sim=1.00
       redsl/llm/llx_router.py:0-8  (_llx_available)
       redsl/validation/sandbox.py:0-12  (_docker_available)
       redsl/validation/sandbox.py:0-12  (_pactfix_available)
       redsl/diagnostics/perf_bridge.py:0-12  (_metrun_available)
   [f610b9ef4ffea9ff]   EXAC  measure_todo_reduction  L=16 N=2 saved=16 sim=1.00
-      redsl/commands/batch.py:0-15  (measure_todo_reduction)
       archive/legacy_scripts/batch_refactor_semcod.py:0-15  (measure_todo_reduction)
+      redsl/commands/batch.py:0-15  (measure_todo_reduction)
   [099664487637c86c]   STRU  is_available  L=6 N=3 saved=12 sim=1.00
       redsl/validation/vallm_bridge.py:0-5  (is_available)
-      redsl/analyzers/code2llm_bridge.py:0-5  (is_available)
       redsl/analyzers/redup_bridge.py:0-5  (is_available)
+      redsl/analyzers/code2llm_bridge.py:0-5  (is_available)
   [828e958c9979cd9c]   EXAC  _extract_json  L=11 N=2 saved=11 sim=1.00
       redsl/validation/vallm_bridge.py:0-10  (_extract_json)
       redsl/analyzers/redup_bridge.py:0-10  (_extract_json)
 
 REFACTOR[5] (ranked by priority):
-  [1] ◐ extract_module     → utils/run_hybrid_quality_refactor.py
+  [1] ◐ extract_module     → utils/apply_all_quality_changes.py
       WHY: 2 occurrences of 81-line block across 2 files — saves 81 lines
       FILES: archive/legacy_scripts/hybrid_quality_refactor.py, redsl/commands/hybrid.py
   [2] ○ extract_function   → redsl/utils/_llx_available.py

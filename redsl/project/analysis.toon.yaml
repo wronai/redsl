@@ -1,4 +1,4 @@
-# code2llm | 59f 10746L | python:59 | 2026-04-08
+# code2llm | 59f 10752L | python:59 | 2026-04-08
 # CC̄=4.3 | critical:6/382 | dups:0 | cycles:0
 
 HEALTH[6]:
@@ -31,9 +31,9 @@ LAYERS:
   │ diff_manager               283L  0C    9m  CC=9      ←0
   │ prompts                    217L  0C    0m  CC=0.0    ←0
   │ body_restorer              203L  0C    7m  CC=11     ←0
-  │ !! ast_transformers           117L  2C    7m  CC=19     ←0
+  │ !! ast_transformers           120L  2C    7m  CC=19     ←0
   │ models                      49L  3C    0m  CC=0.0    ←0
-  │ __init__                    39L  0C    0m  CC=0.0    ←0
+  │ __init__                    42L  0C    0m  CC=0.0    ←0
   │
   commands/                       CC̄=5.1    ←in:0  →out:3
   │ multi_project              251L  3C   10m  CC=5      ←0
@@ -123,14 +123,14 @@ COUPLING:
    analyzers.parsers                                                           1                                                                                                                                                                                                                          ──                    
                  dsl                                                           1                                                                                                                                                                                                                                              ──
   CYCLES: none
+  HUB: validation/ (fan-in=6)
   HUB: analyzers/ (fan-in=11)
   HUB: config/ (fan-in=11)
-  HUB: validation/ (fan-in=6)
   HUB: formatters/ (fan-in=15)
-  SMELL: cli/ fan-out=13 → split needed
-  SMELL: refactors/ fan-out=8 → split needed
   SMELL: api/ fan-out=9 → split needed
   SMELL: orchestrator/ fan-out=10 → split needed
+  SMELL: refactors/ fan-out=8 → split needed
+  SMELL: cli/ fan-out=13 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

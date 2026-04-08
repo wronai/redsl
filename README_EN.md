@@ -128,10 +128,33 @@ REFACTOR_REFLECTION_ROUNDS=2
 - `EXTRACT_CONSTANTS` - Extract magic numbers to constants
 - `ADD_RETURN_TYPES` - Add return type annotations
 
+> **Implementation note:** the deterministic AST helpers now live in `redsl/refactors/ast_transformers.py`, and `redsl.refactors` plus `redsl.refactors.direct` re-export them for backward compatibility.
+
 ### Complex Actions (with LLM)
 - `EXTRACT_FUNCTIONS` - Extract high-complexity functions
 - `SPLIT_MODULE` - Split large modules
 - `REDUCE_COMPLEXITY` - Reduce cyclomatic complexity
+
+## Fresh-project smoke test
+
+To quickly verify that ReDSL runs in a brand-new project, create a tiny temporary project and run the CLI in dry-run mode:
+
+```bash
+mkdir -p /tmp/redsl-smoke
+cat > /tmp/redsl-smoke/main.py <<'PY'
+import os
+
+
+def main() -> None:
+    return None
+
+
+main()
+PY
+
+python3 -m redsl analyze /tmp/redsl-smoke
+python3 -m redsl refactor /tmp/redsl-smoke --dry-run --max-actions 5
+```
 
 ## REST API
 

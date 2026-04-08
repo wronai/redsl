@@ -115,3 +115,6 @@ class UnusedImportRemover(ast.NodeTransformer):
             node.names = new_aliases
             return node
         return None
+
+
+__all__ = ["ReturnTypeAdder", "UnusedImportRemover"]

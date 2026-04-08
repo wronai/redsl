@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.10] - 2026-04-08
+
+### Docs
+- Update README.md
+- Update README_EN.md
+- Update docs/README.md
+- Update redsl/project/context.md
+
+### Test
+- Update tests/test_direct_bugs_and_bridges.py
+
+### Other
+- Update .code2llmignore
+- Update .gitignore
+- Update archive/legacy_scripts/hybrid_llm_refactor.py
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.png
+- Update project/duplication.toon.yaml
+- Update project/evolution.toon.yaml
+- Update project/flow.mmd
+- Update project/flow.png
+- ... and 6 more files
+
 ## [1.2.9] - 2026-04-08
 
 ### Docs

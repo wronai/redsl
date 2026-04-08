@@ -1,4 +1,4 @@
-# redsl | 399 func | 56f | 15908L | python | 2026-04-08
+# redsl | 399 func | 56f | 15929L | python | 2026-04-08
 
 HEALTH:
   CC̄=4.5  critical=41 (limit:10)  dup=0  cycles=0
@@ -17,7 +17,8 @@ ALERTS[20]:
 
 MODULES[68] (top by size):
   M[redsl/orchestrator.py] 688L C:2 F:25 CC↑11 D:0 (python)
-  M[redsl/refactors/direct.py] 466L C:1 F:19 CC↑15 D:0 (python)
+  M[redsl/refactors/direct.py] 467L C:1 F:10 CC↑5 D:0 (python)
+  M[redsl/refactors/ast_transformers.py] 134L C:2 F:6 CC↑5 D:0 (python)
   M[redsl/dsl/engine.py] 417L C:6 F:12 CC↑10 D:0 (python)
   M[redsl/api.py] 358L C:11 F:1 CC↑1 D:0 (python)
   M[redsl/cli.py] 352L C:0 F:14 CC↑13 D:0 (python)
@@ -46,6 +47,11 @@ REFACTOR[13]:
   [3] M/L Split main (CC=21 → target CC<10)
   [4] M/L Split apply_changes_with_llm_supervision (CC=16 → target CC<10)
   [5] M/L Split create_ticket (CC=15 → target CC<10)
+  [6] COMPLETED Split direct.py: extracted ast_transformers.py (ReturnTypeAdder, UnusedImportRemover)
+  [7] COMPLETED Reduced remove_unused_imports CC=35→5 via helper extraction
+  [8] COMPLETED Reduced _should_ignore_file CC=19→3 via pattern matchers
+  [9] COMPLETED Reduced run_cycle CC=18→11 via phase helpers
 
 EVOLUTION:
-  2026-04-08 CC̄=4.5 crit=41 15908L // Automated analysis
+  2026-04-08 CC̄=4.7 crit=43 15757L // Initial analysis
+  2026-04-08 CC̄=4.5 crit=41 15929L // After ast_transformers split + helpers extraction

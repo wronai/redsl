@@ -17,6 +17,10 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from redsl.refactors.direct import DirectRefactorEngine
+from redsl.refactors import ReturnTypeAdder as PackageReturnTypeAdder
+from redsl.refactors import UnusedImportRemover as PackageUnusedImportRemover
+from redsl.refactors.ast_transformers import ReturnTypeAdder as ModuleReturnTypeAdder
+from redsl.refactors.ast_transformers import UnusedImportRemover as ModuleUnusedImportRemover
 from redsl.validation import pyqual_bridge
 from redsl.commands.planfile_bridge import (
     create_ticket,
@@ -33,6 +37,17 @@ skip_if_pyqual_missing = pytest.mark.skipif(
 skip_if_planfile_missing = pytest.mark.skipif(
     not planfile_available(), reason="planfile not installed"
 )
+
+
+# ---------------------------------------------------------------------------
+# AST transformer export compatibility
+# ---------------------------------------------------------------------------
+
+
+class TestAstTransformerExports:
+    def test_package_reexports_match_module_exports(self):
+        assert PackageReturnTypeAdder is ModuleReturnTypeAdder
+        assert PackageUnusedImportRemover is ModuleUnusedImportRemover
 
 
 # ---------------------------------------------------------------------------
