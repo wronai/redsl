@@ -145,7 +145,7 @@ def compare_snapshots(
     if not is_available():
         return None
 
-    cmd = ["regix", "diff", "--format", "json"]
+    cmd = ["regix", "diff"]
     input_data = json.dumps({"before": before, "after": after})
 
     try:
@@ -178,7 +178,7 @@ def check_gates(project_dir: Path) -> dict | None:
     if not is_available():
         return None
 
-    cmd = ["regix", "gates", "--format", "json"]
+    cmd = ["regix", "gates"]
 
     try:
         proc = subprocess.run(
@@ -186,10 +186,16 @@ def check_gates(project_dir: Path) -> dict | None:
             cwd=project_dir,
             capture_output=True,
             text=True,
-            timeout=60,
+            timeout=30,
         )
-        data = json.loads(proc.stdout) if proc.stdout.strip() else {}
+        # regix gates outputs rich text by default, not JSON — parse what we can
         passed = proc.returncode == 0
+        data: dict = {}
+        if proc.stdout.strip():
+            try:
+                data = json.loads(proc.stdout)
+            except json.JSONDecodeError:
+                pass
 
         return {
             "passed": data.get("passed", passed),
@@ -197,7 +203,7 @@ def check_gates(project_dir: Path) -> dict | None:
             "warnings": data.get("warnings", []),
             "raw": data,
         }
-    except (subprocess.TimeoutExpired, json.JSONDecodeError, Exception) as exc:
+    except (subprocess.TimeoutExpired, Exception) as exc:
         logger.warning("regix gates error: %s", exc)
         return None
 

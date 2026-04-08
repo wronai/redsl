@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 _DEFAULT_CONFIG: dict = {
     "include": ["**/*.py"],
-    "exclude": ["**/__pycache__/**", "**/tests/**"],
+    "exclude": ["**/__pycache__/**", "**/tests/**", "**/.venv/**", "**/venv/**", "**/.tox/**", "**/node_modules/**", "**/.git/**"],
     "tools": {
         "ruff": {"enabled": True},
         "mypy": {"enabled": True},
@@ -114,14 +114,14 @@ class PyQualAnalyzer:
         """Sprawdź czy plik pasuje do wzorców wykluczeń."""
         rel_path = file_path.relative_to(project_path)
         rel_path_str = str(rel_path)
+        parts = rel_path.parts
         for excl_pattern in exclude_patterns:
             if fnmatch.fnmatch(rel_path_str, excl_pattern):
                 return True
-            parts = rel_path.parts
-            for i in range(len(parts)):
-                test_path = "/".join(parts[:i + 1])
-                if fnmatch.fnmatch(test_path, excl_pattern.rstrip("**")):
-                    return True
+            # Extract the core directory name from patterns like **/.venv/**
+            core = excl_pattern.strip("*").strip("/")
+            if core and any(p == core for p in parts):
+                return True
         return False
 
     def save_report(self, output_path: Path, format: str = "yaml") -> None:

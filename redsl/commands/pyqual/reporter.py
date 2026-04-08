@@ -73,8 +73,10 @@ class Reporter:
     ) -> None:
         """Zbierz metryki z jednego pliku."""
         try:
-            cc = cc_visit(content)
-            complexities.append(cc.total_complexity)
+            cc_results = cc_visit(content)
+            if cc_results:
+                max_func_cc = max(item.complexity for item in cc_results)
+                complexities.append(max_func_cc)
         except Exception as e:
             logger.debug("Failed to calculate complexity for %s: %s", file_path, e)
 

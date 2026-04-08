@@ -1,13 +1,13 @@
-# code2llm/evolution | 313 func | 48f | 2026-04-07
+# code2llm/evolution | 375 func | 55f | 2026-04-08
 
 NEXT[10] (ranked by impact):
   [1] !! SPLIT           redsl/refactors/direct.py
-      WHY: 516L, 3 classes, max CC=35
-      EFFORT: ~4h  IMPACT: 18060
+      WHY: 535L, 3 classes, max CC=35
+      EFFORT: ~4h  IMPACT: 18725
 
   [2] !! SPLIT           redsl/orchestrator.py
-      WHY: 548L, 2 classes, max CC=17
-      EFFORT: ~4h  IMPACT: 9316
+      WHY: 651L, 2 classes, max CC=18
+      EFFORT: ~4h  IMPACT: 11718
 
   [3] !! SPLIT-FUNC      main  CC=27  fan=26
       WHY: CC=27 exceeds 15
@@ -25,9 +25,9 @@ NEXT[10] (ranked by impact):
       WHY: CC=22 exceeds 15
       EFFORT: ~1h  IMPACT: 396
 
-  [7] !  SPLIT-FUNC      DirectRefactorEngine.extract_constants  CC=17  fan=21
-      WHY: CC=17 exceeds 15
-      EFFORT: ~1h  IMPACT: 357
+  [7] !  SPLIT-FUNC      RefactorOrchestrator.run_cycle  CC=18  fan=18
+      WHY: CC=18 exceeds 15
+      EFFORT: ~1h  IMPACT: 324
 
   [8] !  SPLIT-FUNC      run_hybrid_batch  CC=18  fan=18
       WHY: CC=18 exceeds 15
@@ -37,20 +37,20 @@ NEXT[10] (ranked by impact):
       WHY: CC=16 exceeds 15
       EFFORT: ~1h  IMPACT: 304
 
-  [10] !  SPLIT-FUNC      RefactorOrchestrator.run_cycle  CC=17  fan=17
-      WHY: CC=17 exceeds 15
-      EFFORT: ~1h  IMPACT: 289
+  [10] !  SPLIT-FUNC      DirectRefactorEngine.fix_module_execution_block  CC=15  fan=20
+      WHY: CC=15 exceeds 15
+      EFFORT: ~1h  IMPACT: 300
 
 
 RISKS[2]:
-  ⚠ Splitting redsl/orchestrator.py may break 15 import paths
-  ⚠ Splitting redsl/refactors/direct.py may break 17 import paths
+  ⚠ Splitting redsl/orchestrator.py may break 18 import paths
+  ⚠ Splitting redsl/refactors/direct.py may break 18 import paths
 
 METRICS-TARGET:
-  CC̄:          4.8 → ≤3.4
+  CC̄:          4.7 → ≤3.3
   max-CC:      35 → ≤17
   god-modules: 2 → 0
-  high-CC(≥15): 11 → ≤5
+  high-CC(≥15): 13 → ≤6
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -78,4 +78,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=5.0 → now CC̄=4.8
+  prev CC̄=4.7 → now CC̄=4.7

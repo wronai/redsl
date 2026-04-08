@@ -1,17 +1,16 @@
-# vallm batch | 121f | 88✓ 7⚠ 8✗ | 2026-04-07
+# vallm batch | 133f | 100✓ 7⚠ 8✗ | 2026-04-08
 
 SUMMARY:
-  scanned: 121  passed: 88 (72.7%)  warnings: 7  errors: 8  unsupported: 25
+  scanned: 133  passed: 100 (75.2%)  warnings: 7  errors: 8  unsupported: 25
 
 WARNINGS[7]{path,score}:
-  redsl/refactors/direct.py,0.90
-    issues[6]{rule,severity,message,line}:
+  redsl/refactors/direct.py,0.93
+    issues[5]{rule,severity,message,line}:
       complexity.cyclomatic,warning,remove_unused_imports has cyclomatic complexity 35 (max: 15),17
-      complexity.cyclomatic,warning,extract_constants has cyclomatic complexity 17 (max: 15),199
-      complexity.cyclomatic,warning,_infer_return_type has cyclomatic complexity 19 (max: 15),429
+      complexity.cyclomatic,warning,_infer_return_type has cyclomatic complexity 19 (max: 15),448
+      complexity.maintainability,warning,Low maintainability index: 19.2 (threshold: 20),
       complexity.lizard_cc,warning,remove_unused_imports: CC=35 exceeds limit 15,17
-      complexity.lizard_cc,warning,extract_constants: CC=16 exceeds limit 15,199
-      complexity.lizard_cc,warning,_infer_return_type: CC=19 exceeds limit 15,429
+      complexity.lizard_cc,warning,_infer_return_type: CC=19 exceeds limit 15,448
   redsl/analyzers/utils.py,0.97
     issues[2]{rule,severity,message,line}:
       complexity.cyclomatic,warning,_should_ignore_file has cyclomatic complexity 19 (max: 15),63
@@ -29,11 +28,11 @@ WARNINGS[7]{path,score}:
       complexity.lizard_cc,warning,cmd_analyze: CC=21 exceeds limit 15,38
   redsl/orchestrator.py,0.97
     issues[2]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,run_cycle has cyclomatic complexity 17 (max: 15),78
-      complexity.lizard_cc,warning,run_cycle: CC=17 exceeds limit 15,78
+      complexity.cyclomatic,warning,run_cycle has cyclomatic complexity 18 (max: 15),82
+      complexity.lizard_cc,warning,run_cycle: CC=18 exceeds limit 15,82
   tests/test_bridges.py,0.98
     issues[1]{rule,severity,message,line}:
-      complexity.maintainability,warning,Low maintainability index: 17.5 (threshold: 20),
+      complexity.maintainability,warning,Low maintainability index: 17.4 (threshold: 20),
 
 ERRORS[8]{path,score}:
   project_toon.yaml,0.00

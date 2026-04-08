@@ -16,6 +16,8 @@ flowchart TD
         redsl__cli__debug["debug"]
         redsl__cli__debug_config["debug_config"]
         redsl__cli__debug_decisions["debug_decisions"]
+        redsl__cli__perf["perf"]
+        redsl__cli__cost["cost"]
     end
 
     subgraph Core
@@ -23,18 +25,18 @@ flowchart TD
         redsl__consciousness_loop__ConsciousnessLoop__run["run"]
         redsl__consciousness_loop__ConsciousnessLoop___inner_thought["_inner_thought"]
         redsl__consciousness_loop__ConsciousnessLoop___self_assessment["_self_assessment"]
+        redsl__consciousness_loop__ConsciousnessLoop___profile_performance["_profile_performance"]
         redsl__consciousness_loop__ConsciousnessLoop__stop["stop"]
         redsl__consciousness_loop__main_loop["main_loop"]
         redsl__formatters__format_debug_info["format_debug_info"]
         redsl__config__AgentConfig__from_env["from_env"]
-        redsl__orchestrator__RefactorOrchestrator__run_cycle["run_cycle"]
-        redsl__orchestrator__RefactorOrchestrator__run_from_toon_content["run_from_toon_content"]
-        redsl__orchestrator__RefactorOrchestrator___execute_decision["_execute_decision"]
-        redsl__orchestrator__RefactorOrchestrator___resolve_source_path["_resolve_source_path"]
-        redsl__orchestrator__RefactorOrchestrator___load_source_code["_load_source_code"]
-        redsl__orchestrator__RefactorOrchestrator___resolve_target_function["_resolve_target_function"]
-        redsl__orchestrator__RefactorOrchestrator___consult_memory["_consult_memory"]
-        ...["+197 more"]
+        redsl__main__cmd_analyze{{cmd_analyze CC=22}}
+        redsl__main___dispatch_analyze["_dispatch_analyze"]
+        redsl__main___dispatch_explain["_dispatch_explain"]
+        redsl__main___dispatch_refactor["_dispatch_refactor"]
+        redsl__main___dispatch_memory_stats["_dispatch_memory_stats"]
+        redsl__main___dispatch_serve["_dispatch_serve"]
+        ...["+231 more"]
     end
 
-    class refactor_output__refactor_extract_functions_20260407_143102__00_app__models__main_function,redsl__consciousness_loop__ConsciousnessLoop__run,redsl__consciousness_loop__ConsciousnessLoop___inner_thought,redsl__consciousness_loop__ConsciousnessLoop___self_assessment,redsl__consciousness_loop__ConsciousnessLoop__stop,redsl__consciousness_loop__main_loop,redsl__formatters__format_debug_info,redsl__config__AgentConfig__from_env,redsl__orchestrator__RefactorOrchestrator__run_cycle,redsl__orchestrator__RefactorOrchestrator__run_from_toon_content entry
+    class refactor_output__refactor_extract_functions_20260407_143102__00_app__models__main_function,redsl__consciousness_loop__ConsciousnessLoop__run,redsl__consciousness_loop__ConsciousnessLoop___inner_thought,redsl__consciousness_loop__ConsciousnessLoop___self_assessment,redsl__consciousness_loop__ConsciousnessLoop___profile_performance,redsl__consciousness_loop__ConsciousnessLoop__stop,redsl__consciousness_loop__main_loop,redsl__formatters__format_debug_info,redsl__config__AgentConfig__from_env,redsl__main___dispatch_analyze entry

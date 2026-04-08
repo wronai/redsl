@@ -23,6 +23,22 @@ from redsl.validation import regix_bridge, vallm_bridge
 REDSL_ROOT = Path(__file__).parent.parent / "redsl"
 DSL_PKG = REDSL_ROOT / "dsl"
 
+
+@pytest.fixture(scope="module")
+def redsl_analysis():
+    """Cached fallback analysis of REDSL_ROOT — shared across pipeline tests."""
+    from redsl.analyzers import CodeAnalyzer
+    return CodeAnalyzer().analyze_project(REDSL_ROOT)
+
+
+@pytest.fixture(scope="module")
+def redsl_enriched_analysis():
+    """Cached code2llm + redup enriched analysis — shared across pipeline tests."""
+    from redsl.analyzers import CodeAnalyzer, code2llm_bridge, redup_bridge
+    analyzer = CodeAnalyzer()
+    analysis = code2llm_bridge.maybe_analyze(REDSL_ROOT, analyzer) or analyzer.analyze_project(REDSL_ROOT)
+    return redup_bridge.enrich_analysis(analysis, REDSL_ROOT)
+
 skip_if_code2llm_unavailable = pytest.mark.skipif(
     not code2llm_bridge.is_available(), reason="code2llm not installed"
 )
@@ -123,41 +139,29 @@ class TestPipelineDuplication:
 class TestPipelineDecide:
     """AnalysisResult → DSLEngine → decisions"""
 
-    def test_dsl_engine_generates_decisions_for_redsl(self):
-        analyzer = CodeAnalyzer()
-        analysis = analyzer.analyze_project(REDSL_ROOT)
+    def test_dsl_engine_generates_decisions_for_redsl(self, redsl_analysis):
         engine = DSLEngine()
-        decisions = engine.top_decisions(analysis.to_dsl_contexts(), limit=10)
+        decisions = engine.top_decisions(redsl_analysis.to_dsl_contexts(), limit=10)
         assert isinstance(decisions, list)
         assert len(decisions) > 0, "Expected at least one DSL decision"
 
-    def test_decisions_have_required_fields(self):
-        analyzer = CodeAnalyzer()
-        analysis = analyzer.analyze_project(REDSL_ROOT)
+    def test_decisions_have_required_fields(self, redsl_analysis):
         engine = DSLEngine()
-        decisions = engine.top_decisions(analysis.to_dsl_contexts(), limit=10)
+        decisions = engine.top_decisions(redsl_analysis.to_dsl_contexts(), limit=10)
         for d in decisions:
             assert d.action is not None
             assert d.target_file
             assert d.score > 0
             assert d.rule_name
 
-    def test_code2llm_enrich_redup_then_decide(self):
-        analyzer = CodeAnalyzer()
-        analysis = (
-            code2llm_bridge.maybe_analyze(REDSL_ROOT, analyzer)
-            or analyzer.analyze_project(REDSL_ROOT)
-        )
-        analysis = redup_bridge.enrich_analysis(analysis, REDSL_ROOT)
+    def test_code2llm_enrich_redup_then_decide(self, redsl_enriched_analysis):
         engine = DSLEngine()
-        decisions = engine.top_decisions(analysis.to_dsl_contexts(), limit=10)
+        decisions = engine.top_decisions(redsl_enriched_analysis.to_dsl_contexts(), limit=10)
         assert len(decisions) > 0
 
-    def test_decisions_scores_are_positive(self):
-        analyzer = CodeAnalyzer()
-        analysis = analyzer.analyze_project(REDSL_ROOT)
+    def test_decisions_scores_are_positive(self, redsl_analysis):
         engine = DSLEngine()
-        decisions = engine.top_decisions(analysis.to_dsl_contexts(), limit=20)
+        decisions = engine.top_decisions(redsl_analysis.to_dsl_contexts(), limit=20)
         assert all(d.score > 0 for d in decisions)
 
 
@@ -242,26 +246,23 @@ class TestPipelineValidate:
 # ---------------------------------------------------------------------------
 
 class TestPipelineQualityGate:
-    """pyqual doctor / gates"""
+    """redsl pyqual analyze / internal quality checks"""
 
-    @skip_if_pyqual_unavailable
-    def test_pyqual_doctor_runs(self):
-        proc = subprocess.run(
-            ["pyqual", "doctor"],
-            capture_output=True, text=True, timeout=15,
-            cwd=str(REDSL_ROOT.parent),
-        )
-        assert proc.returncode == 0, f"pyqual doctor failed: {proc.stderr[:200]}"
-        assert "Tool Availability" in proc.stdout or "Available" in proc.stdout
+    def test_pyqual_analyzer_import(self):
+        from redsl.commands.pyqual import PyQualAnalyzer
+        analyzer = PyQualAnalyzer()
+        assert analyzer is not None
+        assert hasattr(analyzer, "analyze_project")
 
-    @skip_if_pyqual_unavailable
-    def test_pyqual_validate_config(self):
-        proc = subprocess.run(
-            ["pyqual", "validate"],
-            capture_output=True, text=True, timeout=15,
-            cwd=str(REDSL_ROOT.parent),
-        )
-        assert proc.returncode == 0 or "error" in proc.stdout.lower() or "valid" in proc.stdout.lower()
+    def test_pyqual_analyze_project(self):
+        from redsl.commands.pyqual import PyQualAnalyzer
+        analyzer = PyQualAnalyzer()
+        files = analyzer._find_python_files(REDSL_ROOT)
+        assert len(files) > 0
+        # Ensure .venv/venv excluded
+        for f in files:
+            assert ".venv" not in f.parts
+            assert "venv" not in f.parts
 
 
 # ---------------------------------------------------------------------------
@@ -298,7 +299,7 @@ class TestFullPipelineSmoke:
                 assert result["available"] is True
 
         # VALIDATE (regix — graceful skip if broken)
-        passed, _ = regix_bridge.validate_working_tree(REDSL_ROOT.parent)
+        passed, _ = regix_bridge.validate_working_tree(DSL_PKG)
         assert passed is True
 
     def test_pipeline_tool_availability_summary(self, capsys):

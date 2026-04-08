@@ -29,6 +29,14 @@ def dsl() -> DSLEngine:
     return DSLEngine()
 
 
+@pytest.fixture(scope="module")
+def goal_analysis(analyzer: CodeAnalyzer):
+    """Cached analysis of the GOAL semcod project — shared across TestGoalFunctionsToon."""
+    if not GOAL.exists():
+        pytest.skip("semcod/goal not available")
+    return analyzer.analyze_project(GOAL)
+
+
 # ---------------------------------------------------------------------------
 # code2llm — analysis.toon (HEALTH[N] emoji + LAYERS)
 # ---------------------------------------------------------------------------
@@ -78,21 +86,18 @@ class TestCode2llmAnalysis:
 
 @skip_if_no_semcod
 class TestGoalFunctionsToon:
-    def test_analyzes_nonzero_files(self, analyzer: CodeAnalyzer) -> None:
-        result = analyzer.analyze_project(GOAL)
-        assert result.total_files > 0
+    def test_analyzes_nonzero_files(self, goal_analysis) -> None:
+        assert goal_analysis.total_files > 0
 
-    def test_detects_high_cc_functions(self, analyzer: CodeAnalyzer) -> None:
-        result = analyzer.analyze_project(GOAL)
-        assert len(result.alerts) > 0, "goal should have CC alerts from functions.toon"
-        cc_alerts = [a for a in result.alerts if a.get("value", 0) > 15]
+    def test_detects_high_cc_functions(self, goal_analysis) -> None:
+        assert len(goal_analysis.alerts) > 0, "goal should have CC alerts from functions.toon"
+        cc_alerts = [a for a in goal_analysis.alerts if a.get("value", 0) > 15]
         assert len(cc_alerts) > 0, "should have functions with CC > 15"
 
     def test_decisions_have_real_paths(
-        self, analyzer: CodeAnalyzer, dsl: DSLEngine
+        self, goal_analysis, dsl: DSLEngine
     ) -> None:
-        result = analyzer.analyze_project(GOAL)
-        decisions = dsl.top_decisions(result.to_dsl_contexts(), limit=5)
+        decisions = dsl.top_decisions(goal_analysis.to_dsl_contexts(), limit=5)
         assert len(decisions) > 0
         real = [d for d in decisions if (GOAL / d.target_file).exists()]
         assert len(real) > 0, "some decisions should reference real files"

@@ -2,7 +2,7 @@
 
 ## Overview
 
-- **Project**: /home/tom/github/wronai/redsl/redsl/dsl
+- **Project**: /home/tom/github/semcod/redsl/redsl/dsl
 - **Primary Language**: python
 - **Languages**: python: 3
 - **Analysis Mode**: static

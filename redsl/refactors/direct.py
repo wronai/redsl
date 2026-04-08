@@ -122,6 +122,21 @@ class DirectRefactorEngine:
             return False
     
     @staticmethod
+    def _is_main_guard_node(node: ast.If) -> bool:
+        """Return True if *node* is `if __name__ == '__main__':`."""
+        test = node.test
+        return (
+            isinstance(test, ast.Compare)
+            and isinstance(test.left, ast.Name)
+            and test.left.id == "__name__"
+            and len(test.ops) == 1
+            and isinstance(test.ops[0], ast.Eq)
+            and len(test.comparators) == 1
+            and isinstance(test.comparators[0], ast.Constant)
+            and test.comparators[0].value == "__main__"
+        )
+
+    @staticmethod
     def _get_indent(line: str) -> str:
         """Return the leading whitespace of a line."""
         return line[: len(line) - len(line.lstrip())]
@@ -150,18 +165,20 @@ class DirectRefactorEngine:
             # Find module-level statements that need to be guarded
             module_level_lines = []
             
+            # Collect existing __main__ guard start lines so we skip them
+            guarded_lines: set[int] = set()
             for node in tree.body:
-                # Check for function calls at module level
+                if isinstance(node, ast.If) and self._is_main_guard_node(node):
+                    for child in ast.walk(node):
+                        if hasattr(child, 'lineno'):
+                            guarded_lines.add(child.lineno - 1)
+
+            for node in tree.body:
+                # Only guard bare function/method calls at module level.
+                # Assignments (app = Typer(), TaskPattern = Task, etc.) are
+                # intentional module-level state and must NOT be moved.
                 if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call):
-                    module_level_lines.append(node.lineno - 1)
-                # Check for assignments that look like executable code
-                elif isinstance(node, ast.Assign):
-                    # Skip if it's an all-caps constant
-                    is_constant = all(
-                        isinstance(t, ast.Name) and t.id.isupper() 
-                        for t in node.targets
-                    )
-                    if not is_constant:
+                    if (node.lineno - 1) not in guarded_lines:
                         module_level_lines.append(node.lineno - 1)
             
             if not module_level_lines:
@@ -218,22 +235,24 @@ class DirectRefactorEngine:
                         const_name = f"CONSTANT_{int(value) if isinstance(value, int) else 'FLOAT'}"
                     value_to_names[value] = const_name
             
-            # Add constants at the top of the file (after imports and docstring)
+            # Add constants after the last import statement.
+            # Use AST end_lineno to correctly skip multi-line import blocks.
+            tree_for_pos = ast.parse(source)
             insert_line = 0
-            for i, line in enumerate(lines):
-                if line.strip().startswith(('import ', 'from ')):
-                    insert_line = i + 1
-                elif line.strip() and not line.startswith(' ') and not line.startswith('#'):
-                    if insert_line == 0:
-                        insert_line = i
-                    break
+            for node in tree_for_pos.body:
+                if isinstance(node, (ast.Import, ast.ImportFrom)):
+                    insert_line = node.end_lineno  # 1-indexed end of this import
+                elif isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant):
+                    pass  # docstring — keep scanning
+                else:
+                    break  # first non-import real statement
             
             # Insert constants
             constants_text = '\n' + '\n'.join(f"{name} = {value}" for value, name in sorted(value_to_names.items())) + '\n\n'
             lines.insert(insert_line, constants_text)
             
-            # Track line offset after inserting constants
-            line_offset = len(constants_text.splitlines())
+            # One element inserted into the lines list → all subsequent indices shift by 1
+            line_offset = 1
             
             # Replace magic numbers with constants (adjust for line offset)
             for line_num, value in magic_numbers:

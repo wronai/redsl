@@ -12,7 +12,7 @@ Moduły:
 from __future__ import annotations
 
 from .test_runner import TestResult, TestRunner, discover_test_command, run_tests, validate_refactor
-from . import regix_bridge, vallm_bridge, test_generator, sandbox
+from . import regix_bridge, vallm_bridge, test_generator, sandbox, pyqual_bridge
 
 __all__ = [
     "TestResult",
@@ -24,4 +24,5 @@ __all__ = [
     "vallm_bridge",
     "test_generator",
     "sandbox",
+    "pyqual_bridge",
 ]

@@ -28,6 +28,7 @@ class MypyAnalyzer:
                     ["mypy", "--show-error-codes", "--no-error-summary"] + [str(f) for f in batch],
                     capture_output=True,
                     text=True,
+                    timeout=60,
                 )
                 for line in result.stdout.splitlines():
                     issue = self._parse_mypy_line(line)
@@ -37,7 +38,7 @@ class MypyAnalyzer:
             results["issues"]["mypy"] = all_issues
             results["summary"]["mypy_issues"] = len(all_issues)
 
-        except (subprocess.CalledProcessError, FileNotFoundError) as e:
+        except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired) as e:
             logger.warning("Failed to run mypy: %s", e)
             results["issues"]["mypy"] = []
 

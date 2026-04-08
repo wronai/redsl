@@ -27,7 +27,7 @@ from redsl.analyzers import code2llm_bridge
 from redsl.config import AgentConfig
 from redsl.dsl import Decision, DSLEngine, RefactorAction, RuleGenerator
 from redsl.llm import LLMLayer
-from redsl.llm.llx_router import estimate_cycle_cost, select_model, select_reflection_model
+from redsl.llm.llx_router import apply_provider_prefix, estimate_cycle_cost, select_model, select_reflection_model
 from redsl.memory import AgentMemory
 from redsl.refactors import RefactorEngine, RefactorProposal, RefactorResult
 from redsl.refactors.direct import DirectRefactorEngine
@@ -282,18 +282,23 @@ class RefactorOrchestrator:
 
         selection = select_model(decision.action, decision.context)
         reflection_model = select_reflection_model(use_local=True)
+
+        configured_model = self.config.llm.model
+        model = apply_provider_prefix(selection.model, configured_model)
+        refl_model = apply_provider_prefix(reflection_model, configured_model)
+
         logger.info(
             "llx_router: %s → model=%s est_cost=$%.4f",
-            selection.reason, selection.model, selection.estimated_cost,
+            selection.reason, model, selection.estimated_cost,
         )
         self._total_llm_cost += selection.estimated_cost
 
         proposal = self.refactor_engine.generate_proposal(
-            decision, source_code, model_override=selection.model
+            decision, source_code, model_override=model
         )
         if self.config.refactor.reflection_rounds > 0:
             proposal = self.refactor_engine.reflect_on_proposal(
-                proposal, source_code, model_override=reflection_model
+                proposal, source_code, model_override=refl_model
             )
 
         result = self.refactor_engine.apply_proposal(proposal, project_dir)
@@ -303,15 +308,30 @@ class RefactorOrchestrator:
     def _resolve_source_path(self, decision: Decision, project_dir: Path) -> Path:
         """Rozwiąż ścieżkę do pliku źródłowego — fallback przez resolve_file_path."""
         source_path = project_dir / decision.target_file
-        if not source_path.exists() and decision.target_function:
+        if source_path.exists():
+            return source_path
+
+        # Try adding .py extension
+        if not decision.target_file.endswith(".py"):
+            candidate = project_dir / (decision.target_file + ".py")
+            if candidate.exists():
+                logger.info("Resolved %r → %s", decision.target_file, candidate.name)
+                return candidate
+
+        # Search for matching filename anywhere in the project
+        bare_name = Path(decision.target_file).stem
+        for py_file in project_dir.rglob(f"{bare_name}.py"):
+            if ".venv" not in py_file.parts and "venv" not in py_file.parts:
+                logger.info("Resolved %r → %s", decision.target_file, py_file.relative_to(project_dir))
+                return py_file
+
+        # Try resolving via function name
+        if decision.target_function:
             resolved = self.analyzer.resolve_file_path(project_dir, decision.target_function)
             if resolved:
                 source_path = project_dir / resolved
-                logger.info("Resolved missing path %r → %s", decision.target_file, resolved)
-        if not source_path.exists():
-            resolved_mod = self.analyzer.resolve_file_path(project_dir, decision.target_file)
-            if resolved_mod:
-                source_path = project_dir / resolved_mod
+                logger.info("Resolved via function %r → %s", decision.target_function, resolved)
+
         return source_path
 
     def _load_source_code(self, source_path: Path, decision: Decision) -> str:

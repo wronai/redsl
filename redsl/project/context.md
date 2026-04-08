@@ -2,14 +2,14 @@
 
 ## Overview
 
-- **Project**: /home/tom/github/wronai/redsl/redsl
+- **Project**: /home/tom/github/semcod/redsl/redsl
 - **Primary Language**: python
-- **Languages**: python: 55
+- **Languages**: python: 58
 - **Analysis Mode**: static
-- **Total Functions**: 339
+- **Total Functions**: 358
 - **Total Classes**: 73
-- **Modules**: 55
-- **Entry Points**: 263
+- **Modules**: 58
+- **Entry Points**: 272
 
 ## Architecture by Module
 
@@ -23,15 +23,15 @@
 - **Classes**: 4
 - **File**: `__init__.py`
 
+### refactors.direct
+- **Functions**: 18
+- **Classes**: 3
+- **File**: `direct.py`
+
 ### analyzers.parsers.project_parser
 - **Functions**: 18
 - **Classes**: 1
 - **File**: `project_parser.py`
-
-### refactors.direct
-- **Functions**: 17
-- **Classes**: 3
-- **File**: `direct.py`
 
 ### main
 - **Functions**: 15
@@ -60,15 +60,15 @@
 - **Classes**: 1
 - **File**: `toon_analyzer.py`
 
+### llm.llx_router
+- **Functions**: 12
+- **Classes**: 1
+- **File**: `llx_router.py`
+
 ### dsl.engine
 - **Functions**: 12
 - **Classes**: 6
 - **File**: `engine.py`
-
-### llm.llx_router
-- **Functions**: 11
-- **Classes**: 1
-- **File**: `llx_router.py`
 
 ### dsl.rule_generator
 - **Functions**: 11
@@ -151,10 +151,6 @@ Uses line-based editing to preserve original formatting.
 4. R
 - **Calls**: CycleReport, logger.info, logger.info, analysis.to_dsl_contexts, self.dsl_engine.top_decisions, len, logger.info, logger.info
 
-### refactors.direct.DirectRefactorEngine.extract_constants
-> Extract magic numbers into named constants.
-- **Calls**: len, file_path.read_text, source.splitlines, enumerate, lines.insert, len, file_path.write_text, self.applied_changes.append
-
 ### commands.batch.run_semcod_batch
 > Run batch refactoring on semcod projects.
 - **Calls**: semcod_root.iterdir, print, sorted, print, print, print, commands.batch.measure_todo_reduction, print
@@ -175,13 +171,17 @@ Args:
 > Wygeneruj propozycję refaktoryzacji na podstawie decyzji DSL.
 - **Calls**: PROMPTS.get, prompt_template.format, self.llm.call_json, response_data.get, response_data.get, RefactorProposal, logger.info, changes.append
 
-### analyzers.incremental.IncrementalAnalyzer._merge_with_cache
-> Scal świeżo przeanalizowane pliki z cached poprzednimi wynikami.
-- **Calls**: self._analyze_subset, AnalysisResult, merged.metrics.extend, project_dir.rglob, self._populate_cache, cache.save, len, sum
+### refactors.direct.DirectRefactorEngine.extract_constants
+> Extract magic numbers into named constants.
+- **Calls**: len, file_path.read_text, source.splitlines, ast.parse, lines.insert, file_path.write_text, self.applied_changes.append, isinstance
 
 ### refactors.direct.DirectRefactorEngine.fix_module_execution_block
 > Wrap module-level code in if __name__ == '__main__' guard.
-- **Calls**: file_path.read_text, ast.parse, source.splitlines, min, lines.insert, sorted, file_path.write_text, self.applied_changes.append
+- **Calls**: file_path.read_text, ast.parse, analyzers.incremental.EvolutionaryCache.set, source.splitlines, min, lines.insert, sorted, file_path.write_text
+
+### analyzers.incremental.IncrementalAnalyzer._merge_with_cache
+> Scal świeżo przeanalizowane pliki z cached poprzednimi wynikami.
+- **Calls**: self._analyze_subset, AnalysisResult, merged.metrics.extend, project_dir.rglob, self._populate_cache, cache.save, len, sum
 
 ### refactors.direct.DirectRefactorEngine.add_return_types
 > Add return type annotations to functions.
@@ -301,14 +301,14 @@ _infer_return_type [refactors.direct.ReturnTypeAdder]
 run_cycle [orchestrator.RefactorOrchestrator]
 ```
 
-### Flow 9: extract_constants
-```
-extract_constants [refactors.direct.DirectRefactorEngine]
-```
-
-### Flow 10: run_semcod_batch
+### Flow 9: run_semcod_batch
 ```
 run_semcod_batch [commands.batch]
+```
+
+### Flow 10: chunk_function
+```
+chunk_function [analyzers.semantic_chunker.SemanticChunker]
 ```
 
 ## Key Classes
@@ -341,8 +341,8 @@ run_semcod_batch [commands.batch]
 
 ### refactors.direct.DirectRefactorEngine
 > Applies simple refactorings directly via AST manipulation.
-- **Methods**: 10
-- **Key Methods**: refactors.direct.DirectRefactorEngine.__init__, refactors.direct.DirectRefactorEngine.remove_unused_imports, refactors.direct.DirectRefactorEngine._get_indent, refactors.direct.DirectRefactorEngine._clean_blank_lines, refactors.direct.DirectRefactorEngine.fix_module_execution_block, refactors.direct.DirectRefactorEngine.extract_constants, refactors.direct.DirectRefactorEngine._generate_constant_name, refactors.direct.DirectRefactorEngine.add_return_types, refactors.direct.DirectRefactorEngine._find_def_colon, refactors.direct.DirectRefactorEngine.get_applied_changes
+- **Methods**: 11
+- **Key Methods**: refactors.direct.DirectRefactorEngine.__init__, refactors.direct.DirectRefactorEngine.remove_unused_imports, refactors.direct.DirectRefactorEngine._is_main_guard_node, refactors.direct.DirectRefactorEngine._get_indent, refactors.direct.DirectRefactorEngine._clean_blank_lines, refactors.direct.DirectRefactorEngine.fix_module_execution_block, refactors.direct.DirectRefactorEngine.extract_constants, refactors.direct.DirectRefactorEngine._generate_constant_name, refactors.direct.DirectRefactorEngine.add_return_types, refactors.direct.DirectRefactorEngine._find_def_colon
 
 ### commands.multi_project.MultiProjectReport
 > Zbiorczy raport z analizy wielu projektów.
@@ -400,15 +400,15 @@ Agent nie czeka na polecenia — sam analizuje, myśli i planuje.
 - **Methods**: 6
 - **Key Methods**: consciousness_loop.ConsciousnessLoop.__init__, consciousness_loop.ConsciousnessLoop.run, consciousness_loop.ConsciousnessLoop._inner_thought, consciousness_loop.ConsciousnessLoop._self_assessment, consciousness_loop.ConsciousnessLoop._profile_performance, consciousness_loop.ConsciousnessLoop.stop
 
-### commands.pyqual.PyQualAnalyzer
-> Python code quality analyzer — fasada nad wyspecjalizowanymi analizatorami.
-- **Methods**: 6
-- **Key Methods**: commands.pyqual.PyQualAnalyzer.__init__, commands.pyqual.PyQualAnalyzer._load_config, commands.pyqual.PyQualAnalyzer.analyze_project, commands.pyqual.PyQualAnalyzer._find_python_files, commands.pyqual.PyQualAnalyzer._is_excluded, commands.pyqual.PyQualAnalyzer.save_report
-
 ### commands.multi_project.MultiProjectRunner
 > Uruchamia ReDSL na wielu projektach.
 - **Methods**: 6
 - **Key Methods**: commands.multi_project.MultiProjectRunner.__init__, commands.multi_project.MultiProjectRunner.analyze, commands.multi_project.MultiProjectRunner.analyze_from_paths, commands.multi_project.MultiProjectRunner.run_cycles, commands.multi_project.MultiProjectRunner.rank_by_priority, commands.multi_project.MultiProjectRunner._analyze_one
+
+### commands.pyqual.PyQualAnalyzer
+> Python code quality analyzer — fasada nad wyspecjalizowanymi analizatorami.
+- **Methods**: 6
+- **Key Methods**: commands.pyqual.PyQualAnalyzer.__init__, commands.pyqual.PyQualAnalyzer._load_config, commands.pyqual.PyQualAnalyzer.analyze_project, commands.pyqual.PyQualAnalyzer._find_python_files, commands.pyqual.PyQualAnalyzer._is_excluded, commands.pyqual.PyQualAnalyzer.save_report
 
 ### memory.MemoryLayer
 > Warstwa pamięci oparta na ChromaDB.
@@ -512,6 +512,13 @@ Args:
     proposal: Propozycja z listą FileCh
 - **Output to**: validation.vallm_bridge.is_available, validation.vallm_bridge.validate_patch, scores.append, failures.append, sum
 
+### validation.pyqual_bridge.validate_config
+> Run `pyqual validate` to check pyqual.yaml is well-formed.
+
+Returns:
+    (valid: bool, message: str)
+- **Output to**: validation.pyqual_bridge.is_available, subprocess.run, logger.warning, str, output.strip
+
 ### validation.regix_bridge.validate_no_regression
 > Porównaj HEAD~1 → HEAD i sprawdź czy nie ma regresji metryk.
 
@@ -544,10 +551,6 @@ Używany w run_cycle
 > Dodaj fan-out z hotspotów do istniejących metryk.
 - **Output to**: max
 
-### analyzers.toon_analyzer.ToonAnalyzer._process_alerts
-> Przetwórz alerty i zaktualizuj lub dodaj metryki.
-- **Output to**: alert.get, alert.get, alert.get, func_index.get, CodeMetrics
-
 ## Behavioral Patterns
 
 ### recursion_estimate_cycle_cost
@@ -571,12 +574,12 @@ Functions exposed as public API (no underscore prefix):
 - `refactors.direct.DirectRefactorEngine.remove_unused_imports` - 37 calls
 - `commands.pyqual.run_pyqual_analysis` - 35 calls
 - `orchestrator.RefactorOrchestrator.run_cycle` - 29 calls
-- `refactors.direct.DirectRefactorEngine.extract_constants` - 29 calls
 - `commands.batch.run_semcod_batch` - 27 calls
 - `analyzers.semantic_chunker.SemanticChunker.chunk_function` - 27 calls
 - `analyzers.parsers.duplication_parser.DuplicationParser.parse_duplication_toon` - 27 calls
 - `refactors.engine.RefactorEngine.generate_proposal` - 25 calls
-- `refactors.direct.DirectRefactorEngine.fix_module_execution_block` - 22 calls
+- `refactors.direct.DirectRefactorEngine.extract_constants` - 25 calls
+- `refactors.direct.DirectRefactorEngine.fix_module_execution_block` - 23 calls
 - `refactors.direct.DirectRefactorEngine.add_return_types` - 22 calls
 - `main.cmd_refactor` - 21 calls
 - `commands.hybrid.run_hybrid_quality_refactor` - 21 calls
@@ -586,9 +589,11 @@ Functions exposed as public API (no underscore prefix):
 - `cli.debug_decisions` - 20 calls
 - `formatters.format_batch_results` - 19 calls
 - `commands.pyqual.run_pyqual_fix` - 19 calls
+- `refactors.body_restorer.repair_file` - 19 calls
 - `analyzers.redup_bridge.scan_duplicates` - 19 calls
 - `analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content` - 19 calls
 - `dsl.engine.DSLEngine.add_rules_from_yaml` - 18 calls
+- `commands.planfile_bridge.create_ticket` - 17 calls
 - `refactors.engine.RefactorEngine.validate_proposal` - 17 calls
 - `validation.sandbox.RefactorSandbox.apply_and_test` - 17 calls
 - `orchestrator.RefactorOrchestrator.execute_sandboxed` - 16 calls
@@ -602,8 +607,6 @@ Functions exposed as public API (no underscore prefix):
 - `cli.batch_semcod` - 14 calls
 - `formatters.format_debug_info` - 13 calls
 - `llm.LLMLayer.call` - 13 calls
-- `refactors.diff_manager.preview_proposal` - 13 calls
-- `analyzers.redup_bridge.enrich_analysis` - 13 calls
 
 ## System Interactions
 
@@ -639,8 +642,8 @@ graph TD
     run_cycle --> info
     run_cycle --> to_dsl_contexts
     run_cycle --> top_decisions
-    extract_constants --> len
-    extract_constants --> read_text
+    run_semcod_batch --> iterdir
+    run_semcod_batch --> print
 ```
 
 ## Reverse Engineering Guidelines

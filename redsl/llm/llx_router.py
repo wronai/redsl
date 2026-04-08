@@ -98,11 +98,15 @@ def _estimate_cost(model: str, tokens: int) -> float:
     return (tokens / 1_000_000) * price_per_m
 
 
-def _ollama_available() -> bool:
+def _ollama_available(model: str = "llama3") -> bool:
     try:
         import urllib.request
         with urllib.request.urlopen("http://localhost:11434/api/tags", timeout=2) as resp:
-            return resp.status == 200
+            if resp.status != 200:
+                return False
+            data = json.loads(resp.read())
+            model_names = [m.get("name", "").split(":")[0] for m in data.get("models", [])]
+            return model in model_names
     except Exception:
         return False
 
@@ -187,6 +191,26 @@ def estimate_cycle_cost(decisions: list, contexts: list[dict]) -> list[dict]:
             }
         )
     return items
+
+
+def apply_provider_prefix(model: str, configured_model: str) -> str:
+    """Apply provider prefix from configured model to a bare model name.
+
+    If configured_model is 'openrouter/openai/gpt-5.4-mini' and model is
+    'gpt-4o-mini', return 'openrouter/openai/gpt-4o-mini'.
+    If model already has a prefix (e.g. 'ollama/llama3'), return as-is.
+    """
+    if "/" in model:
+        return model
+    parts = configured_model.split("/")
+    if len(parts) >= 3:
+        # e.g. openrouter/openai/gpt-X → prefix = openrouter/openai
+        prefix = "/".join(parts[:-1])
+        return f"{prefix}/{model}"
+    if len(parts) == 2:
+        # e.g. openrouter/gpt-X → prefix = openrouter
+        return f"{parts[0]}/{model}"
+    return model
 
 
 def call_via_llx(messages: list[dict], task_type: str) -> str | None:

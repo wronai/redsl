@@ -29,6 +29,7 @@ class BanditAnalyzer:
                     ["bandit", "-f", "json", "-r", str(dir_path)],
                     capture_output=True,
                     text=True,
+                    timeout=60,
                 )
                 if result.stdout:
                     bandit_result = json.loads(result.stdout)
@@ -41,6 +42,6 @@ class BanditAnalyzer:
             results["issues"]["bandit"] = all_issues
             results["summary"]["security_issues"] = len(all_issues)
 
-        except (subprocess.CalledProcessError, json.JSONDecodeError, FileNotFoundError) as e:
+        except (subprocess.CalledProcessError, json.JSONDecodeError, FileNotFoundError, subprocess.TimeoutExpired) as e:
             logger.warning("Failed to run bandit: %s", e)
             results["issues"]["bandit"] = []

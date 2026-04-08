@@ -29,6 +29,7 @@ class RuffAnalyzer:
                     ["ruff", "check", "--format=json"] + [str(f) for f in batch],
                     capture_output=True,
                     text=True,
+                    timeout=30,
                 )
                 if result.stdout:
                     all_issues.extend(json.loads(result.stdout))
@@ -43,6 +44,6 @@ class RuffAnalyzer:
             results["summary"]["ruff_errors"] = error_count
             results["summary"]["ruff_warnings"] = warning_count
 
-        except (subprocess.CalledProcessError, json.JSONDecodeError, FileNotFoundError) as e:
+        except (subprocess.CalledProcessError, json.JSONDecodeError, FileNotFoundError, subprocess.TimeoutExpired) as e:
             logger.warning("Failed to run ruff: %s", e)
             results["issues"]["ruff"] = []
