@@ -163,16 +163,16 @@ COUPLING:
                redsl.dsl                                                                                               1                                                                                                                                                                                              ──
   CYCLES: none
   HUB: redsl.validation/ (fan-in=6)
+  HUB: redsl.analyzers/ (fan-in=23)
+  HUB: redsl/ (fan-in=13)
   HUB: redsl.execution/ (fan-in=13)
   HUB: redsl.autonomy/ (fan-in=7)
-  HUB: redsl/ (fan-in=13)
   HUB: redsl.llm/ (fan-in=6)
-  HUB: redsl.analyzers/ (fan-in=23)
-  SMELL: redsl.refactors/ fan-out=8 → split needed
-  SMELL: redsl.execution/ fan-out=10 → split needed
-  SMELL: redsl.commands/ fan-out=21 → split needed
-  SMELL: redsl.autonomy/ fan-out=19 → split needed
   SMELL: redsl/ fan-out=13 → split needed
+  SMELL: redsl.execution/ fan-out=10 → split needed
+  SMELL: redsl.autonomy/ fan-out=19 → split needed
+  SMELL: redsl.commands/ fan-out=21 → split needed
+  SMELL: redsl.refactors/ fan-out=8 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

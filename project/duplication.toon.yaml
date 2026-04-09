@@ -6,7 +6,7 @@ SUMMARY:
   dup_groups:    17
   dup_fragments: 40
   saved_lines:   218
-  scan_ms:       5761
+  scan_ms:       5551
 
 DUPLICATES[17] (ranked by impact):
   [c748cd7f9fe60e14] ! STRU  example_python_client  L=52 N=2 saved=52 sim=1.00

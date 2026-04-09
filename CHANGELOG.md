@@ -7,32 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.2.20] - 2026-04-09
+## [1.2.21] - 2026-04-09
 
 ### Docs
+- Update CHANGELOG.md
 - Update README.md
-- Update README_EN.md
 - Update docs/README.md
-- Update project/README.md
-- Update project/context.md
-- Update redsl/project/README.md
-- Update redsl/project/context.md
-
-### Test
-- Update tests/test_tier3.py
 
 ### Other
 - Update project/analysis.toon.yaml
 - Update project/calls.mmd
 - Update project/calls.png
-- Update project/compact_flow.mmd
-- Update project/compact_flow.png
 - Update project/duplication.toon.yaml
-- Update project/evolution.toon.yaml
-- Update project/flow.mmd
-- Update project/flow.png
 - Update project/index.html
-- ... and 11 more files
+- Update project/map.toon.yaml
+- Update redsl/project/analysis.toon.yaml
+- Update redsl/project/batch_1/analysis.toon.yaml
+- Update redsl/project/root/analysis.toon.yaml
+- Update requirements.txt
+
+## [1.2.20] - 2026-04-09
+
+### Added
+- **Markdown Report Generation** - Automatic Markdown reports for refactor and batch commands:
+  - `redsl_refactor_plan.md` — dry-run output saved next to project
+  - `redsl_refactor_report.md` — executed refactor cycle report
+  - `redsl_batch_semcod_report.md` — batch summary for `batch semcod`
+  - `redsl_batch_hybrid_report.md` — batch summary for `batch hybrid`
+- **Formatter Module** - New `redsl/formatters.py` with Markdown generation functions
+  - `format_cycle_report_markdown()` — Format refactor cycle as Markdown
+  - `format_batch_report_markdown()` — Format batch run as Markdown
+
+### Changed
+- **Batch Persistence** - All batch runs now persist Markdown reports to disk
+- **Report Structure** - Reports include summary, decisions, and file changes
+
+### Test
+- **test_tier3.py** - Added tests for Markdown report creation and batch persistence
+
+### Docs
+- Update README.md with Markdown report documentation
+- Update README_EN.md with Markdown report documentation
+- Update docs/README.md (auto-generated)
+- Update project documentation files
+
+### Other
+- Update project analysis artifacts (toon.yaml, diagrams)
 
 ## [1.2.19] - 2026-04-08
 

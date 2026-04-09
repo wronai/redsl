@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "redsl"
-version = "1.2.20"
+version = "1.2.21"
 description = "ReDSL — Refactor + DSL + Self-Learning. LLM-powered autonomous code refactoring."
 readme = "README_EN.md"
 requires-python = ">=3.11"
@@ -26,16 +26,16 @@ classifiers = [
 ]
 
 dependencies = [
-    "fastapi>=0.110.0",
-    "uvicorn>=0.27.0",
-    "pydantic>=2.6.0",
-    "litellm>=1.30.0",
-    "chromadb>=0.4.22",
-    "pyyaml>=6.0.1",
-    "rich>=13.7.0",
-    "httpx>=0.27.0",
-    "click>=8.1.0",
-    "python-dotenv>=1.0.0",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.44.0",
+    "pydantic>=2.10.0",
+    "litellm>=1.52.0",
+    "chromadb>=0.6.0",
+    "pyyaml>=6.0.2",
+    "rich>=13.9.0",
+    "httpx>=0.28.0",
+    "click>=8.1.7",
+    "python-dotenv>=1.0.1",
     "goal>=2.1.0",
     "costs>=0.1.20",
     "pfix>=0.1.60",
@@ -43,9 +43,10 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0",
-    "ruff>=0.3.0",
-    "mypy>=1.8",
+    "pytest>=9.0",
+    "pytest-cov>=7.1",
+    "ruff>=0.15.0",
+    "mypy>=1.13",
     "goal>=2.1.0",
     "costs>=0.1.20",
     "pfix>=0.1.60",
