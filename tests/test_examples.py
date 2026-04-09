@@ -196,6 +196,11 @@ class TestApiIntegrationExample:
     "03-full-pipeline",
     "04-memory-learning",
     "05-api-integration",
+    "06-awareness",
+    "07-pyqual",
+    "08-audit",
+    "09-pr-bot",
+    "10-badge",
 ])
 def test_all_examples_exist(example_name):
     """Verify all expected example directories exist."""
@@ -211,3 +216,156 @@ def test_examples_have_readme():
             readme = example_dir / "README.md"
             if not readme.exists():
                 pytest.fail(f"Missing README.md in {example_dir.name}")
+
+
+@pytest.mark.parametrize("dir_name", [
+    "01-basic-analysis",
+    "02-custom-rules",
+    "03-full-pipeline",
+    "04-memory-learning",
+    "05-api-integration",
+    "06-awareness",
+    "07-pyqual",
+    "08-audit",
+    "09-pr-bot",
+    "10-badge",
+])
+def test_example_yaml_files_exist(dir_name):
+    """Verify each example directory has default.yaml and advanced.yaml."""
+    example_dir = EXAMPLES_DIR / dir_name
+    assert (example_dir / "default.yaml").exists(), f"default.yaml missing in {dir_name}"
+    assert (example_dir / "advanced.yaml").exists(), f"advanced.yaml missing in {dir_name}"
+
+
+def test_advanced_examples_run(capsys):
+    """Verify the advanced scenarios execute from the examples/ directory."""
+    from redsl.examples.basic_analysis import run_basic_analysis_example
+    from redsl.examples.custom_rules import run_custom_rules_example
+    from redsl.examples.memory_learning import run_memory_learning_example
+
+    basic_report = run_basic_analysis_example("advanced")
+    custom_report = run_custom_rules_example("advanced")
+    memory_report = run_memory_learning_example("advanced")
+    captured = capsys.readouterr()
+
+    assert "(advanced)" in captured.out or "advanced" in captured.out
+    assert len(basic_report["decisions"]) > 0
+    assert len(custom_report["decisions"]) > 0
+    assert memory_report["stats"]["episodic"] >= 5
+
+
+class TestAwarenessExample:
+    """Test 06-awareness example."""
+
+    def test_example_runs_without_errors(self):
+        script_path = EXAMPLES_DIR / "06-awareness" / "main.py"
+        result = subprocess.run(
+            [sys.executable, str(script_path)],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0, f"Script failed with: {result.stderr}"
+
+    def test_shows_patterns(self):
+        script_path = EXAMPLES_DIR / "06-awareness" / "main.py"
+        result = subprocess.run(
+            [sys.executable, str(script_path)],
+            capture_output=True,
+            text=True,
+        )
+        assert "Wzorce zmian" in result.stdout or "wzorce" in result.stdout.lower()
+        assert "Timeline" in result.stdout
+
+
+class TestPyQualExample:
+    """Test 07-pyqual example."""
+
+    def test_example_runs_without_errors(self):
+        script_path = EXAMPLES_DIR / "07-pyqual" / "main.py"
+        result = subprocess.run(
+            [sys.executable, str(script_path)],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0, f"Script failed with: {result.stderr}"
+
+    def test_shows_quality_issues(self):
+        script_path = EXAMPLES_DIR / "07-pyqual" / "main.py"
+        result = subprocess.run(
+            [sys.executable, str(script_path)],
+            capture_output=True,
+            text=True,
+        )
+        assert "Nieużywane importy" in result.stdout or "Pliki" in result.stdout
+
+
+class TestAuditExample:
+    """Test 08-audit example."""
+
+    def test_runs_without_errors(self):
+        script_path = EXAMPLES_DIR / "08-audit" / "main.py"
+        result = subprocess.run(
+            [sys.executable, str(script_path)],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0, f"Script failed with: {result.stderr}"
+
+    def test_shows_grade_and_badge(self):
+        script_path = EXAMPLES_DIR / "08-audit" / "main.py"
+        result = subprocess.run(
+            [sys.executable, str(script_path)],
+            capture_output=True,
+            text=True,
+        )
+        assert "Grade" in result.stdout
+        assert "Badge" in result.stdout or "badge" in result.stdout
+        assert "img.shields.io" in result.stdout
+
+
+class TestPrBotExample:
+    """Test 09-pr-bot example."""
+
+    def test_runs_without_errors(self):
+        script_path = EXAMPLES_DIR / "09-pr-bot" / "main.py"
+        result = subprocess.run(
+            [sys.executable, str(script_path)],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0, f"Script failed with: {result.stderr}"
+
+    def test_shows_pr_comment(self):
+        script_path = EXAMPLES_DIR / "09-pr-bot" / "main.py"
+        result = subprocess.run(
+            [sys.executable, str(script_path)],
+            capture_output=True,
+            text=True,
+        )
+        assert "redsl-bot" in result.stdout
+        assert "Metrics" in result.stdout
+        assert "Status check" in result.stdout
+
+
+class TestBadgeExample:
+    """Test 10-badge example."""
+
+    def test_runs_without_errors(self):
+        script_path = EXAMPLES_DIR / "10-badge" / "main.py"
+        result = subprocess.run(
+            [sys.executable, str(script_path)],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0, f"Script failed with: {result.stderr}"
+
+    def test_shows_badges_and_grades(self):
+        script_path = EXAMPLES_DIR / "10-badge" / "main.py"
+        result = subprocess.run(
+            [sys.executable, str(script_path)],
+            capture_output=True,
+            text=True,
+        )
+        assert "Markdown" in result.stdout
+        assert "img.shields.io" in result.stdout
+        assert "auth-module" in result.stdout

@@ -142,3 +142,53 @@ def test_refactor_live_json_emits_payload_and_passes_flags(tmp_path: Path, monke
         "rollback_on_failure": True,
         "use_sandbox": True,
     }
+
+
+# ---------------------------------------------------------------------------
+# CLI example subcommand tests
+# ---------------------------------------------------------------------------
+
+
+def test_example_list_shows_all_scenarios() -> None:
+    runner = CliRunner()
+    result = runner.invoke(cli_module.cli, ["example", "list"])
+    assert result.exit_code == 0
+    for name in ["basic-analysis", "custom-rules", "full-pipeline", "memory-learning", "api-integration", "awareness", "pyqual", "audit", "pr-bot", "badge"]:
+        assert name in result.output
+
+
+def test_example_memory_learning_default() -> None:
+    runner = CliRunner()
+    result = runner.invoke(cli_module.cli, ["example", "memory-learning"])
+    assert result.exit_code == 0
+    assert "EPISODIC" in result.output
+    assert "SEMANTIC" in result.output
+    assert "PROCEDURAL" in result.output
+
+
+def test_example_basic_analysis_advanced() -> None:
+    runner = CliRunner()
+    result = runner.invoke(cli_module.cli, ["example", "basic-analysis", "--scenario", "advanced"])
+    assert result.exit_code == 0
+    assert "advanced" in result.output.lower() or "Analiza" in result.output
+
+
+# ---------------------------------------------------------------------------
+# batch pyqual-run CLI registration test
+# ---------------------------------------------------------------------------
+
+
+def test_batch_pyqual_run_help() -> None:
+    runner = CliRunner()
+    result = runner.invoke(cli_module.cli, ["batch", "pyqual-run", "--help"])
+    assert result.exit_code == 0
+    assert "pyqual" in result.output.lower()
+    assert "--pipeline" in result.output
+    assert "--push" in result.output
+
+
+def test_batch_autofix_help() -> None:
+    runner = CliRunner()
+    result = runner.invoke(cli_module.cli, ["batch", "autofix", "--help"])
+    assert result.exit_code == 0
+    assert "Auto-fix" in result.output

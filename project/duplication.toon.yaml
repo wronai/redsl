@@ -1,17 +1,14 @@
-# redup/duplication | 17 groups | 118f 19703L | 2026-04-09
+# redup/duplication | 18 groups | 125f 19790L | 2026-04-09
 
 SUMMARY:
-  files_scanned: 118
-  total_lines:   19703
-  dup_groups:    17
-  dup_fragments: 40
-  saved_lines:   218
-  scan_ms:       5551
+  files_scanned: 125
+  total_lines:   19790
+  dup_groups:    18
+  dup_fragments: 46
+  saved_lines:   187
+  scan_ms:       5533
 
-DUPLICATES[17] (ranked by impact):
-  [c748cd7f9fe60e14] ! STRU  example_python_client  L=52 N=2 saved=52 sim=1.00
-      examples/05-api-integration/main.py:96-147  (example_python_client)
-      examples/05-api-integration/main.py:150-181  (example_websocket)
+DUPLICATES[18] (ranked by impact):
   [88cd2d34ab2799c8]   STRU  _metrun_available  L=10 N=4 saved=30 sim=1.00
       redsl/diagnostics/perf_bridge.py:50-59  (_metrun_available)
       redsl/llm/llx_router.py:148-153  (_llx_available)
@@ -33,11 +30,21 @@ DUPLICATES[17] (ranked by impact):
       archive/legacy_scripts/hybrid_llm_refactor.py:254-259  (_count_todo_issues)
       archive/legacy_scripts/hybrid_quality_refactor.py:130-135  (_count_todo_issues)
       redsl/commands/hybrid.py:30-35  (_count_todo_issues)
+  [bf09142e1f461c0a]   STRU  example_basic_analysis  L=4 N=4 saved=12 sim=1.00
+      redsl/cli.py:486-489  (example_basic_analysis)
+      redsl/cli.py:495-498  (example_custom_rules)
+      redsl/cli.py:514-517  (example_memory_learning)
+      redsl/cli.py:523-526  (example_api_integration)
   [59ffcfccc57a16ff]   EXAC  get_applied_changes  L=3 N=4 saved=9 sim=1.00
       redsl/refactors/direct_constants.py:127-129  (get_applied_changes)
       redsl/refactors/direct_guard.py:106-108  (get_applied_changes)
       redsl/refactors/direct_imports.py:208-210  (get_applied_changes)
       redsl/refactors/direct_types.py:122-124  (get_applied_changes)
+  [3827f031a50510f3]   STRU  main  L=3 N=4 saved=9 sim=1.00
+      redsl/examples/api_integration.py:35-37  (main)
+      redsl/examples/basic_analysis.py:48-50  (main)
+      redsl/examples/custom_rules.py:62-64  (main)
+      redsl/examples/memory_learning.py:111-113  (main)
   [828e958c9979cd9c]   EXAC  _extract_json  L=8 N=2 saved=8 sim=1.00
       redsl/analyzers/redup_bridge.py:225-232  (_extract_json)
       redsl/validation/vallm_bridge.py:36-43  (_extract_json)
@@ -67,59 +74,62 @@ DUPLICATES[17] (ranked by impact):
       refactor_output/refactor_extract_functions_20260407_143102/00_app__models.py:12-14  (process_data)
       refactor_output/refactor_extract_functions_20260407_143102/00_app__models.py:17-19  (validate_data)
 
-REFACTOR[17] (ranked by priority):
-  [1] ○ extract_module     → examples/05-api-integration/utils/example_python_client.py
-      WHY: 2 occurrences of 52-line block across 1 files — saves 52 lines
-      FILES: examples/05-api-integration/main.py
-  [2] ○ extract_function   → redsl/utils/_metrun_available.py
+REFACTOR[18] (ranked by priority):
+  [1] ○ extract_function   → redsl/utils/_metrun_available.py
       WHY: 4 occurrences of 10-line block across 3 files — saves 30 lines
       FILES: redsl/diagnostics/perf_bridge.py, redsl/llm/llx_router.py, redsl/validation/sandbox.py
-  [3] ○ extract_function   → utils/_process_single_project.py
+  [2] ○ extract_function   → utils/_process_single_project.py
       WHY: 2 occurrences of 21-line block across 2 files — saves 21 lines
       FILES: archive/legacy_scripts/hybrid_quality_refactor.py, redsl/commands/hybrid.py
-  [4] ○ extract_function   → redsl/commands/utils/fix_stolen_indent.py
+  [3] ○ extract_function   → redsl/commands/utils/fix_stolen_indent.py
       WHY: 2 occurrences of 19-line block across 1 files — saves 19 lines
       FILES: redsl/commands/doctor_fixers.py
-  [5] ○ extract_function   → redsl/validation/utils/is_available.py
+  [4] ○ extract_function   → redsl/validation/utils/is_available.py
       WHY: 2 occurrences of 19-line block across 2 files — saves 19 lines
       FILES: redsl/validation/regix_bridge.py, redsl/validation/vallm_bridge.py
-  [6] ○ extract_function   → utils/measure_todo_reduction.py
+  [5] ○ extract_function   → utils/measure_todo_reduction.py
       WHY: 2 occurrences of 13-line block across 2 files — saves 13 lines
       FILES: archive/legacy_scripts/batch_refactor_semcod.py, redsl/commands/batch.py
-  [7] ○ extract_function   → utils/_count_todo_issues.py
+  [6] ○ extract_function   → utils/_count_todo_issues.py
       WHY: 3 occurrences of 6-line block across 3 files — saves 12 lines
       FILES: archive/legacy_scripts/hybrid_llm_refactor.py, archive/legacy_scripts/hybrid_quality_refactor.py, redsl/commands/hybrid.py
+  [7] ○ extract_function   → redsl/utils/example_basic_analysis.py
+      WHY: 4 occurrences of 4-line block across 1 files — saves 12 lines
+      FILES: redsl/cli.py
   [8] ○ extract_function   → redsl/refactors/utils/get_applied_changes.py
       WHY: 4 occurrences of 3-line block across 4 files — saves 9 lines
       FILES: redsl/refactors/direct_constants.py, redsl/refactors/direct_guard.py, redsl/refactors/direct_imports.py, redsl/refactors/direct_types.py
-  [9] ○ extract_function   → redsl/utils/_extract_json.py
+  [9] ○ extract_function   → redsl/examples/utils/main.py
+      WHY: 4 occurrences of 3-line block across 4 files — saves 9 lines
+      FILES: redsl/examples/api_integration.py, redsl/examples/basic_analysis.py, redsl/examples/custom_rules.py, redsl/examples/memory_learning.py
+  [10] ○ extract_function   → redsl/utils/_extract_json.py
       WHY: 2 occurrences of 8-line block across 2 files — saves 8 lines
       FILES: redsl/analyzers/redup_bridge.py, redsl/validation/vallm_bridge.py
-  [10] ○ extract_function   → utils/_find_projects.py
+  [11] ○ extract_function   → utils/_find_projects.py
       WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
       FILES: archive/legacy_scripts/hybrid_quality_refactor.py, redsl/commands/hybrid.py
-  [11] ○ extract_function   → redsl/analyzers/utils/is_available.py
+  [12] ○ extract_function   → redsl/analyzers/utils/is_available.py
       WHY: 3 occurrences of 3-line block across 3 files — saves 6 lines
       FILES: redsl/analyzers/code2llm_bridge.py, redsl/analyzers/radon_analyzer.py, redsl/analyzers/redup_bridge.py
-  [12] ○ extract_function   → archive/legacy_scripts/utils/_regenerate_todo.py
+  [13] ○ extract_function   → archive/legacy_scripts/utils/_regenerate_todo.py
       WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
       FILES: archive/legacy_scripts/hybrid_llm_refactor.py, archive/legacy_scripts/hybrid_quality_refactor.py
-  [13] ○ extract_function   → redsl/commands/utils/_read_source.py
+  [14] ○ extract_function   → redsl/commands/utils/_read_source.py
       WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
       FILES: redsl/commands/doctor_fstring_fixers.py, redsl/commands/doctor_indent_fixers.py
-  [14] ○ extract_function   → redsl/autonomy/utils/_extract_file_path.py
+  [15] ○ extract_function   → redsl/autonomy/utils/_extract_file_path.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: redsl/autonomy/auto_fix.py
-  [15] ○ extract_function   → redsl/utils/batch_hybrid.py
+  [16] ○ extract_function   → redsl/utils/batch_hybrid.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: redsl/cli.py
-  [16] ○ extract_function   → redsl/utils/_dispatch_analyze.py
+  [17] ○ extract_function   → redsl/utils/_dispatch_analyze.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: redsl/main.py
-  [17] ○ extract_function   → refactor_output/refactor_extract_functions_20260407_143102/utils/process_data.py
+  [18] ○ extract_function   → refactor_output/refactor_extract_functions_20260407_143102/utils/process_data.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: refactor_output/refactor_extract_functions_20260407_143102/00_app__models.py
 
 METRICS-TARGET:
-  dup_groups:  17 → 0
-  saved_lines: 218 lines recoverable
+  dup_groups:  18 → 0
+  saved_lines: 187 lines recoverable

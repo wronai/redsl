@@ -1,24 +1,20 @@
-# code2llm | 114f 19151L | python:113,shell:1 | 2026-04-09
-# CC̄=4.1 | critical:3/781 | dups:0 | cycles:0
+# code2llm | 114f 19435L | python:113,shell:1 | 2026-04-09
+# CC̄=4.0 | critical:0/818 | dups:0 | cycles:0
 
-HEALTH[3]:
-  🟡 CC    format_cycle_report_markdown CC=28 (limit:15)
-  🟡 CC    format_batch_report_markdown CC=17 (limit:15)
-  🟡 CC    call CC=16 (limit:15)
+HEALTH[0]: ok
 
-REFACTOR[1]:
-  1. split 3 high-CC methods  (CC>15)
+REFACTOR[0]: none needed
 
-PIPELINES[439]:
-  [1] Src [main]: main → example_curl_commands
+PIPELINES[454]:
+  [1] Src [main]: main → run_api_integration_example → load_example_yaml → scenario_resource_name
       PURITY: 100% pure
-  [2] Src [main]: main
+  [2] Src [main]: main → run_full_pipeline_example → load_example_yaml → scenario_resource_name
       PURITY: 100% pure
-  [3] Src [process_order]: process_order → _is_order_terminal
+  [3] Src [main]: main → run_basic_analysis_example → load_example_yaml → scenario_resource_name
       PURITY: 100% pure
-  [4] Src [main]: main
+  [4] Src [main]: main → run_custom_rules_example → load_example_yaml → scenario_resource_name
       PURITY: 100% pure
-  [5] Src [main]: main → _parse_args
+  [5] Src [main]: main → run_memory_learning_example → load_example_yaml → scenario_resource_name
       PURITY: 100% pure
 
 LAYERS:
@@ -31,11 +27,11 @@ LAYERS:
   │ debug_decisions             62L  0C    1m  CC=7      ←0
   │ debug_llm_config            55L  0C    1m  CC=5      ←0
   │
-  redsl/                          CC̄=4.1    ←in:13  →out:13  !! split
-  │ !! formatters                 517L  0C   15m  CC=28     ←4
-  │ cli                        491L  0C   25m  CC=7      ←0
+  redsl/                          CC̄=4.0    ←in:13  →out:13  !! split
+  │ !! formatters                 614L  0C   28m  CC=13     ←4
+  │ !! cli                        564L  0C   32m  CC=7      ←0
+  │ api                        478L  12C    8m  CC=1      ←0
   │ engine                     417L  6C   12m  CC=10     ←0
-  │ api                        386L  11C    7m  CC=1      ←0
   │ radon_analyzer             370L  0C   20m  CC=14     ←1
   │ engine                     336L  1C    9m  CC=12     ←1
   │ quality_gate               325L  1C   10m  CC=11     ←1
@@ -66,12 +62,12 @@ LAYERS:
   │ semantic_chunker           227L  2C    7m  CC=11     ←0
   │ sandbox                    224L  3C    9m  CC=11     ←0
   │ doctor_fixers              214L  0C    8m  CC=10     ←0
+  │ __init__                   213L  2C    7m  CC=7      ←0
   │ direct_imports             213L  1C   15m  CC=7      ←0
   │ auto_fix                   210L  1C   13m  CC=8      ←1
   │ cli_autonomy               206L  0C    2m  CC=1      ←0
   │ consciousness_loop         204L  1C    7m  CC=5      ←0
   │ body_restorer              203L  0C    7m  CC=11     ←1
-  │ !! __init__                   191L  2C    4m  CC=16     ←0
   │ decision                   190L  0C    4m  CC=8      ←5
   │ code2llm_bridge            178L  0C    5m  CC=5      ←1
   │ timeline_toon              173L  1C   10m  CC=11     ←1
@@ -162,16 +158,16 @@ COUPLING:
          redsl.awareness                                                                                               1                                                                                                                                                                      ──                        
                redsl.dsl                                                                                               1                                                                                                                                                                                              ──
   CYCLES: none
-  HUB: redsl.validation/ (fan-in=6)
-  HUB: redsl.analyzers/ (fan-in=23)
-  HUB: redsl/ (fan-in=13)
-  HUB: redsl.execution/ (fan-in=13)
   HUB: redsl.autonomy/ (fan-in=7)
   HUB: redsl.llm/ (fan-in=6)
-  SMELL: redsl/ fan-out=13 → split needed
-  SMELL: redsl.execution/ fan-out=10 → split needed
+  HUB: redsl.execution/ (fan-in=13)
+  HUB: redsl/ (fan-in=13)
+  HUB: redsl.validation/ (fan-in=6)
+  HUB: redsl.analyzers/ (fan-in=23)
   SMELL: redsl.autonomy/ fan-out=19 → split needed
   SMELL: redsl.commands/ fan-out=21 → split needed
+  SMELL: redsl.execution/ fan-out=10 → split needed
+  SMELL: redsl/ fan-out=13 → split needed
   SMELL: redsl.refactors/ fan-out=8 → split needed
 
 EXTERNAL:

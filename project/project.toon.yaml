@@ -1,12 +1,12 @@
-# redsl | 767 func | 99f | 25565L | python | 2026-04-09
+# redsl | 791 func | 99f | 25924L | python | 2026-04-09
 
 HEALTH:
-  CC̄=4.1  critical=54 (limit:10)  dup=3  cycles=0
+  CC̄=4.0  critical=51 (limit:10)  dup=3  cycles=0
 
 ALERTS[20]:
   !!! high_fan_out     register = 29 (limit:10)
-  !!! cc_exceeded      format_cycle_report_markdown = 28 (limit:15)
   !!! high_fan_out     _register_refactor_routes = 25 (limit:10)
+  !!! high_fan_out     _register_example_routes = 23 (limit:10)
   !!! high_fan_out     SemanticChunker.chunk_function = 21 (limit:10)
   !!  high_fan_out     main = 19 (limit:10)
   !!  high_fan_out     apply_quality_refactors = 18 (limit:10)
@@ -16,11 +16,11 @@ ALERTS[20]:
   !!  high_fan_out     _fix_stolen_indent = 16 (limit:10)
 
 MODULES[114] (top by size):
-  M[redsl/formatters.py] 517L C:0 F:15 CC↑28 D:4 (python)
-  M[redsl/cli.py] 491L C:0 F:25 CC↑7 D:0 (python)
+  M[redsl/formatters.py] 614L C:0 F:28 CC↑13 D:4 (python)
+  M[redsl/cli.py] 564L C:0 F:32 CC↑7 D:0 (python)
+  M[redsl/api.py] 478L C:12 F:8 CC↑1 D:0 (python)
   M[redsl/dsl/engine.py] 417L C:6 F:12 CC↑10 D:0 (python)
   M[archive/legacy_scripts/hybrid_llm_refactor.py] 386L C:0 F:16 CC↑10 D:1 (python)
-  M[redsl/api.py] 386L C:11 F:7 CC↑1 D:0 (python)
   M[redsl/analyzers/radon_analyzer.py] 370L C:0 F:20 CC↑14 D:1 (python)
   M[redsl/refactors/engine.py] 336L C:1 F:9 CC↑12 D:0 (python)
   M[redsl/autonomy/quality_gate.py] 325L C:1 F:10 CC↑11 D:1 (python)
@@ -36,19 +36,19 @@ MODULES[114] (top by size):
 HOTSPOTS[10]:
   ★ register fan=29  // Register all autonomy commands on the given Click group.
   ★ _register_refactor_routes fan=25  // Orchestrates 25 calls
+  ★ _register_example_routes fan=23  // Endpoints for running and listing packaged example scenarios.
   ★ SemanticChunker.chunk_function fan=21  // Wytnij semantyczny chunk dla jednej funkcji.
 
 Args:
     file_path:         Ścież
   ★ main fan=19  // Process semcod projects.
-  ★ apply_quality_refactors fan=18  // Apply all quality refactorings to a project.
 
-REFACTOR[7]:
-  [1] H/L Split format_cycle_report_markdown (CC=28 → target CC<10)
-  [2] H/H Split god module redsl/formatters.py (517L, 0 classes)
-  [3] M/L Split format_batch_report_markdown (CC=17 → target CC<10)
-  [4] M/L Split LLMLayer.call (CC=16 → target CC<10)
-  [5] M/M Reduce register fan-out (currently 29)
+REFACTOR[5]:
+  [1] H/H Split god module redsl/formatters.py (614L, 0 classes)
+  [2] H/H Split god module redsl/cli.py (564L, 0 classes)
+  [3] M/M Reduce register fan-out (currently 29)
+  [4] M/M Reduce _register_refactor_routes fan-out (currently 25)
+  [5] M/M Reduce _register_example_routes fan-out (currently 23)
 
 EVOLUTION:
-  2026-04-09 CC̄=4.1 crit=54 25565L // Automated analysis
+  2026-04-09 CC̄=4.0 crit=51 25924L // Automated analysis
