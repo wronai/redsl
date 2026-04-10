@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Literal
 
 
-_DEFAULT_LLM_MODEL = "openrouter/openai/gpt-5-mini"
+_DEFAULT_LLM_MODEL = "openrouter/x-ai/grok-code-fast-1"
 _DEFAULT_XAI_MODEL = "x-ai/grok-code-fast-1"
 
 
@@ -22,7 +22,7 @@ def _default_llm_model() -> str:
     if os.getenv("XAI_API_KEY"):
         return _DEFAULT_XAI_MODEL
     if os.getenv("OPENAI_API_KEY"):
-        return "openai/gpt-5-mini"
+        return "openai/gpt-5.4-mini"
     return _DEFAULT_LLM_MODEL
 
 

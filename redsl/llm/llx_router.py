@@ -21,13 +21,12 @@ from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
-_REFLECTION_MODEL_DEFAULT = "gpt-5-mini"
+_REFLECTION_MODEL_DEFAULT = "gpt-5.4-mini"
 _REFLECTION_MODEL_LOCAL = "ollama/llama3"
 _HARD_REFRACTOR_MODEL = "google/gemini-3.1-flash-lite-preview"
 
 _PRICES_PER_M_TOKENS: dict[str, float] = {
     "gpt-4o": 15.0,
-    "gpt-5-mini": 0.6,
     "gpt-5.4-mini": 0.6,
     "google/gemini-3.1-flash-lite-preview": 0.15,
     "ollama/llama3": 0.0,
@@ -44,14 +43,14 @@ def _get_refactor_action_enum():
 
 
 _MODEL_MATRIX_SPECS: tuple[tuple[str, str | None, str | None, str | None], ...] = (
-    ("extract_functions", _HARD_REFRACTOR_MODEL, _HARD_REFRACTOR_MODEL, "gpt-5-mini"),
-    ("split_module", _HARD_REFRACTOR_MODEL, _HARD_REFRACTOR_MODEL, "gpt-5-mini"),
-    ("deduplicate", "gpt-5-mini", "gpt-5-mini", "gpt-5-mini"),
-    ("add_type_hints", "gpt-5-mini", "gpt-5-mini", "gpt-5-mini"),
-    ("simplify_conditionals", _HARD_REFRACTOR_MODEL, _HARD_REFRACTOR_MODEL, "gpt-5-mini"),
-    ("reduce_fan_out", _HARD_REFRACTOR_MODEL, _HARD_REFRACTOR_MODEL, "gpt-5-mini"),
-    ("rename_for_clarity", None, None, "gpt-5-mini"),
-    ("add_docstrings", None, None, "gpt-5-mini"),
+    ("extract_functions", _HARD_REFRACTOR_MODEL, _HARD_REFRACTOR_MODEL, "gpt-5.4-mini"),
+    ("split_module", _HARD_REFRACTOR_MODEL, _HARD_REFRACTOR_MODEL, "gpt-5.4-mini"),
+    ("deduplicate", "gpt-5.4-mini", "gpt-5.4-mini", "gpt-5.4-mini"),
+    ("add_type_hints", "gpt-5.4-mini", "gpt-5.4-mini", "gpt-5.4-mini"),
+    ("simplify_conditionals", _HARD_REFRACTOR_MODEL, _HARD_REFRACTOR_MODEL, "gpt-5.4-mini"),
+    ("reduce_fan_out", _HARD_REFRACTOR_MODEL, _HARD_REFRACTOR_MODEL, "gpt-5.4-mini"),
+    ("rename_for_clarity", None, None, "gpt-5.4-mini"),
+    ("add_docstrings", None, None, "gpt-5.4-mini"),
 )
 
 
@@ -174,14 +173,14 @@ def select_model(
 
     model = _MODEL_MATRIX.get(
         (action_value, tier),
-        _MODEL_MATRIX.get((action_value, "any"), "gpt-5-mini"),
+        _MODEL_MATRIX.get((action_value, "any"), "gpt-5.4-mini"),
     )
 
     estimated_tokens = _estimate_tokens(context)
     cost = _estimate_cost(model, estimated_tokens)
 
     if cost > budget_remaining:
-        model = "gpt-5-mini"
+        model = "gpt-5.4-mini"
         cost = _estimate_cost(model, estimated_tokens)
         if cost > budget_remaining:
             model = _REFLECTION_MODEL_LOCAL

@@ -48,6 +48,70 @@ def _pyqual_cli_available() -> bool:
     return shutil.which("pyqual") is not None
 
 
+def _print_batch_header(
+    workspace_root: Path,
+    project_count: int,
+    pyqual_ok: bool,
+    pipeline_mode: bool,
+    git_push: bool,
+    publish: bool,
+    fix_config: bool,
+    dry_run: bool,
+    skip_dirty: bool,
+    profile: str,
+) -> None:
+    """Print batch execution header with configuration summary."""
+    print(f"\n{'=' * 60}")
+    print(f"reDSL × pyqual — Multi-Project Quality Pipeline")
+    print(f"{'=' * 60}")
+    print(f"Workspace:      {workspace_root}")
+    print(f"Projects found: {project_count}")
+    print(f"pyqual CLI:     {'✅ available' if pyqual_ok else '⚠️  not found (install: pip install pyqual)'}")
+    print(f"Pipeline mode:  {'full (fix+verify+publish)' if pipeline_mode else 'gates only'}")
+    print(f"Git push:       {'enabled' if git_push else 'disabled'}")
+    print(f"Publish:        {'enabled' if publish else 'disabled'}")
+    print(f"Config fix:     {'enabled' if fix_config else 'disabled'}")
+    print(f"Dry run:        {'enabled' if dry_run else 'disabled'}")
+    print(f"Skip dirty:     {'enabled' if skip_dirty else 'disabled'}")
+    print(f"Profile:        {profile}")
+    print(f"{'=' * 60}")
+
+
+def _format_project_status(result: Any) -> str:
+    """Format project result status into readable parts."""
+    parts = []
+    if result.skipped:
+        parts.append(f"skipped: {result.skip_reason}")
+    if result.pyqual_yaml_generated:
+        parts.append("pyqual.yaml generated")
+    if not result.config_valid:
+        parts.append("config FAIL")
+    elif result.config_fixed:
+        parts.append("config fixed")
+    if result.redsl_fixes_applied > 0:
+        parts.append(f"{result.redsl_fixes_applied} ReDSL fixes")
+    if result.gates_passed:
+        parts.append(f"gates PASS ({result.gates_passing}/{result.gates_total})")
+    elif result.gates_total > 0:
+        parts.append(f"gates FAIL ({result.gates_passing}/{result.gates_total})")
+    if result.pipeline_passed:
+        parts.append("pipeline OK")
+    elif result.pipeline_ran:
+        parts.append("pipeline FAIL")
+    if result.push_preflight_passed:
+        parts.append("push preflight OK")
+    if result.pipeline_publish_passed:
+        parts.append("publish OK")
+    if result.git_committed:
+        parts.append("committed")
+    if result.git_pushed:
+        parts.append("pushed")
+    parts.append(f"verdict={result.verdict}")
+    if not parts:
+        parts.append(f"{result.py_files} files, CC̄={result.avg_cc}")
+    return ", ".join(parts)
+
+
 def run_pyqual_batch(
     workspace_root: Path,
     max_fixes: int = 30,
@@ -79,20 +143,10 @@ def run_pyqual_batch(
     resolved_profile = _resolve_profile(profile, run_pipeline, publish)
     effective_pipeline = run_pipeline or publish
 
-    print(f"\n{'=' * 60}")
-    print(f"reDSL × pyqual — Multi-Project Quality Pipeline")
-    print(f"{'=' * 60}")
-    print(f"Workspace:      {workspace_root}")
-    print(f"Projects found: {len(packages)}")
-    print(f"pyqual CLI:     {'✅ available' if pyqual_ok else '⚠️  not found (install: pip install pyqual)'}")
-    print(f"Pipeline mode:  {'full (fix+verify+publish)' if effective_pipeline else 'gates only'}")
-    print(f"Git push:       {'enabled' if git_push else 'disabled'}")
-    print(f"Publish:        {'enabled' if publish else 'disabled'}")
-    print(f"Config fix:     {'enabled' if fix_config else 'disabled'}")
-    print(f"Dry run:        {'enabled' if dry_run else 'disabled'}")
-    print(f"Skip dirty:     {'enabled' if skip_dirty else 'disabled'}")
-    print(f"Profile:        {resolved_profile}")
-    print(f"{'=' * 60}")
+    _print_batch_header(
+        workspace_root, len(packages), pyqual_ok, effective_pipeline,
+        git_push, publish, fix_config, dry_run, skip_dirty, resolved_profile
+    )
 
     from .models import PyqualProjectResult
     all_results: list[PyqualProjectResult] = []
@@ -107,39 +161,7 @@ def run_pyqual_batch(
         )
         all_results.append(result)
 
-        # Brief status
-        parts = []
-        if result.skipped:
-            parts.append(f"skipped: {result.skip_reason}")
-        if result.pyqual_yaml_generated:
-            parts.append("pyqual.yaml generated")
-        if not result.config_valid:
-            parts.append("config FAIL")
-        elif result.config_fixed:
-            parts.append("config fixed")
-        if result.redsl_fixes_applied > 0:
-            parts.append(f"{result.redsl_fixes_applied} ReDSL fixes")
-        if result.gates_passed:
-            parts.append(f"gates PASS ({result.gates_passing}/{result.gates_total})")
-        elif result.gates_total > 0:
-            parts.append(f"gates FAIL ({result.gates_passing}/{result.gates_total})")
-        if result.pipeline_passed:
-            parts.append("pipeline OK")
-        elif result.pipeline_ran:
-            parts.append("pipeline FAIL")
-        if result.push_preflight_passed:
-            parts.append("push preflight OK")
-        if result.pipeline_publish_passed:
-            parts.append("publish OK")
-        if result.git_committed:
-            parts.append("committed")
-        if result.git_pushed:
-            parts.append("pushed")
-        parts.append(f"verdict={result.verdict}")
-        if not parts:
-            parts.append(f"{result.py_files} files, CC̄={result.avg_cc}")
-
-        print(f"  → {', '.join(parts)}")
+        print(f"  → {_format_project_status(result)}")
 
         if fail_fast and result.verdict == "failed":
             print("  → fail-fast triggered, stopping batch")

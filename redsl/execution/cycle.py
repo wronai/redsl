@@ -54,6 +54,7 @@ def run_cycle(
     validate_regix: bool = False,
     rollback_on_failure: bool = False,
     use_sandbox: bool = False,
+    target_file: str | None = None,
 ) -> "CycleReport":
     """Run a complete refactoring cycle."""
     from redsl.execution.decision import _execute_decisions
@@ -80,7 +81,7 @@ def run_cycle(
 
         logger.info("=== CYCLE %d: DECIDE ===", orchestrator._cycle_count)
         from redsl.execution.decision import _select_decisions
-        decisions = _select_decisions(orchestrator, analysis, max_actions)
+        decisions = _select_decisions(orchestrator, analysis, max_actions, target_file=target_file)
         report.decisions_count = len(decisions)
 
         if not decisions:

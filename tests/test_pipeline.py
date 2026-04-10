@@ -85,6 +85,7 @@ class TestPipelinePerceive:
         assert toon_files, f"No toon files generated in {out}"
 
     @skip_if_code2llm_unavailable
+    @pytest.mark.slow
     def test_pipeline_perceive_produces_usable_analysis(self):
         analyzer = CodeAnalyzer()
         result = (
@@ -269,6 +270,7 @@ class TestPipelineQualityGate:
 # Full pipeline smoke test
 # ---------------------------------------------------------------------------
 
+@pytest.mark.slow
 class TestFullPipelineSmoke:
     """Weryfikuje że cały flow PERCEIVE→DECIDE→REFLECT nie crashuje."""
 

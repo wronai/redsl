@@ -6,7 +6,7 @@
 - **Primary Language**: python
 - **Languages**: python: 193
 - **Analysis Mode**: static
-- **Total Functions**: 887
+- **Total Functions**: 907
 - **Total Classes**: 117
 - **Modules**: 193
 - **Entry Points**: 0
@@ -93,6 +93,10 @@
 - **Classes**: 2
 - **File**: `__init__.py`
 
+### commands.batch_pyqual.reporting
+- **Functions**: 15
+- **File**: `reporting.py`
+
 ### llm.llx_router
 - **Functions**: 15
 - **Classes**: 1
@@ -102,11 +106,6 @@
 - **Functions**: 15
 - **Classes**: 1
 - **File**: `direct_imports.py`
-
-### root.history
-- **Functions**: 13
-- **Classes**: 3
-- **File**: `history.py`
 
 ## Key Entry Points
 
@@ -244,9 +243,17 @@ Key functions that process and transform data:
 ### commands.doctor_fstring_fixers._write_if_parses
 - **Output to**: path.write_text, ast.parse
 
+### commands.cli_autonomy._parse_worktree_changes
+> Parse `git status --porcelain` output into a list of file paths.
+- **Output to**: status_output.splitlines, None.strip, len, paths.append
+
 ### commands.hybrid._process_single_project
 > Process a single project and return results.
 - **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
+
+### commands.batch_pyqual.runner._format_project_status
+> Format project result status into readable parts.
+- **Output to**: parts.append, None.join, parts.append, parts.append, parts.append
 
 ### commands.batch_pyqual.pipeline._validate_config
 > Validate pyqual config.
@@ -260,7 +267,7 @@ This is the main entry point that orchestrates a
 
 ### commands.autofix.pipeline._process_project
 > Full autofix pipeline for a single project.
-- **Output to**: ProjectFixResult, todo_file.exists, commands.hybrid._count_todo_issues, pyqual_yaml.exists, commands.hybrid._count_todo_issues
+- **Output to**: ProjectFixResult, commands.autofix.pipeline._stage_collect_metrics, commands.autofix.pipeline._stage_ensure_todo, commands.autofix.pipeline._stage_apply_fixes, commands.autofix.pipeline._stage_quality_gate_check
 
 ### commands.pyqual.mypy_analyzer.MypyAnalyzer._parse_mypy_line
 > Parsuj jedną linię wyjścia mypy.
@@ -279,6 +286,10 @@ This is the main entry point that orchestrates a
 ### autonomy.review._parse_changed_files_from_diff
 > Extract changed file paths from a unified diff.
 - **Output to**: diff.splitlines, line.startswith, None.strip, path.endswith, paths.append
+
+### formatters.debug.format_debug_info
+> Format debug information.
+- **Output to**: yaml.dump, json.dumps, info.items, None.join, isinstance
 
 ### formatters.refactor.format_refactor_plan
 > Format refactoring plan in specified format.
@@ -304,10 +315,6 @@ This is the main entry point that orchestrates a
 > Serialize decision object to dict.
 - **Output to**: hasattr, hasattr, hasattr, str, hasattr
 
-### formatters.debug.format_debug_info
-> Format debug information.
-- **Output to**: yaml.dump, json.dumps, info.items, None.join, isinstance
-
 ### formatters.cycle.format_cycle_report_yaml
 > Format full cycle report as YAML for stdout.
 - **Output to**: yaml.dump, formatters.core._get_timestamp, formatters.refactor._serialize_analysis, formatters.refactor._serialize_decision, round
@@ -328,33 +335,24 @@ This is the main entry point that orchestrates a
 > Format batch processing results.
 - **Output to**: yaml.dump, json.dumps, enumerate, len, sum
 
-### formatters.batch.format_batch_report_markdown
-> Format a batch run report as Markdown.
-- **Output to**: None.strftime, list, formatters.batch._batch_report_totals, lines.extend, lines.extend
-
-### execution.validation._validate_with_regix
-> Validate changes with regix and update report.
-- **Output to**: regix_bridge.validate_working_tree, regix_bridge.check_gates, regix_report.get, report.errors.append, logger.info
-
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
 
-- `commands.cli_autonomy.register` - 147 calls
+- `commands.cli_autonomy.register` - 270 calls
 - `examples.memory_learning.run_memory_learning_example` - 78 calls
-- `examples.audit.run_audit_example` - 69 calls
 - `examples.pr_bot.run_pr_bot_example` - 69 calls
+- `examples.audit.run_audit_example` - 69 calls
 - `examples.badge.run_badge_example` - 50 calls
 - `commands.cli_awareness.register` - 48 calls
 - `commands.cli_doctor.register` - 48 calls
-- `commands.batch_pyqual.runner.run_pyqual_batch` - 46 calls
 - `examples.pyqual_example.run_pyqual_example` - 41 calls
 - `examples.awareness.run_awareness_example` - 41 calls
 - `commands.pyqual.run_pyqual_analysis` - 35 calls
 - `examples.custom_rules.run_custom_rules_example` - 34 calls
+- `cli.refactor.refactor` - 32 calls
 - `examples.basic_analysis.run_basic_analysis_example` - 31 calls
 - `commands.batch.run_semcod_batch` - 30 calls
-- `cli.refactor.refactor` - 29 calls
 - `refactors.engine.RefactorEngine.generate_proposal` - 28 calls
 - `examples.full_pipeline.run_full_pipeline_example` - 27 calls
 - `refactors.prompts.build_ecosystem_context` - 27 calls
@@ -380,6 +378,7 @@ Functions exposed as public API (no underscore prefix):
 - `cli.logging.setup_logging` - 19 calls
 - `history.HistoryReader.generate_decision_report` - 18 calls
 - `commands.planfile_bridge.create_ticket` - 18 calls
+- `commands.doctor_detectors.detect_version_mismatch` - 18 calls
 
 ## System Interactions
 

@@ -27,10 +27,27 @@ def _select_decisions(
     orchestrator: "RefactorOrchestrator",
     analysis: "AnalysisResult",
     max_actions: int,
+    target_file: str | None = None,
 ) -> list[Decision]:
-    """Select top decisions from analysis."""
+    """Select top decisions from analysis, optionally filtered to a target file."""
     contexts = analysis.to_dsl_contexts()
-    return orchestrator.dsl_engine.top_decisions(contexts, limit=max_actions)
+    decisions = orchestrator.dsl_engine.top_decisions(contexts, limit=max_actions * 3 if target_file else max_actions)
+    if target_file:
+        target_norm = Path(target_file).as_posix().lstrip("./")
+        decisions = [
+            d for d in decisions
+            if _decision_matches_target(d, target_norm)
+        ][:max_actions]
+    return decisions
+
+
+def _decision_matches_target(decision: Decision, target_norm: str) -> bool:
+    """Check if a decision's target file matches the given normalized path."""
+    decision_target = getattr(decision, "target_file", "")
+    if not decision_target:
+        return False
+    decision_norm = Path(str(decision_target)).as_posix().lstrip("./")
+    return decision_norm == target_norm or decision_norm.startswith(f"{target_norm.rstrip('/')}/")
 
 
 def _execute_direct_refactor(

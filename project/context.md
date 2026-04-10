@@ -4,22 +4,14 @@
 
 - **Project**: /home/tom/github/semcod/redsl
 - **Primary Language**: python
-- **Languages**: python: 147, shell: 1
+- **Languages**: python: 169, shell: 1
 - **Analysis Mode**: static
-- **Total Functions**: 937
+- **Total Functions**: 947
 - **Total Classes**: 120
-- **Modules**: 148
-- **Entry Points**: 534
+- **Modules**: 170
+- **Entry Points**: 538
 
 ## Architecture by Module
-
-### redsl.cli
-- **Functions**: 39
-- **File**: `cli.py`
-
-### redsl.formatters
-- **Functions**: 28
-- **File**: `formatters.py`
 
 ### redsl.awareness.git_timeline
 - **Functions**: 23
@@ -44,15 +36,15 @@
 - **Classes**: 1
 - **File**: `project_parser.py`
 
-### redsl.analyzers.incremental
-- **Functions**: 17
-- **Classes**: 2
-- **File**: `incremental.py`
-
 ### redsl.analyzers.quality_visitor
 - **Functions**: 17
 - **Classes**: 1
 - **File**: `quality_visitor.py`
+
+### redsl.analyzers.incremental
+- **Functions**: 17
+- **Classes**: 2
+- **File**: `incremental.py`
 
 ### archive.legacy_scripts.hybrid_llm_refactor
 - **Functions**: 16
@@ -101,10 +93,19 @@
 - **Classes**: 1
 - **File**: `auto_fix.py`
 
+### redsl.cli.examples
+- **Functions**: 13
+- **File**: `examples.py`
+
 ### redsl.analyzers.toon_analyzer
 - **Functions**: 13
 - **Classes**: 1
 - **File**: `toon_analyzer.py`
+
+### redsl.autonomy.growth_control
+- **Functions**: 12
+- **Classes**: 3
+- **File**: `growth_control.py`
 
 ## Key Entry Points
 
@@ -141,6 +142,10 @@ Uses late-binding via *host_module* so that monkeypatching
 > Run pyqual analysis on a project.
 - **Calls**: PyQualAnalyzer, analyzer.analyze_project, analyzer.save_report, print, print, print, print, print
 
+### redsl.cli.refactor.refactor
+> Run refactoring on a project.
+- **Calls**: click.command, click.argument, click.option, click.option, click.option, click.option, click.option, click.option
+
 ### redsl.dsl.engine.DSLEngine._load_default_rules
 > Załaduj domyślny zestaw reguł refaktoryzacji.
 - **Calls**: Rule, Rule, Rule, Rule, Rule, Rule, Rule, Rule
@@ -152,10 +157,6 @@ Uses late-binding via *host_module* so that monkeypatching
 ### archive.legacy_scripts.apply_semcod_refactor.main
 > Apply reDSL to a semcod project.
 - **Calls**: Path, logger.info, AgentConfig, RefactorOrchestrator, print, orchestrator.explain_decisions, print, len
-
-### redsl.cli.refactor
-> Run refactoring on a project.
-- **Calls**: cli.command, click.argument, click.option, click.option, click.option, click.option, click.option, click.option
 
 ### redsl.refactors.engine.RefactorEngine.generate_proposal
 > Wygeneruj propozycję refaktoryzacji na podstawie decyzji DSL.
@@ -192,23 +193,20 @@ Args:
 ### redsl.awareness.timeline_analysis.TimelineAnalyzer._analyze_series
 - **Calls**: float, TimelineAnalyzer._linear_regression, max, max, min, TrendAnalysis, TrendAnalysis, float
 
-### redsl.commands.autofix.run_autofix_batch
+### redsl.commands.autofix.runner.run_autofix_batch
 > Run full autofix pipeline on all semcod packages.
-- **Calls**: redsl.commands.autofix._find_packages, print, print, print, enumerate, redsl.commands.autofix._build_summary, redsl.commands.autofix._print_summary, redsl.commands.autofix._save_reports
+- **Calls**: redsl.commands.batch_pyqual.discovery._find_packages, print, print, print, enumerate, redsl.commands.batch_pyqual.reporting._build_summary, archive.legacy_scripts.hybrid_quality_refactor._print_summary, redsl.commands.autofix.reporting._save_reports
 
 ### redsl.commands.pyqual.reporter.Reporter.calculate_metrics
 > Oblicz metryki złożoności i utrzymywalności kodu.
 - **Calls**: None.get, None.get, None.update, sum, sum, logger.warning, None.update, file_path.read_text
 
-### redsl.cli.scan
+### redsl.cli.scan.scan
 > Scan a folder of projects and produce a markdown priority report.
-- **Calls**: cli.command, click.argument, click.option, click.option, redsl.cli._setup_logging, click.echo, click.echo, scan_commands.scan_folder
+- **Calls**: click.command, click.argument, click.option, click.option, redsl.cli.logging.setup_logging, click.echo, click.echo, scan_commands.scan_folder
 
 ### redsl.awareness.AwarenessManager.build_snapshot
 - **Calls**: None.resolve, self._build_cache_key, GitTimelineAnalyzer, timeline_analyzer.build_timeline, timeline_analyzer.analyze_trends, ChangePatternLearner, pattern_learner.learn_from_timeline, self.health_model.assess
-
-### redsl.awareness.health_model.HealthModel.assess
-- **Calls**: trends.get, trends.get, trends.get, self._bounded_score, self._bounded_score, self._bounded_score, self._bounded_score, self._status_for_score
 
 ### redsl.validation.vallm_bridge.validate_proposal
 > Waliduj wszystkie zmiany w propozycji refaktoryzacji.
@@ -222,13 +220,12 @@ Args:
 > Iteruj po węzłach top-level i class-level, zbieraj CC, nesting i alerty.
 - **Calls**: rel_path.endswith, ast.iter_child_nodes, isinstance, ast.iter_child_nodes, isinstance, isinstance, redsl.analyzers.python_analyzer.ast_cyclomatic_complexity, max
 
+### redsl.awareness.health_model.HealthModel.assess
+- **Calls**: trends.get, trends.get, trends.get, self._bounded_score, self._bounded_score, self._bounded_score, self._bounded_score, self._status_for_score
+
 ### redsl.analyzers.parsers.project_parser.ProjectParser._parse_emoji_alert_line
 > T001: Parsuj linie code2llm v2: 🟡 CC func_name CC=41 (limit:10)
 - **Calls**: None.strip, re.match, match.group, re.search, re.search, alert_type_map.get, match.group, int
-
-### redsl.cli.debug_decisions
-> Debug DSL decision making.
-- **Calls**: debug.command, click.argument, click.option, CodeAnalyzer, analyzer.analyze_project, analysis.to_dsl_contexts, RefactorOrchestrator, orchestrator.dsl_engine.evaluate
 
 ### redsl.commands.pyqual.run_pyqual_fix
 > Run automatic fixes based on pyqual analysis.
@@ -237,6 +234,10 @@ Args:
 ### redsl.analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content
 > Analizuj z bezpośredniego contentu toon (bez plików).
 - **Calls**: AnalysisResult, len, sum, self.parser.parse_project_toon, data.get, data.get, data.get, self.parser.parse_duplication_toon
+
+### redsl.analyzers.toon_analyzer.ToonAnalyzer._process_project_ton
+> Parsuj plik project_toon i zaktualizuj result.
+- **Calls**: toon_file.read_text, project_data.get, health.get, health.get, health.get, project_data.get, health.get, health.get
 
 ## Process Flows
 
@@ -267,22 +268,22 @@ run_pyqual_batch [redsl.commands.batch_pyqual.runner]
 run_pyqual_analysis [redsl.commands.pyqual]
 ```
 
-### Flow 5: _load_default_rules
+### Flow 5: refactor
+```
+refactor [redsl.cli.refactor]
+```
+
+### Flow 6: _load_default_rules
 ```
 _load_default_rules [redsl.dsl.engine.DSLEngine]
 ```
 
-### Flow 6: run_semcod_batch
+### Flow 7: run_semcod_batch
 ```
 run_semcod_batch [redsl.commands.batch]
   └─> _save_markdown_report
       └─ →> format_batch_report_markdown
           └─> _batch_report_totals
-```
-
-### Flow 7: refactor
-```
-refactor [redsl.cli]
 ```
 
 ### Flow 8: generate_proposal
@@ -443,6 +444,10 @@ Key functions that process and transform data:
 > Process a single project and return results.
 - **Output to**: archive.legacy_scripts.hybrid_quality_refactor._count_todo_issues, archive.legacy_scripts.hybrid_quality_refactor.apply_all_quality_changes, archive.legacy_scripts.hybrid_quality_refactor._regenerate_todo, archive.legacy_scripts.hybrid_quality_refactor._count_todo_issues, print
 
+### refactor_output.refactor_extract_functions_20260407_143102.00_app__models.process_data
+
+### refactor_output.refactor_extract_functions_20260407_143102.00_app__models.validate_data
+
 ### archive.legacy_scripts.hybrid_llm_refactor._process_decisions_for_file
 - **Output to**: print, decisions.sort, archive.legacy_scripts.hybrid_llm_refactor._apply_decision, print
 
@@ -454,68 +459,63 @@ Key functions that process and transform data:
 > Process a single project and return results.
 - **Output to**: archive.legacy_scripts.hybrid_llm_refactor._count_todo_issues, archive.legacy_scripts.hybrid_llm_refactor.apply_changes_with_llm_supervision, archive.legacy_scripts.hybrid_llm_refactor._regenerate_todo, archive.legacy_scripts.hybrid_llm_refactor._count_todo_issues, print
 
-### refactor_output.refactor_extract_functions_20260407_143102.00_app__models.process_data
-
-### refactor_output.refactor_extract_functions_20260407_143102.00_app__models.validate_data
-
-### redsl.formatters.format_refactor_plan
-> Format refactoring plan in specified format.
-- **Output to**: redsl.formatters._format_yaml, redsl.formatters._format_json, redsl.formatters._format_text
-
-### redsl.formatters._format_yaml
-> Format as YAML.
-- **Output to**: yaml.dump, redsl.formatters._get_timestamp, redsl.formatters._serialize_analysis, redsl.formatters._serialize_decision, len
-
-### redsl.formatters._format_json
-> Format as JSON.
-- **Output to**: json.dumps, redsl.formatters._get_timestamp, redsl.formatters._serialize_analysis, redsl.formatters._serialize_decision, len
-
-### redsl.formatters._format_text
-> Format as rich text.
-- **Output to**: output.append, redsl.formatters._count_decision_types, output.append, output.append, enumerate
-
-### redsl.formatters._serialize_analysis
-> Serialize analysis object to dict.
-- **Output to**: getattr, getattr, getattr, getattr, getattr
-
-### redsl.formatters._serialize_decision
-> Serialize decision object to dict.
-- **Output to**: hasattr, hasattr, hasattr, str, hasattr
-
-### redsl.formatters.format_batch_results
-> Format batch processing results.
-- **Output to**: yaml.dump, json.dumps, enumerate, len, sum
-
-### redsl.formatters.format_cycle_report_yaml
-> Format full cycle report as YAML for stdout.
-- **Output to**: yaml.dump, redsl.formatters._get_timestamp, redsl.formatters._serialize_analysis, redsl.formatters._serialize_decision, round
-
-### redsl.formatters.format_cycle_report_markdown
-> Format a refactor cycle as a Markdown report.
-- **Output to**: None.strftime, lines.extend, lines.extend, lines.extend, lines.extend
-
-### redsl.formatters.format_batch_report_markdown
-> Format a batch run report as Markdown.
-- **Output to**: None.strftime, list, redsl.formatters._batch_report_totals, lines.extend, lines.extend
-
-### redsl.formatters.format_plan_yaml
-> Format dry-run plan as YAML for stdout.
-- **Output to**: yaml.dump, redsl.formatters._get_timestamp, redsl.formatters._serialize_analysis, redsl.formatters._serialize_decision, len
-
-### redsl.formatters._serialize_result
-> Serialize a RefactorResult to dict.
-- **Output to**: round
-
-### redsl.formatters.format_debug_info
-> Format debug information.
-- **Output to**: yaml.dump, json.dumps, info.items, None.join, isinstance
-
-### redsl.commands.autofix._process_project
-> Full autofix pipeline for a single project.
-- **Output to**: ProjectFixResult, todo_file.exists, redsl.commands.autofix._count_todo_issues, pyqual_yaml.exists, redsl.commands.autofix._count_todo_issues
-
 ### redsl.commands.doctor_indent_fixers._process_guard_and_indent
 - **Output to**: len, None.rstrip, _GUARD_RE.match, new_lines.append, redsl.commands.doctor_indent_fixers._handle_guard
+
+### redsl.commands.doctor_fstring_fixers._write_if_parses
+- **Output to**: path.write_text, ast.parse
+
+### redsl.commands.cli_autonomy._parse_worktree_changes
+> Parse `git status --porcelain` output into a list of file paths.
+- **Output to**: status_output.splitlines, None.strip, len, paths.append
+
+### redsl.commands.hybrid._process_single_project
+> Process a single project and return results.
+- **Output to**: redsl.commands.hybrid._count_todo_issues, redsl.commands.hybrid.run_hybrid_quality_refactor, redsl.commands.hybrid._regenerate_todo, redsl.commands.hybrid._count_todo_issues, print
+
+### redsl.commands.batch_pyqual.pipeline._validate_config
+> Validate pyqual config.
+- **Output to**: pyqual_bridge.validate_config, print, ctx.result.errors.append, print, print
+
+### redsl.commands.batch_pyqual.pipeline.process_project
+> Full ReDSL + pyqual pipeline for a single project.
+
+This is the main entry point that orchestrates a
+- **Output to**: redsl.commands.batch_pyqual.pipeline._init_project_context, redsl.commands.batch_pyqual.pipeline._validate_config, redsl.commands.batch_pyqual.pipeline._run_analysis_stage, redsl.commands.batch_pyqual.pipeline._run_redsl_fix_stage, redsl.commands.batch_pyqual.pipeline._run_gates_stage
+
+### redsl.commands.autofix.pipeline._process_project
+> Full autofix pipeline for a single project.
+- **Output to**: ProjectFixResult, todo_file.exists, archive.legacy_scripts.hybrid_quality_refactor._count_todo_issues, pyqual_yaml.exists, archive.legacy_scripts.hybrid_quality_refactor._count_todo_issues
+
+### redsl.commands.pyqual.mypy_analyzer.MypyAnalyzer._parse_mypy_line
+> Parsuj jedną linię wyjścia mypy.
+- **Output to**: line.split, line.strip, len, int, None.strip
+
+### redsl.examples._common.parse_scenario
+- **Output to**: argparse.ArgumentParser, parser.add_argument, parser.parse_args
+
+### redsl.autonomy.review._parse_changed_files_from_diff
+> Extract changed file paths from a unified diff.
+- **Output to**: diff.splitlines, line.startswith, None.strip, path.endswith, paths.append
+
+### redsl.diagnostics.perf_bridge._parse_metrun_output
+> Parsuj wyjście `metrun inspect` (JSON lub plain text).
+- **Output to**: stdout.strip, PerformanceReport, json.loads, PerformanceReport, Bottleneck
+
+### redsl.diagnostics.perf_bridge._parse_profile_bottlenecks
+- **Output to**: stats_output.splitlines, bottlenecks.sort, line.split, None.isdigit, len
+
+### redsl.formatters.refactor.format_refactor_plan
+> Format refactoring plan in specified format.
+- **Output to**: redsl.formatters.refactor._format_yaml, redsl.formatters.refactor._format_json, redsl.formatters.refactor._format_text
+
+### redsl.formatters.refactor._format_yaml
+> Format as YAML.
+- **Output to**: yaml.dump, redsl.formatters.core._get_timestamp, redsl.formatters.refactor._serialize_analysis, redsl.formatters.refactor._serialize_decision, len
+
+### redsl.formatters.refactor._format_json
+> Format as JSON.
+- **Output to**: json.dumps, redsl.formatters.core._get_timestamp, redsl.formatters.refactor._serialize_analysis, redsl.formatters.refactor._serialize_decision, len
 
 ## Behavioral Patterns
 
@@ -538,7 +538,7 @@ Key functions that process and transform data:
 
 Functions exposed as public API (no underscore prefix):
 
-- `redsl.commands.cli_autonomy.register` - 147 calls
+- `redsl.commands.cli_autonomy.register` - 270 calls
 - `redsl.examples.memory_learning.run_memory_learning_example` - 78 calls
 - `redsl.examples.audit.run_audit_example` - 69 calls
 - `redsl.examples.pr_bot.run_pr_bot_example` - 69 calls
@@ -547,15 +547,15 @@ Functions exposed as public API (no underscore prefix):
 - `redsl.commands.cli_doctor.register` - 48 calls
 - `archive.legacy_scripts.batch_refactor_semcod.main` - 46 calls
 - `redsl.commands.batch_pyqual.runner.run_pyqual_batch` - 46 calls
-- `redsl.examples.pyqual_example.run_pyqual_example` - 41 calls
 - `redsl.examples.awareness.run_awareness_example` - 41 calls
+- `redsl.examples.pyqual_example.run_pyqual_example` - 41 calls
 - `archive.legacy_scripts.batch_quality_refactor.main` - 38 calls
 - `redsl.commands.pyqual.run_pyqual_analysis` - 35 calls
 - `redsl.examples.custom_rules.run_custom_rules_example` - 34 calls
+- `redsl.cli.refactor.refactor` - 32 calls
 - `redsl.examples.basic_analysis.run_basic_analysis_example` - 31 calls
 - `redsl.commands.batch.run_semcod_batch` - 30 calls
 - `archive.legacy_scripts.apply_semcod_refactor.main` - 29 calls
-- `redsl.cli.refactor` - 29 calls
 - `redsl.refactors.engine.RefactorEngine.generate_proposal` - 28 calls
 - `redsl.examples.full_pipeline.run_full_pipeline_example` - 27 calls
 - `redsl.refactors.prompts.build_ecosystem_context` - 27 calls
@@ -567,17 +567,17 @@ Functions exposed as public API (no underscore prefix):
 - `archive.legacy_scripts.debug_llm_config.debug_llm` - 24 calls
 - `redsl.execution.cycle.run_cycle` - 23 calls
 - `archive.legacy_scripts.hybrid_quality_refactor.apply_all_quality_changes` - 21 calls
-- `redsl.main.cmd_refactor` - 21 calls
-- `redsl.commands.autofix.run_autofix_batch` - 21 calls
 - `redsl.commands.hybrid.run_hybrid_quality_refactor` - 21 calls
+- `redsl.main.cmd_refactor` - 21 calls
+- `redsl.commands.autofix.runner.run_autofix_batch` - 21 calls
 - `redsl.commands.pyqual.reporter.Reporter.calculate_metrics` - 21 calls
-- `redsl.cli.scan` - 21 calls
+- `redsl.cli.scan.scan` - 21 calls
 - `redsl.awareness.AwarenessManager.build_snapshot` - 20 calls
-- `redsl.awareness.health_model.HealthModel.assess` - 20 calls
 - `redsl.validation.vallm_bridge.validate_proposal` - 20 calls
-- `redsl.cli.debug_decisions` - 20 calls
-- `redsl.formatters.format_batch_results` - 19 calls
-- `redsl.formatters.format_batch_report_markdown` - 19 calls
+- `redsl.awareness.health_model.HealthModel.assess` - 20 calls
+- `redsl.commands.pyqual.run_pyqual_fix` - 19 calls
+- `redsl.autonomy.metrics.collect_autonomy_metrics` - 19 calls
+- `redsl.formatters.batch.format_batch_results` - 19 calls
 
 ## System Interactions
 
@@ -601,6 +601,9 @@ graph TD
     run_pyqual_analysis --> analyze_project
     run_pyqual_analysis --> save_report
     run_pyqual_analysis --> print
+    refactor --> command
+    refactor --> argument
+    refactor --> option
     _load_default_rules --> Rule
     run_semcod_batch --> iterdir
     run_semcod_batch --> print
@@ -609,9 +612,6 @@ graph TD
     main --> info
     main --> AgentConfig
     main --> RefactorOrchestrator
-    refactor --> command
-    refactor --> argument
-    refactor --> option
     generate_proposal --> get
     generate_proposal --> build_ecosystem_cont
     generate_proposal --> format

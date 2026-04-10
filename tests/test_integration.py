@@ -17,29 +17,30 @@ skip_if_no_semcod = pytest.mark.skipif(
     not SEMCOD.exists(),
     reason="semcod directory not available",
 )
+pytestmark = [pytest.mark.slow, pytest.mark.integration]
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def analyzer() -> CodeAnalyzer:
     return CodeAnalyzer()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def dsl() -> DSLEngine:
     return DSLEngine()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def goal_analysis(analyzer: CodeAnalyzer):
-    """Cached analysis of the GOAL semcod project — shared across TestGoalFunctionsToon."""
+    """Cached analysis of the GOAL semcod project — shared across all tests."""
     if not GOAL.exists():
         pytest.skip("semcod/goal not available")
     return analyzer.analyze_project(GOAL)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def pfix_analysis(analyzer: CodeAnalyzer):
-    """Cached analysis of the PFIX semcod project — shared across fallback tests."""
+    """Cached analysis of the PFIX semcod project — shared across all tests."""
     if not PFIX.exists():
         pytest.skip("semcod/pfix not available")
     return analyzer.analyze_project(PFIX)

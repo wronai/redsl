@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -13,13 +14,24 @@ from ..config import AgentConfig
 from ..formatters import (
     format_cycle_report_markdown,
     format_cycle_report_yaml,
+    format_plan_yaml,
     format_refactor_plan,
+    _serialize_analysis,
+    _serialize_decision,
     _get_timestamp,
 )
 from ..orchestrator import RefactorOrchestrator
 from .logging import setup_logging
 
 logger = logging.getLogger(__name__)
+
+
+def _resolve_cli_export(name: str, fallback: Any) -> Any:
+    """Resolve a formatter/helper from `redsl.cli` so tests can monkeypatch it."""
+    cli_module = sys.modules.get("redsl.cli")
+    if cli_module is not None and hasattr(cli_module, name):
+        return getattr(cli_module, name)
+    return fallback
 
 
 @click.command()
@@ -31,6 +43,7 @@ logger = logging.getLogger(__name__)
 @click.option("--validate-regix", is_flag=True, help="Validate with regix after execution")
 @click.option("--rollback", is_flag=True, help="Auto-rollback changes if regix detects regression")
 @click.option("--sandbox", is_flag=True, help="Test each refactoring in a Docker sandbox")
+@click.option("--target-file", type=str, default=None, help="Restrict decisions to a project-relative file or path prefix")
 @click.pass_context
 def refactor(
     ctx: click.Context,
@@ -42,10 +55,12 @@ def refactor(
     validate_regix: bool,
     rollback: bool,
     sandbox: bool,
+    target_file: str | None,
 ) -> None:
     """Run refactoring on a project."""
     verbose = ctx.obj.get("verbose", False)
-    log_file = setup_logging(project_path, verbose)
+    setup_logging_fn = _resolve_cli_export("_setup_logging", setup_logging)
+    log_file = setup_logging_fn(project_path, verbose)
     logger.info("reDSL refactor started: %s (max_actions=%d, dry_run=%s)", project_path, max_actions, dry_run)
 
     if format == "text":
@@ -53,9 +68,15 @@ def refactor(
         click.echo(f"Log file: {log_file}", err=True)
 
     config = _build_refactor_config(dry_run)
-    orchestrator = RefactorOrchestrator(config)
+    orchestrator_cls = _resolve_cli_export("RefactorOrchestrator", RefactorOrchestrator)
+    orchestrator = orchestrator_cls(config)
 
-    analysis, decisions = _collect_refactor_analysis_and_decisions(orchestrator, project_path, max_actions)
+    analysis, decisions = _collect_refactor_analysis_and_decisions(
+        orchestrator,
+        project_path,
+        max_actions,
+        target_file=target_file,
+    )
 
     if dry_run:
         _emit_refactor_dry_run(format, decisions, analysis)
@@ -73,6 +94,7 @@ def refactor(
         validate_regix=validate_regix,
         rollback_on_failure=rollback,
         use_sandbox=sandbox,
+        target_file=target_file,
     )
 
     _emit_refactor_live_output(report, decisions, analysis, format)
@@ -96,19 +118,46 @@ def _collect_refactor_analysis_and_decisions(
     orchestrator: RefactorOrchestrator,
     project_path: Path,
     max_actions: int,
+    target_file: str | None = None,
 ) -> tuple[Any, list[Any]]:
     logger.info("Starting analysis of %s", project_path)
     analysis = orchestrator.analyzer.analyze_project(project_path)
     contexts = analysis.to_dsl_contexts()
-    decisions = orchestrator.dsl_engine.evaluate(contexts)[:max_actions]
+    evaluated = orchestrator.dsl_engine.evaluate(contexts)
+    if target_file:
+        target_norm = Path(target_file).as_posix().lstrip("./")
+        evaluated = [
+            decision
+            for decision in evaluated
+            if _decision_matches_target(decision, target_norm)
+        ]
+
+    decisions = sorted(
+        evaluated,
+        key=lambda decision: getattr(decision, "score", 0),
+        reverse=True,
+    )[:max_actions]
+
+    if target_file and not decisions:
+        from click import ClickException
+
+        raise ClickException(f"No refactoring decisions matched target file: {target_file}")
+
     return analysis, decisions
+
+
+def _decision_matches_target(decision: Any, target_norm: str) -> bool:
+    decision_target = getattr(decision, "target_file", "")
+    if not decision_target:
+        return False
+    decision_norm = Path(str(decision_target)).as_posix().lstrip("./")
+    return decision_norm == target_norm or decision_norm.startswith(f"{target_norm.rstrip('/')}/")
 
 
 def _emit_refactor_dry_run(format: str, decisions: list[Any], analysis: Any) -> None:
     if format == "text":
-        click.echo("DRY RUN - Planned actions:")
-        for i, decision in enumerate(decisions, 1):
-            click.echo(f"  {i}. {decision.action.value} on {decision.target_file}")
+        formatter = _resolve_cli_export("format_refactor_plan", format_refactor_plan)
+        click.echo(formatter(decisions, "text", analysis))
     elif format == "json":
         click.echo(json.dumps({
             "status": "dry_run",
@@ -116,23 +165,46 @@ def _emit_refactor_dry_run(format: str, decisions: list[Any], analysis: Any) -> 
             "planned_actions": len(decisions),
         }, indent=2))
     else:
-        click.echo(format_refactor_plan(decisions, "yaml", analysis))
+        formatter = _resolve_cli_export("format_plan_yaml", format_plan_yaml)
+        click.echo(formatter(decisions, analysis))
 
 
 def _emit_refactor_live_output(report: Any, decisions: list[Any], analysis: Any, format: str) -> None:
     if format == "text":
-        click.echo(f"\n=== RESULT: {report.status.upper()} ===")
-        click.echo(f"Applied: {len(report.applied_changes)}")
-        click.echo(f"Failed: {len(report.failed_changes)}")
+        status = getattr(report, "status", None)
+        if not status:
+            status = "success" if not getattr(report, "errors", []) else "failed"
+        click.echo(f"\n=== RESULT: {str(status).upper()} ===")
+        click.echo(f"Applied: {getattr(report, 'proposals_applied', len(getattr(report, 'applied_changes', [])))}")
+        click.echo(f"Rejected: {getattr(report, 'proposals_rejected', len(getattr(report, 'failed_changes', [])))}")
     elif format == "json":
-        click.echo(json.dumps({
-            "status": report.status,
-            "applied": len(report.applied_changes),
-            "failed": len(report.failed_changes),
-            "metrics": report.metrics.to_dict() if hasattr(report, "metrics") else {},
-        }, indent=2))
+        serialize_analysis = _resolve_cli_export("_serialize_analysis", _serialize_analysis)
+        serialize_decision = _resolve_cli_export("_serialize_decision", _serialize_decision)
+        get_timestamp = _resolve_cli_export("_get_timestamp", _get_timestamp)
+        payload = {
+            "redsl_report": {
+                "timestamp": get_timestamp(),
+                "cycle": getattr(report, "cycle_number", 0),
+                "analysis": serialize_analysis(analysis) if analysis else {
+                    "summary": getattr(report, "analysis_summary", ""),
+                },
+                "decisions": [serialize_decision(d) for d in decisions],
+                "plan": {
+                    "total_decisions": getattr(report, "decisions_count", len(decisions)),
+                    "decisions": [serialize_decision(d) for d in decisions],
+                },
+                "execution": {
+                    "proposals_generated": getattr(report, "proposals_generated", len(getattr(report, "results", []))),
+                    "proposals_applied": getattr(report, "proposals_applied", len(getattr(report, "applied_changes", []))),
+                    "proposals_rejected": getattr(report, "proposals_rejected", len(getattr(report, "failed_changes", []))),
+                },
+                "errors": getattr(report, "errors", []) or [],
+            }
+        }
+        click.echo(json.dumps(payload, indent=2, default=str))
     else:
-        click.echo(format_cycle_report_yaml(report))
+        formatter = _resolve_cli_export("format_cycle_report_yaml", format_cycle_report_yaml)
+        click.echo(formatter(report, decisions, analysis))
 
 
 def _save_refactor_markdown_report(

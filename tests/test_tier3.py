@@ -122,8 +122,8 @@ class TestLlxRouter:
 
         assert matrix[("extract_functions", "critical")] == "google/gemini-3.1-flash-lite-preview"
         assert matrix[("extract_functions", "high")] == "google/gemini-3.1-flash-lite-preview"
-        assert matrix[("extract_functions", "any")] == "gpt-5-mini"
-        assert matrix[("rename_for_clarity", "any")] == "gpt-5-mini"
+        assert matrix[("extract_functions", "any")] == "gpt-5.4-mini"
+        assert matrix[("rename_for_clarity", "any")] == "gpt-5.4-mini"
         assert ("rename_for_clarity", "critical") not in matrix
         assert ("rename_for_clarity", "high") not in matrix
 
@@ -136,7 +136,7 @@ class TestLlxRouter:
     def test_select_model_low_cc_returns_mini(self):
         from redsl.llm.llx_router import select_model
         sel = select_model("add_type_hints", {"cyclomatic_complexity": 5})
-        assert sel.model == "gpt-5-mini"
+        assert sel.model == "gpt-5.4-mini"
 
     def test_select_model_critical_cc_extract(self):
         from redsl.llm.llx_router import select_model
@@ -158,14 +158,14 @@ class TestLlxRouter:
         from redsl.llm.llx_router import apply_provider_prefix
         model = apply_provider_prefix(
             "google/gemini-3.1-flash-lite-preview",
-            "openrouter/openai/gpt-5-mini",
+            "openrouter/openai/gpt-5.4-mini",
         )
         assert model == "openrouter/google/gemini-3.1-flash-lite-preview"
 
     def test_apply_provider_prefix_prefers_configured_xai_model(self):
         from redsl.llm.llx_router import apply_provider_prefix
 
-        model = apply_provider_prefix("gpt-5-mini", "x-ai/grok-code-fast-1")
+        model = apply_provider_prefix("gpt-5.4-mini", "x-ai/grok-code-fast-1")
 
         assert model == "xai/grok-code-fast-1"
 
@@ -173,7 +173,7 @@ class TestLlxRouter:
         from redsl.llm.llx_router import select_reflection_model
         with patch("redsl.llm.llx_router._ollama_available", return_value=False):
             model = select_reflection_model(use_local=True)
-        assert model == "gpt-5-mini"
+        assert model == "gpt-5.4-mini"
 
     def test_select_reflection_model_with_ollama(self):
         from redsl.llm.llx_router import select_reflection_model
@@ -184,7 +184,7 @@ class TestLlxRouter:
     def test_select_reflection_model_default(self):
         from redsl.llm.llx_router import select_reflection_model
         model = select_reflection_model(use_local=False)
-        assert model == "gpt-5-mini"
+        assert model == "gpt-5.4-mini"
 
     def test_estimate_cost_gpt4o(self):
         from redsl.llm.llx_router import _estimate_cost
@@ -193,7 +193,7 @@ class TestLlxRouter:
 
     def test_estimate_cost_mini(self):
         from redsl.llm.llx_router import _estimate_cost
-        cost = _estimate_cost("gpt-5-mini", 1_000_000)
+        cost = _estimate_cost("gpt-5.4-mini", 1_000_000)
         assert cost == pytest.approx(0.6)
 
     def test_estimate_cost_gemini(self):

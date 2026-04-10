@@ -4,22 +4,22 @@ flowchart TD
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
     subgraph CLI
-        redsl__cli___setup_logging["_setup_logging"]
-        redsl__cli__cli["cli"]
-        redsl__cli___build_awareness_manager["_build_awareness_manager"]
-        redsl__cli___echo_json["_echo_json"]
-        redsl__cli__scan["scan"]
-        redsl__cli___build_refactor_config["_build_refactor_config"]
-        redsl__cli___collect_refactor_analysis_and_decisions["_collect_refactor_analysis_and"]
-        redsl__cli___emit_refactor_dry_run["_emit_refactor_dry_run"]
-        redsl__cli___build_refactor_report_payload["_build_refactor_report_payload"]
-        redsl__cli___emit_refactor_text_summary["_emit_refactor_text_summary"]
-        redsl__cli___emit_refactor_live_output["_emit_refactor_live_output"]
-        redsl__cli___save_refactor_markdown_report["_save_refactor_markdown_report"]
-        redsl__cli___prepare_refactor_application["_prepare_refactor_application"]
-        redsl__cli__refactor["refactor"]
-        redsl__cli__batch["batch"]
-        ...["+24 more"]
+        redsl__cli__examples__example["example"]
+        redsl__cli__examples__example_basic_analysis["example_basic_analysis"]
+        redsl__cli__examples__example_custom_rules["example_custom_rules"]
+        redsl__cli__examples__example_full_pipeline["example_full_pipeline"]
+        redsl__cli__examples__example_memory_learning["example_memory_learning"]
+        redsl__cli__examples__example_api_integration["example_api_integration"]
+        redsl__cli__examples__example_awareness["example_awareness"]
+        redsl__cli__examples__example_pyqual["example_pyqual"]
+        redsl__cli__examples__example_audit["example_audit"]
+        redsl__cli__examples__example_pr_bot["example_pr_bot"]
+        redsl__cli__examples__example_badge["example_badge"]
+        redsl__cli__examples__example_list["example_list"]
+        redsl__cli__examples__register_examples["register_examples"]
+        redsl__cli__pyqual__pyqual["pyqual"]
+        redsl__cli__pyqual__pyqual_analyze["pyqual_analyze"]
+        ...["+29 more"]
     end
 
     subgraph Core
@@ -30,15 +30,15 @@ flowchart TD
         redsl__consciousness_loop__ConsciousnessLoop___profile_performance["_profile_performance"]
         redsl__consciousness_loop__ConsciousnessLoop__stop["stop"]
         redsl__consciousness_loop__main_loop["main_loop"]
-        redsl__config___default_llm_model["_default_llm_model"]
-        redsl__config__LLMConfig__api_key["api_key"]
-        redsl__config__AgentConfig__from_env["from_env"]
-        redsl__formatters__format_debug_info["format_debug_info"]
         redsl__history__HistoryWriter__record["record"]
         redsl__history__HistoryWriter__record_event["record_event"]
         redsl__history__HistoryWriter__decision_signature["decision_signature"]
         redsl__history__HistoryWriter__has_recent_signature["has_recent_signature"]
-        ...["+441 more"]
+        redsl__history__HistoryReader__load_events["load_events"]
+        redsl__history__HistoryReader__filter_by_file["filter_by_file"]
+        redsl__history__HistoryReader__filter_by_type["filter_by_type"]
+        redsl__history__HistoryReader__has_recent_proposal["has_recent_proposal"]
+        ...["+447 more"]
     end
 
-    class refactor_output__refactor_extract_functions_20260407_143102__00_app__models__main_function,redsl__consciousness_loop__ConsciousnessLoop__run,redsl__consciousness_loop__ConsciousnessLoop___inner_thought,redsl__consciousness_loop__ConsciousnessLoop___self_assessment,redsl__consciousness_loop__ConsciousnessLoop___profile_performance,redsl__consciousness_loop__ConsciousnessLoop__stop,redsl__consciousness_loop__main_loop,redsl__config__LLMConfig__api_key,redsl__config__AgentConfig__from_env,redsl__formatters__format_debug_info entry
+    class refactor_output__refactor_extract_functions_20260407_143102__00_app__models__main_function,redsl__consciousness_loop__ConsciousnessLoop__run,redsl__consciousness_loop__ConsciousnessLoop___inner_thought,redsl__consciousness_loop__ConsciousnessLoop___self_assessment,redsl__consciousness_loop__ConsciousnessLoop___profile_performance,redsl__consciousness_loop__ConsciousnessLoop__stop,redsl__consciousness_loop__main_loop,redsl__history__HistoryWriter__record,redsl__history__HistoryWriter__record_event,redsl__history__HistoryWriter__decision_signature entry

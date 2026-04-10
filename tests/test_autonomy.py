@@ -535,6 +535,215 @@ class TestCLI:
         assert result.exit_code == 0
         assert "hook" in result.output.lower()
 
+    def test_autonomous_pr_aborts_when_only_reports_are_generated(self, monkeypatch, tmp_path: Path) -> None:
+        from click.testing import CliRunner
+        from redsl.cli import cli
+        import redsl.commands.cli_autonomy as cli_autonomy
+
+        # Stub helpers that call subprocess at module level
+        monkeypatch.setattr(cli_autonomy, "_gh_available", lambda: False)
+        monkeypatch.setattr(cli_autonomy, "_https_to_ssh", lambda url: url)
+
+        clone_path = tmp_path / "vallm"
+        calls: list[tuple[tuple[str, ...], str | None]] = []
+
+        def fake_run(cmd, cwd=None, capture_output=False, text=False, timeout=None, check=False, env=None):
+            calls.append((tuple(cmd), cwd))
+
+            if tuple(cmd[:2]) == ("git", "clone"):
+                clone_path.mkdir(parents=True, exist_ok=True)
+                return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+            if tuple(cmd[:3]) == ("/usr/bin/python3", "-m", "redsl.cli"):
+                (clone_path / "redsl_refactor_plan.md").write_text("plan", encoding="utf-8")
+                (clone_path / "redsl_refactor_report.md").write_text("report", encoding="utf-8")
+                return subprocess.CompletedProcess(cmd, 0, stdout="refactor complete", stderr="")
+
+            if tuple(cmd[:3]) == ("git", "status", "--porcelain"):
+                return subprocess.CompletedProcess(
+                    cmd,
+                    0,
+                    stdout="?? redsl_refactor_plan.md\n?? redsl_refactor_report.md\n",
+                    stderr="",
+                )
+
+            if tuple(cmd[:2]) in {("git", "branch"), ("git", "ls-remote")}:
+                return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+            raise AssertionError(f"Unexpected command: {cmd}")
+
+        monkeypatch.setattr(subprocess, "run", fake_run)
+
+        runner = CliRunner()
+        result = runner.invoke(
+            cli,
+            [
+                "autonomous-pr",
+                "https://github.com/semcod/vallm.git",
+                "--auto-apply",
+                "--work-dir",
+                str(tmp_path),
+                "--branch-name",
+                "redsl-test-branch",
+            ],
+        )
+
+        assert result.exit_code != 0
+        assert "no source-code changes" in result.output.lower()
+        assert (clone_path / "redsl_refactor_plan.md").exists()
+        assert (clone_path / "redsl_refactor_report.md").exists()
+        assert not any(cmd[:2] == ("git", "checkout") for cmd, _ in calls)
+        assert not any(cmd[:2] == ("git", "commit") for cmd, _ in calls)
+
+    # --- SSH / gh helpers -----------------------------------------------
+
+    def test_https_to_ssh_converts_github_url(self) -> None:
+        from redsl.commands.cli_autonomy import _https_to_ssh
+
+        assert _https_to_ssh("https://github.com/semcod/vallm.git") == "git@github.com:semcod/vallm.git"
+        assert _https_to_ssh("http://github.com/org/repo.git") == "git@github.com:org/repo.git"
+        # Non-GitHub URLs are left unchanged
+        assert _https_to_ssh("https://gitlab.com/org/repo.git") == "https://gitlab.com/org/repo.git"
+        # Already SSH → returned as-is
+        assert _https_to_ssh("git@github.com:org/repo.git") == "git@github.com:org/repo.git"
+
+    def test_gh_available_returns_false_when_missing(self, monkeypatch) -> None:
+        from redsl.commands.cli_autonomy import _gh_available
+
+        def raise_fnf(cmd, **kw):
+            raise FileNotFoundError("gh not found")
+
+        monkeypatch.setattr(subprocess, "run", raise_fnf)
+        assert _gh_available() is False
+
+    def test_gh_available_returns_true_when_auth_ok(self, monkeypatch) -> None:
+        from redsl.commands.cli_autonomy import _gh_available
+
+        monkeypatch.setattr(
+            subprocess, "run",
+            lambda cmd, **kw: subprocess.CompletedProcess(cmd, 0),
+        )
+        assert _gh_available() is True
+
+    # --- Full pipeline (clone → push → PR) with real changes -----------
+
+    def test_autonomous_pr_full_pipeline_with_ssh_and_gh(self, monkeypatch, tmp_path: Path) -> None:
+        """Happy-path: clone via SSH, real changes produced, push, PR via gh."""
+        from click.testing import CliRunner
+        from redsl.cli import cli
+        import redsl.commands.cli_autonomy as cli_autonomy
+
+        monkeypatch.setattr(cli_autonomy, "_gh_available", lambda: True)
+        monkeypatch.setattr(cli_autonomy, "_https_to_ssh", lambda url: url.replace("https://github.com/", "git@github.com:"))
+
+        clone_path = tmp_path / "vallm"
+        calls: list[tuple[tuple[str, ...], str | None]] = []
+
+        def fake_run(cmd, cwd=None, capture_output=False, text=False, timeout=None, check=False, env=None):
+            calls.append((tuple(cmd), cwd))
+
+            if tuple(cmd[:2]) == ("git", "clone"):
+                clone_path.mkdir(parents=True, exist_ok=True)
+                return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+            if tuple(cmd[:3]) == ("/usr/bin/python3", "-m", "redsl.cli"):
+                (clone_path / "src" / "main.py").parent.mkdir(parents=True, exist_ok=True)
+                (clone_path / "src" / "main.py").write_text("# refactored", encoding="utf-8")
+                return subprocess.CompletedProcess(cmd, 0, stdout="1. Decision: split_module\n2. Decision: add_types", stderr="")
+
+            if tuple(cmd[:3]) == ("git", "status", "--porcelain"):
+                return subprocess.CompletedProcess(cmd, 0, stdout=" M src/main.py\n?? redsl_refactor_report.md\n", stderr="")
+
+            if tuple(cmd[:2]) in {("git", "branch"), ("git", "ls-remote")}:
+                return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+            if tuple(cmd[:2]) == ("git", "checkout"):
+                return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+            if tuple(cmd[:2]) == ("git", "add"):
+                return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+            if tuple(cmd[:2]) == ("git", "commit"):
+                return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+            if tuple(cmd[:2]) == ("git", "push"):
+                return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+            if tuple(cmd[:2]) == ("gh", "pr"):
+                return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+            raise AssertionError(f"Unexpected command: {cmd}")
+
+        monkeypatch.setattr(subprocess, "run", fake_run)
+
+        runner = CliRunner()
+        result = runner.invoke(
+            cli,
+            [
+                "autonomous-pr",
+                "https://github.com/semcod/vallm.git",
+                "--auto-apply",
+                "--work-dir", str(tmp_path),
+                "--branch-name", "redsl-test-ssh",
+            ],
+        )
+
+        assert result.exit_code == 0, f"Expected success, got:\n{result.output}"
+        assert "ssh" in result.output.lower() or "git@github.com" in result.output.lower()
+        assert "pr created successfully" in result.output.lower()
+        # Verify SSH clone URL used
+        clone_cmds = [c for c, _ in calls if c[:2] == ("git", "clone")]
+        assert any("git@github.com:" in c[2] for c in clone_cmds)
+        # Verify gh pr create was called
+        pr_cmds = [c for c, _ in calls if c[:2] == ("gh", "pr")]
+        assert len(pr_cmds) == 1
+
+    def test_autonomous_pr_skips_pr_creation_without_gh(self, monkeypatch, tmp_path: Path) -> None:
+        """When gh is not available, push succeeds but PR creation is skipped."""
+        from click.testing import CliRunner
+        from redsl.cli import cli
+        import redsl.commands.cli_autonomy as cli_autonomy
+
+        monkeypatch.setattr(cli_autonomy, "_gh_available", lambda: False)
+        monkeypatch.setattr(cli_autonomy, "_https_to_ssh", lambda url: url)
+
+        clone_path = tmp_path / "vallm"
+        calls: list[tuple[tuple[str, ...], str | None]] = []
+
+        def fake_run(cmd, cwd=None, capture_output=False, text=False, timeout=None, check=False, env=None):
+            calls.append((tuple(cmd), cwd))
+            if tuple(cmd[:2]) == ("git", "clone"):
+                clone_path.mkdir(parents=True, exist_ok=True)
+                return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+            if tuple(cmd[:3]) == ("/usr/bin/python3", "-m", "redsl.cli"):
+                (clone_path / "src").mkdir(parents=True, exist_ok=True)
+                (clone_path / "src" / "mod.py").write_text("# fixed", encoding="utf-8")
+                return subprocess.CompletedProcess(cmd, 0, stdout="done", stderr="")
+            if tuple(cmd[:3]) == ("git", "status", "--porcelain"):
+                return subprocess.CompletedProcess(cmd, 0, stdout=" M src/mod.py\n", stderr="")
+            if tuple(cmd[:2]) in {("git", "branch"), ("git", "ls-remote"), ("git", "checkout"),
+                                   ("git", "add"), ("git", "commit"), ("git", "push")}:
+                return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+            raise AssertionError(f"Unexpected command: {cmd}")
+
+        monkeypatch.setattr(subprocess, "run", fake_run)
+
+        runner = CliRunner()
+        result = runner.invoke(
+            cli,
+            [
+                "autonomous-pr",
+                "https://github.com/semcod/vallm.git",
+                "--auto-apply",
+                "--work-dir", str(tmp_path),
+                "--branch-name", "redsl-no-gh",
+            ],
+        )
+
+        assert result.exit_code == 0, f"Expected success:\n{result.output}"
+        assert "gh" in result.output.lower() and "not available" in result.output.lower()
+        assert not any(c[:2] == ("gh", "pr") for c, _ in calls)
+
 
 # ===========================================================================
 # HistoryReader (new)

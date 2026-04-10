@@ -234,62 +234,83 @@ def _run_pipeline_stage(ctx: ProjectContext, run_pipeline: bool, publish: bool, 
     return ctx
 
 
+def _run_preflight_check(ctx: ProjectContext) -> None:
+    """Run git push preflight check in dry-run mode."""
+    from .discovery import _run_cmd
+
+    if ctx.pyqual_available:
+        push_result = pyqual_bridge.git_push(ctx.project, detect_protection=True, dry_run=True)
+        ctx.result.push_preflight_passed = bool(
+            push_result.get("pushed", False)
+            or push_result.get("dry_run", False)
+            or push_result.get("ok", False)
+        )
+    else:
+        push_result = _run_cmd(["git", "push", "--dry-run"], ctx.project, timeout=60)
+        ctx.result.push_preflight_passed = push_result.returncode == 0
+    print(f"    Git push preflight: {'PASS' if ctx.result.push_preflight_passed else 'FAIL'}")
+
+
+def _commit_changes(ctx: ProjectContext, status_lines: list[str]) -> None:
+    """Commit changes if any exist."""
+    from .discovery import _run_cmd
+
+    if not status_lines:
+        return
+
+    commit_msg = f"chore(pyqual): auto-fix by ReDSL + pyqual ({datetime.now():%Y-%m-%d %H:%M})"
+
+    if ctx.pyqual_available:
+        commit_result = pyqual_bridge.git_commit(ctx.project, commit_msg)
+        ctx.result.git_committed = bool(commit_result.get("committed", False))
+    else:
+        _run_cmd(["git", "add", "-A"], ctx.project, timeout=10)
+        commit_result = _run_cmd(["git", "commit", "-m", commit_msg], ctx.project, timeout=30)
+        ctx.result.git_committed = commit_result.returncode == 0
+
+
+def _push_changes(ctx: ProjectContext) -> None:
+    """Push changes to remote."""
+    from .discovery import _run_cmd
+
+    if ctx.pyqual_available:
+        push_result = pyqual_bridge.git_push(ctx.project, detect_protection=True)
+        ctx.result.git_pushed = bool(push_result.get("pushed", False))
+    else:
+        push_result = _run_cmd(["git", "push"], ctx.project, timeout=60)
+        ctx.result.git_pushed = push_result.returncode == 0
+
+
+def _print_git_status(ctx: ProjectContext) -> None:
+    """Print git operation status."""
+    if ctx.result.git_committed or ctx.result.git_pushed:
+        status = (
+            "committed + pushed"
+            if ctx.result.git_committed and ctx.result.git_pushed
+            else "pushed" if ctx.result.git_pushed else "commit failed"
+        )
+        print(f"    Git: {status}")
+
+
 def _run_git_stage(ctx: ProjectContext, git_push: bool, dry_run: bool) -> ProjectContext:
     """Stage 6: Git commit and push."""
     if not git_push:
         return ctx
 
     try:
-        from .discovery import _git_status_lines, _run_cmd
+        from .discovery import _git_status_lines
 
         status_lines = _git_status_lines(ctx.project)
         ctx.result.changes_to_commit = len(status_lines)
 
         if dry_run:
-            if ctx.pyqual_available:
-                push_result = pyqual_bridge.git_push(ctx.project, detect_protection=True, dry_run=True)
-                ctx.result.push_preflight_passed = bool(
-                    push_result.get("pushed", False)
-                    or push_result.get("dry_run", False)
-                    or push_result.get("ok", False)
-                )
-            else:
-                push_result = _run_cmd(["git", "push", "--dry-run"], ctx.project, timeout=60)
-                ctx.result.push_preflight_passed = push_result.returncode == 0
-            print(f"    Git push preflight: {'PASS' if ctx.result.push_preflight_passed else 'FAIL'}")
+            _run_preflight_check(ctx)
         elif ctx.result.dirty_before:
             ctx.result.errors.append("Push skipped: repository had local changes before batch run")
         else:
-            if status_lines:
-                if ctx.pyqual_available:
-                    commit_result = pyqual_bridge.git_commit(
-                        ctx.project,
-                        f"chore(pyqual): auto-fix by ReDSL + pyqual ({datetime.now():%Y-%m-%d %H:%M})",
-                    )
-                    ctx.result.git_committed = bool(commit_result.get("committed", False))
-                else:
-                    _run_cmd(["git", "add", "-A"], ctx.project, timeout=10)
-                    commit_result = _run_cmd(
-                        ["git", "commit", "-m", f"chore(pyqual): auto-fix by ReDSL + pyqual ({datetime.now():%Y-%m-%d %H:%M})"],
-                        ctx.project,
-                        timeout=30,
-                    )
-                    ctx.result.git_committed = commit_result.returncode == 0
-
-            if ctx.pyqual_available:
-                push_result = pyqual_bridge.git_push(ctx.project, detect_protection=True)
-                ctx.result.git_pushed = bool(push_result.get("pushed", False))
-            else:
-                push_result = _run_cmd(["git", "push"], ctx.project, timeout=60)
-                ctx.result.git_pushed = push_result.returncode == 0
-
-            if ctx.result.git_committed or ctx.result.git_pushed:
-                status = (
-                    "committed + pushed"
-                    if ctx.result.git_committed and ctx.result.git_pushed
-                    else "pushed" if ctx.result.git_pushed else "commit failed"
-                )
-                print(f"    Git: {status}")
+            _commit_changes(ctx, status_lines)
+            _push_changes(ctx)
+            _print_git_status(ctx)
     except Exception as exc:
         ctx.result.errors.append(f"Git: {exc}")
 
