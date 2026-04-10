@@ -6,16 +6,11 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any
-
 import click
-
-
-def _echo_json(payload: Any) -> None:
-    click.echo(__import__("json").dumps(payload, indent=2, default=str))
 
 
 def _https_to_ssh(url: str) -> str:
@@ -74,7 +69,6 @@ def _split_generated_and_real_changes(paths: list[str]) -> tuple[list[str], list
 
 @dataclass
 class _CloneResult:
-    """Result of repository cloning step."""
     clone_path: Path | None
     error: str = ""
 
@@ -90,7 +84,7 @@ def _step_clone(git_url: str, clone_url: str, work_dir: Path) -> _CloneResult:
 
     try:
         subprocess.run(
-            ["git", "clone", clone_url, str(clone_path)],
+            ["git", "clone", "--depth", "1", clone_url, str(clone_path)],
             check=True,
             capture_output=True,
             timeout=60
@@ -112,9 +106,23 @@ def _step_clone(git_url: str, clone_url: str, work_dir: Path) -> _CloneResult:
 
 @dataclass
 class _AnalysisResult:
-    """Result of analysis step."""
     success: bool
     error: str = ""
+
+
+def _refactor_cmd(clone_path: Path, max_actions: int, target_file: str | None, dry_run: bool) -> list[str]:
+    """Build the reDSL refactor subprocess command."""
+    cmd = [
+        sys.executable, "-m", "redsl.cli", "refactor", str(clone_path),
+        "--max-actions", str(max_actions),
+        "--format", "text" if dry_run else "yaml",
+        "--use-code2llm", "--validate-regix",
+    ]
+    if dry_run:
+        cmd.append("--dry-run")
+    if target_file:
+        cmd.extend(["--target-file", target_file])
+    return cmd
 
 
 def _step_analyze(clone_path: Path, max_actions: int, target_file: str | None) -> _AnalysisResult:
@@ -124,10 +132,7 @@ def _step_analyze(clone_path: Path, max_actions: int, target_file: str | None) -
 
     try:
         result = subprocess.run(
-            ["/usr/bin/python3", "-m", "redsl.cli", "refactor", str(clone_path),
-             "--max-actions", str(max_actions), "--dry-run", "--format", "text",
-             "--use-code2llm", "--validate-regix",
-             *(["--target-file", target_file] if target_file else [])],
+            _refactor_cmd(clone_path, max_actions, target_file, dry_run=True),
             capture_output=True,
             text=True,
             timeout=300
@@ -152,7 +157,6 @@ def _step_analyze(clone_path: Path, max_actions: int, target_file: str | None) -
 
 @dataclass
 class _ApplyResult:
-    """Result of apply fixes step."""
     success: bool
     real_changes: list[str]
     generated_changes: list[str]
@@ -176,10 +180,7 @@ def _step_apply(
         click.echo(f"  Auto-apply mode: Running reDSL refactor without dry-run...")
         try:
             result = subprocess.run(
-                ["/usr/bin/python3", "-m", "redsl.cli", "refactor", str(clone_path),
-                 "--max-actions", str(max_actions), "--format", "yaml",
-                 "--use-code2llm", "--validate-regix",
-                 *(["--target-file", target_file] if target_file else [])],
+                _refactor_cmd(clone_path, max_actions, target_file, dry_run=False),
                 capture_output=True,
                 text=True,
                 timeout=600
@@ -189,6 +190,12 @@ def _step_apply(
                 click.echo(f"  Continuing with whatever changes were made...")
             else:
                 click.echo(f"  ✓ Refactor applied")
+                # Show suggestions from apply output
+                suggestions = [l for l in result.stdout.split('\n') if re.match(r'\s*\d+\.\s', l)]
+                if suggestions:
+                    click.echo(f"\n  Suggestions:")
+                    for line in suggestions:
+                        click.echo(f"    {line}")
         except subprocess.TimeoutExpired:
             return _ApplyResult(False, [], [], "Refactor timed out")
         except Exception as e:
@@ -238,7 +245,6 @@ def _resolve_branch_name(clone_path: Path, branch_name: str) -> str:
 
 @dataclass
 class _CommitResult:
-    """Result of branch/commit step."""
     resolved_branch_name: str
     success: bool
     error: str = ""
@@ -291,7 +297,6 @@ def _step_branch_and_commit(
 
 @dataclass
 class _PushResult:
-    """Result of push step."""
     success: bool
     error: str = ""
 
@@ -338,22 +343,14 @@ def _step_create_pr(
         return True
 
     pr_title = "Autonomous refactoring by ReDSL"
-    changes_list = "\n".join(f"- `{path}`" for path in real_changes)
+    changes_list = "\n".join(f"- `{p}`" for p in real_changes)
     pr_body = (
-        "## Summary\n\n"
-        "This PR applies autonomous refactoring suggested by ReDSL.\n\n"
-        f"## Changes ({len(real_changes)} file(s))\n\n"
-        f"{changes_list}\n\n"
-        "## Pipeline\n\n"
-        "| Step | Status |\n"
-        "|------|--------|\n"
-        "| Clone (SSH) | ✅ |\n"
-        f"| Analysis (code2llm + regix) | ✅ {max_actions} actions |\n"
-        "| Apply refactors | ✅ |\n"
-        "| Push | ✅ |\n"
-        "| PR | ✅ |\n\n"
-        "---\n"
-        "*Generated by reDSL autonomous-pr command*\n"
+        f"## Summary\n\nAutonomous refactoring by ReDSL.\n\n"
+        f"## Changes ({len(real_changes)} file(s))\n\n{changes_list}\n\n"
+        f"## Pipeline\n\n| Step | Status |\n|------|--------|\n"
+        f"| Clone (SSH) | ✅ |\n| Analysis | ✅ {max_actions} actions |\n"
+        f"| Apply | ✅ |\n| Push | ✅ |\n| PR | ✅ |\n\n"
+        "---\n*Generated by reDSL autonomous-pr*\n"
     )
     try:
         subprocess.run(
@@ -375,14 +372,7 @@ def _step_create_pr(
     return True
 
 
-def _print_workflow_header(
-    git_url: str,
-    clone_url: str,
-    use_gh: bool,
-    max_actions: int,
-    branch_name: str,
-    target_file: str | None,
-) -> None:
+def _print_workflow_header(git_url, clone_url, use_gh, max_actions, branch_name, target_file):
     """Print workflow header information."""
     click.echo(f"=== Autonomous PR Workflow ===")
     click.echo(f"Target: {git_url}")
@@ -397,16 +387,52 @@ def _print_workflow_header(
     click.echo("")
 
 
-def _print_workflow_complete(
+def _print_workflow_complete(git_url, resolved_branch_name, clone_url):
+    """Print workflow completion information."""
+    proto = 'SSH' if clone_url.startswith('git@') else 'HTTPS'
+    click.echo(f"\n=== Autonomous PR Workflow Complete ===")
+    click.echo(f"Repository: {git_url}  Branch: {resolved_branch_name}  Protocol: {proto}")
+
+
+def _abort_no_changes(apply_result: _ApplyResult) -> None:
+    """Report and abort when no source-code changes were produced."""
+    click.echo("\n  ✗ Refactor produced no source-code changes; only reports/logs were generated.")
+    if apply_result.generated_changes:
+        click.echo("  Generated artifacts:")
+        for path in apply_result.generated_changes:
+            click.echo(f"    - {path}")
+    click.echo("  Aborting autonomous PR creation.")
+    raise click.ClickException("Autonomous PR aborted: no source-code changes were produced")
+
+
+def _step_finalize(
+    clone_path: Path,
+    branch_name: str,
+    real_changes: list[str],
+    max_actions: int,
+    use_gh: bool,
     git_url: str,
-    resolved_branch_name: str,
     clone_url: str,
 ) -> None:
-    """Print workflow completion information."""
-    click.echo(f"\n=== Autonomous PR Workflow Complete ===")
-    click.echo(f"Repository: {git_url}")
-    click.echo(f"Branch: {resolved_branch_name}")
-    click.echo(f"Protocol: {'SSH' if clone_url.startswith('git@') else 'HTTPS'}")
+    """Execute Steps 4–7: branch, commit, push, create PR."""
+    commit_result = _step_branch_and_commit(clone_path, branch_name, real_changes, max_actions)
+    if not commit_result.success:
+        click.echo(f"  ✗ {commit_result.error}")
+        return
+    resolved_branch_name = commit_result.resolved_branch_name
+
+    push_result = _step_push(clone_path, resolved_branch_name, use_gh)
+    if not push_result.success:
+        click.echo(f"  ✗ {push_result.error}")
+        if "github.com" in git_url and not clone_url.startswith("git@"):
+            click.echo("  Hint: configure SSH keys or install `gh` CLI for authentication")
+        return
+
+    pr_success = _step_create_pr(clone_path, resolved_branch_name, use_gh, real_changes, max_actions, clone_url)
+    if not pr_success:
+        return
+
+    _print_workflow_complete(git_url, resolved_branch_name, clone_url)
 
 
 def run_autonomous_pr(
@@ -443,47 +469,31 @@ def run_autonomous_pr(
         return
     clone_path = clone_result.clone_path
 
-    # Step 2: Analyze
-    analyze_result = _step_analyze(clone_path, max_actions, target_file)
-    if not analyze_result.success:
-        click.echo(f"  ✗ {analyze_result.error}")
-        return
-
     if dry_run:
+        # Step 2: Analyze only
+        analyze_result = _step_analyze(clone_path, max_actions, target_file)
+        if not analyze_result.success:
+            click.echo(f"  ✗ {analyze_result.error}")
+            return
         click.echo("\nDry run complete - no PR created")
         return
+
+    if auto_apply:
+        # Steps 2+3 merged: single refactor run (skip redundant dry-run)
+        click.echo(f"\nStep 2+3: Analyzing & applying fixes (single pass)...")
+    else:
+        # Step 2: Analyze first so user sees suggestions
+        analyze_result = _step_analyze(clone_path, max_actions, target_file)
+        if not analyze_result.success:
+            click.echo(f"  ✗ {analyze_result.error}")
+            return
 
     # Step 3: Apply
     apply_result = _step_apply(clone_path, max_actions, target_file, auto_apply)
     if not apply_result.success:
-        click.echo(f"\n  ✗ Refactor produced no source-code changes; only reports/logs were generated.")
-        if apply_result.generated_changes:
-            click.echo("  Generated artifacts:")
-            for path in apply_result.generated_changes:
-                click.echo(f"    - {path}")
-        click.echo("  Aborting autonomous PR creation.")
-        raise click.ClickException("Autonomous PR aborted: no source-code changes were produced")
+        _abort_no_changes(apply_result)
 
     real_changes = apply_result.real_changes
 
-    # Step 4 & 5: Branch and Commit
-    commit_result = _step_branch_and_commit(clone_path, branch_name, real_changes, max_actions)
-    if not commit_result.success:
-        click.echo(f"  ✗ {commit_result.error}")
-        return
-    resolved_branch_name = commit_result.resolved_branch_name
-
-    # Step 6: Push
-    push_result = _step_push(clone_path, resolved_branch_name, use_gh)
-    if not push_result.success:
-        click.echo(f"  ✗ {push_result.error}")
-        if "github.com" in git_url and not clone_url.startswith("git@"):
-            click.echo("  Hint: configure SSH keys or install `gh` CLI for authentication")
-        return
-
-    # Step 7: Create PR
-    pr_success = _step_create_pr(clone_path, resolved_branch_name, use_gh, real_changes, max_actions, clone_url)
-    if not pr_success:
-        return
-
-    _print_workflow_complete(git_url, resolved_branch_name, clone_url)
+    # Steps 4–7: Branch, Commit, Push, PR
+    _step_finalize(clone_path, branch_name, real_changes, max_actions, use_gh, git_url, clone_url)
