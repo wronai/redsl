@@ -160,8 +160,8 @@ def _register_refactor_routes(app: Any, orchestrator: Any) -> None:
     @app.post("/refactor")
     async def refactor(req: RefactorRequest):
         """Run refactoring on a project."""
-        from .formatters import format_refactor_plan
-        from .config import AgentConfig
+        from redsl.formatters import format_refactor_plan
+        from redsl.config import AgentConfig
 
         # Load config from environment
         config = AgentConfig.from_env()
@@ -237,8 +237,8 @@ def _register_batch_routes(app: Any) -> None:
     @app.post("/batch/semcod")
     async def batch_semcod(req: BatchSemcodRequest):
         """Batch refactor semcod projects."""
-        from .commands import batch as batch_commands
-        from .formatters import format_batch_results
+        from redsl.commands import batch as batch_commands
+        from redsl.formatters import format_batch_results
 
         results = batch_commands.run_semcod_batch(Path(req.semcod_root), req.max_actions)
 
@@ -271,7 +271,7 @@ def _register_batch_routes(app: Any) -> None:
     @app.post("/batch/hybrid")
     async def batch_hybrid(req: BatchHybridRequest):
         """Hybrid quality refactoring (no LLM needed)."""
-        from .commands import hybrid as hybrid_commands
+        from redsl.commands import hybrid as hybrid_commands
 
         results = hybrid_commands.run_hybrid_batch(Path(req.semcod_root), req.max_changes)
         return {"status": "completed", "results": results}
@@ -281,7 +281,7 @@ def _register_debug_routes(app: Any, orchestrator: Any) -> None:
     @app.get("/debug/config")
     async def debug_config(show_env: bool = False):
         """Get configuration info."""
-        from .config import AgentConfig
+        from redsl.config import AgentConfig
 
         config = AgentConfig.from_env()
         info = {
@@ -329,7 +329,7 @@ def _register_pyqual_routes(app: Any) -> None:
     @app.post("/pyqual/analyze")
     async def pyqual_analyze(req: PyQualAnalyzeRequest):
         """Python code quality analysis."""
-        from .commands import pyqual as pyqual_commands
+        from redsl.commands import pyqual as pyqual_commands
 
         config_path = Path(req.config) if req.config else None
         results = pyqual_commands.run_pyqual_analysis(
@@ -342,7 +342,7 @@ def _register_pyqual_routes(app: Any) -> None:
     @app.post("/pyqual/fix")
     async def pyqual_fix(req: PyQualFixRequest):
         """Apply automatic quality fixes."""
-        from .commands import pyqual as pyqual_commands
+        from redsl.commands import pyqual as pyqual_commands
 
         config_path = Path(req.config) if req.config else None
         pyqual_commands.run_pyqual_fix(Path(req.project_path), config_path)
