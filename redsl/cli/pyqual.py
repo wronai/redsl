@@ -6,7 +6,7 @@ from pathlib import Path
 
 import click
 
-from ..commands import pyqual as pyqual_commands
+from redsl.commands import pyqual as pyqual_commands
 
 
 @click.group()

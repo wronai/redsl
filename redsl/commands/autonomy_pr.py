@@ -354,7 +354,8 @@ def _step_create_pr(
     )
     try:
         subprocess.run(
-            ["gh", "pr", "create", "--title", pr_title, "--body", pr_body],
+            ["gh", "pr", "create", "--title", pr_title, "--body", pr_body,
+             "--head", resolved_branch_name],
             cwd=str(clone_path),
             check=True,
             capture_output=True,

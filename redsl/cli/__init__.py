@@ -12,19 +12,19 @@ load_dotenv()
 
 import click
 
-from .logging import setup_logging as _setup_logging
-from .refactor import register_refactor, _save_refactor_markdown_report
-from .batch import register_batch
-from .pyqual import register_pyqual
-from .debug import register_debug
-from .examples import register_examples
-from .scan import scan
-from .utils import perf_command, cost_command
+from redsl.cli.logging import setup_logging as _setup_logging
+from redsl.cli.refactor import register_refactor, _save_refactor_markdown_report
+from redsl.cli.batch import register_batch
+from redsl.cli.pyqual import register_pyqual
+from redsl.cli.debug import register_debug
+from redsl.cli.examples import register_examples
+from redsl.cli.scan import scan
+from redsl.cli.utils import perf_command, cost_command
 
 # Import for test compatibility
-from ..orchestrator import RefactorOrchestrator
-from ..commands import batch_pyqual as batch_pyqual_commands
-from ..formatters import format_plan_yaml, _serialize_analysis, format_refactor_plan, _serialize_decision, _get_timestamp, format_cycle_report_yaml
+from redsl.orchestrator import RefactorOrchestrator
+from redsl.commands import batch_pyqual as batch_pyqual_commands
+from redsl.formatters import format_plan_yaml, _serialize_analysis, format_refactor_plan, _serialize_decision, _get_timestamp, format_cycle_report_yaml
 
 # Backward-compatible exports for tests
 __all__ = [
@@ -54,7 +54,7 @@ def cli(ctx: click.Context, verbose: bool) -> None:
 
 def _build_awareness_manager():
     """Build awareness manager for CLI commands (late-bound for testability)."""
-    from ..awareness import AwarenessManager
+    from redsl.awareness import AwarenessManager
     return AwarenessManager()
 
 
@@ -67,9 +67,9 @@ def _register_all(cli_group: click.Group) -> None:
     register_examples(cli_group)
     cli_group.add_command(perf_command)
     cli_group.add_command(cost_command)
-    from ..commands.cli_doctor import register as _register_doctor
-    from ..commands.cli_autonomy import register as _register_autonomy
-    from ..commands.cli_awareness import register as _register_awareness
+    from redsl.commands.cli_doctor import register as _register_doctor
+    from redsl.commands.cli_autonomy import register as _register_autonomy
+    from redsl.commands.cli_awareness import register as _register_awareness
     _register_doctor(cli_group)
     _register_autonomy(cli_group, sys.modules[__name__])
     _register_awareness(cli_group, sys.modules[__name__])

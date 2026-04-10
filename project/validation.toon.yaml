@@ -1,30 +1,16 @@
-# vallm batch | 297f | 202✓ 10⚠ 25✗ | 2026-04-10
+# vallm batch | 299f | 203✓ 7⚠ 26✗ | 2026-04-10
 
 SUMMARY:
-  scanned: 297  passed: 202 (68.0%)  warnings: 10  errors: 25  unsupported: 70
+  scanned: 299  passed: 203 (67.9%)  warnings: 7  errors: 26  unsupported: 70
 
-WARNINGS[10]{path,score}:
-  redsl/commands/batch_pyqual/reporting.py,0.93
-    issues[4]{rule,severity,message,line}:
+WARNINGS[7]{path,score}:
+  redsl/commands/batch_pyqual/reporting.py,0.97
+    issues[2]{rule,severity,message,line}:
       complexity.cyclomatic,warning,_build_summary has cyclomatic complexity 23 (max: 15),74
-      complexity.cyclomatic,warning,_save_report has cyclomatic complexity 20 (max: 15),164
       complexity.lizard_cc,warning,_build_summary: CC=23 exceeds limit 15,74
-      complexity.lizard_cc,warning,_save_report: CC=19 exceeds limit 15,164
-  redsl/commands/cli_autonomy.py,0.93
-    issues[2]{rule,severity,message,line}:
-      complexity.lizard_cc,warning,register.autonomous_pr_cmd: CC=31 exceeds limit 15,286
-      complexity.lizard_length,warning,register.autonomous_pr_cmd: 192 lines exceeds limit 100,286
-  redsl/commands/autofix/pipeline.py,0.97
-    issues[2]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,_process_project has cyclomatic complexity 19 (max: 15),16
-      complexity.lizard_cc,warning,_process_project: CC=18 exceeds limit 15,16
-  redsl/commands/batch_pyqual/pipeline.py,0.97
-    issues[2]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,_run_git_stage has cyclomatic complexity 17 (max: 15),237
-      complexity.lizard_cc,warning,_run_git_stage: CC=16 exceeds limit 15,237
   redsl/dsl/engine.py,0.97
     issues[1]{rule,severity,message,line}:
-      complexity.lizard_length,warning,_load_default_rules: 138 lines exceeds limit 100,188
+      complexity.lizard_length,warning,_load_default_rules: 178 lines exceeds limit 100,188
   redsl/execution/decision.py,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_length,warning,_execute_decision: 154 lines exceeds limit 100,118
@@ -41,7 +27,7 @@ WARNINGS[10]{path,score}:
     issues[1]{rule,severity,message,line}:
       complexity.cyclomatic,warning,test_run_pyqual_batch_smoke_with_mocked_project_flow has cyclomatic complexity 22 (max: 15),184
 
-ERRORS[25]{path,score}:
+ERRORS[26]{path,score}:
   project_toon.yaml,0.00
     issues[1]{rule,severity,message,line}:
       syntax.tree_sitter,error,tree-sitter found 1 parse error(s) in yaml,
@@ -60,6 +46,9 @@ ERRORS[25]{path,score}:
   redsl/cli/pyqual.py,0.89
     issues[1]{rule,severity,message,line}:
       python.import.relative.resolvable,error,Relative import 'commands' not found,9
+  tests/conftest.py,0.89
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,5
   tests/test_scan.py,0.91
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,7

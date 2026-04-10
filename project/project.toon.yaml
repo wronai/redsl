@@ -1,26 +1,26 @@
-# redsl | 897 func | 126f | 30448L | python | 2026-04-10
+# redsl | 930 func | 127f | 31050L | python | 2026-04-10
 
 HEALTH:
-  CC̄=4.1  critical=63 (limit:10)  dup=3  cycles=0
+  CC̄=4.1  critical=62 (limit:10)  dup=3  cycles=0
 
 ALERTS[20]:
-  !!! high_fan_out     register = 57 (limit:10)
-  !!! cc_exceeded      run_pyqual_batch = 27 (limit:15)
+  !!! high_fan_out     register = 33 (limit:10)
   !!! high_fan_out     _register_refactor_routes = 25 (limit:10)
-  !!! high_fan_out     _process_project = 23 (limit:10)
   !!! high_fan_out     SemanticChunker.chunk_function = 21 (limit:10)
   !!  cc_exceeded      _build_summary = 23 (limit:15)
-  !!  cc_exceeded      _save_report = 20 (limit:15)
   !!  high_fan_out     main = 19 (limit:10)
   !!  high_fan_out     _execute_decision = 19 (limit:10)
   !!  high_fan_out     apply_quality_refactors = 18 (limit:10)
+  !!  high_fan_out     refactor = 18 (limit:10)
+  !!  high_fan_out     main = 17 (limit:10)
+  !!  high_fan_out     register = 16 (limit:10)
 
-MODULES[147] (top by size):
-  M[redsl/commands/cli_autonomy.py] 551L C:0 F:4 CC↑5 D:0 (python)
+MODULES[148] (top by size):
+  M[redsl/commands/autonomy_pr.py] 525L C:5 F:18 CC↑12 D:1 (python)
   M[redsl/api.py] 470L C:12 F:8 CC↑1 D:0 (python)
-  M[redsl/dsl/engine.py] 417L C:6 F:12 CC↑10 D:0 (python)
+  M[redsl/dsl/engine.py] 458L C:6 F:12 CC↑10 D:0 (python)
+  M[redsl/commands/batch_pyqual/pipeline.py] 393L C:1 F:14 CC↑13 D:1 (python)
   M[archive/legacy_scripts/hybrid_llm_refactor.py] 386L C:0 F:16 CC↑10 D:1 (python)
-  M[redsl/commands/batch_pyqual/pipeline.py] 372L C:1 F:10 CC↑17 D:1 (python)
   M[redsl/analyzers/radon_analyzer.py] 370L C:0 F:20 CC↑14 D:1 (python)
   M[redsl/refactors/engine.py] 336L C:1 F:9 CC↑12 D:0 (python)
   M[redsl/autonomy/quality_gate.py] 325L C:1 F:10 CC↑11 D:3 (python)
@@ -31,24 +31,24 @@ MODULES[147] (top by size):
   M[redsl/commands/scan.py] 315L C:1 F:16 CC↑14 D:0 (python)
   M[redsl/validation/vallm_bridge.py] 314L C:0 F:8 CC↑10 D:0 (python)
   M[redsl/commands/doctor_indent_fixers.py] 309L C:0 F:13 CC↑13 D:1 (python)
-  LANGS: python:146/shell:1
+  LANGS: python:147/shell:1
 
 HOTSPOTS[10]:
-  ★ register fan=57  // Register all autonomy commands on the given Click group.
+  ★ register fan=33  // Register all autonomy commands on the given Click group.
   ★ _register_refactor_routes fan=25  // Orchestrates 25 calls
-  ★ _process_project fan=23  // Analysis pipeline, 23 stages
   ★ SemanticChunker.chunk_function fan=21  // Wytnij semantyczny chunk dla jednej funkcji.
 
 Args:
     file_path:         Ścież
   ★ main fan=19  // Process semcod projects.
+  ★ _execute_decision fan=19  // Execute a single decision (direct or LLM-based).
 
-REFACTOR[9]:
-  [1] H/L Split run_pyqual_batch (CC=27 → target CC<10)
-  [2] H/H Split god module redsl/commands/cli_autonomy.py (551L, 0 classes)
-  [3] M/L Split _build_summary (CC=23 → target CC<10)
-  [4] M/L Split _save_report (CC=20 → target CC<10)
-  [5] M/L Split _run_git_stage (CC=17 → target CC<10)
+REFACTOR[6]:
+  [1] H/H Split god module redsl/commands/autonomy_pr.py (525L, 5 classes)
+  [2] M/L Split _build_summary (CC=23 → target CC<10)
+  [3] M/L Split _format_project_status (CC=15 → target CC<10)
+  [4] M/M Reduce register fan-out (currently 33)
+  [5] M/M Reduce _register_refactor_routes fan-out (currently 25)
 
 EVOLUTION:
-  2026-04-10 CC̄=4.1 crit=63 30448L // Automated analysis
+  2026-04-10 CC̄=4.1 crit=62 31050L // Automated analysis

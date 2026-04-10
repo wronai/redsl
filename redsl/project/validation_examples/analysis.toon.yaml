@@ -1,5 +1,5 @@
-# code2llm | 138f 21694L | python:138 | 2026-04-10
-# CC̄=4.0 | critical:2/921 | dups:0 | cycles:0
+# code2llm | 138f 21773L | python:138 | 2026-04-10
+# CC̄=4.0 | critical:2/924 | dups:0 | cycles:0
 
 HEALTH[3]:
   🟡 CC    _build_summary CC=23 (limit:15)
@@ -9,7 +9,7 @@ HEALTH[3]:
 REFACTOR[1]:
   1. split 3 high-CC methods  (CC>15)
 
-PIPELINES[486]:
+PIPELINES[485]:
   [1] Src [__init__]: __init__
       PURITY: 100% pure
   [2] Src [run]: run
@@ -23,7 +23,7 @@ PIPELINES[486]:
 
 LAYERS:
   commands/                       CC̄=4.9    ←in:8  →out:19  !! split
-  │ autonomy_pr                489L  5C   15m  CC=13     ←1
+  │ autonomy_pr                499L  5C   17m  CC=12     ←1
   │ pipeline                   393L  1C   14m  CC=13     ←1
   │ doctor_detectors           319L  0C   16m  CC=10     ←1
   │ scan                       315L  1C   16m  CC=14     ←0
@@ -87,10 +87,10 @@ LAYERS:
   │ project_parser             300L  1C   18m  CC=12     ←0
   │ toon_analyzer              296L  1C   13m  CC=14     ←0
   │ incremental                291L  2C   17m  CC=8      ←17
-  │ python_analyzer            262L  1C    8m  CC=12     ←3
+  │ python_analyzer            273L  1C    8m  CC=12     ←3
   │ redup_bridge               242L  0C    7m  CC=12     ←1
   │ semantic_chunker           227L  2C    7m  CC=11     ←0
-  │ quality_visitor            192L  1C   17m  CC=8      ←0
+  │ quality_visitor            209L  1C   18m  CC=8      ←0
   │ code2llm_bridge            178L  0C    5m  CC=5      ←1
   │ functions_parser           148L  1C    6m  CC=9      ←0
   │ utils                      140L  0C    9m  CC=7      ←4
@@ -161,7 +161,7 @@ LAYERS:
   │ __init__                    17L  0C    0m  CC=0.0    ←0
   │
   dsl/                            CC̄=3.2    ←in:0  →out:1
-  │ engine                     417L  6C   12m  CC=10     ←0
+  │ engine                     458L  6C   12m  CC=10     ←0
   │ rule_generator             271L  2C   11m  CC=6      ←0
   │ __init__                    22L  0C    0m  CC=0.0    ←0
   │
@@ -175,9 +175,6 @@ LAYERS:
   │ __init__                    15L  0C    0m  CC=0.0    ←0
   │ __main__                     6L  0C    0m  CC=0.0    ←0
   │
-  memory/                         CC̄=2.1    ←in:0  →out:0
-  │ __init__                   235L  4C   18m  CC=8      ←0
-  │
   cli/                            CC̄=2.1    ←in:0  →out:8  !! split
   │ refactor                   255L  0C   10m  CC=9      ←1
   │ examples                   121L  0C   13m  CC=4      ←1
@@ -189,6 +186,9 @@ LAYERS:
   │ scan                        36L  0C    1m  CC=7      ←0
   │ pyqual                      35L  0C    4m  CC=1      ←1
   │ __main__                     1L  0C    0m  CC=0.0    ←0
+  │
+  memory/                         CC̄=2.1    ←in:0  →out:0
+  │ __init__                   235L  4C   18m  CC=8      ←0
   │
 
 COUPLING:
@@ -209,22 +209,22 @@ COUPLING:
                     llm                                                                                          ←4                                                                                                                                                                                                                                    ──                       
                    main                                                                                           3                                             1                                                                                                                                                                                                             ──
   CYCLES: none
-  HUB: execution/ (fan-in=14)
-  HUB: validation/ (fan-in=13)
   HUB: config/ (fan-in=16)
-  HUB: formatters/ (fan-in=11)
-  HUB: commands/ (fan-in=8)
-  HUB: commands.autofix/ (fan-in=7)
   HUB: autonomy/ (fan-in=13)
+  HUB: commands/ (fan-in=8)
+  HUB: validation/ (fan-in=13)
   HUB: analyzers/ (fan-in=26)
-  SMELL: execution/ fan-out=11 → split needed
-  SMELL: commands/ fan-out=19 → split needed
-  SMELL: commands.autofix/ fan-out=10 → split needed
+  HUB: formatters/ (fan-in=11)
+  HUB: commands.autofix/ (fan-in=7)
+  HUB: execution/ (fan-in=14)
   SMELL: autonomy/ fan-out=24 → split needed
+  SMELL: commands/ fan-out=19 → split needed
   SMELL: api/ fan-out=12 → split needed
-  SMELL: commands.batch_pyqual/ fan-out=12 → split needed
-  SMELL: cli/ fan-out=8 → split needed
+  SMELL: commands.autofix/ fan-out=10 → split needed
   SMELL: refactors/ fan-out=8 → split needed
+  SMELL: cli/ fan-out=8 → split needed
+  SMELL: execution/ fan-out=11 → split needed
+  SMELL: commands.batch_pyqual/ fan-out=12 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

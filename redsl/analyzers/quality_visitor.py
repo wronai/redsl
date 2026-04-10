@@ -19,6 +19,8 @@ class CodeQualityVisitor(ast.NodeVisitor):
         self.in_function = False
         self.in_main_guard = False
         self.module_level_statements: list[tuple[int, str]] = []
+        self._import_modules: set[str] = set()  # unique imported modules for fan_out
+        self._params_missing_types: int = 0  # function params without annotations
 
     def visit_Import(self, node: ast.Import) -> None:
         """Track import statements."""
@@ -26,10 +28,13 @@ class CodeQualityVisitor(ast.NodeVisitor):
             name = alias.asname if alias.asname else alias.name
             self.imports[name] = node
             self.imported_names[name] = alias.name
+            self._import_modules.add(alias.name.split('.')[0])
         self.generic_visit(node)
 
     def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
         """Track from...import statements."""
+        if node.module:
+            self._import_modules.add(node.module.split('.')[0])
         for alias in node.names:
             if alias.name == "*":
                 continue  # Can't track star imports
@@ -80,11 +85,20 @@ class CodeQualityVisitor(ast.NodeVisitor):
                 self.magic_numbers.append((node.lineno, node.value))
         self.generic_visit(node)
 
+    def _count_untyped_params(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
+        """Count function parameters without type annotations."""
+        for arg in node.args.args:
+            if arg.arg in ("self", "cls"):
+                continue
+            if arg.annotation is None:
+                self._params_missing_types += 1
+
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
         """Check for missing return type annotations."""
         self.in_function = True
         if node.returns is None and node.name != "__init__":
             self.functions_missing_return.append((node.name, node.lineno))
+        self._count_untyped_params(node)
         self.generic_visit(node)
         self.in_function = False
 
@@ -93,6 +107,7 @@ class CodeQualityVisitor(ast.NodeVisitor):
         self.in_function = True
         if node.returns is None and node.name != "__init__":
             self.functions_missing_return.append((node.name, node.lineno))
+        self._count_untyped_params(node)
         self.generic_visit(node)
         self.in_function = False
 
@@ -185,6 +200,8 @@ class CodeQualityVisitor(ast.NodeVisitor):
             "magic_numbers": len(self.magic_numbers),
             "module_execution_block": 1 if self.has_module_execution_block() else 0,
             "missing_return_types": len(self.functions_missing_return),
+            "fan_out": len(self._import_modules),
+            "missing_type_hints": self._params_missing_types,
             "unused_import_list": self.get_unused_imports(),
             "magic_number_list": self.magic_numbers,
             "functions_missing_return": self.functions_missing_return,

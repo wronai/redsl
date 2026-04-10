@@ -554,7 +554,7 @@ class TestCLI:
                 clone_path.mkdir(parents=True, exist_ok=True)
                 return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
 
-            if tuple(cmd[:3]) == ("/usr/bin/python3", "-m", "redsl.cli"):
+            if len(cmd) >= 3 and tuple(cmd[1:3]) == ("-m", "redsl.cli"):
                 (clone_path / "redsl_refactor_plan.md").write_text("plan", encoding="utf-8")
                 (clone_path / "redsl_refactor_report.md").write_text("report", encoding="utf-8")
                 return subprocess.CompletedProcess(cmd, 0, stdout="refactor complete", stderr="")
@@ -646,7 +646,7 @@ class TestCLI:
                 clone_path.mkdir(parents=True, exist_ok=True)
                 return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
 
-            if tuple(cmd[:3]) == ("/usr/bin/python3", "-m", "redsl.cli"):
+            if len(cmd) >= 3 and tuple(cmd[1:3]) == ("-m", "redsl.cli"):
                 (clone_path / "src" / "main.py").parent.mkdir(parents=True, exist_ok=True)
                 (clone_path / "src" / "main.py").write_text("# refactored", encoding="utf-8")
                 return subprocess.CompletedProcess(cmd, 0, stdout="1. Decision: split_module\n2. Decision: add_types", stderr="")
@@ -693,7 +693,7 @@ class TestCLI:
         assert "pr created successfully" in result.output.lower()
         # Verify SSH clone URL used
         clone_cmds = [c for c, _ in calls if c[:2] == ("git", "clone")]
-        assert any("git@github.com:" in c[2] for c in clone_cmds)
+        assert any("git@github.com:" in arg for c in clone_cmds for arg in c)
         # Verify gh pr create was called
         pr_cmds = [c for c, _ in calls if c[:2] == ("gh", "pr")]
         assert len(pr_cmds) == 1
@@ -715,7 +715,7 @@ class TestCLI:
             if tuple(cmd[:2]) == ("git", "clone"):
                 clone_path.mkdir(parents=True, exist_ok=True)
                 return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
-            if tuple(cmd[:3]) == ("/usr/bin/python3", "-m", "redsl.cli"):
+            if len(cmd) >= 3 and tuple(cmd[1:3]) == ("-m", "redsl.cli"):
                 (clone_path / "src").mkdir(parents=True, exist_ok=True)
                 (clone_path / "src" / "mod.py").write_text("# fixed", encoding="utf-8")
                 return subprocess.CompletedProcess(cmd, 0, stdout="done", stderr="")

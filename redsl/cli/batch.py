@@ -7,12 +7,12 @@ from typing import Tuple
 
 import click
 
-from ..commands import autofix as autofix_commands
-from ..commands import batch as batch_commands
-from ..commands import batch_pyqual as batch_pyqual_commands
-from ..commands import hybrid as hybrid_commands
-from ..formatters import format_batch_results
-from .logging import setup_logging
+from redsl.commands import autofix as autofix_commands
+from redsl.commands import batch as batch_commands
+from redsl.commands import batch_pyqual as batch_pyqual_commands
+from redsl.commands import hybrid as hybrid_commands
+from redsl.formatters import format_batch_results
+from redsl.cli.logging import setup_logging
 
 
 @click.group()

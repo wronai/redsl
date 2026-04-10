@@ -6,8 +6,8 @@ from pathlib import Path
 
 import click
 
-from ..commands import scan as scan_commands
-from .logging import setup_logging
+from redsl.commands import scan as scan_commands
+from redsl.cli.logging import setup_logging
 
 
 @click.command("scan")
@@ -28,7 +28,7 @@ def scan(ctx: click.Context, folder: Path, output_path: Path | None, quiet: bool
     output_path.write_text(report_md, encoding="utf-8")
 
     ok = sum(1 for r in results if r.is_ok())
-    from ..commands.scan import _TIER_CRITICAL, _TIER_HIGH, _TIER_MEDIUM, _TIER_LOW
+    from redsl.commands.scan import _TIER_CRITICAL, _TIER_HIGH, _TIER_MEDIUM, _TIER_LOW
     tier_counts = {t: sum(1 for r in results if r.tier == t) for t in [_TIER_CRITICAL, _TIER_HIGH, _TIER_MEDIUM, _TIER_LOW]}
     click.echo("─" * 60)
     click.echo(f"\nProjects analysed: {ok}/{len(results)}")

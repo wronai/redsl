@@ -126,7 +126,7 @@ class PythonAnalyzer:
         quality_visitor.visit(tree)
         quality_metrics = quality_visitor.get_metrics()
 
-        func_count, class_count, max_cc, high_cc_funcs, alerts = self._scan_top_nodes(
+        func_count, class_count, max_cc, max_depth, high_cc_funcs, alerts = self._scan_top_nodes(
             tree, rel_path, lines
         )
 
@@ -136,6 +136,10 @@ class PythonAnalyzer:
             function_count=func_count,
             class_count=class_count,
             cyclomatic_complexity=max_cc,
+            nested_depth=max_depth,
+            fan_out=quality_metrics.get("fan_out", 0),
+            missing_type_hints=quality_metrics.get("missing_type_hints", 0),
+            is_public_api=rel_path.endswith("__init__.py"),
             unused_imports=quality_metrics["unused_imports"],
             magic_numbers=quality_metrics["magic_numbers"],
             module_execution_block=quality_metrics["module_execution_block"],
@@ -157,11 +161,12 @@ class PythonAnalyzer:
 
     def _scan_top_nodes(
         self, tree: ast.AST, rel_path: str, lines: int
-    ) -> tuple[int, int, int, list[CodeMetrics], list[dict]]:
+    ) -> tuple[int, int, int, int, list[CodeMetrics], list[dict]]:
         """Iteruj po węzłach top-level i class-level, zbieraj CC, nesting i alerty."""
         func_count = 0
         class_count = 0
         max_cc = 0
+        max_depth = 0
         high_cc_funcs: list[CodeMetrics] = []
         alerts: list[dict] = []
         is_init_file = rel_path.endswith("__init__.py")
@@ -173,9 +178,10 @@ class PythonAnalyzer:
                     if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
                         func_count += 1
                         cc = ast_cyclomatic_complexity(item)
+                        depth = ast_max_nesting_depth(item)
                         max_cc = max(max_cc, cc)
+                        max_depth = max(max_depth, depth)
                         if cc > 10:
-                            depth = ast_max_nesting_depth(item)
                             is_pub = is_init_file or not item.name.startswith("_")
                             high_cc_funcs.append(CodeMetrics(
                                 file_path=rel_path,
@@ -195,9 +201,10 @@ class PythonAnalyzer:
             elif isinstance(top, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 func_count += 1
                 cc = ast_cyclomatic_complexity(top)
+                depth = ast_max_nesting_depth(top)
                 max_cc = max(max_cc, cc)
+                max_depth = max(max_depth, depth)
                 if cc > 10:
-                    depth = ast_max_nesting_depth(top)
                     is_pub = is_init_file or not top.name.startswith("_")
                     high_cc_funcs.append(CodeMetrics(
                         file_path=rel_path,
@@ -215,7 +222,7 @@ class PythonAnalyzer:
                         "limit": 10,
                     })
 
-        return func_count, class_count, max_cc, high_cc_funcs, alerts
+        return func_count, class_count, max_cc, max_depth, high_cc_funcs, alerts
 
     def _accumulate_file_metrics(self, file_data: dict, result: AnalysisResult) -> None:
         """Dodaj metryki jednego pliku do zbiorczego wyniku."""
@@ -254,6 +261,10 @@ class PythonAnalyzer:
                 m.magic_numbers = quality_metrics["magic_numbers"]
                 m.module_execution_block = quality_metrics["module_execution_block"]
                 m.missing_return_types = quality_metrics["missing_return_types"]
+                m.fan_out = quality_metrics.get("fan_out", 0)
+                m.missing_type_hints = quality_metrics.get("missing_type_hints", 0)
+                if not m.is_public_api:
+                    m.is_public_api = rel_path.endswith("__init__.py")
                 m._quality_details = {
                     "unused_import_list": quality_metrics["unused_import_list"],
                     "magic_number_list": quality_metrics["magic_number_list"],

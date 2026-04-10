@@ -323,6 +323,47 @@ class DSLEngine:
                 description="Dodaj brakujące typy zwracane z funkcji",
                 tags=["typing", "quality"],
             ),
+            # --- New rules exploiting expanded metrics ---
+            Rule(
+                name="split_long_module",
+                conditions=[
+                    Condition("module_lines", Operator.GT, 300),
+                ],
+                action=RefactorAction.SPLIT_MODULE,
+                priority=0.55,
+                description="Długi moduł (>300L) — rozważ podział na mniejsze jednostki",
+                tags=["structure", "readability"],
+            ),
+            Rule(
+                name="deeply_nested_code",
+                conditions=[
+                    Condition("nested_depth", Operator.GT, 3),
+                ],
+                action=RefactorAction.SIMPLIFY_CONDITIONALS,
+                priority=0.60,
+                description="Głębokie zagnieżdżenie (>3) — uprość logikę, zastosuj early return",
+                tags=["complexity", "readability"],
+            ),
+            Rule(
+                name="high_fan_out_module",
+                conditions=[
+                    Condition("fan_out", Operator.GT, 10),
+                ],
+                action=RefactorAction.REDUCE_FAN_OUT,
+                priority=0.58,
+                description="Moduł z >10 zależnościami — rozważ fasadę lub podział",
+                tags=["coupling", "structure"],
+            ),
+            Rule(
+                name="add_param_type_hints",
+                conditions=[
+                    Condition("missing_type_hints", Operator.GT, 3),
+                ],
+                action=RefactorAction.ADD_TYPE_HINTS,
+                priority=0.52,
+                description="Funkcje z parametrami bez typów — dodaj type hints",
+                tags=["typing", "quality"],
+            ),
         ]
 
     def add_rule(self, rule: Rule) -> None:
