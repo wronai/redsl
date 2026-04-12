@@ -81,15 +81,15 @@
 - **Classes**: 2
 - **File**: `scheduler.py`
 
-### root.api
-- **Functions**: 16
-- **Classes**: 12
-- **File**: `api.py`
-
 ### root.awareness
 - **Functions**: 16
 - **Classes**: 2
 - **File**: `__init__.py`
+
+### root.api
+- **Functions**: 16
+- **Classes**: 12
+- **File**: `api.py`
 
 ### batch_1.awareness
 - **Functions**: 16
@@ -362,15 +362,15 @@ Functions exposed as public API (no underscore prefix):
 - `formatters.batch.format_batch_results` - 19 calls
 - `formatters.batch.format_batch_report_markdown` - 19 calls
 - `refactors.body_restorer.repair_file` - 19 calls
-- `analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content` - 19 calls
 - `analyzers.redup_bridge.scan_duplicates` - 19 calls
+- `analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content` - 19 calls
 - `cli.logging.setup_logging` - 19 calls
 - `history.HistoryReader.generate_decision_report` - 18 calls
 - `commands.planfile_bridge.create_ticket` - 18 calls
 - `commands.doctor_detectors.detect_version_mismatch` - 18 calls
 - `commands.batch_pyqual.runner.run_pyqual_batch` - 18 calls
-- `autonomy.growth_control.check_module_budget` - 18 calls
 - `autonomy.scheduler.Scheduler.run` - 18 calls
+- `autonomy.growth_control.check_module_budget` - 18 calls
 - `cli.batch.batch_pyqual_run` - 18 calls
 - `dsl.engine.DSLEngine.add_rules_from_yaml` - 18 calls
 - `commands.doctor_fixers.fix_module_level_exit` - 17 calls
