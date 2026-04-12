@@ -176,6 +176,25 @@ def _print_pyqual_report(project_name: str, results: Dict[str, Any], output_file
     print(f"\nFull report saved to: {output_file}")
 
 
+def _get_output_dir(project_path: Path) -> Path:
+    """Determine writable output directory for reports.
+
+    If the project directory is read-only (e.g. Docker read-only mount),
+    fall back to /app/redsl_output/ or a temp directory.
+    """
+    test_file = project_path / ".redsl_write_test"
+    try:
+        test_file.write_text("")
+        test_file.unlink()
+        return project_path
+    except OSError:
+        fallback = Path("/app/redsl_output")
+        if fallback.is_dir():
+            return fallback
+        import tempfile
+        return Path(tempfile.gettempdir())
+
+
 def run_pyqual_analysis(
     project_path: Path,
     config_path: Optional[Path] = None,
@@ -185,8 +204,12 @@ def run_pyqual_analysis(
     analyzer = PyQualAnalyzer(config_path)
     results = analyzer.analyze_project(project_path)
 
-    output_file = project_path / f"pyqual_report.{output_format}"
-    analyzer.save_report(output_file, output_format)
+    output_dir = _get_output_dir(project_path)
+    output_file = output_dir / f"pyqual_report.{output_format}"
+    try:
+        analyzer.save_report(output_file, output_format)
+    except OSError as exc:
+        logger.warning("Cannot save pyqual report to %s: %s", output_file, exc)
 
     _print_pyqual_report(project_path.name, results, output_file)
 

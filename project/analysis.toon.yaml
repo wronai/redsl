@@ -1,20 +1,20 @@
-# code2llm | 159f 23664L | python:157,shell:2 | 2026-04-12
-# CC̄=3.8 | critical:0/1087 | dups:0 | cycles:0
+# code2llm | 159f 23706L | python:157,shell:2 | 2026-04-12
+# CC̄=3.8 | critical:0/1089 | dups:0 | cycles:0
 
 HEALTH[0]: ok
 
 REFACTOR[0]: none needed
 
 PIPELINES[511]:
-  [1] Src [main]: main → run_api_integration_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
+  [1] Src [main]: main → run_basic_analysis_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
       PURITY: 100% pure
-  [2] Src [main]: main → run_basic_analysis_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
+  [2] Src [main]: main → run_memory_learning_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
       PURITY: 100% pure
-  [3] Src [main]: main → run_badge_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
+  [3] Src [main]: main → run_full_pipeline_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
       PURITY: 100% pure
-  [4] Src [main]: main → run_pr_bot_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
+  [4] Src [main]: main → run_badge_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
       PURITY: 100% pure
-  [5] Src [main]: main → run_memory_learning_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
+  [5] Src [main]: main → run_custom_rules_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
       PURITY: 100% pure
 
 LAYERS:
@@ -43,18 +43,18 @@ LAYERS:
   │ project_parser             300L  1C   18m  CC=12     ←0
   │ toon_analyzer              296L  1C   13m  CC=14     ←0
   │ perf_bridge                295L  3C   11m  CC=6      ←2
+  │ hybrid                     293L  0C   12m  CC=9      ←0
   │ incremental                291L  2C   17m  CC=8      ←18
+  │ __init__                   290L  1C   13m  CC=11     ←0
   │ engine                     290L  6C   12m  CC=10     ←0
   │ refactor                   287L  0C   13m  CC=6      ←1
   │ llx_router                 287L  1C   15m  CC=9      ←2
   │ diff_manager               283L  0C    9m  CC=9      ←0
   │ growth_control             277L  3C   12m  CC=11     ←0
   │ prompts                    277L  0C    3m  CC=9      ←1
-  │ hybrid                     274L  0C   11m  CC=9      ←0
   │ python_analyzer            273L  1C    8m  CC=12     ←3
   │ main                       272L  0C   23m  CC=6      ←1
   │ rule_generator             271L  2C   11m  CC=6      ←0
-  │ __init__                   267L  1C   12m  CC=11     ←0
   │ scheduler                  264L  2C   16m  CC=9      ←0
   │ github_actions             260L  1C    6m  CC=6      ←0
   │ multi_project              251L  3C   10m  CC=5      ←0
@@ -208,22 +208,22 @@ COUPLING:
          redsl.awareness                                                                                               1                                                                                                                                                                                                                                              ──                        
                redsl.dsl                                                                                               1                                                                                                                                                                                                                                                                      ──
   CYCLES: none
-  HUB: redsl/ (fan-in=14)
-  HUB: redsl.autonomy/ (fan-in=13)
-  HUB: redsl.validation/ (fan-in=13)
-  HUB: redsl.llm/ (fan-in=6)
-  HUB: archive.legacy_scripts/ (fan-in=7)
   HUB: redsl.analyzers/ (fan-in=26)
-  HUB: redsl.formatters/ (fan-in=11)
   HUB: redsl.cli/ (fan-in=5)
+  HUB: redsl.autonomy/ (fan-in=13)
+  HUB: archive.legacy_scripts/ (fan-in=7)
+  HUB: redsl.formatters/ (fan-in=11)
   HUB: redsl.execution/ (fan-in=14)
   HUB: redsl.commands/ (fan-in=7)
-  SMELL: redsl/ fan-out=23 → split needed
-  SMELL: redsl.autonomy/ fan-out=24 → split needed
+  HUB: redsl/ (fan-in=14)
+  HUB: redsl.validation/ (fan-in=13)
+  HUB: redsl.llm/ (fan-in=6)
+  SMELL: redsl.refactors/ fan-out=8 → split needed
   SMELL: redsl.cli/ fan-out=8 → split needed
+  SMELL: redsl.autonomy/ fan-out=24 → split needed
   SMELL: redsl.execution/ fan-out=12 → split needed
   SMELL: redsl.commands/ fan-out=39 → split needed
-  SMELL: redsl.refactors/ fan-out=8 → split needed
+  SMELL: redsl/ fan-out=23 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

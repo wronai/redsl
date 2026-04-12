@@ -1,5 +1,5 @@
-# code2llm | 147f 22356L | python:147 | 2026-04-12
-# CC̄=3.8 | critical:0/1031 | dups:0 | cycles:0
+# code2llm | 147f 22398L | python:147 | 2026-04-12
+# CC̄=3.8 | critical:0/1033 | dups:0 | cycles:0
 
 HEALTH[0]: ok
 
@@ -61,8 +61,8 @@ LAYERS:
   │ cli_autonomy               350L  0C   20m  CC=6      ←0
   │ reporting                  331L  0C   24m  CC=12     ←2
   │ doctor_detectors           319L  0C   16m  CC=10     ←1
-  │ hybrid                     274L  0C   11m  CC=9      ←4
-  │ __init__                   267L  1C   12m  CC=11     ←0
+  │ hybrid                     293L  0C   12m  CC=9      ←4
+  │ __init__                   290L  1C   13m  CC=11     ←0
   │ multi_project              251L  3C   10m  CC=5      ←0
   │ doctor_fixers              214L  0C    8m  CC=10     ←0
   │ scan                       213L  1C    9m  CC=8      ←0
@@ -159,14 +159,14 @@ LAYERS:
   │ github_actions             260L  1C    6m  CC=6      ←0
   │ __init__                    15L  0C    0m  CC=0.0    ←0
   │
+  integrations/                   CC̄=3.3    ←in:1  →out:1
+  │ webhook                    109L  0C    3m  CC=4      ←1
+  │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │
   dsl/                            CC̄=3.3    ←in:0  →out:1
   │ engine                     290L  6C   12m  CC=10     ←0
   │ rule_generator             271L  2C   11m  CC=6      ←0
   │ __init__                    22L  0C    0m  CC=0.0    ←0
-  │
-  integrations/                   CC̄=3.3    ←in:1  →out:1
-  │ webhook                    109L  0C    3m  CC=4      ←1
-  │ __init__                     1L  0C    0m  CC=0.0    ←0
   │
   diagnostics/                    CC̄=3.2    ←in:3  →out:0
   │ perf_bridge                295L  3C   11m  CC=6      ←2
@@ -216,23 +216,23 @@ COUPLING:
                    main                                                                                           3                                             1                                                                                                                                                                                      ──                       
      consciousness_loop                                                                                           1                                             1                                                                                                                                                                                                             ──
   CYCLES: none
-  HUB: commands.autofix/ (fan-in=7)
-  HUB: execution/ (fan-in=14)
-  HUB: commands/ (fan-in=8)
-  HUB: analyzers/ (fan-in=26)
-  HUB: autonomy/ (fan-in=13)
-  HUB: formatters/ (fan-in=11)
-  HUB: commands.autonomy_pr/ (fan-in=10)
-  HUB: config/ (fan-in=16)
   HUB: validation/ (fan-in=13)
+  HUB: autonomy/ (fan-in=13)
+  HUB: commands.autonomy_pr/ (fan-in=10)
+  HUB: analyzers/ (fan-in=26)
+  HUB: commands.autofix/ (fan-in=7)
+  HUB: formatters/ (fan-in=11)
+  HUB: execution/ (fan-in=14)
+  HUB: config/ (fan-in=16)
+  HUB: commands/ (fan-in=8)
+  SMELL: autonomy/ fan-out=24 → split needed
+  SMELL: commands.batch_pyqual/ fan-out=12 → split needed
   SMELL: cli/ fan-out=8 → split needed
+  SMELL: api/ fan-out=13 → split needed
+  SMELL: refactors/ fan-out=8 → split needed
   SMELL: commands.autofix/ fan-out=10 → split needed
   SMELL: execution/ fan-out=11 → split needed
   SMELL: commands/ fan-out=29 → split needed
-  SMELL: api/ fan-out=13 → split needed
-  SMELL: refactors/ fan-out=8 → split needed
-  SMELL: autonomy/ fan-out=24 → split needed
-  SMELL: commands.batch_pyqual/ fan-out=12 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

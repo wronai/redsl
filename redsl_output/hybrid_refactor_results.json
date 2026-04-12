@@ -1,0 +1,17 @@
+[
+  {
+    "project": "test_sample_project",
+    "quality_decisions": 0,
+    "changes_applied": 0,
+    "errors": 0,
+    "changes_by_type": {
+      "remove_unused_imports": 0,
+      "fix_module_execution_block": 0,
+      "extract_constants": 0,
+      "add_return_types": 0
+    },
+    "changes": [],
+    "before_issues": 4,
+    "after_issues": 4
+  }
+]

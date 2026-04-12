@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import shutil
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -37,7 +38,10 @@ def _count_todo_issues(todo_file: Path) -> int:
 
 
 def _regenerate_todo(project: Path) -> None:
-    """Regenerate TODO.md with prefact."""
+    """Regenerate TODO.md with prefact (skipped if prefact not installed)."""
+    if not shutil.which("prefact"):
+        logger.info("prefact not found — skipping TODO regeneration for %s", project)
+        return
     todo_file = project / "TODO.md"
     current_issues = _count_todo_issues(todo_file)
     if current_issues > _MAX_TODO_ISSUES:
@@ -120,16 +124,31 @@ def _print_summary(stats: dict[str, Any], all_results: list[dict]) -> None:
             print(f"  {r['project']}: {reduction} fewer TODOs ({r['changes_applied']} changes)")
 
 
+def _writable_path(base: Path, filename: str) -> Path:
+    """Return a writable path — falls back to /app/redsl_output/ if base is read-only."""
+    target = base / filename
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with open(target, "a") as f:
+            pass
+        target.unlink(missing_ok=True)
+        return target
+    except OSError:
+        fallback = Path("/app/redsl_output")
+        fallback.mkdir(parents=True, exist_ok=True)
+        return fallback / filename
+
+
 def _save_results(all_results: list[dict], semcod_root: Path) -> None:
     """Save results to JSON file."""
-    results_file = semcod_root / "hybrid_refactor_results.json"
+    results_file = _writable_path(semcod_root, "hybrid_refactor_results.json")
     results_file.write_text(json.dumps(all_results, indent=2))
     print(f"\nResults saved to: {results_file}")
 
 
 def _save_markdown_report(all_results: list[dict], semcod_root: Path, stats: dict[str, Any]) -> None:
     """Save a human-readable Markdown summary for hybrid batch runs."""
-    report_path = semcod_root / "redsl_batch_hybrid_report.md"
+    report_path = _writable_path(semcod_root, "redsl_batch_hybrid_report.md")
     report_payload = {
         "projects_processed": len(all_results),
         "total_before": stats.get("total_before", 0),

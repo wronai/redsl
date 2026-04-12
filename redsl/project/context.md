@@ -6,7 +6,7 @@
 - **Primary Language**: python
 - **Languages**: python: 205
 - **Analysis Mode**: static
-- **Total Functions**: 1031
+- **Total Functions**: 1033
 - **Total Classes**: 122
 - **Modules**: 205
 - **Entry Points**: 0
@@ -369,8 +369,8 @@ Functions exposed as public API (no underscore prefix):
 - `commands.planfile_bridge.create_ticket` - 18 calls
 - `commands.doctor_detectors.detect_version_mismatch` - 18 calls
 - `commands.batch_pyqual.runner.run_pyqual_batch` - 18 calls
-- `autonomy.scheduler.Scheduler.run` - 18 calls
 - `autonomy.growth_control.check_module_budget` - 18 calls
+- `autonomy.scheduler.Scheduler.run` - 18 calls
 - `cli.batch.batch_pyqual_run` - 18 calls
 - `dsl.engine.DSLEngine.add_rules_from_yaml` - 18 calls
 - `commands.doctor_fixers.fix_module_level_exit` - 17 calls

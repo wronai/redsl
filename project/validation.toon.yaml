@@ -1,7 +1,7 @@
-# vallm batch | 316f | 222✓ 0⚠ 20✗ | 2026-04-12
+# vallm batch | 319f | 224✓ 0⚠ 20✗ | 2026-04-12
 
 SUMMARY:
-  scanned: 316  passed: 222 (70.3%)  warnings: 0  errors: 20  unsupported: 74
+  scanned: 319  passed: 224 (70.2%)  warnings: 0  errors: 20  unsupported: 75
 
 ERRORS[20]{path,score}:
   tests/test_dsl_engine.py,0.79
@@ -66,7 +66,7 @@ ERRORS[20]{path,score}:
       python.import.resolvable,error,Module 'pytest' not found,13
 
 UNSUPPORTED[5]{bucket,count}:
-  *.md,56
+  *.md,57
   Dockerfile*,1
   *.txt,2
   *.yml,1
