@@ -280,6 +280,28 @@ def _count_blocks(direct_blocks: list[dict[str, Any]]) -> tuple[int, int]:
 
     return function_count, class_count
 
+def _process_block_alert(
+    name: str, cc: int, result: AnalysisResult | None,
+    existing_alerts: set[tuple[str, str, int, int]], alert_count: int
+) -> int:
+    """Append a cc_exceeded alert if warranted and not already present; return updated alert_count."""
+    if result is None or cc <= 10:
+        return alert_count
+    alert = {
+        "type": "cc_exceeded",
+        "name": name,
+        "severity": 3 if cc > 20 else 2,
+        "value": cc,
+        "limit": 10,
+    }
+    signature = _alert_signature(alert)
+    if signature not in existing_alerts:
+        result.alerts.append(alert)
+        existing_alerts.add(signature)
+        alert_count += 1
+    return alert_count
+
+
 def _update_function_metrics(
     all_blocks: list[dict[str, Any]], normalized_path: str, module_lines: int, module_cc: int, is_init_file: bool,
     existing_function_metrics: dict[tuple[str, str], CodeMetrics], metric_list: list[Any], result: AnalysisResult | None, 
@@ -318,21 +340,7 @@ def _update_function_metrics(
             metric.cyclomatic_complexity = cc
             updated += 1
 
-        if result is None or cc <= 10:
-            continue
-
-        alert = {
-            "type": "cc_exceeded",
-            "name": name,
-            "severity": 3 if cc > 20 else 2,
-            "value": cc,
-            "limit": 10,
-        }
-        signature = _alert_signature(alert)
-        if signature not in existing_alerts:
-            result.alerts.append(alert)
-            existing_alerts.add(signature)
-            alert_count += 1
+        alert_count = _process_block_alert(name, cc, result, existing_alerts, alert_count)
 
     return updated, added, alert_count
 
@@ -353,13 +361,23 @@ def _update_module_metrics(
 
     return updated
 
+def _recompute_file_stats(result: AnalysisResult, metric_list: list[Any]) -> None:
+    """Recompute total_files, total_lines, critical_count on *result*."""
+    result.total_files = len({m.file_path for m in metric_list if not m.function_name})
+    result.total_lines = sum(m.module_lines for m in metric_list if not m.function_name)
+    result.critical_count = sum(1 for a in result.alerts if a.get("severity", 0) >= 2)
+
+
+def _recompute_cc_avg(metric_list: list[Any]) -> float:
+    """Return average CC across all metrics with CC > 0, or 0.0."""
+    cc_vals = [m.cyclomatic_complexity for m in metric_list if m.cyclomatic_complexity > 0]
+    return round(sum(cc_vals) / len(cc_vals), 2) if cc_vals else 0.0
+
+
 def _update_result_stats(result: AnalysisResult | None, metric_list: list[Any], updated: int, added: int, alert_count: int) -> None:
     if result is not None:
-        result.total_files = len({m.file_path for m in metric_list if not m.function_name})
-        result.total_lines = sum(m.module_lines for m in metric_list if not m.function_name)
-        result.critical_count = sum(1 for a in result.alerts if a.get("severity", 0) >= 2)
-        cc_vals = [m.cyclomatic_complexity for m in metric_list if m.cyclomatic_complexity > 0]
-        result.avg_cc = round(sum(cc_vals) / len(cc_vals), 2) if cc_vals else 0.0
+        _recompute_file_stats(result, metric_list)
+        result.avg_cc = _recompute_cc_avg(metric_list)
 
     if updated or added or alert_count:
         logger.info(

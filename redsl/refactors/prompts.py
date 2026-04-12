@@ -230,6 +230,28 @@ Ecosystem context:
 """
 
 
+def _format_trends(trends: dict[str, Any]) -> list[str]:
+    """Render trend entries as short key=value lines."""
+    lines: list[str] = []
+    for name, trend in trends.items():
+        if isinstance(trend, dict):
+            lines.append(
+                f"{name}={trend.get('trend', 'unknown')} "
+                f"current={trend.get('current', trend.get('current_value', 0))} "
+                f"predicted={trend.get('predicted', trend.get('predicted_value', 0))}"
+            )
+    return lines
+
+
+def _format_alerts(alerts: list[Any]) -> list[str]:
+    """Render up to 3 alert entries as short title (severity) lines."""
+    lines: list[str] = []
+    for alert in alerts[:3]:
+        if isinstance(alert, dict):
+            lines.append(f"{alert.get('title', 'alert')} ({alert.get('severity', 'unknown')})")
+    return lines
+
+
 def build_ecosystem_context(context: dict[str, Any] | None) -> str:
     """Render a short ecosystem/context block for prompts."""
     if not context:
@@ -241,19 +263,8 @@ def build_ecosystem_context(context: dict[str, Any] | None) -> str:
     alerts = context.get("alerts", []) or []
     latest_summary = context.get("latest_summary", "")
 
-    trend_lines: list[str] = []
-    for name, trend in trends.items():
-        if isinstance(trend, dict):
-            trend_lines.append(
-                f"{name}={trend.get('trend', 'unknown')} "
-                f"current={trend.get('current', trend.get('current_value', 0))} "
-                f"predicted={trend.get('predicted', trend.get('predicted_value', 0))}"
-            )
-
-    alert_lines = []
-    for alert in alerts[:3]:
-        if isinstance(alert, dict):
-            alert_lines.append(f"{alert.get('title', 'alert')} ({alert.get('severity', 'unknown')})")
+    trend_lines = _format_trends(trends)
+    alert_lines = _format_alerts(alerts)
 
     return ECOSYSTEM_CONTEXT_TEMPLATE.format(
         project_name=context.get("project_name", context.get("project_path", "unknown")),

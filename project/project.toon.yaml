@@ -1,12 +1,11 @@
-# redsl | 992 func | 134f | 31684L | python | 2026-04-12
+# redsl | 1027 func | 134f | 31837L | python | 2026-04-12
 
 HEALTH:
-  CC̄=3.9  critical=59 (limit:10)  dup=3  cycles=0
+  CC̄=3.8  critical=50 (limit:10)  dup=3  cycles=0
 
 ALERTS[20]:
   !!  high_fan_out     main = 19 (limit:10)
   !!  high_fan_out     apply_quality_refactors = 18 (limit:10)
-  !!  high_fan_out     refactor = 18 (limit:10)
   !!  high_fan_out     main = 17 (limit:10)
   !!  high_fan_out     _analyze_single_project = 16 (limit:10)
   !!  high_fan_out     detect_version_mismatch = 16 (limit:10)
@@ -14,16 +13,17 @@ ALERTS[20]:
   !!  high_fan_out     run_cycle = 16 (limit:10)
   !!  high_fan_out     RefactorEngine.generate_proposal = 16 (limit:10)
   !!  high_fan_out     repair_file = 16 (limit:10)
+  !!  high_fan_out     AwarenessManager.build_snapshot = 16 (limit:10)
 
 MODULES[159] (top by size):
   M[redsl/api.py] 484L C:12 F:16 CC↑7 D:0 (python)
-  M[redsl/commands/batch_pyqual/pipeline.py] 393L C:1 F:14 CC↑13 D:1 (python)
+  M[redsl/commands/batch_pyqual/pipeline.py] 398L C:1 F:15 CC↑10 D:1 (python)
+  M[redsl/analyzers/radon_analyzer.py] 388L C:0 F:23 CC↑10 D:1 (python)
   M[archive/legacy_scripts/hybrid_llm_refactor.py] 386L C:0 F:16 CC↑10 D:1 (python)
   M[redsl/execution/decision.py] 372L C:0 F:9 CC↑8 D:6 (python)
-  M[redsl/analyzers/radon_analyzer.py] 370L C:0 F:20 CC↑14 D:1 (python)
   M[redsl/commands/cli_autonomy.py] 350L C:0 F:20 CC↑6 D:0 (python)
   M[redsl/refactors/engine.py] 336L C:1 F:9 CC↑12 D:0 (python)
-  M[redsl/commands/batch_pyqual/reporting.py] 326L C:0 F:20 CC↑13 D:2 (python)
+  M[redsl/commands/batch_pyqual/reporting.py] 331L C:0 F:24 CC↑12 D:2 (python)
   M[redsl/autonomy/quality_gate.py] 325L C:1 F:10 CC↑11 D:3 (python)
   M[redsl/awareness/__init__.py] 325L C:2 F:16 CC↑10 D:0 (python)
   M[redsl/commands/doctor_detectors.py] 319L C:0 F:16 CC↑10 D:1 (python)
@@ -36,14 +36,14 @@ MODULES[159] (top by size):
 HOTSPOTS[10]:
   ★ main fan=19  // Process semcod projects.
   ★ apply_quality_refactors fan=18  // Apply all quality refactorings to a project.
-  ★ refactor fan=18  // Run refactoring on a project.
   ★ main fan=17  // Process semcod projects.
   ★ _analyze_single_project fan=16  // Analysis pipeline, 16 stages
+  ★ detect_version_mismatch fan=16  // Find tests that hardcode a version string that differs from VERSION file.
 
 REFACTOR[3]:
   [1] M/M Reduce main fan-out (currently 19)
   [2] M/M Reduce apply_quality_refactors fan-out (currently 18)
-  [3] M/M Reduce refactor fan-out (currently 18)
+  [3] M/M Reduce main fan-out (currently 17)
 
 EVOLUTION:
-  2026-04-12 CC̄=3.9 crit=59 31684L // Automated analysis
+  2026-04-12 CC̄=3.8 crit=50 31837L // Automated analysis

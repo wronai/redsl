@@ -12,6 +12,32 @@ if TYPE_CHECKING:
     from redsl.orchestrator import RefactorOrchestrator
 
 
+def _resolve_source_preview(
+    orchestrator: "RefactorOrchestrator",
+    project_dir: Path,
+    d: Any,
+) -> str | None:
+    """Return a short source preview string for a decision, or None."""
+    src_path = project_dir / d.target_file
+    if not src_path.exists() and d.target_function:
+        resolved = orchestrator.analyzer.resolve_file_path(project_dir, d.target_function)
+        if resolved:
+            src_path = project_dir / resolved
+    if not src_path.exists():
+        return None
+    func = d.target_function
+    if not func:
+        worst = orchestrator.analyzer.find_worst_function(src_path)
+        func = worst[0] if worst else None
+    if not func:
+        return None
+    src = orchestrator.analyzer.extract_function_source(src_path, func)
+    preview = src[:400].rstrip()
+    if len(src) > 400:
+        preview += f"\n    ... (+{len(src)-400} chars)"
+    return f"Źródło ({src_path.name}::{func}):\n{preview}"
+
+
 def explain_decisions(orchestrator: "RefactorOrchestrator", project_dir: Path, limit: int = 10) -> str:
     """Explain refactoring decisions without executing them."""
     analysis = orchestrator.analyzer.analyze_project(project_dir)
@@ -34,22 +60,9 @@ def explain_decisions(orchestrator: "RefactorOrchestrator", project_dir: Path, l
             f"   Rationale: {d.rationale}",
         ])
 
-        src_path = project_dir / d.target_file
-        if not src_path.exists() and d.target_function:
-            resolved = orchestrator.analyzer.resolve_file_path(project_dir, d.target_function)
-            if resolved:
-                src_path = project_dir / resolved
-        if src_path.exists():
-            func = d.target_function
-            if not func:
-                worst = orchestrator.analyzer.find_worst_function(src_path)
-                func = worst[0] if worst else None
-            if func:
-                src = orchestrator.analyzer.extract_function_source(src_path, func)
-                preview = src[:400].rstrip()
-                if len(src) > 400:
-                    preview += f"\n    ... (+{len(src)-400} chars)"
-                lines.append(f"Źródło ({src_path.name}::{func}):\n{preview}")
+        preview = _resolve_source_preview(orchestrator, project_dir, d)
+        if preview:
+            lines.append(preview)
         lines.append("")
 
     return "\n".join(lines)

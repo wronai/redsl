@@ -24,6 +24,46 @@ def _build_timeline(raw_points: list[dict[str, Any]]) -> list[MetricPoint]:
     return timeline
 
 
+def _print_patterns(patterns: list[Any], display: dict[str, Any]) -> None:
+    """Print detected change patterns if display config says so."""
+    if not display.get("show_patterns"):
+        return
+    print("\n  Wzorce zmian:")
+    print("-" * 60)
+    for i, pattern in enumerate(patterns, 1):
+        print(f"\n  [{i}] {pattern.name}")
+        print(f"      {pattern.description}")
+        print(f"      Outcome: {pattern.outcome}")
+        if display.get("show_effectiveness"):
+            print(f"      Effectiveness: {pattern.effectiveness:.3f}")
+
+
+def _print_signals(patterns: list[Any], learner: ChangePatternLearner, display: dict[str, Any]) -> None:
+    """Print unique trigger signals if display config says so."""
+    if not display.get("show_signals"):
+        return
+    all_signals = set()
+    for p in patterns:
+        all_signals.update(p.trigger_signals)
+    print(f"\n  Unikalne sygnały: {sorted(all_signals)}")
+    for signal in sorted(all_signals):
+        matching = learner.recall_by_signal(signal)
+        print(f"    {signal}: {len(matching)} wzorców")
+
+
+def _print_summary_section(learner: ChangePatternLearner, display: dict[str, Any]) -> None:
+    """Print pattern summary if display config says so."""
+    if not display.get("show_summary"):
+        return
+    summary = learner.summarize_patterns()
+    degradations = sum(1 for s in summary if s["outcome"] == "degradation")
+    improvements = sum(1 for s in summary if s["outcome"] == "improvement")
+    print(f"\n  Podsumowanie:")
+    print(f"    Degradacje:  {degradations}")
+    print(f"    Poprawy:     {improvements}")
+    print(f"    Łącznie:     {len(summary)}")
+
+
 def run_awareness_example(scenario: str = "default", source: str | None = None) -> dict[str, Any]:
     data = load_example_yaml("awareness", scenario=scenario, source=source)
     display = data.get("display", {})
@@ -38,34 +78,9 @@ def run_awareness_example(scenario: str = "default", source: str | None = None) 
     patterns = learner.learn_from_timeline(timeline)
     print(f"  Wykryte wzorce: {len(patterns)}")
 
-    if display.get("show_patterns"):
-        print("\n  Wzorce zmian:")
-        print("-" * 60)
-        for i, pattern in enumerate(patterns, 1):
-            print(f"\n  [{i}] {pattern.name}")
-            print(f"      {pattern.description}")
-            print(f"      Outcome: {pattern.outcome}")
-            if display.get("show_effectiveness"):
-                print(f"      Effectiveness: {pattern.effectiveness:.3f}")
-
-    if display.get("show_signals"):
-        all_signals = set()
-        for p in patterns:
-            all_signals.update(p.trigger_signals)
-        print(f"\n  Unikalne sygnały: {sorted(all_signals)}")
-
-        for signal in sorted(all_signals):
-            matching = learner.recall_by_signal(signal)
-            print(f"    {signal}: {len(matching)} wzorców")
-
-    if display.get("show_summary"):
-        summary = learner.summarize_patterns()
-        degradations = sum(1 for s in summary if s["outcome"] == "degradation")
-        improvements = sum(1 for s in summary if s["outcome"] == "improvement")
-        print(f"\n  Podsumowanie:")
-        print(f"    Degradacje:  {degradations}")
-        print(f"    Poprawy:     {improvements}")
-        print(f"    Łącznie:     {len(summary)}")
+    _print_patterns(patterns, display)
+    _print_signals(patterns, learner, display)
+    _print_summary_section(learner, display)
 
     print("\n" + "=" * 60)
 

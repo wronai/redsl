@@ -180,6 +180,20 @@ def _run_redsl_fix_stage(ctx: ProjectContext, max_fixes: int) -> ProjectContext:
     return ctx
 
 
+def _process_gate_result(gate_result: dict[str, Any], result: Any) -> None:
+    """Populate result fields from a pyqual gate check response."""
+    result.gates_passed = gate_result.get("passed", True)
+    result.gate_details = list(gate_result.get("gates", []))
+    result.gates_total = len(result.gate_details)
+    result.gates_passing = sum(1 for gate in result.gate_details if gate.get("passed"))
+    if gate_result.get("timed_out"):
+        result.errors.append("pyqual gates timed out")
+    if gate_result.get("error"):
+        result.errors.append(f"pyqual gates: {gate_result['error']}")
+    print(f"    pyqual gates: {'PASS' if result.gates_passed else 'FAIL'} "
+          f"({result.gates_passing}/{result.gates_total})")
+
+
 def _run_gates_stage(ctx: ProjectContext) -> ProjectContext:
     """Stage 4: Run pyqual gates check."""
     pyqual_ready = ctx.pyqual_available and ctx.result.has_pyqual_yaml and ctx.result.config_valid
@@ -192,16 +206,7 @@ def _run_gates_stage(ctx: ProjectContext) -> ProjectContext:
 
     try:
         gate_result = pyqual_bridge.check_gates(ctx.project)
-        ctx.result.gates_passed = gate_result.get("passed", True)
-        ctx.result.gate_details = list(gate_result.get("gates", []))
-        ctx.result.gates_total = len(ctx.result.gate_details)
-        ctx.result.gates_passing = sum(1 for gate in ctx.result.gate_details if gate.get("passed"))
-        if gate_result.get("timed_out"):
-            ctx.result.errors.append("pyqual gates timed out")
-        if gate_result.get("error"):
-            ctx.result.errors.append(f"pyqual gates: {gate_result['error']}")
-        print(f"    pyqual gates: {'PASS' if ctx.result.gates_passed else 'FAIL'} "
-              f"({ctx.result.gates_passing}/{ctx.result.gates_total})")
+        _process_gate_result(gate_result, ctx.result)
     except Exception as exc:
         ctx.result.errors.append(f"pyqual gates: {exc}")
 

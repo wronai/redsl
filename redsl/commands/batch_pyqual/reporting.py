@@ -248,6 +248,19 @@ def _build_report_header(summary: dict[str, Any], workspace_root: Path, now: str
     ]
 
 
+def _format_project_row(i: int, r: PyqualProjectResult) -> str:
+    """Format a single project row for the details table."""
+    config_str = "✅" if r.config_valid else ("🛠️" if r.config_fixed else "❌")
+    gate_str = f"{'✅' if r.gates_passed else '❌'} {r.gates_passing}/{r.gates_total}" if r.gates_total else "—"
+    pipe_str = "✅" if r.pipeline_passed else ("❌" if r.pipeline_ran else "—")
+    publish_str = "✅" if r.pipeline_publish_passed else ("📝" if r.publish_configured else "—")
+    git_str = "✅" if r.git_pushed else ("🔎" if r.push_preflight_passed else ("📝" if r.git_committed else "—"))
+    return (
+        f"| {i} | `{r.name}` | {r.py_files} | {r.total_loc:,} | {r.avg_cc:.1f} | {r.max_cc} "
+        f"| {r.redsl_fixes_applied} | {config_str} | {gate_str} | {pipe_str} | {publish_str} | {git_str} | {r.verdict} |"
+    )
+
+
 def _build_project_table(results: list[PyqualProjectResult]) -> list[str]:
     """Build per-project details table."""
     lines = [
@@ -261,15 +274,7 @@ def _build_project_table(results: list[PyqualProjectResult]) -> list[str]:
     ]
 
     for i, r in enumerate(results, 1):
-        config_str = "✅" if r.config_valid else ("🛠️" if r.config_fixed else "❌")
-        gate_str = f"{'✅' if r.gates_passed else '❌'} {r.gates_passing}/{r.gates_total}" if r.gates_total else "—"
-        pipe_str = "✅" if r.pipeline_passed else ("❌" if r.pipeline_ran else "—")
-        publish_str = "✅" if r.pipeline_publish_passed else ("📝" if r.publish_configured else "—")
-        git_str = "✅" if r.git_pushed else ("🔎" if r.push_preflight_passed else ("📝" if r.git_committed else "—"))
-        lines.append(
-            f"| {i} | `{r.name}` | {r.py_files} | {r.total_loc:,} | {r.avg_cc:.1f} | {r.max_cc} "
-            f"| {r.redsl_fixes_applied} | {config_str} | {gate_str} | {pipe_str} | {publish_str} | {git_str} | {r.verdict} |"
-        )
+        lines.append(_format_project_row(i, r))
     return lines
 
 

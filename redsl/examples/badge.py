@@ -31,6 +31,65 @@ def _grade_for_score(score: float, scale: list[dict]) -> dict[str, Any]:
     return scale[-1]
 
 
+def _dimension_color(val: float | int, db: dict[str, Any]) -> str:
+    """Resolve shields.io color for a dimension badge."""
+    th = db["thresholds"]
+    if "coverage" in db["key"]:
+        if val >= th["green"]:
+            return "brightgreen"
+        elif val >= th["yellow"]:
+            return "yellow"
+        else:
+            return "red"
+    else:
+        if val <= th["green"]:
+            return "brightgreen"
+        elif val <= th["yellow"]:
+            return "yellow"
+        else:
+            return "red"
+
+
+def _format_dimension_badges(metrics: dict[str, Any], dim_badges: list[dict]) -> str | None:
+    """Build dimension badge string, or None if no dimension badges."""
+    if not dim_badges:
+        return None
+    parts = []
+    for db in dim_badges:
+        val = metrics.get(db["key"], 0)
+        dc = _dimension_color(val, db)
+        parts.append(f"{db['label']}:{dc}")
+    return " | ".join(parts)
+
+
+def _print_badge_code(grade: str, color: str, styles: list[dict]) -> None:
+    """Print Markdown and HTML badge code for the first style."""
+    label = "code%20quality"
+    for style in styles[:1]:
+        url = style["url_template"].format(label=label, grade=grade, color=color)
+        print(f"\n     Markdown:")
+        print(f"       [![code quality]({url})](https://redsl.dev)")
+        print(f"     HTML:")
+        print(f'       <img src="{url}" alt="code quality {grade}">')
+
+
+def _print_summary(results: list[dict[str, Any]], scale: list[dict]) -> None:
+    """Print ecosystem summary table when multiple projects."""
+    if len(results) <= 1:
+        return
+    print(f"\n  {'═' * 55}")
+    print(f"  📋 Podsumowanie ekosystemu:")
+    print(f"  {'─' * 55}")
+    print(f"  {'Projekt':<25s} {'Grade':>6s} {'Score':>8s}")
+    print(f"  {'─' * 55}")
+    for r in results:
+        print(f"  {r['name']:<25s} {r['grade']:>6s} {r['score']:>7.1f}")
+    avg_score = sum(r["score"] for r in results) / len(results)
+    avg_entry = _grade_for_score(avg_score, scale)
+    print(f"  {'─' * 55}")
+    print(f"  {'ECOSYSTEM AVG':<25s} {avg_entry['grade']:>6s} {avg_score:>7.1f}")
+
+
 def run_badge_example(scenario: str = "default", source: str | None = None) -> dict[str, Any]:
     data = load_example_yaml("badge", scenario=scenario, source=source)
     scale = data.get("grade_scale", [])
@@ -69,28 +128,9 @@ def run_badge_example(scenario: str = "default", source: str | None = None) -> d
               f"LOC={metrics.get('total_lines', '?'):,}")
 
         # -- Dimension badges (advanced) --
-        if dim_badges:
-            parts = []
-            for db in dim_badges:
-                val = metrics.get(db["key"], 0)
-                th = db["thresholds"]
-                # For type_coverage, higher is better
-                if "coverage" in db["key"]:
-                    if val >= th["green"]:
-                        dc = "brightgreen"
-                    elif val >= th["yellow"]:
-                        dc = "yellow"
-                    else:
-                        dc = "red"
-                else:
-                    if val <= th["green"]:
-                        dc = "brightgreen"
-                    elif val <= th["yellow"]:
-                        dc = "yellow"
-                    else:
-                        dc = "red"
-                parts.append(f"{db['label']}:{dc}")
-            print(f"     Dimensions: {' | '.join(parts)}")
+        dim_str = _format_dimension_badges(metrics, dim_badges)
+        if dim_str:
+            print(f"     Dimensions: {dim_str}")
 
         # -- History (advanced) --
         history = proj.get("history", [])
@@ -99,27 +139,10 @@ def run_badge_example(scenario: str = "default", source: str | None = None) -> d
             print(f"     Trend: {trend}")
 
         # -- Badge code --
-        label = "code%20quality"
-        for style in styles[:1]:  # show first style
-            url = style["url_template"].format(label=label, grade=grade, color=color)
-            print(f"\n     Markdown:")
-            print(f"       [![code quality]({url})](https://redsl.dev)")
-            print(f"     HTML:")
-            print(f"       <img src=\"{url}\" alt=\"code quality {grade}\">")
+        _print_badge_code(grade, color, styles)
 
     # -- Summary table --
-    if len(results) > 1:
-        print(f"\n  {'═' * 55}")
-        print(f"  📋 Podsumowanie ekosystemu:")
-        print(f"  {'─' * 55}")
-        print(f"  {'Projekt':<25s} {'Grade':>6s} {'Score':>8s}")
-        print(f"  {'─' * 55}")
-        for r in results:
-            print(f"  {r['name']:<25s} {r['grade']:>6s} {r['score']:>7.1f}")
-        avg_score = sum(r["score"] for r in results) / len(results)
-        avg_entry = _grade_for_score(avg_score, scale)
-        print(f"  {'─' * 55}")
-        print(f"  {'ECOSYSTEM AVG':<25s} {avg_entry['grade']:>6s} {avg_score:>7.1f}")
+    _print_summary(results, scale)
 
     print(f"\n  {'═' * 55}")
 

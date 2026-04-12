@@ -145,6 +145,21 @@ def scan_as_toon(
         return ""
 
 
+def _build_dup_index(groups: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """Build a filename → {similarity, lines} index from duplicate groups."""
+    file_to_dup: dict[str, dict[str, Any]] = {}
+    for group in groups:
+        similarity = float(group.get("similarity_score") or group.get("similarity") or 0)
+        lines = int(group.get("total_lines", 0))
+        for fragment in group.get("fragments", []):
+            raw_path = fragment.get("file", "")
+            frag_lines = int(fragment.get("lines") or fragment.get("total_lines") or lines)
+            key = Path(raw_path).name
+            if key not in file_to_dup or file_to_dup[key]["similarity"] < similarity:
+                file_to_dup[key] = {"similarity": similarity, "lines": frag_lines}
+    return file_to_dup
+
+
 def enrich_analysis(
     analysis: AnalysisResult,
     project_dir: Path,
@@ -167,21 +182,9 @@ def enrich_analysis(
         return analysis
 
     analysis.duplicates = groups
-
-    file_to_dup: dict[str, dict] = {}
-    for group in groups:
-        similarity = float(group.get("similarity_score") or group.get("similarity") or 0)
-        lines = int(group.get("total_lines", 0))
-        for fragment in group.get("fragments", []):
-            raw_path = fragment.get("file", "")
-            frag_lines = int(fragment.get("lines") or fragment.get("total_lines") or lines)
-            # Normalise: keep only the filename for matching
-            key = Path(raw_path).name
-            if key not in file_to_dup or file_to_dup[key]["similarity"] < similarity:
-                file_to_dup[key] = {"similarity": similarity, "lines": frag_lines}
+    file_to_dup = _build_dup_index(groups)
 
     for metric in analysis.metrics:
-        # CodeMetrics.file_path can be bare filename or relative path
         key = Path(metric.file_path).name
         if key in file_to_dup:
             metric.duplicate_lines = file_to_dup[key]["lines"]

@@ -9,8 +9,8 @@ from typing import Any
 from .models import ProjectFixResult
 
 
-def _build_summary(results: list[ProjectFixResult]) -> dict[str, Any]:
-    """Build aggregate summary from all results."""
+def _aggregate_totals(results: list[ProjectFixResult]) -> dict[str, int]:
+    """Compute aggregate totals from project results."""
     return {
         "projects_processed": len(results),
         "todos_generated": sum(1 for r in results if r.todo_generated),
@@ -23,27 +23,38 @@ def _build_summary(results: list[ProjectFixResult]) -> dict[str, Any]:
         "total_after": sum(r.todo_issues_after for r in results),
         "total_applied": sum(r.hybrid_applied + r.gate_fixed for r in results),
         "total_errors": sum(len(r.errors) for r in results),
-        "project_details": [
-            {
-                "name": r.name,
-                "path": r.path,
-                "had_todo": r.had_todo,
-                "todo_generated": r.todo_generated,
-                "before_issues": r.todo_issues_before,
-                "after_issues": r.todo_issues_after,
-                "hybrid_applied": r.hybrid_applied,
-                "gate_fixed": r.gate_fixed,
-                "gate_manual": r.gate_manual,
-                "py_files": r.py_files,
-                "total_loc": r.total_loc,
-                "avg_cc": r.avg_cc,
-                "max_cc": r.max_cc,
-                "critical_count": r.critical_count,
-                "errors": r.errors,
-            }
-            for r in results
-        ],
     }
+
+
+def _project_details(results: list[ProjectFixResult]) -> list[dict[str, Any]]:
+    """Build per-project detail dicts."""
+    return [
+        {
+            "name": r.name,
+            "path": r.path,
+            "had_todo": r.had_todo,
+            "todo_generated": r.todo_generated,
+            "before_issues": r.todo_issues_before,
+            "after_issues": r.todo_issues_after,
+            "hybrid_applied": r.hybrid_applied,
+            "gate_fixed": r.gate_fixed,
+            "gate_manual": r.gate_manual,
+            "py_files": r.py_files,
+            "total_loc": r.total_loc,
+            "avg_cc": r.avg_cc,
+            "max_cc": r.max_cc,
+            "critical_count": r.critical_count,
+            "errors": r.errors,
+        }
+        for r in results
+    ]
+
+
+def _build_summary(results: list[ProjectFixResult]) -> dict[str, Any]:
+    """Build aggregate summary from all results."""
+    summary = _aggregate_totals(results)
+    summary["project_details"] = _project_details(results)
+    return summary
 
 
 def _print_summary(summary: dict[str, Any], results: list[ProjectFixResult]) -> None:

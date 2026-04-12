@@ -110,23 +110,24 @@ def _render_report_header(now: str, folder: Path, results: list[ProjectScanResul
     ]
 
 
+def _tier_names(results: list[ProjectScanResult], limit: int = 3) -> str:
+    """Format up to *limit* project names as comma-separated backtick string."""
+    return ", ".join(f"`{r.name}`" for r in results[:limit])
+
+
 def _build_recommendations(tiers: dict[str, list[ProjectScanResult]]) -> str:
     """Build a prioritised plain-text recommendations block from tier buckets."""
     parts: list[str] = []
     if tiers[_TIER_CRITICAL]:
-        names = ", ".join(f"`{r.name}`" for r in tiers[_TIER_CRITICAL][:3])
-        parts.append(f"1. **Immediate refactoring needed** in {names} — run `redsl refactor <path>` to apply fixes.")
+        parts.append(f"1. **Immediate refactoring needed** in {_tier_names(tiers[_TIER_CRITICAL])} — run `redsl refactor <path>` to apply fixes.")
     if tiers[_TIER_HIGH]:
-        names = ", ".join(f"`{r.name}`" for r in tiers[_TIER_HIGH][:3])
-        parts.append(f"2. **Schedule deep analysis** for {names} — use `redsl refactor <path> --dry-run` to preview changes.")
+        parts.append(f"2. **Schedule deep analysis** for {_tier_names(tiers[_TIER_HIGH])} — use `redsl refactor <path> --dry-run` to preview changes.")
     no_tests = [r for r in tiers[_TIER_CRITICAL] + tiers[_TIER_HIGH] if not r.has_tests]
     if no_tests:
-        names = ", ".join(f"`{r.name}`" for r in no_tests[:3])
-        parts.append(f"3. **Add test coverage** to {names} before automated refactoring.")
+        parts.append(f"3. **Add test coverage** to {_tier_names(no_tests)} before automated refactoring.")
     no_toon = [r for r in tiers[_TIER_CRITICAL] + tiers[_TIER_HIGH] if not r.has_toon]
     if no_toon:
-        names = ", ".join(f"`{r.name}`" for r in no_toon[:3])
-        parts.append(f"4. **Generate toon analysis** (`code2llm . -f toon -o project`) in {names} to unlock deeper reDSL insights.")
+        parts.append(f"4. **Generate toon analysis** (`code2llm . -f toon -o project`) in {_tier_names(no_toon)} to unlock deeper reDSL insights.")
     if not parts:
         parts.append("All projects are in good shape! Consider running `redsl refactor --dry-run` periodically to stay ahead of complexity growth.")
     return "\n".join(parts)

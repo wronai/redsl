@@ -125,9 +125,8 @@ def _fix_body_indent(lines: list[str], i: int, new_lines: list[str], def_indent:
     return new_lines, i, changed
 
 
-def _check_excess_indent(lines: list[str], i: int, new_lines: list[str], def_indent: int, expected: int, changed: bool) -> tuple[list[str], int, bool]:
-    """Strip one extra indent level from body lines that are over-indented by 4."""
-    has_excess = False
+def _detect_excess_indent(lines: list[str], i: int, expected: int, def_indent: int) -> bool:
+    """Return True if body lines after position i are over-indented by 4."""
     scan = i + 1
     while scan < min(i + 10, len(lines)):
         if not lines[scan].strip():
@@ -135,28 +134,38 @@ def _check_excess_indent(lines: list[str], i: int, new_lines: list[str], def_ind
             continue
         scan_indent = len(lines[scan]) - len(lines[scan].lstrip())
         if scan_indent == expected + 4:
-            has_excess = True
-            break
+            return True
         elif scan_indent <= def_indent:
             break
         scan += 1
+    return False
 
-    if has_excess:
-        while i < len(lines):
-            bl = lines[i]
-            bl_indent = len(bl) - len(bl.lstrip()) if bl.strip() else -1
-            if not bl.strip():
-                new_lines.append(bl)
-                i += 1
-                continue
-            if bl_indent <= def_indent and i > scan:
-                break
-            if bl_indent >= expected + 4:
-                new_lines.append(bl[4:])
-                changed = True
-            else:
-                new_lines.append(bl)
+
+def _strip_excess_indent(lines: list[str], i: int, new_lines: list[str], def_indent: int, expected: int, scan: int, changed: bool) -> tuple[list[str], int, bool]:
+    """Strip one extra indent level from over-indented body lines."""
+    while i < len(lines):
+        bl = lines[i]
+        bl_indent = len(bl) - len(bl.lstrip()) if bl.strip() else -1
+        if not bl.strip():
+            new_lines.append(bl)
             i += 1
+            continue
+        if bl_indent <= def_indent and i > scan:
+            break
+        if bl_indent >= expected + 4:
+            new_lines.append(bl[4:])
+            changed = True
+        else:
+            new_lines.append(bl)
+        i += 1
+    return new_lines, i, changed
+
+
+def _check_excess_indent(lines: list[str], i: int, new_lines: list[str], def_indent: int, expected: int, changed: bool) -> tuple[list[str], int, bool]:
+    """Strip one extra indent level from body lines that are over-indented by 4."""
+    if _detect_excess_indent(lines, i, expected, def_indent):
+        scan = i + 1
+        new_lines, i, changed = _strip_excess_indent(lines, i, new_lines, def_indent, expected, scan, changed)
     return new_lines, i, changed
 
 

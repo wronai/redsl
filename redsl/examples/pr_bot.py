@@ -23,6 +23,53 @@ def _delta(before: float | int, after: float | int, lower_is_better: bool = True
     return f"{sign}{diff} {arrow} {marker}"
 
 
+def _print_risk_flags(flags: list[dict[str, Any]]) -> None:
+    """Print risk flags section."""
+    if not flags:
+        return
+    print(f"  │")
+    print(f"  │  ### 🚩 Risk Flags ({len(flags)})")
+    print(f"  │  {'─' * 56}")
+    for flag in flags:
+        icon = _LEVEL_ICON.get(flag["level"], "⚪")
+        print(f"  │  {icon} **{flag['file']}**")
+        print(f"  │     {flag['message']}")
+        if flag.get("suggestion"):
+            print(f"  │     💡 _{flag['suggestion']}_")
+
+
+def _print_suggestions(suggestions: list[dict[str, Any]]) -> None:
+    """Print code suggestions section."""
+    if not suggestions:
+        return
+    print(f"  │")
+    print(f"  │  ### 💬 Suggestions ({len(suggestions)})")
+    print(f"  │  {'─' * 56}")
+    for sug in suggestions:
+        stype = sug.get("type", "info")
+        print(f"  │")
+        print(f"  │  **{sug['title']}** — `{sug['file']}:{sug.get('line', '?')}` [{stype}]")
+        for line in sug.get("body", "").strip().splitlines():
+            print(f"  │  {line}")
+
+
+def _print_status_check(status: dict[str, Any]) -> str:
+    """Print status check section; return the conclusion string."""
+    print(f"  │")
+    print(f"  │  {'─' * 56}")
+    conclusion = status.get("conclusion", "neutral")
+    check_icon = "✅" if conclusion == "success" else "❌" if conclusion == "failure" else "⏸"
+    print(f"  │  {check_icon} **Status check: {conclusion.upper()}**")
+    print(f"  │  {status.get('summary', '')}")
+    blockers = status.get("blockers", [])
+    if blockers:
+        print(f"  │")
+        print(f"  │  **Blockers:**")
+        for b in blockers:
+            print(f"  │  - 🔴 {b}")
+    return conclusion
+
+
 def run_pr_bot_example(scenario: str = "default", source: str | None = None) -> dict[str, Any]:
     data = load_example_yaml("pr_bot", scenario=scenario, source=source)
     pr = data["pr"]
@@ -61,43 +108,9 @@ def run_pr_bot_example(scenario: str = "default", source: str | None = None) -> 
     for label, bv, av, d in rows:
         print(f"  │  {label:<25s} {bv:>8s} {av:>8s} {d:>18s}")
 
-    # -- Risk flags --
-    if flags:
-        print(f"  │")
-        print(f"  │  ### 🚩 Risk Flags ({len(flags)})")
-        print(f"  │  {'─' * 56}")
-        for flag in flags:
-            icon = _LEVEL_ICON.get(flag["level"], "⚪")
-            print(f"  │  {icon} **{flag['file']}**")
-            print(f"  │     {flag['message']}")
-            if flag.get("suggestion"):
-                print(f"  │     💡 _{flag['suggestion']}_")
-
-    # -- Code suggestions --
-    if suggestions:
-        print(f"  │")
-        print(f"  │  ### 💬 Suggestions ({len(suggestions)})")
-        print(f"  │  {'─' * 56}")
-        for sug in suggestions:
-            stype = sug.get("type", "info")
-            print(f"  │")
-            print(f"  │  **{sug['title']}** — `{sug['file']}:{sug.get('line', '?')}` [{stype}]")
-            for line in sug.get("body", "").strip().splitlines():
-                print(f"  │  {line}")
-
-    # -- Status check --
-    print(f"  │")
-    print(f"  │  {'─' * 56}")
-    conclusion = status.get("conclusion", "neutral")
-    check_icon = "✅" if conclusion == "success" else "❌" if conclusion == "failure" else "⏸"
-    print(f"  │  {check_icon} **Status check: {conclusion.upper()}**")
-    print(f"  │  {status.get('summary', '')}")
-    blockers = status.get("blockers", [])
-    if blockers:
-        print(f"  │")
-        print(f"  │  **Blockers:**")
-        for b in blockers:
-            print(f"  │  - 🔴 {b}")
+    _print_risk_flags(flags)
+    _print_suggestions(suggestions)
+    conclusion = _print_status_check(status)
 
     print(f"  │                                                              │")
     print(f"  └{'─' * 62}┘")

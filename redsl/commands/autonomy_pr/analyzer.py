@@ -87,6 +87,33 @@ def _step_analyze(clone_path: Path, max_actions: int, target_file: str | None) -
     return _AnalysisResult(True)
 
 
+def _run_auto_apply(clone_path: Path, max_actions: int, target_file: str | None) -> _ApplyResult | None:
+    """Run auto-apply refactor; return _ApplyResult on early-exit, None to continue."""
+    click.echo(f"  Auto-apply mode: Running reDSL refactor without dry-run...")
+    try:
+        result = subprocess.run(
+            _refactor_cmd(clone_path, max_actions, target_file, dry_run=False),
+            capture_output=True,
+            text=True,
+            timeout=600
+        )
+        if result.returncode != 0:
+            click.echo(f"  ⚠ Refactor execution had issues: {result.stderr}")
+            click.echo(f"  Continuing with whatever changes were made...")
+        else:
+            click.echo(f"  ✓ Refactor applied")
+            suggestions = [l for l in result.stdout.split('\n') if re.match(r'\s*\d+\.\s', l)]
+            if suggestions:
+                click.echo(f"\n  Suggestions:")
+                for line in suggestions:
+                    click.echo(f"    {line}")
+    except subprocess.TimeoutExpired:
+        return _ApplyResult(False, [], [], "Refactor timed out")
+    except Exception as e:
+        return _ApplyResult(False, [], [], f"Refactor error: {e}")
+    return None
+
+
 def _step_apply(
     clone_path: Path,
     max_actions: int,
@@ -101,28 +128,9 @@ def _step_apply(
         dry_run_history.unlink()
 
     if auto_apply:
-        click.echo(f"  Auto-apply mode: Running reDSL refactor without dry-run...")
-        try:
-            result = subprocess.run(
-                _refactor_cmd(clone_path, max_actions, target_file, dry_run=False),
-                capture_output=True,
-                text=True,
-                timeout=600
-            )
-            if result.returncode != 0:
-                click.echo(f"  ⚠ Refactor execution had issues: {result.stderr}")
-                click.echo(f"  Continuing with whatever changes were made...")
-            else:
-                click.echo(f"  ✓ Refactor applied")
-                suggestions = [l for l in result.stdout.split('\n') if re.match(r'\s*\d+\.\s', l)]
-                if suggestions:
-                    click.echo(f"\n  Suggestions:")
-                    for line in suggestions:
-                        click.echo(f"    {line}")
-        except subprocess.TimeoutExpired:
-            return _ApplyResult(False, [], [], "Refactor timed out")
-        except Exception as e:
-            return _ApplyResult(False, [], [], f"Refactor error: {e}")
+        early = _run_auto_apply(clone_path, max_actions, target_file)
+        if early is not None:
+            return early
     else:
         click.echo(f"  ⚠ Manual step: Please apply the suggested refactoring from the analysis above")
         click.echo(f"  Then press Enter to continue, or Ctrl+C to abort...")
