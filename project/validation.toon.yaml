@@ -1,7 +1,7 @@
-# vallm batch | 319f | 224✓ 0⚠ 20✗ | 2026-04-12
+# vallm batch | 326f | 231✓ 0⚠ 20✗ | 2026-04-12
 
 SUMMARY:
-  scanned: 319  passed: 224 (70.2%)  warnings: 0  errors: 20  unsupported: 75
+  scanned: 326  passed: 231 (70.9%)  warnings: 0  errors: 20  unsupported: 75
 
 ERRORS[20]{path,score}:
   tests/test_dsl_engine.py,0.79

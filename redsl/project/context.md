@@ -263,6 +263,10 @@ Key functions that process and transform data:
 > Format growth check result as text.
 - **Output to**: None.join, lines.append, lines.append, lines.append, lines.append
 
+### commands.hybrid._process_single_project
+> Process a single project and return results.
+- **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
+
 ### commands.cli_doctor._format_check_report
 > Format doctor check report as text.
 - **Output to**: None.join, lines.append, lines.append, lines.append
@@ -275,10 +279,6 @@ Key functions that process and transform data:
 > Format doctor batch report as text.
 - **Output to**: lines.append, None.join, len, len, len
 
-### commands.hybrid._process_single_project
-> Process a single project and return results.
-- **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
-
 ### commands._indent_fixers._process_def_block
 > Handle a def/class/try block: fix body indent or strip excess indent.
 - **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
@@ -286,6 +286,10 @@ Key functions that process and transform data:
 ### commands.batch._process_batch_project
 > Process a single project in the batch.
 - **Output to**: print, print, print, commands.batch.measure_todo_reduction, print
+
+### commands.batch_pyqual.runner._format_project_status
+> Format project result status into readable parts.
+- **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
 
 ### commands.batch_pyqual.reporting._format_summary_verdicts
 > Format verdict and project count lines.
@@ -301,10 +305,6 @@ Key functions that process and transform data:
 
 ### commands.batch_pyqual.reporting._format_project_row
 > Format a single project row for the details table.
-
-### commands.batch_pyqual.runner._format_project_status
-> Format project result status into readable parts.
-- **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
 
 ### commands.batch_pyqual.pipeline._validate_config
 > Validate pyqual config.
@@ -354,9 +354,9 @@ Functions exposed as public API (no underscore prefix):
 - `examples.api_integration.run_api_integration_example` - 26 calls
 - `cli.refactor.refactor` - 24 calls
 - `execution.cycle.run_cycle` - 23 calls
+- `awareness.AwarenessManager.build_snapshot` - 20 calls
 - `awareness.health_model.HealthModel.assess` - 20 calls
 - `validation.vallm_bridge.validate_proposal` - 20 calls
-- `awareness.AwarenessManager.build_snapshot` - 20 calls
 - `commands.pyqual.run_pyqual_fix` - 19 calls
 - `autonomy.metrics.collect_autonomy_metrics` - 19 calls
 - `formatters.batch.format_batch_results` - 19 calls
@@ -370,13 +370,13 @@ Functions exposed as public API (no underscore prefix):
 - `commands.doctor_detectors.detect_version_mismatch` - 18 calls
 - `commands.batch_pyqual.runner.run_pyqual_batch` - 18 calls
 - `autonomy.growth_control.check_module_budget` - 18 calls
-- `autonomy.scheduler.Scheduler.run` - 18 calls
 - `cli.batch.batch_pyqual_run` - 18 calls
+- `autonomy.scheduler.Scheduler.run` - 18 calls
 - `dsl.engine.DSLEngine.add_rules_from_yaml` - 18 calls
 - `commands.doctor_fixers.fix_module_level_exit` - 17 calls
 - `examples.awareness.run_awareness_example` - 17 calls
-- `refactors.prompts.build_ecosystem_context` - 17 calls
 - `refactors.engine.RefactorEngine.validate_proposal` - 17 calls
+- `refactors.prompts.build_ecosystem_context` - 17 calls
 - `refactors.direct_constants.DirectConstantsRefactorer.extract_constants` - 17 calls
 - `validation.sandbox.RefactorSandbox.apply_and_test` - 17 calls
 - `commands._scan_report.render_markdown` - 16 calls

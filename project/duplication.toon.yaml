@@ -1,12 +1,12 @@
-# redup/duplication | 25 groups | 179f 24979L | 2026-04-12
+# redup/duplication | 25 groups | 186f 25088L | 2026-04-12
 
 SUMMARY:
-  files_scanned: 179
-  total_lines:   24979
+  files_scanned: 186
+  total_lines:   25088
   dup_groups:    25
   dup_fragments: 76
   saved_lines:   297
-  scan_ms:       6030
+  scan_ms:       5575
 
 DUPLICATES[25] (ranked by impact):
   [bf09142e1f461c0a] ! STRU  example_basic_analysis  L=4 N=9 saved=32 sim=1.00
@@ -36,7 +36,7 @@ DUPLICATES[25] (ranked by impact):
       redsl/examples/pyqual_example.py:68-70  (main)
   [3b031ed301b05772]   STRU  _process_single_project  L=21 N=2 saved=21 sim=1.00
       archive/legacy_scripts/hybrid_quality_refactor.py:145-165  (_process_single_project)
-      redsl/commands/hybrid.py:252-272  (_process_single_project)
+      redsl/commands/hybrid.py:263-283  (_process_single_project)
   [e4ebf1a748620d64]   STRU  fix_stolen_indent  L=19 N=2 saved=19 sim=1.00
       redsl/commands/doctor_fixers.py:37-55  (fix_stolen_indent)
       redsl/commands/doctor_fixers.py:57-75  (fix_broken_fstrings)
@@ -85,7 +85,7 @@ DUPLICATES[25] (ranked by impact):
       redsl/validation/vallm_bridge.py:36-43  (_extract_json)
   [d87e95474146674c]   EXAC  _find_projects  L=7 N=2 saved=7 sim=1.00
       archive/legacy_scripts/hybrid_quality_refactor.py:121-127  (_find_projects)
-      redsl/commands/hybrid.py:243-249  (_find_projects)
+      redsl/commands/hybrid.py:254-260  (_find_projects)
   [77e67270f2ef5b1d]   EXAC  _git_status_lines  L=7 N=2 saved=7 sim=1.00
       redsl/commands/batch_pyqual/discovery.py:75-81  (_git_status_lines)
       redsl/commands/batch_pyqual/runner.py:21-27  (_git_status_lines)

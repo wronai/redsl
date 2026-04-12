@@ -4,12 +4,12 @@
 
 - **Project**: /home/tom/github/semcod/redsl
 - **Primary Language**: python
-- **Languages**: python: 180, shell: 2
+- **Languages**: python: 187, shell: 2
 - **Analysis Mode**: static
-- **Total Functions**: 1089
-- **Total Classes**: 125
-- **Modules**: 182
-- **Entry Points**: 546
+- **Total Functions**: 1093
+- **Total Classes**: 126
+- **Modules**: 189
+- **Entry Points**: 548
 
 ## Architecture by Module
 
@@ -72,11 +72,6 @@
 - **Classes**: 2
 - **File**: `__init__.py`
 
-### redsl.api
-- **Functions**: 16
-- **Classes**: 12
-- **File**: `api.py`
-
 ### redsl.commands.batch_pyqual.pipeline
 - **Functions**: 15
 - **Classes**: 1
@@ -92,6 +87,10 @@
 - **Classes**: 1
 - **File**: `direct_imports.py`
 
+### redsl.commands.hybrid
+- **Functions**: 14
+- **File**: `hybrid.py`
+
 ### redsl.history
 - **Functions**: 13
 - **Classes**: 3
@@ -102,9 +101,10 @@
 - **Classes**: 1
 - **File**: `__init__.py`
 
-### redsl.cli.examples
+### redsl.autonomy.auto_fix
 - **Functions**: 13
-- **File**: `examples.py`
+- **Classes**: 1
+- **File**: `auto_fix.py`
 
 ## Key Entry Points
 
@@ -199,10 +199,6 @@ Args:
 > Przeanalizuj jeden plik AST.
 - **Calls**: CodeQualityVisitor, visitor.visit, visitor.get_unused_imports, ast.walk, unused_imports.append, magic_numbers.append, print_statements.append, isinstance
 
-### redsl.autonomy.scheduler.Scheduler.run
-> Main scheduler loop — runs until stopped.
-- **Calls**: logger.info, self._analyze, self._check_trends, self._check_proactive, asyncio.sleep, self._has_changes_since_last_check, logger.debug, self._report_findings
-
 ### redsl.autonomy.growth_control.check_module_budget
 > Check whether a module stays within its complexity budget.
 - **Calls**: Path, BUDGETS.get, len, redsl.autonomy.growth_control._infer_module_type, file_path.read_text, source.splitlines, violations.append, ast.parse
@@ -210,6 +206,10 @@ Args:
 ### redsl.cli.batch.batch_pyqual_run
 > Multi-project quality pipeline: ReDSL analysis + pyqual gates + optional push.
 - **Calls**: batch.command, click.argument, click.option, click.option, click.option, click.option, click.option, click.option
+
+### redsl.autonomy.scheduler.Scheduler.run
+> Main scheduler loop — runs until stopped.
+- **Calls**: logger.info, self._analyze, self._check_trends, self._check_proactive, asyncio.sleep, self._has_changes_since_last_check, logger.debug, self._report_findings
 
 ### redsl.dsl.engine.DSLEngine.add_rules_from_yaml
 > Załaduj reguły z formatu YAML/dict.
@@ -341,6 +341,11 @@ This is a thin facade that delegates
 - **Methods**: 10
 - **Key Methods**: redsl.awareness.timeline_toon.ToonCollector.__init__, redsl.awareness.timeline_toon.ToonCollector.snapshot_for_commit, redsl.awareness.timeline_toon.ToonCollector._collect_toon_contents, redsl.awareness.timeline_toon.ToonCollector._empty_toon_contents, redsl.awareness.timeline_toon.ToonCollector._store_toon_content, redsl.awareness.timeline_toon.ToonCollector._toon_bucket, redsl.awareness.timeline_toon.ToonCollector._sorted_toon_candidates, redsl.awareness.timeline_toon.ToonCollector._toon_candidate_priority, redsl.awareness.timeline_toon.ToonCollector._is_duplication_file, redsl.awareness.timeline_toon.ToonCollector._is_validation_file
 
+### redsl.analyzers.semantic_chunker.SemanticChunker
+> Buduje semantyczne chunki kodu dla LLM.
+- **Methods**: 10
+- **Key Methods**: redsl.analyzers.semantic_chunker.SemanticChunker._locate_function_data, redsl.analyzers.semantic_chunker.SemanticChunker._gather_chunk_contexts, redsl.analyzers.semantic_chunker.SemanticChunker.chunk_function, redsl.analyzers.semantic_chunker.SemanticChunker._parse_source, redsl.analyzers.semantic_chunker.SemanticChunker._build_chunk, redsl.analyzers.semantic_chunker.SemanticChunker.chunk_file, redsl.analyzers.semantic_chunker.SemanticChunker._find_nodes, redsl.analyzers.semantic_chunker.SemanticChunker._extract_relevant_imports, redsl.analyzers.semantic_chunker.SemanticChunker._extract_class_context, redsl.analyzers.semantic_chunker.SemanticChunker._extract_neighbors
+
 ### redsl.commands.multi_project.MultiProjectReport
 > Zbiorczy raport z analizy wielu projektów.
 - **Methods**: 9
@@ -388,11 +393,6 @@ This is a thin facade that delegates
 Deleguje do ToonAnalyzer (toon), PythonAnalyzer (AST) i PathResolv
 - **Methods**: 8
 - **Key Methods**: redsl.analyzers.analyzer.CodeAnalyzer.__init__, redsl.analyzers.analyzer.CodeAnalyzer.analyze_project, redsl.analyzers.analyzer.CodeAnalyzer.analyze_from_toon_content, redsl.analyzers.analyzer.CodeAnalyzer.resolve_file_path, redsl.analyzers.analyzer.CodeAnalyzer.extract_function_source, redsl.analyzers.analyzer.CodeAnalyzer.find_worst_function, redsl.analyzers.analyzer.CodeAnalyzer.resolve_metrics_paths, redsl.analyzers.analyzer.CodeAnalyzer._ast_cyclomatic_complexity
-
-### redsl.analyzers.semantic_chunker.SemanticChunker
-> Buduje semantyczne chunki kodu dla LLM.
-- **Methods**: 8
-- **Key Methods**: redsl.analyzers.semantic_chunker.SemanticChunker.chunk_function, redsl.analyzers.semantic_chunker.SemanticChunker._parse_source, redsl.analyzers.semantic_chunker.SemanticChunker._build_chunk, redsl.analyzers.semantic_chunker.SemanticChunker.chunk_file, redsl.analyzers.semantic_chunker.SemanticChunker._find_nodes, redsl.analyzers.semantic_chunker.SemanticChunker._extract_relevant_imports, redsl.analyzers.semantic_chunker.SemanticChunker._extract_class_context, redsl.analyzers.semantic_chunker.SemanticChunker._extract_neighbors
 
 ### redsl.dsl.rule_generator.RuleGenerator
 > Generuje nowe reguły DSL z historii refaktoryzacji w pamięci agenta.
@@ -504,13 +504,13 @@ Key functions that process and transform data:
 > Process a single project in the batch.
 - **Output to**: print, print, print, redsl.commands.batch.measure_todo_reduction, print
 
-### redsl.commands.batch_pyqual.runner._format_project_status
-> Format project result status into readable parts.
-- **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
-
 ### redsl.commands.batch_pyqual.reporting._format_summary_verdicts
 > Format verdict and project count lines.
 - **Output to**: None.join
+
+### redsl.commands.batch_pyqual.reporting._format_summary_config_and_gates
+> Format config, gates, and fix lines.
+- **Output to**: lines.append, lines.append, lines.append, None.join, lines.append
 
 ## Behavioral Patterns
 
@@ -569,9 +569,9 @@ Functions exposed as public API (no underscore prefix):
 - `redsl.commands.planfile_bridge.create_ticket` - 18 calls
 - `redsl.commands.doctor_detectors.detect_version_mismatch` - 18 calls
 - `redsl.commands.batch_pyqual.runner.run_pyqual_batch` - 18 calls
-- `redsl.autonomy.scheduler.Scheduler.run` - 18 calls
 - `redsl.autonomy.growth_control.check_module_budget` - 18 calls
 - `redsl.cli.batch.batch_pyqual_run` - 18 calls
+- `redsl.autonomy.scheduler.Scheduler.run` - 18 calls
 - `redsl.dsl.engine.DSLEngine.add_rules_from_yaml` - 18 calls
 
 ## System Interactions
