@@ -1,6 +1,6 @@
 # reDSL Project Scan Report
 
-> Generated: **2026-04-12 11:32**  
+> Generated: **2026-04-12 11:39**  
 > Folder: `/home/tom/github/semcod/redsl`  
 > Projects found: **4** (4 analysed, 0 errors)
 
@@ -10,9 +10,9 @@
 
 | # | Project | Tier | Files | LoC | Avg CC | Max CC | Critical | Tests | Commits/30d |
 |---|---------|------|------:|----:|-------:|-------:|---------:|:-----:|------------:|
-| 1 | `redsl` | 🔴 Critical | 161 | 23,971 | 7.9 | 14 | 15 | ✅ | 66 |
-| 2 | `tests` | 🔴 Critical | 28 | 7,626 | 9.0 | 19 | 8 | ✅ | 66 |
-| 3 | `app` | 🟡 Medium | 1 | 48 | 1.0 | 1 | 0 | ❌ | 66 |
+| 1 | `redsl` | 🔴 Critical | 161 | 23,971 | 7.9 | 14 | 15 | ✅ | 67 |
+| 2 | `tests` | 🔴 Critical | 28 | 7,626 | 9.0 | 19 | 8 | ✅ | 67 |
+| 3 | `app` | 🟡 Medium | 1 | 48 | 1.0 | 1 | 0 | ❌ | 67 |
 | 4 | `test_sample_project` | 🟢 Low | 1 | 32 | 4.0 | 4 | 0 | ❌ | 2 |
 
 ---
@@ -26,7 +26,7 @@
 - **Languages**: Python
 - **Python files**: 161  |  **LoC**: 23,971
 - **Avg CC**: 7.9  |  **Max CC**: 14  |  **Critical functions**: 15
-- **Recent activity**: 66 commits in last 30 days  |  Last commit: 0d ago
+- **Recent activity**: 67 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ✅ yes  |  **Toon files**: ❌ none
 - **Top hotspots** (CC):
   - `analyzers/toon_analyzer.py` — CC 14
@@ -40,7 +40,7 @@
 - **Languages**: Python
 - **Python files**: 28  |  **LoC**: 7,626
 - **Avg CC**: 9.0  |  **Max CC**: 19  |  **Critical functions**: 8
-- **Recent activity**: 66 commits in last 30 days  |  Last commit: 0d ago
+- **Recent activity**: 67 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ✅ yes  |  **Toon files**: ❌ none
 - **Top hotspots** (CC):
   - `test_batch_pyqual.py` — CC 19
@@ -56,7 +56,7 @@
 - **Languages**: Python
 - **Python files**: 1  |  **LoC**: 48
 - **Avg CC**: 1.0  |  **Max CC**: 1  |  **Critical functions**: 0
-- **Recent activity**: 66 commits in last 30 days  |  Last commit: 0d ago
+- **Recent activity**: 67 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ❌ none found  |  **Toon files**: ❌ none
 
 ### 🟢 Low (1 projects)

@@ -39,9 +39,9 @@ LAYERS:
   │ __init__                    29L  1C    0m  CC=0.0    ←0
   │
   validation/                     CC̄=4.4    ←in:13  →out:1
-  │ regix_bridge               317L  0C    8m  CC=9      ←1
+  │ regix_bridge               317L  0C    8m  CC=9      ←2
   │ vallm_bridge               314L  0C    8m  CC=10     ←1
-  │ pyqual_bridge              249L  0C   12m  CC=11     ←2
+  │ pyqual_bridge              249L  0C   12m  CC=11     ←1
   │ sandbox                    224L  3C    9m  CC=11     ←0
   │ __init__                    28L  0C    0m  CC=0.0    ←0
   │
@@ -216,23 +216,23 @@ COUPLING:
                    main                                                                                           3                                             1                                                                                                                                                                                      ──                       
      consciousness_loop                                                                                           1                                             1                                                                                                                                                                                                             ──
   CYCLES: none
-  HUB: autonomy/ (fan-in=13)
+  HUB: analyzers/ (fan-in=26)
   HUB: config/ (fan-in=16)
-  HUB: commands.autonomy_pr/ (fan-in=10)
-  HUB: validation/ (fan-in=13)
-  HUB: commands.autofix/ (fan-in=7)
-  HUB: commands/ (fan-in=8)
   HUB: execution/ (fan-in=14)
   HUB: formatters/ (fan-in=11)
-  HUB: analyzers/ (fan-in=26)
+  HUB: validation/ (fan-in=13)
+  HUB: commands.autonomy_pr/ (fan-in=10)
+  HUB: autonomy/ (fan-in=13)
+  HUB: commands.autofix/ (fan-in=7)
+  HUB: commands/ (fan-in=8)
+  SMELL: api/ fan-out=13 → split needed
+  SMELL: cli/ fan-out=8 → split needed
+  SMELL: execution/ fan-out=11 → split needed
+  SMELL: commands.batch_pyqual/ fan-out=12 → split needed
+  SMELL: refactors/ fan-out=8 → split needed
   SMELL: autonomy/ fan-out=24 → split needed
   SMELL: commands.autofix/ fan-out=10 → split needed
-  SMELL: refactors/ fan-out=8 → split needed
   SMELL: commands/ fan-out=29 → split needed
-  SMELL: execution/ fan-out=11 → split needed
-  SMELL: api/ fan-out=13 → split needed
-  SMELL: commands.batch_pyqual/ fan-out=12 → split needed
-  SMELL: cli/ fan-out=8 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

@@ -306,10 +306,6 @@ Key functions that process and transform data:
 > Format project result status into readable parts.
 - **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
 
-### commands.autofix.runner._format_project_status
-> Format brief status line for a project result.
-- **Output to**: None.join, status_parts.append, status_parts.append, status_parts.append, status_parts.append
-
 ### commands.batch_pyqual.pipeline._validate_config
 > Validate pyqual config.
 - **Output to**: pyqual_bridge.validate_config, print, ctx.result.errors.append, print, print
@@ -323,6 +319,10 @@ Key functions that process and transform data:
 
 This is the main entry point that orchestrates a
 - **Output to**: commands.batch_pyqual.pipeline._init_project_context, commands.batch_pyqual.pipeline._validate_config, commands.batch_pyqual.pipeline._run_analysis_stage, commands.batch_pyqual.pipeline._run_redsl_fix_stage, commands.batch_pyqual.pipeline._run_gates_stage
+
+### commands.autofix.runner._format_project_status
+> Format brief status line for a project result.
+- **Output to**: None.join, status_parts.append, status_parts.append, status_parts.append, status_parts.append
 
 ### commands.autofix.pipeline._process_project
 > Full autofix pipeline for a single project.
@@ -362,8 +362,8 @@ Functions exposed as public API (no underscore prefix):
 - `formatters.batch.format_batch_results` - 19 calls
 - `formatters.batch.format_batch_report_markdown` - 19 calls
 - `refactors.body_restorer.repair_file` - 19 calls
-- `analyzers.redup_bridge.scan_duplicates` - 19 calls
 - `analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content` - 19 calls
+- `analyzers.redup_bridge.scan_duplicates` - 19 calls
 - `cli.logging.setup_logging` - 19 calls
 - `history.HistoryReader.generate_decision_report` - 18 calls
 - `commands.planfile_bridge.create_ticket` - 18 calls
