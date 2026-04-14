@@ -22,16 +22,6 @@ path: /home/tom/github/semcod/domd
 
 domd (Do Markdown Docs) skanuje pliki Markdown w repozytorium, wykrywa bloki kodu z komendami (bash, Python), uruchamia je i sprawdza, czy działają poprawnie. Wynik to automatycznie generowane pliki TODO.md (komendy do naprawienia) i DONE.md (komendy działające poprawnie), plus interaktywny web dashboard.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 2.2.67 |
-| Język | Python |
-| Pliki źródłowe | 37 |
-| Linie kodu | 3 609 |
-| Pliki testowe | 29 |
-
 ## Kluczowe funkcje
 
 domd traktuje dokumentację jako kod testowalny. Jeśli README mówi "uruchom `pip install mypackage`", domd sprawdza, czy ta komenda faktycznie działa. To eliminuje problem nieaktualnej dokumentacji — broken examples są natychmiast wykrywane.

@@ -22,17 +22,6 @@ path: /home/tom/github/semcod/pyqual
 
 pyqual to deklaratywny system quality gates stworzony z myślą o projektach, w których kod jest generowany lub wspomagany przez modele LLM. Zamiast konfigurować osobno ruff, mypy i bandit, definiujesz reguły w jednym pliku YAML, a pyqual uruchamia pętle walidacji z automatycznymi poprawkami.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.1.140 |
-| Język | Python |
-| Pliki źródłowe | 118 |
-| Linie kodu | 18 887 |
-| Pliki testowe | 33 |
-| Ocena dojrzałości | A+ |
-
 ## Kluczowe funkcje
 
 Deklaratywna konfiguracja quality gates pozwala zdefiniować progi akceptacji (np. pokrycie testami ≥80%, zero błędów bandit o severity critical) i uruchomić pętlę: analiza → poprawka → walidacja → powtórz. Proste błędy są naprawiane deterministycznie, a złożone mogą być delegowane do LLM.

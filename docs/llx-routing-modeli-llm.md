@@ -22,17 +22,6 @@ path: /home/tom/github/semcod/llx
 
 llx to inteligentny router modeli LLM, który analizuje metryki kodu (z code2llm) i na ich podstawie decyduje, który model jest optymalny dla danego zadania. Proste poprawki (rename, extract variable) trafiają do taniego modelu lokalnego, a złożone refaktoryzacje (god module split, architektura) do modelu klasy GPT-4 lub Claude Opus.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.1.55 |
-| Język | Python |
-| Pliki źródłowe | 131 |
-| Linie kodu | 22 765 |
-| Pliki testowe | 19 |
-| Ocena dojrzałości | A+ |
-
 ## Kluczowe funkcje
 
 llx jest następcą projektu preLLM i integruje się z litellm, co daje dostęp do dziesiątek providerów LLM (OpenAI, Anthropic, Ollama, OpenRouter). Routing odbywa się na podstawie złożoności cyklomatycznej, fan-out, rozmiaru pliku i typu operacji refaktoryzacji.

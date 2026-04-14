@@ -21,16 +21,6 @@ path: /home/tom/github/semcod/ats-benchmark
 
 ats-benchmark to zestaw benchmarków mierzących wydajność narzędzi automatyzacji — od czasu analizy statycznej, przez throughput LLM, po jakość generowanego kodu. Największy projekt w ekosystemie pod względem danych (85k linii), ponieważ zawiera obszerne zestawy testowe i dane referencyjne.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 1.0.9 |
-| Język | Python |
-| Pliki źródłowe | 57 |
-| Linie kodu | 84 719 |
-| Pliki testowe | 1 |
-
 ## Kluczowe funkcje
 
 ats-benchmark zawiera klasy do mierzenia wyników naprawy kodu przez LLM (RepairResult), przykładową aplikację e-commerce (ProductCatalog, ShoppingCart, PaymentProcessor, OrderService, AnalyticsService) służącą jako realistyczny target benchmarków, oraz infrastrukturę do porównywania modeli i narzędzi.

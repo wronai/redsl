@@ -22,17 +22,6 @@ path: /home/tom/github/semcod/proxym
 
 proxym to inteligentne proxy dla wywołań API modeli LLM. Stoi pomiędzy aplikacją a providerami (OpenAI, Anthropic, Ollama, OpenRouter) i dodaje warstwy optymalizacji: semantyczny cache (identyczne zapytania nie są powtarzane), routing kosztów (tańszy provider dla prostych zadań) i delta context buffers (zamiast wysyłać cały kontekst, wysyła tylko zmienione fragmenty).
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.1.123 |
-| Język | Python |
-| Pliki źródłowe | 94 |
-| Linie kodu | 21 778 |
-| Pliki testowe | 78 |
-| Ocena dojrzałości | A+ |
-
 ## Kluczowe funkcje
 
 proxym obsługuje routing multi-provider, co oznacza, że jedno zapytanie może być automatycznie przekierowane do najtańszego lub najszybszego dostępnego modelu. Semantyczny cache redukuje koszty o 30-50% w typowych scenariuszach refaktoryzacji, gdzie wiele plików wymaga podobnych operacji.

@@ -17,10 +17,6 @@
 
 ---
 
-## 🎯 Priority Tiers
-
-### 🔴 Critical (2 projects)
-
 #### `redsl`
 
 - **Languages**: Python
@@ -49,8 +45,6 @@
   - `test_autonomy.py` — CC 11
   - `test_direct_refactor.py` — CC 11
 
-### 🟠 High (1 projects)
-
 #### `app`
 
 - **Languages**: Python
@@ -58,8 +52,6 @@
 - **Avg CC**: 1.0  |  **Max CC**: 1  |  **Critical functions**: 0
 - **Recent activity**: 73 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ❌ none found  |  **Toon files**: ❌ none
-
-### 🟢 Low (1 projects)
 
 #### `test_sample_project`
 

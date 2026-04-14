@@ -3,9 +3,6 @@
 Demonstracja modułu `redsl.awareness` — wykrywanie wzorców zmian
 w historii projektu (timeline → patterns).
 
-## Uruchomienie
-
-```bash
 # CLI
 redsl example awareness
 redsl example awareness --scenario advanced

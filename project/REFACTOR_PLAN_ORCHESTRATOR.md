@@ -1,5 +1,3 @@
-# Orchestrator.py Split Plan
-
 ## Current State
 - **File**: `redsl/orchestrator.py` (688 lines)
 - **Classes**: 2 (CycleReport, RefactorOrchestrator)
@@ -20,8 +18,6 @@ redsl/orchestrator/
 ├── reflection.py         # Reflection and learning (_reflect_on_cycle, _auto_learn_rules)
 └── utils.py              # Utility methods (_resolve_source_path, _load_source_code)
 ```
-
-## Module Responsibilities
 
 ### 1. `models.py` (30 lines)
 - `CycleReport` dataclass
@@ -59,16 +55,10 @@ redsl/orchestrator/
 - `execute_sandboxed()`, `add_custom_rules()`
 - Maintains backward compatibility
 
-## Import Migration Strategy
-
-### Current imports that need updating:
-```python
 # Current (in other files)
 from redsl.orchestrator import RefactorOrchestrator
 ```
 
-### New imports (backward compatible):
-```python
 # In __init__.py
 from .cycle import CycleExecutor
 from .decision import DecisionExecutor
@@ -88,8 +78,6 @@ class RefactorOrchestrator:
 2. **Testable components** - each module independently testable
 3. **Single responsibility** - each module has clear purpose
 4. **Reduced CC** - each module will have CC < 10
-
-## Migration Steps (Incremental)
 
 ### Phase 1: Create new modules (no behavior change)
 1. Create `orchestrator/` directory
@@ -111,8 +99,6 @@ class RefactorOrchestrator:
 2. **Test coverage** - All 330 existing tests must pass
 3. **Gradual rollout** - Can be done incrementally module by module
 4. **Backup plan** - Can revert by restoring single `orchestrator.py`
-
-## Estimated Effort: 4 hours
 
 ## Impact after completion:
 - Max CC per module: < 10

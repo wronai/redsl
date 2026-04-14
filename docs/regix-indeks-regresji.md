@@ -22,17 +22,6 @@ path: /home/tom/github/semcod/regix
 
 regix (Regression Index) to narzędzie, które porównuje metryki jakości kodu między dwoma punktami w historii git — np. między ostatnim release'em a bieżącym stanem brancha. Wykrywa pogorszenie złożoności cyklomatycznej, wzrost duplikacji, nowe god modules i inne sygnały regresji.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.1.11 |
-| Język | Python |
-| Pliki źródłowe | 46 |
-| Linie kodu | 6 538 |
-| Pliki testowe | 22 |
-| Ocena dojrzałości | A+ |
-
 ## Kluczowe funkcje
 
 regix generuje raport delta: metryki przed vs. po, z wyraźnym wskazaniem, które pliki i funkcje pogorszyły się. Działa z sandboxem Docker — klonuje obie wersje, analizuje każdą niezależnie i porównuje wyniki.

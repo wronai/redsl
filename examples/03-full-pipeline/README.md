@@ -19,9 +19,6 @@ REMEMBER  → Store outcomes in agent memory
 - Python 3.10+
 - ReDSL installed with all dependencies
 
-## Running the Example
-
-```bash
 # With OpenAI (default: gpt-5.4-mini)
 export OPENAI_API_KEY=your_key_here
 cd examples/03-full-pipeline

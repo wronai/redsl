@@ -22,16 +22,6 @@ path: /home/tom/github/semcod/pfix
 
 pfix to narzędzie self-healing dla Pythona — przechwytuje błędy runtime (exceptions, import errors, dependency conflicts), analizuje kontekst błędu i automatycznie generuje poprawkę za pomocą LLM. Obsługuje również naprawę zależności (brakujące pakiety, niekompatybilne wersje) i integruje się z MCP (Model Context Protocol).
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.1.72 |
-| Język | Python |
-| Pliki źródłowe | 88 |
-| Linie kodu | 9 160 |
-| Pliki testowe | 16 |
-
 ## Kluczowe funkcje
 
 pfix oferuje trzy tryby: `pfix explain last` (wyjaśnia ostatni błąd z logów), `pfix explain TypeError` (generuje edukacyjny content o typie wyjątku) i automatyczny fix z fallback chain (próbuje kolejnych modeli LLM, aż znajdzie działającą poprawkę).

@@ -5,8 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
 ### Fixed
 - **Analyzer**: Fixed false positive unused import detection for submodule imports like `import urllib.request` used as `urllib.request.urlopen()` — now correctly detects usage via attribute chain
 - **Guard Refactorer**: Fixed `fix_module_execution_block` wrapping FastAPI/Flask configuration calls (e.g., `app.add_middleware()`, `app.include_router()`) in `__main__` guard — now skips config methods
@@ -20,13 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update README.md with the current 2026-04-09 analysis snapshot and hotspot priorities
 - Update README_EN.md with the current 2026-04-09 analysis snapshot and hotspot priorities
 - Update TODO.md with the current backlog priorities
-
-## [1.2.27] - 2026-04-12
-
-### Docs
-- Update README.md
-
-## [1.2.26] - 2026-04-12
 
 ### Docs
 - Update README.md
@@ -43,8 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/evolution.toon.yaml
 - Update project/index.html
 - Update project/map.toon.yaml
-
-## [1.2.25] - 2026-04-11
 
 ### Docs
 - Update README.md
@@ -76,11 +65,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/flow.mmd
 - ... and 19 more files
 
-## [1.2.24] - 2026-04-09
-
-### Docs
-- Update README.md
-
 ### Test
 - Update tests/test_direct_bugs_and_bridges.py
 
@@ -88,8 +72,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update redsl/project/analysis.toon.yaml
 - Update redsl/project/batch_1/analysis.toon.yaml
 - Update redsl/project/root/analysis.toon.yaml
-
-## [1.2.23] - 2026-04-09
 
 ### Docs
 - Update README.md
@@ -111,8 +93,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/flow.png
 - Update project/index.html
 - ... and 9 more files
-
-## [1.2.22] - 2026-04-09
 
 ### Docs
 - Update CHANGELOG.md
@@ -146,8 +126,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/04-memory-learning/advanced.yaml
 - ... and 51 more files
 
-## [1.2.21] - 2026-04-09
-
 ### Docs
 - Update CHANGELOG.md
 - Update README.md
@@ -164,8 +142,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update redsl/project/batch_1/analysis.toon.yaml
 - Update redsl/project/root/analysis.toon.yaml
 - Update requirements.txt
-
-## [1.2.20] - 2026-04-09
 
 ### Added
 - **Markdown Report Generation** - Automatic Markdown reports for refactor and batch commands:
@@ -193,8 +169,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Other
 - Update project analysis artifacts (toon.yaml, diagrams)
 
-## [1.2.19] - 2026-04-08
-
 ### Docs
 - Update README.md
 - Update redsl/project/context.md
@@ -203,8 +177,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update redsl/project/analysis.toon.yaml
 - Update redsl/project/batch_1/analysis.toon.yaml
 - Update redsl/project/root/analysis.toon.yaml
-
-## [1.2.18] - 2026-04-08
 
 ### Docs
 - Update README.md
@@ -228,8 +200,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update redsl/project/analysis.toon.yaml
 - Update redsl/project/batch_1/analysis.toon.yaml
 - ... and 3 more files
-
-## [1.2.17] - 2026-04-08
 
 ### Docs
 - Update README.md
@@ -255,16 +225,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/index.html
 - ... and 16 more files
 
-## [1.2.16] - 2026-04-08
-
-### Docs
-- Update README.md
-
 ### Other
 - Update redsl/analyzers/radon_analyzer.py
 - Update redsl/project/analysis.toon.yaml
-
-## [1.2.15] - 2026-04-08
 
 ### Docs
 - Update README.md
@@ -282,8 +245,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update redsl/commands/doctor.py
 - Update redsl/project/analysis.toon.yaml
 
-## [1.2.14] - 2026-04-08
-
 ### Docs
 - Update README.md
 - Update TODO.md
@@ -295,21 +256,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Test
 - Update tests/test_integration.py
-
-### Other
-- Update project/analysis.toon.yaml
-- Update project/calls.mmd
-- Update project/calls.png
-- Update project/compact_flow.mmd
-- Update project/compact_flow.png
-- Update project/duplication.toon.yaml
-- Update project/evolution.toon.yaml
-- Update project/flow.mmd
-- Update project/flow.png
-- Update project/index.html
-- ... and 9 more files
-
-## [1.2.13] - 2026-04-08
 
 ### Docs
 - Update README.md
@@ -330,11 +276,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update redsl/llm/__init__.py
 - Update redsl/project/analysis.toon.yaml
 
-## [1.2.12] - 2026-04-08
-
-### Docs
-- Update README.md
-
 ### Test
 - Update tests/test_cli_refactor.py
 
@@ -347,8 +288,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update redsl/execution/validation.py
 - Update redsl/orchestrator.py
 - Update redsl/project/analysis.toon.yaml
-
-## [1.2.11] - 2026-04-08
 
 ### Docs
 - Update README.md
@@ -382,8 +321,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/flow.png
 - ... and 46 more files
 
-## [1.2.10] - 2026-04-08
-
 ### Docs
 - Update README.md
 - Update README_EN.md
@@ -406,8 +343,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/flow.png
 - ... and 6 more files
 
-## [1.2.9] - 2026-04-08
-
 ### Docs
 - Update README.md
 - Update docs/README.md
@@ -418,21 +353,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Test
 - Update tests/test_direct_bugs_and_bridges.py
-
-### Other
-- Update project/analysis.toon.yaml
-- Update project/calls.mmd
-- Update project/calls.png
-- Update project/compact_flow.mmd
-- Update project/compact_flow.png
-- Update project/duplication.toon.yaml
-- Update project/evolution.toon.yaml
-- Update project/flow.mmd
-- Update project/flow.png
-- Update project/index.html
-- ... and 10 more files
-
-## [1.2.8] - 2026-04-08
 
 ### Added
 - **DirectRefactorEngine** - Silnik bezpośredniej refaktoryzacji bez LLM:
@@ -466,8 +386,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Test
 - 328 testów przechodzi (dodano testy dla bridges i DirectRefactorEngine)
 
-## [1.2.7] - 2026-04-07
-
 ### Docs
 - Update README.md
 - Update redsl/project/context.md
@@ -475,8 +393,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Other
 - Update redsl/project/analysis.toon.yaml
 - Update redsl/validation/regix_bridge.py
-
-## [1.2.6] - 2026-04-07
 
 ### Docs
 - Update README.md
@@ -496,21 +412,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update tests/test_pipeline.py
 - Update tests/test_tier3.py
 
-### Other
-- Update project/analysis.toon.yaml
-- Update project/calls.mmd
-- Update project/calls.png
-- Update project/compact_flow.mmd
-- Update project/compact_flow.png
-- Update project/duplication.toon.yaml
-- Update project/evolution.toon.yaml
-- Update project/flow.mmd
-- Update project/flow.png
-- Update project/index.html
-- ... and 25 more files
-
-## [1.2.5] - 2026-04-07
-
 ### Docs
 - Update README.md
 - Update docs/README.md
@@ -520,21 +421,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Test
 - Update tests/test_bootstrap.py
 - Update tests/test_validation_and_diff.py
-
-### Other
-- Update project/analysis.toon.yaml
-- Update project/calls.mmd
-- Update project/calls.png
-- Update project/compact_flow.mmd
-- Update project/compact_flow.png
-- Update project/duplication.toon.yaml
-- Update project/evolution.toon.yaml
-- Update project/flow.mmd
-- Update project/flow.png
-- Update project/index.html
-- ... and 20 more files
-
-## [1.2.4] - 2026-04-07
 
 ### Docs
 - Update README.md
@@ -553,15 +439,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update redsl/analyzers/parsers/__init__.py
 - ... and 18 more files
 
-## [1.2.3] - 2026-04-07
-
-### Docs
-- Update README.md
-
 ### Other
 - Update project/validation.toon.yaml
-
-## [1.2.2] - 2026-04-07
 
 ### Docs
 - Update README.md
@@ -577,8 +456,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/index.html
 - Update project/map.toon.yaml
 - Update project/project.toon.yaml
-
-## [1.2.1] - 2026-04-07
 
 ### Docs
 - Update CHANGELOG.md
@@ -614,8 +491,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update archive/legacy_scripts/debug_decisions.py
 - ... and 52 more files
 
-## [1.2.0] - 2026-04-07
-
 ### Added
 - **YAML/JSON Output Support**: All CLI commands now support `--format yaml|json|text` option
 - **REST API**: Complete FastAPI-based REST API mirroring CLI commands
@@ -639,8 +514,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Import Issues**: Added python-dotenv to dependencies
 - **Configuration**: Improved environment variable handling
-
-## [1.1.0] - 2026-04-07
 
 ### Added
 - **CLI Interface**: Complete command-line interface with Click
@@ -674,11 +547,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 - Legacy scripts moved to `archive/legacy_scripts/`
 
-## [1.0.7] - 2026-04-07
-
-### Docs
-- Update README.md
-
 ### Test
 - Update tests/test_integration.py
 
@@ -690,20 +558,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update apply_semcod_refactor.py
 - Update batch_refactor_semcod.py
 
-## [1.0.6] - 2026-04-07
-
-### Docs
-- Update README.md
-
 ### Other
 - Update app/__pycache__/__init__.cpython-313.pyc
 - Update app/analyzers/__pycache__/__init__.cpython-313.pyc
 - Update app/dsl/__pycache__/engine.cpython-313.pyc
-
-## [1.0.5] - 2026-04-07
-
-### Docs
-- Update README.md
 
 ### Test
 - Update tests/test_integration.py
@@ -712,16 +570,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update app/__pycache__/__init__.cpython-313.pyc
 - Update app/analyzers/__pycache__/__init__.cpython-313.pyc
 
-## [1.0.4] - 2026-04-07
-
-### Docs
-- Update README.md
-
 ### Other
 - Update app/__pycache__/__init__.cpython-313.pyc
 - Update app/analyzers/__pycache__/__init__.cpython-313.pyc
-
-## [1.0.3] - 2026-04-07
 
 ### Docs
 - Update README.md
@@ -730,8 +581,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Other
 - Update app/__pycache__/__init__.cpython-313.pyc
 - Update app/analyzers/__pycache__/__init__.cpython-313.pyc
-
-## [1.0.2] - 2026-04-07
 
 ### Docs
 - Update README.md
@@ -740,11 +589,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Other
 - Update .gitignore
 - Update app/__pycache__/__init__.cpython-313.pyc
-
-## [1.0.1] - 2026-04-07
-
-### Docs
-- Update README.md
 
 ### Other
 - Update VERSION
@@ -755,26 +599,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/04-memory-learning/main.py
 - Update examples/05-api-integration/main.py
 
-## [1.0.3] - 2026-04-07
-
-### Docs
-- Update README.md
-
 ### Other
 - Update .gitignore
 - Update app/__pycache__/__init__.cpython-313.pyc
 - Update project_toon.yaml
 
-## [1.0.2] - 2026-04-07
-
 ### Other
 - Update .idea/redsl.iml
 - Update app/__pycache__/__init__.cpython-313.pyc
-
-## [1.0.1] - 2026-04-07
-
-### Docs
-- Update README.md
 
 ### Test
 - Update tests/__init__.py

@@ -1,5 +1,3 @@
-# System Architecture Analysis
-
 ## Overview
 
 - **Project**: /home/tom/github/semcod/redsl/redsl
@@ -10,8 +8,6 @@
 - **Total Classes**: 123
 - **Modules**: 212
 - **Entry Points**: 0
-
-## Architecture by Module
 
 ### commands.batch_pyqual.reporting
 - **Functions**: 24
@@ -114,21 +110,6 @@ Main execution flows into the system:
 
 Key execution flows identified:
 
-## Key Classes
-
-### awareness.git_timeline.GitTimelineAnalyzer
-> Build a historical metric timeline from git commits — facade.
-
-This is a thin facade that delegates 
-- **Methods**: 23
-- **Key Methods**: awareness.git_timeline.GitTimelineAnalyzer.__init__, awareness.git_timeline.GitTimelineAnalyzer.build_timeline, awareness.git_timeline.GitTimelineAnalyzer.analyze_trends, awareness.git_timeline.GitTimelineAnalyzer.predict_future_state, awareness.git_timeline.GitTimelineAnalyzer.find_degradation_sources, awareness.git_timeline.GitTimelineAnalyzer.summarize, awareness.git_timeline.GitTimelineAnalyzer._resolve_repo_root, awareness.git_timeline.GitTimelineAnalyzer._project_rel_path, awareness.git_timeline.GitTimelineAnalyzer._git_log, awareness.git_timeline.GitTimelineAnalyzer._snapshot_for_commit
-
-### analyzers.quality_visitor.CodeQualityVisitor
-> Detects common code quality issues in Python AST.
-- **Methods**: 18
-- **Key Methods**: analyzers.quality_visitor.CodeQualityVisitor.__init__, analyzers.quality_visitor.CodeQualityVisitor.visit_Import, analyzers.quality_visitor.CodeQualityVisitor.visit_ImportFrom, analyzers.quality_visitor.CodeQualityVisitor.visit_Name, analyzers.quality_visitor.CodeQualityVisitor.visit_Assign, analyzers.quality_visitor.CodeQualityVisitor.visit_Attribute, analyzers.quality_visitor.CodeQualityVisitor._get_root_name, analyzers.quality_visitor.CodeQualityVisitor.visit_Constant, analyzers.quality_visitor.CodeQualityVisitor._count_untyped_params, analyzers.quality_visitor.CodeQualityVisitor.visit_FunctionDef
-- **Inherits**: ast.NodeVisitor
-
 ### analyzers.parsers.project_parser.ProjectParser
 > Parser sekcji project_toon.
 - **Methods**: 18
@@ -204,13 +185,6 @@ This is a thin facade that delegates
 - f
 - **Methods**: 8
 - **Key Methods**: llm.LLMLayer.__init__, llm.LLMLayer._load_provider_key, llm.LLMLayer._resolve_provider_key, llm.LLMLayer._build_completion_kwargs, llm.LLMLayer.call, llm.LLMLayer.call_json, llm.LLMLayer.reflect, llm.LLMLayer.total_calls
-
-### analyzers.analyzer.CodeAnalyzer
-> Główny analizator kodu — fasada.
-
-Deleguje do ToonAnalyzer (toon), PythonAnalyzer (AST) i PathResolv
-- **Methods**: 8
-- **Key Methods**: analyzers.analyzer.CodeAnalyzer.__init__, analyzers.analyzer.CodeAnalyzer.analyze_project, analyzers.analyzer.CodeAnalyzer.analyze_from_toon_content, analyzers.analyzer.CodeAnalyzer.resolve_file_path, analyzers.analyzer.CodeAnalyzer.extract_function_source, analyzers.analyzer.CodeAnalyzer.find_worst_function, analyzers.analyzer.CodeAnalyzer.resolve_metrics_paths, analyzers.analyzer.CodeAnalyzer._ast_cyclomatic_complexity
 
 ### dsl.rule_generator.RuleGenerator
 > Generuje nowe reguły DSL z historii refaktoryzacji w pamięci agenta.
@@ -388,14 +362,6 @@ How components interact:
 ```mermaid
 graph TD
 ```
-
-## Reverse Engineering Guidelines
-
-1. **Entry Points**: Start analysis from the entry points listed above
-2. **Core Logic**: Focus on classes with many methods
-3. **Data Flow**: Follow data transformation functions
-4. **Process Flows**: Use the flow diagrams for execution paths
-5. **API Surface**: Public API functions reveal the interface
 
 ## Context for LLM
 

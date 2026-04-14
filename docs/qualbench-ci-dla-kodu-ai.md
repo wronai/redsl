@@ -22,16 +22,6 @@ path: /home/tom/github/semcod/qualbench
 
 qualbench zmienia sposób oceny kodu generowanego przez AI. Standardowe benchmarki (HumanEval, MBPP) sprawdzają, czy kod działa. qualbench idzie dalej — mierzy, czy kod jest gotowy do produkcji: czy ma testy, czy jest czytelny, czy spełnia quality gates, czy nie wprowadza regresji.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.3.0 |
-| Język | Python |
-| Pliki źródłowe | 25 |
-| Linie kodu | 4 276 |
-| Pliki testowe | 3 |
-
 ## Kluczowe funkcje
 
 qualbench ocenia kod w wielu wymiarach: poprawność (czy działa?), jakość (CC, duplikacje, code smells), testowalność (czy ma testy? jaki coverage?), dokumentacja (docstringi, komentarze) i bezpieczeństwo (bandit scan). Wynik to score produkcyjnej gotowości — od 0% do 100%.

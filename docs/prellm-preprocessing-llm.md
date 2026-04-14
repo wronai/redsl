@@ -22,16 +22,6 @@ path: /home/tom/github/semcod/prellm
 
 preLLM implementuje wzorzec small-then-large: zapytanie najpierw trafia do małego, taniego modelu (np. Qwen 3B przez Ollama), który je klasyfikuje, dekompozuje na podzadania i wzbogaca kontekstem — a dopiero potem przetworzone zapytanie trafia do dużego modelu (GPT-4, Claude). Efekt to niższe koszty i wyższa jakość odpowiedzi.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.4.25 |
-| Język | Python |
-| Pliki źródłowe | 108 |
-| Linie kodu | 16 828 |
-| Pliki testowe | 32 |
-
 ## Kluczowe funkcje
 
 API jest maksymalnie proste — jedna funkcja `preprocess_and_execute()` z konfigurowalnymi strategiami (classify, structure, enrich). preLLM wspiera reguły domenowe (np. wykrywanie destruktywnych operacji na bazie danych), konfigurację per-domena (DevOps, coding, business, embedded) i fallback chain dla modeli.

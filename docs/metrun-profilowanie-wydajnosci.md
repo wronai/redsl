@@ -22,17 +22,6 @@ path: /home/tom/github/semcod/metrun
 
 metrun (Execution Intelligence Tool) to narzędzie do profilowania wydajności kodu Python. Zawiera bottleneck engine — algorytm automatycznie identyfikujący najwolniejsze ścieżki wykonania — oraz generator raportów flamegraph, które wizualizują, gdzie program spędza najwięcej czasu.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.1.12 |
-| Język | Python |
-| Pliki źródłowe | 39 |
-| Linie kodu | 4 092 |
-| Pliki testowe | 19 |
-| Ocena dojrzałości | A |
-
 ## Kluczowe funkcje
 
 Bottleneck engine analizuje profil wykonania i generuje czytelny raport z top 10 wąskich gardeł, wraz z sugestiami optymalizacji. Raporty flamegraph mogą być eksportowane do HTML lub SVG, co ułatwia ich udostępnianie w zespole.

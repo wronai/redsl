@@ -22,16 +22,6 @@ path: /home/tom/github/semcod/goal
 
 goal to narzędzie do automatyzacji operacji git, które analizuje zmiany w kodzie i generuje inteligentne, konwencjonalne commity (conventional commits). Zamiast pisać ręcznie "fix: naprawiono bug w parsowaniu", goal analizuje diff, rozumie kontekst zmian i sam generuje precyzyjny komunikat.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 2.1.177 |
-| Język | Python |
-| Pliki źródłowe | 138 |
-| Linie kodu | 24 623 |
-| Pliki testowe | 21 |
-
 ## Kluczowe funkcje
 
 goal obsługuje pełny workflow: od analizy zmian, przez generowanie commitów z użyciem LLM, po automatyczne zarządzanie wersjami i changelogami. Wspiera interaktywny tryb release'ów, gdzie developer wybiera typ wersji (patch/minor/major), a goal automatycznie aktualizuje wersje, tworzy tagi i generuje changelog.

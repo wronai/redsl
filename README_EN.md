@@ -33,11 +33,6 @@ Based on the 2026-04-09 `code2llm` analysis:
 pip install redsl
 ```
 
-## Quick Start
-
-### Basic CLI Usage
-
-```bash
 # Refactor a single project (dry run)
 redsl refactor ./my-project --max-actions 5 --dry-run
 
@@ -51,9 +46,6 @@ redsl refactor ./my-project --format yaml
 redsl refactor ./my-project --format json
 ```
 
-### Batch Processing
-
-```bash
 # Process semcod projects with LLM
 redsl batch semcod /path/to/semcod --max-actions 10
 
@@ -71,9 +63,6 @@ Every `refactor` and `batch` run also writes a Markdown report next to the proje
 - `redsl_batch_semcod_report.md` — batch summary for `batch semcod`
 - `redsl_batch_hybrid_report.md` — batch summary for `batch hybrid`
 
-### Python Code Quality Analysis
-
-```bash
 # Analyze code quality
 redsl pyqual analyze ./my-project
 
@@ -87,9 +76,6 @@ redsl pyqual analyze ./my-project --format json
 redsl pyqual fix ./my-project
 ```
 
-### Debugging
-
-```bash
 # Check configuration
 redsl debug config --show-env
 
@@ -97,11 +83,6 @@ redsl debug config --show-env
 redsl debug decisions ./my-project --limit 20
 ```
 
-## Advanced Usage
-
-### Using with CI/CD
-
-```yaml
 # GitHub Actions example
 - name: Run reDSL analysis
   run: |
@@ -114,9 +95,6 @@ redsl debug decisions ./my-project --limit 20
     path: refactor-plan.yaml
 ```
 
-### Integration with Other Tools
-
-```bash
 # Use with jq for JSON processing
 redsl refactor ./ --format json | jq '.refactoring_plan.decisions[] | select(.score > 1.0)'
 
@@ -140,8 +118,6 @@ REFACTOR_DRY_RUN=false
 REFACTOR_MAX_ACTIONS=20
 REFACTOR_REFLECTION_ROUNDS=2
 ```
-
-## Available Refactoring Actions
 
 ### Simple Actions (no LLM)
 - `REMOVE_UNUSED_IMPORTS` - Remove unused imports
@@ -189,8 +165,6 @@ uvicorn redsl.api:app --reload --host 0.0.0.0 --port 8000
 redsl api --host 0.0.0.0 --port 8000
 ```
 
-### API Endpoints
-
 #### Refactor a Project
 ```bash
 curl -X POST "http://localhost:8000/refactor" \
@@ -203,8 +177,6 @@ curl -X POST "http://localhost:8000/refactor" \
   }'
 ```
 
-#### Batch Processing
-```bash
 # Batch semcod processing
 curl -X POST "http://localhost:8000/batch/semcod" \
   -H "Content-Type: application/json" \
@@ -223,8 +195,6 @@ curl -X POST "http://localhost:8000/batch/hybrid" \
   }'
 ```
 
-#### Debug Endpoints
-```bash
 # Get configuration
 curl "http://localhost:8000/debug/config?show_env=true"
 
@@ -232,8 +202,6 @@ curl "http://localhost:8000/debug/config?show_env=true"
 curl "http://localhost:8000/debug/decisions?project_path=./my-project&limit=10"
 ```
 
-#### Python Quality Analysis
-```bash
 # Analyze code quality
 curl -X POST "http://localhost:8000/pyqual/analyze" \
   -H "Content-Type: application/json" \
@@ -298,6 +266,3 @@ Environment variables:
 | `examples/03-full-pipeline/` | Full cycle: analyze → decide → refactor → reflect |
 | `examples/04-memory-learning/` | Memory system: episodic, semantic, procedural |
 
-## License
-
-Apache License 2.0

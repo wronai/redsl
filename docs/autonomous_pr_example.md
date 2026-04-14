@@ -8,8 +8,6 @@ This document demonstrates how ReDSL can automatically analyze a repository, sug
 **Branch**: `redsl-autonomous-refactor`  
 **PR**: https://github.com/semcod/vallm/pull/new/redsl-autonomous-refactor
 
-## Workflow
-
 ### 1. Analysis
 
 ReDSL analyzed the vallm repository and identified 3 refactoring opportunities:
@@ -126,9 +124,6 @@ git checkout -b redsl-autonomous-refactor
 
 # 3. Run reDSL analysis
 redsl refactor . --max-actions 3 --dry-run --format text
-
-# 4. Apply the suggested fix manually
-# (Edit the file as shown above)
 
 # 5. Commit the change
 git add examples/11_claude_code_autonomous/claude_autonomous_demo.py

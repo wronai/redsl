@@ -22,16 +22,6 @@ path: /home/tom/github/semcod/pactfix
 
 pactfix to analizator skryptów Bash, który integruje ShellCheck z automatycznym naprawianiem błędów. Zamiast ręcznie poprawiać każde ostrzeżenie ShellCheck, pactfix aplikuje poprawki automatycznie — od brakujących cudzysłowów po niebezpieczne wzorce (np. `eval`, unquoted variables).
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 1.0.5 |
-| Język | Python |
-| Pliki źródłowe | 33 |
-| Linie kodu | 4 280 |
-| Pliki testowe | 8 |
-
 ## Kluczowe funkcje
 
 pactfix działa w trybie real-time — monitoruje zmiany w skryptach i natychmiast zgłasza problemy. Auto-fix obsługuje najpopularniejsze kategorie błędów ShellCheck (quoting, variable expansion, deprecated syntax). Narzędzie generuje diff z naniesionymi poprawkami do review.

@@ -22,17 +22,6 @@ path: /home/tom/github/semcod/code2llm
 
 code2llm to wysokowydajny silnik analizy statycznej kodu Python, który ekstrahuje strukturę programu — grafy przepływu sterowania (CFG), grafy przepływu danych (DFG) i grafy wywołań (call graphs) — i zapisuje je w zoptymalizowanym formacie TOON. Ten format jest zaprojektowany tak, aby modele językowe mogły efektywnie przetwarzać metryki kodu bez konieczności parsowania surowych plików źródłowych.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.5.103 |
-| Język | Python |
-| Pliki źródłowe | 137 |
-| Linie kodu | 25 223 |
-| Pliki testowe | 33 |
-| Ocena dojrzałości | A |
-
 ## Kluczowe funkcje
 
 code2llm analizuje repozytorium i generuje plik `toon.yaml` zawierający metryki takie jak średnia złożoność cyklomatyczna (CC̄), liczba funkcji, klas i modułów. Analiza 20 tys. linii kodu trwa około 6 sekund — algorytmicznie, bez wywoływania modeli LLM.

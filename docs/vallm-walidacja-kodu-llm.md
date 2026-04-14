@@ -22,17 +22,6 @@ path: /home/tom/github/semcod/vallm
 
 vallm to zestaw narzędzi do walidacji kodu, który został wygenerowany przez modele językowe. Zamiast ślepo akceptować output z GPT-4 czy Claude, vallm przepuszcza go przez serię testów: parsowanie AST, analizę statyczną, sprawdzenie typów i automatyczny code review. Dopiero po przejściu wszystkich testów kod jest oznaczany jako gotowy do merge'a.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.1.71 |
-| Język | Python |
-| Pliki źródłowe | 69 |
-| Linie kodu | 9 550 |
-| Pliki testowe | 31 |
-| Ocena dojrzałości | A+ |
-
 ## Kluczowe funkcje
 
 vallm uruchamia walidację w trybie batch — może sprawdzić dziesiątki plików równolegle. Wynik to raport z liczbą testów passed/warnings/errors i szczegółowymi komunikatami dla każdego problemu.

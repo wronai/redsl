@@ -22,16 +22,6 @@ path: /home/tom/github/semcod/costs
 
 cost (costs) to narzędzie CLI, które analizuje historię commitów w repozytorium git i oblicza koszty użycia modeli AI. Dla każdego commitu, który był wspomagany przez LLM, cost oblicza koszt na podstawie modelu, liczby tokenów i cennika providera. Wynik to raport z łącznym kosztem AI i porównaniem z kosztem czasu developera.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.1.48 |
-| Język | Shell / Python |
-| Pliki źródłowe | 17 |
-| Linie kodu | 1 478 |
-| Pliki testowe | 1 |
-
 ## Kluczowe funkcje
 
 cost oferuje automatyczne generowanie badge'ów (np. "AI Cost: $7.50", "Human Time: 16.8h"), integrację z pre-commit hookami (badge aktualizuje się automatycznie przy każdym commit), raporty Markdown/HTML i integrację z GitHub Actions.

@@ -1,5 +1,3 @@
-# ReDSL
-
 ## AI Cost Tracking
 
 ![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-yellow) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fopenai%2Fgpt-5-mini-lightgrey)
@@ -48,12 +46,6 @@ Na podstawie analizy `code2llm` z 2026-04-09:
 - 🚀 **Skalowalność** - Przetwarzanie wielu projektów (semcod) jednocześnie
 - 🐳 **Sandbox** - Bezpieczne testowanie refaktoryzacji w Docker
 
-## Instalacja
-
-```bash
-# Z PyPI (gdy dostępne)
-pip install redsl
-
 # Ze źródeł
 git clone https://github.com/wronai/redsl
 cd redsl
@@ -66,11 +58,6 @@ pip install -e .
 - Opcjonalnie: Docker (dla sandbox testing)
 - Opcjonalnie: Narzędzia semcod ecosystem (code2llm, regix, pyqual, planfile)
 
-## Szybki start
-
-### Podstawowe użycie CLI
-
-```bash
 # Refaktoryzacja pojedynczego projektu (dry-run)
 redsl refactor ./my-project --max-actions 5 --dry-run
 
@@ -87,9 +74,6 @@ redsl pyqual analyze ./my-project --format yaml
 redsl pyqual fix ./my-project
 ```
 
-### Przetwarzanie wsadowe (semcod ecosystem)
-
-```bash
 # Hybrydowa refaktoryzacja (bez LLM) - szybka
 redsl batch hybrid /path/to/semcod --max-changes 50
 
@@ -107,9 +91,6 @@ Każde uruchomienie `refactor` oraz `batch` zapisuje też raport Markdown obok p
 - `redsl_batch_semcod_report.md` — raport zbiorczy dla `batch semcod`
 - `redsl_batch_hybrid_report.md` — raport zbiorczy dla `batch hybrid`
 
-### Debugowanie i diagnostyka
-
-```bash
 # Sprawdź konfigurację i zmienne środowiskowe
 redsl debug config --show-env
 
@@ -138,9 +119,6 @@ redsl cost ./my-project --max-actions 10
 | `examples/09-pr-bot/` | PR Bot z metrykami delta | [Przejdź](./examples/09-pr-bot/) |
 | `examples/10-badge/` | Generator badge'i jakości | [Przejdź](./examples/10-badge/) |
 
-### Szybkie uruchomienie przykładu
-
-```bash
 # Uruchomienie przykładu przez CLI
 redsl example 01-basic-analysis
 
@@ -152,9 +130,6 @@ python examples/01-basic-analysis/main.py
 
 ReDSL udostępnia REST API (FastAPI) do programatycznego dostępu do wszystkich funkcji:
 
-### Uruchomienie serwera
-
-```bash
 # Wbudowany serwer (uvicorn)
 redsl server --host 0.0.0.0 --port 8000
 
@@ -177,9 +152,6 @@ python -m redsl.server
 | `/examples` | GET | Lista dostępnych przykładów |
 | `/examples/{name}/yaml` | GET | Surowe dane YAML scenariusza |
 
-### Przykłady użycia
-
-```bash
 # Health check
 curl http://localhost:8000/health
 
@@ -239,8 +211,6 @@ Dokumentacja interaktywna (Swagger UI) dostępna pod `http://localhost:8000/docs
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Dostępne akcje refaktoryzacji
-
 ### Proste akcje (bez LLM)
 - `REMOVE_UNUSED_IMPORTS` - Usuwanie nieużywanych importów
 - `FIX_MODULE_EXECUTION_BLOCK` - Poprawa bloków wykonania modułu
@@ -255,8 +225,6 @@ Dokumentacja interaktywna (Swagger UI) dostępna pod `http://localhost:8000/docs
 - `REDUCE_COMPLEXITY` - Redukcja złożoności cyklomatycznej
 - `SIMPLIFY_CONDITIONALS` - Upraszczanie warunków
 - `DEDUPLICATE` - Usuwanie duplikacji kodu
-
-## Testy
 
 ### Szybki smoke test
 
@@ -278,12 +246,6 @@ PY
 python3 -m redsl analyze /tmp/redsl-smoke
 python3 -m redsl refactor /tmp/redsl-smoke --dry-run --max-actions 5
 ```
-
-### Testy automatyczne
-
-```bash
-# Wszystkie testy (fast + e2e + integration)
-pytest
 
 # Tylko szybkie testy (< 5s każdy)
 pytest -m 'not slow'
@@ -316,11 +278,6 @@ ReDSL integruje się z ekosystemem semcod dla wzmocnionej analizy:
 | `redup` | `redup_bridge.py` | Detekcja duplikacji kodu (`redup==0.4.18`) |
 | `llx` | `llx_router.py` | Inteligentny routing modeli LLM |
 
-## Konfiguracja
-
-### Plik `.env` (zmienne środowiskowe)
-
-```bash
 # Klucz API dla LLM (wymagany dla akcji z LLM)
 OPENROUTER_API_KEY (set in your environment)
 

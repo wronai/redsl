@@ -2,8 +2,6 @@
 
 This example demonstrates the three-layer memory system used by the ReDSL agent.
 
-## Memory Layers
-
 ### 1. Episodic Memory
 Stores the history of actions taken by the agent:
 - What action was performed

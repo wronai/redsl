@@ -22,18 +22,6 @@ path: /home/tom/github/semcod/planfile
 
 planfile to platforma automatyzacji SDLC (Software Development Life Cycle), która pozwala definiować strategie projektowe i sprinty w plikach YAML, a następnie automatycznie synchronizować je z systemami ticketowymi (GitHub Issues, Jira, GitLab) i pipeline'ami CI/CD.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.1.52 |
-| Język | Python |
-| Pliki źródłowe | 99 |
-| Linie kodu | 12 627 |
-| Pliki testowe | 17 |
-| Koszt LLM | $7.50 (53 commity) |
-| Czas developerski | ~16.8h |
-
 ## Kluczowe funkcje
 
 planfile oferuje strategiczne modelowanie projektów (YAML), automatyczną pętlę CI/CD (test → ticket → fix → retest), integrację z wieloma backendami (GitHub, Jira, GitLab, generic HTTP), LLM-powered auto-fix i generowanie strategii z AI, a także REST API (FastAPI) i CLI.

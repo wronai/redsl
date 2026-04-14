@@ -22,16 +22,6 @@ path: /home/tom/github/semcod/nfo
 
 nfo to automatyczny system logowania, który dodaje observability do funkcji Python za pomocą dekoratorów. Zamiast ręcznie dodawać `logger.info()` do każdej funkcji, nfo automatycznie śledzi wywołania, argumenty, czas wykonania i wyniki — zapisując dane do wybranego sinku.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.2.20 |
-| Język | Python |
-| Pliki źródłowe | 84 |
-| Linie kodu | 13 453 |
-| Pliki testowe | 25 |
-
 ## Kluczowe funkcje
 
 nfo wspiera wiele formatów wyjścia: SQLite (do analizy), CSV (do eksportu), Markdown (do dokumentacji), Prometheus (do monitoringu). Unikalna funkcja to LLM-powered analysis — nfo może przeanalizować zebrane logi i wygenerować raport z anomaliami, wąskimi gardłami i sugestiami optymalizacji.

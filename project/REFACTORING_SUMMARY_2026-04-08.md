@@ -1,7 +1,3 @@
-# Refactoring Summary - 2026-04-08 ✅ COMPLETE
-
-## Completed Refactorings
-
 ### 1. redsl/commands/hybrid.py:run_hybrid_batch() (CC 18 → ~8)
 **File**: `/home/tom/github/semcod/redsl/redsl/commands/hybrid.py`
 
@@ -41,21 +37,6 @@
 - Extracted `_save_results()` - JSON serialization
 
 **Impact**: Reduced cyclomatic complexity from 27 to ~8 per helper function
-
-### 2. archive/legacy_scripts/hybrid_quality_refactor.py:main() (CC 21 → ~8)
-**File**: `/home/tom/github/semcod/redsl/archive/legacy_scripts/hybrid_quality_refactor.py`
-
-**Changes**:
-- Extracted `_parse_args()` - CLI argument parsing
-- Extracted `_find_projects()` - Project discovery
-- Extracted `_count_todo_issues()` - TODO counting utility
-- Extracted `_regenerate_todo()` - prefact integration
-- Extracted `_process_single_project()` - Single project processing
-- Extracted `_calculate_summary_stats()` - Statistics aggregation
-- Extracted `_print_summary()` - Summary output
-- Extracted `_save_results()` - JSON serialization
-
-**Impact**: Reduced cyclomatic complexity from 21 to ~8 per helper function
 
 ### 5. redsl/analyzers/incremental.py:_merge_with_cache() (CC 15 → ~7)
 **File**: `/home/tom/github/semcod/redsl/redsl/analyzers/incremental.py`
@@ -115,8 +96,6 @@
 | Lines of code | 11806L | **11106L** (-700L) | - | ✅ Reduced |
 
 **code2llm status**: `HEALTH[0]: ok` | `REFACTOR[0]: none needed`
-
-## Status: ✅ ALL P1 REFACTORINGS COMPLETE
 
 ### Architecture Improvements
 - `orchestrator.py` reduced from 688L to 135L (podział na `redsl/execution/`)

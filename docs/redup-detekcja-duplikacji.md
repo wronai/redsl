@@ -22,17 +22,6 @@ path: /home/tom/github/semcod/redup
 
 redup to analizator duplikacji kodu, który działa na poziomie AST (Abstract Syntax Tree), a nie tokenów. Oznacza to, że wykrywa nie tylko dosłowne kopie kodu, ale też fragmenty semantycznie podobne — np. funkcje robiące to samo, ale z innymi nazwami zmiennych. Po wykryciu duplikacji generuje gotowy plan refaktoryzacji, który może być wykonany ręcznie lub przez LLM.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.4.15 |
-| Język | Python |
-| Pliki źródłowe | 21 |
-| Linie kodu | 2 128 |
-| Pliki testowe | 13 |
-| Ocena dojrzałości | A |
-
 ## Kluczowe funkcje
 
 redup grupuje zduplikowany kod w klastry i oblicza, ile linii można odzyskać przez ekstrakcję wspólnych funkcji lub modułów. W typowym projekcie 20k LOC redup znajduje 15-20 grup duplikacji z potencjałem redukcji 200+ linii.

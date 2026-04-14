@@ -22,16 +22,6 @@ path: /home/tom/github/semcod/code2docs
 
 code2docs automatyzuje generowanie dokumentacji projektu na podstawie analizy kodu źródłowego. Zamiast ręcznie pisać README i aktualizować je przy każdej zmianie, code2docs skanuje repozytorium i generuje aktualną dokumentację — w tym README projektu, CONTRIBUTING.md, API reference i overview całej organizacji.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 3.0.25 |
-| Język | Python |
-| Pliki źródłowe | 64 |
-| Linie kodu | 8 220 |
-| Pliki testowe | 10 |
-
 ## Kluczowe funkcje
 
 code2docs zawiera specjalizowane generatory: ContributingGenerator (wykrywa narzędzia dev i generuje instrukcje), OrgReadmeGenerator (skanuje wiele projektów i tworzy overview organizacji), a także generatory dla testów, code style i pull requestów.

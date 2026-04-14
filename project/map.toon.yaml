@@ -558,6 +558,10 @@ Przyjmuje zbiór reguł i konteks...
     format_cycle_report_markdown(report;decisions;analysis;project_path;log_file;dry_run)
     format_plan_yaml(decisions;analysis)
     _serialize_result(result)
+  redsl/autonomy/scheduler.py:
+    e: AutonomyMode,Scheduler
+    AutonomyMode(str,Enum):
+    Scheduler: __init__(4),run(0),stop(0),run_once(0),_has_changes_since_last_check(0),_git_head(0),_analyze(0),_check_trends(0),_check_proactive(0),_generate_proposals(1),_save_proposals(1),_apply_safe(1),_create_pr(1),_report_findings(3),_summary(1),_self_assess(0)  # Periodic quality-improvement loop...
   redsl/execution/resolution.py:
     e: _resolve_source_path,_resolve_target_function,_load_source_code,_consult_memory,_consult_memory_for_decisions,_remember_decision_result
     _resolve_source_path(orchestrator;decision;project_dir)
@@ -566,10 +570,6 @@ Przyjmuje zbiór reguł i konteks...
     _consult_memory(orchestrator;decision)
     _consult_memory_for_decisions(orchestrator;decisions)
     _remember_decision_result(orchestrator;decision;proposal;result)
-  redsl/autonomy/scheduler.py:
-    e: AutonomyMode,Scheduler
-    AutonomyMode(str,Enum):
-    Scheduler: __init__(4),run(0),stop(0),run_once(0),_has_changes_since_last_check(0),_git_head(0),_analyze(0),_check_trends(0),_check_proactive(0),_generate_proposals(1),_save_proposals(1),_apply_safe(1),_create_pr(1),_report_findings(3),_summary(1),_self_assess(0)  # Periodic quality-improvement loop...
   redsl/execution/reporter.py:
     e: _resolve_source_preview,explain_decisions,get_memory_stats,estimate_cycle_cost
     _resolve_source_preview(orchestrator;project_dir;d)
@@ -594,11 +594,6 @@ Przyjmuje zbiór reguł i konteks...
     estimate_cycle_cost(decisions;contexts)
     apply_provider_prefix(model;configured_model)
     call_via_llx(messages;task_type)
-  redsl/refactors/prompts.py:
-    e: _format_trends,_format_alerts,build_ecosystem_context
-    _format_trends(trends)
-    _format_alerts(alerts)
-    build_ecosystem_context(context)
   redsl/refactors/diff_manager.py:
     e: generate_diff,preview_proposal,create_checkpoint,rollback_to_checkpoint,rollback_single_file,_is_git_repo,_rollback_git_stash,_rollback_files,_git_checkout_file
     generate_diff(original;refactored;file_path)
@@ -610,6 +605,11 @@ Przyjmuje zbiór reguł i konteks...
     _rollback_git_stash(stash_name;project_dir)
     _rollback_files(cp_name;project_dir)
     _git_checkout_file(rel_path;project_dir)
+  redsl/refactors/prompts.py:
+    e: _format_trends,_format_alerts,build_ecosystem_context
+    _format_trends(trends)
+    _format_alerts(alerts)
+    build_ecosystem_context(context)
   redsl/refactors/direct_constants.py:
     e: DirectConstantsRefactorer
     DirectConstantsRefactorer: __init__(0),_build_value_to_names_map(2),_find_import_end_line(0),_replace_magic_numbers(4),extract_constants(2),_generate_constant_name(2),get_applied_changes(0)  # Handles magic number to constant extraction...
@@ -687,6 +687,9 @@ Przyjmuje zbiór reguł i konteks...
     _count_todo_issues(todo_file)
     _append_gate_violations_to_todo(todo_file;violations)
     _generate_todo_md(project;metrics;gate_violations)
+  redsl/commands/pyqual/reporter.py:
+    e: Reporter
+    Reporter: calculate_metrics(3),_store_metrics_results(5),_collect_file_metrics(5),generate_recommendations(1),save_report(2)  # Generuje rekomendacje i zapisuje raporty analizy jakości...
   redsl/orchestrator.py:
     e: CycleReport,RefactorOrchestrator
     CycleReport:  # Raport z jednego cyklu refaktoryzacji...
@@ -694,9 +697,6 @@ Przyjmuje zbiór reguł i konteks...
 
 Łączy:
 - CodeAnalyzer...
-  redsl/commands/pyqual/reporter.py:
-    e: Reporter
-    Reporter: calculate_metrics(3),_store_metrics_results(5),_collect_file_metrics(5),generate_recommendations(1),save_report(2)  # Generuje rekomendacje i zapisuje raporty analizy jakości...
   redsl/commands/autonomy_pr/analyzer.py:
     e: _parse_worktree_changes,_split_generated_and_real_changes,_refactor_cmd,_step_analyze,_run_auto_apply,_step_apply
     _parse_worktree_changes(status_output)
@@ -758,10 +758,6 @@ Przyjmuje zbiór reguł i konteks...
   redsl/awareness/timeline_git.py:
     e: GitTimelineProvider
     GitTimelineProvider: __init__(2),_resolve_repo_root(0),_project_rel_path(0),_git_log(1),_git_show(2),_is_duplication_file(0),_is_validation_file(0)  # Provides git-based timeline data...
-  redsl/refactors/ast_transformers.py:
-    e: ReturnTypeAdder,UnusedImportRemover
-    ReturnTypeAdder(ast.NodeTransformer): __init__(1),visit_FunctionDef(1),visit_AsyncFunctionDef(1),_get_type_from_constant(1),_infer_return_type(1),_extract_type_name(1)  # AST transformer to add return type annotations...
-    UnusedImportRemover(ast.NodeTransformer): __init__(1),visit_Import(1),visit_ImportFrom(1)  # AST transformer to remove unused imports...
   redsl/analyzers/incremental.py:
     e: EvolutionaryCache,IncrementalAnalyzer,get_changed_files,get_staged_files,_file_hash
     EvolutionaryCache: __init__(1),_load(0),save(0),get(1),set(2),invalidate(1),clear(0)  # Cache wyników analizy per-plik oparty o hash pliku.
@@ -773,6 +769,10 @@ Pozwala...
     get_changed_files(project_dir;since)
     get_staged_files(project_dir)
     _file_hash(file_path)
+  redsl/refactors/ast_transformers.py:
+    e: ReturnTypeAdder,UnusedImportRemover
+    ReturnTypeAdder(ast.NodeTransformer): __init__(1),visit_FunctionDef(1),visit_AsyncFunctionDef(1),_get_type_from_constant(1),_infer_return_type(1),_extract_type_name(1)  # AST transformer to add return type annotations...
+    UnusedImportRemover(ast.NodeTransformer): __init__(1),visit_Import(1),visit_ImportFrom(1)  # AST transformer to remove unused imports...
   redsl/analyzers/resolver.py:
     e: PathResolver
     PathResolver: resolve_file_path(2),extract_function_source(1),find_worst_function(1),resolve_metrics_paths(2)  # Resolver ścieżek i kodu źródłowego funkcji...
@@ -847,6 +847,12 @@ Pozwala...
     _batch_top_improvement_lines(details)
     _batch_error_lines(details)
     format_batch_report_markdown(report;root;title)
+  redsl/llm/__init__.py:
+    e: LLMResponse,LLMLayer
+    LLMResponse:  # Odpowiedź z modelu LLM...
+    LLMLayer: __init__(1),_load_provider_key(3),_resolve_provider_key(2),_build_completion_kwargs(6),call(5),call_json(2),reflect(3)  # Warstwa abstrakcji nad LLM z obsługą:
+- wywołań tekstowych
+-...
   redsl/execution/cycle.py:
     e: _new_cycle_report,_analyze_project,_summarize_analysis,run_cycle,run_from_toon_content
     _new_cycle_report(orchestrator)
@@ -854,12 +860,6 @@ Pozwala...
     _summarize_analysis(analysis)
     run_cycle(orchestrator;project_dir;max_actions;use_code2llm;validate_regix;rollback_on_failure;use_sandbox;target_file)
     run_from_toon_content(orchestrator;project_toon;duplication_toon;validation_toon;source_files;max_actions)
-  redsl/llm/__init__.py:
-    e: LLMResponse,LLMLayer
-    LLMResponse:  # Odpowiedź z modelu LLM...
-    LLMLayer: __init__(1),_load_provider_key(3),_resolve_provider_key(2),_build_completion_kwargs(6),call(5),call_json(2),reflect(3)  # Warstwa abstrakcji nad LLM z obsługą:
-- wywołań tekstowych
--...
   redsl/refactors/direct_imports.py:
     e: DirectImportRefactorer
     DirectImportRefactorer: __init__(0),remove_unused_imports(2),_collect_unused_import_edits(3),_collect_import_edits(5),_collect_import_from_edits(5),_is_star_import(0),_build_import_from_replacement(3),_alias_name(0),_format_alias(0),_remove_statement_lines(1),_remove_replaced_statement_lines(1),_apply_line_edits(3),_get_indent(0),_clean_blank_lines(0),get_applied_changes(0)  # Handles import-related direct refactoring...

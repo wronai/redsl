@@ -22,16 +22,6 @@ path: /home/tom/github/semcod/weekly
 
 weekly to kompleksowy analizator jakości projektu Python, który skanuje nie tylko kod, ale cały ekosystem projektu: code style, dokumentację, konfigurację CI/CD, zależności i strukturę. Wynik to lista priorytetyzowanych problemów z konkretnymi krokami naprawczymi.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.1.41 |
-| Język | Python |
-| Pliki źródłowe | 32 |
-| Linie kodu | 3 682 |
-| Pliki testowe | 10 |
-
 ## Kluczowe funkcje
 
 weekly sprawdza: brakujące pliki konfiguracyjne (pyproject.toml, .gitignore, CI workflows), nieaktualne zależności, brak testów, problemy z dokumentacją i code style. Każdy problem ma przypisany priorytet i sugerowany krok naprawczy — actionable, nie tylko informacyjny.

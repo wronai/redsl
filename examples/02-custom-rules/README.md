@@ -16,8 +16,6 @@ cd examples/02-custom-rules
 python main.py
 ```
 
-## Example Rules
-
 ### 1. Security Audit (Python-defined)
 ```python
 Rule(

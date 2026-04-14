@@ -22,16 +22,6 @@ path: /home/tom/github/semcod/prefact
 
 prefact to narzędzie jakości kodu Python, które rozumie specyfikę kodu generowanego przez LLM. Standardowe lintery (ruff, pylint) stosują te same reguły do kodu ludzkiego i maszynowego. prefact dodaje reguły LLM-aware — wykrywa typowe anty-wzorce generowane przez modele (nadmiarowe komentarze, niepotrzebne abstrakcje, powtórzenia z promptu) i sugeruje poprawki.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 0.1.30 |
-| Język | Python |
-| Pliki źródłowe | 37 |
-| Linie kodu | 4 022 |
-| Pliki testowe | 12 |
-
 ## Kluczowe funkcje
 
 System pluginów pozwala dodawać własne reguły specyficzne dla projektu lub organizacji. Funkcje enterprise obejmują konfigurację per-team, raportowanie do dashboardu i integrację z CI/CD.

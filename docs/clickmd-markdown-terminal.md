@@ -22,16 +22,6 @@ path: /home/tom/github/semcod/clickmd
 
 clickmd to biblioteka do renderowania Markdown w aplikacjach CLI. Zamiast wyświetlać surowy tekst Markdown w terminalu, clickmd parsuje go i renderuje z kolorami ANSI — nagłówki, bloki kodu z syntax highlighting, tabele, listy i linki wyglądają profesjonalnie bezpośrednio w konsoli.
 
-## Status projektu
-
-| Metryka | Wartość |
-|---------|---------|
-| Wersja | 1.1.13 |
-| Język | Python |
-| Pliki źródłowe | 36 |
-| Linie kodu | 7 995 |
-| Pliki testowe | 6 |
-
 ## Kluczowe funkcje
 
 clickmd wspiera pełne formatowanie Markdown: nagłówki (z kolorami wg poziomu), bloki kodu z syntax highlighting dla wielu języków, tabele ASCII, listy numerowane i nienumerowane, bold/italic/strikethrough i linki. Działa jako biblioteka Python i jako komenda CLI.

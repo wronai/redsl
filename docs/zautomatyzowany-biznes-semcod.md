@@ -22,8 +22,6 @@ path: /home/tom/github/semcod/biznes-semcod
 
 Ekosystem Semcod to 29 narzędzi open-source, pipeline analizy i refaktoryzacji kodu działający w ~6 sekund, i trzy usługi komercyjne (Audit, Sprint, Retainer). Obecny model wymaga ręcznego zaangażowania — od wyceny po realizację. Pytanie: jak to zautomatyzować?
 
-## Trzy ścieżki automatyzacji biznesu
-
 ### Ścieżka 1: Self-service Audit (najszybsza adopcja)
 
 Zamiast formularza i ręcznej wyceny, klient podaje link do repozytorium (publicznego lub z tokenem), a pipeline automatycznie uruchamia skan i generuje raport PDF z metrykami, priorytetami i szacowanym kosztem refaktoryzacji.
@@ -50,8 +48,6 @@ Czas wdrożenia: 6-8 tygodni.
 Udostępnienie pipeline'u Semcod jako REST API — developer wysyła kod, dostaje wynik analizy w JSON. Integracja z istniejącymi CI/CD (GitHub Actions, GitLab CI) przez gotowe action/stage.
 
 Model cenowy: pay-per-analysis ($0.01-0.10 per 1k LOC), tiered plans z commitmentem.
-
-## Usługi ułatwiające szybką adopcję
 
 ### 1. „One-click Audit" — zerowe tarcie
 
