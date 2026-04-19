@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+## [1.2.31] - 2026-04-19
+
+### Docs
+- Update README.md
+- Update docs/README.md
+- Update redsl/project/README.md
+- Update redsl/project/context.md
+- Update redsl_scan_report.md
+
+### Other
+- Update redsl/project/analysis.toon.yaml
+- Update redsl/project/batch_1/analysis.toon.yaml
+- Update redsl/project/batch_2/analysis.toon.yaml
+- Update redsl/project/evolution.toon.yaml
+- Update redsl/project/root/analysis.toon.yaml
+
 ## [1.2.30] - 2026-04-19
 
 ### Docs

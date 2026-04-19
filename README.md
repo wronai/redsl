@@ -2,7 +2,7 @@
 
 ![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-yellow) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fopenai%2Fgpt-5-mini-lightgrey)
 
-This project uses AI-generated code. Total cost: **$7.5000** with **73** AI commits.
+This project uses AI-generated code. Total cost: **$7.5000** with **74** AI commits.
 
 Generated on 2026-04-19 using [openrouter/openai/gpt-5-mini](https://openrouter.ai/models/openrouter/openai/gpt-5-mini)
 
@@ -12,7 +12,7 @@ Generated on 2026-04-19 using [openrouter/openai/gpt-5-mini](https://openrouter.
 
 ReDSL to zaawansowany system refaktoryzacji kodu Python, który łączy analizę statyczną, reguły DSL (Domain Specific Language), pamięć agenta i inteligencję LLM do automatycznego poprawiania jakości kodu.
 
-![Version](https://img.shields.io/badge/version-1.2.30-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-571%20passing-green) ![E2E](https://img.shields.io/badge/e2e-18%20tests-green) [![Docs](https://img.shields.io/badge/docs-29%20projektów-green)](./docs/)
+![Version](https://img.shields.io/badge/version-1.2.31-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-571%20passing-green) ![E2E](https://img.shields.io/badge/e2e-18%20tests-green) [![Docs](https://img.shields.io/badge/docs-29%20projektów-green)](./docs/)
 
 ---
 
@@ -277,6 +277,8 @@ ReDSL integruje się z ekosystemem semcod dla wzmocnionej analizy:
 | `vallm` | `vallm_bridge.py` | Walidacja poprawności kodu przez LLM |
 | `redup` | `redup_bridge.py` | Detekcja duplikacji kodu (`redup==0.4.18`) |
 | `llx` | `llx_router.py` | Inteligentny routing modeli LLM |
+| `sumd` | `sumd_bridge.py` | Natywna analiza AST (CC, fan-out, hotspoty) - alternatywa dla code2llm |
+| `testql` | `testql_bridge.py` | Walidacja API po refaktoryzacji - testy regresyjne |
 
 # Klucz API dla LLM (wymagany dla akcji z LLM)
 OPENROUTER_API_KEY (set in your environment)

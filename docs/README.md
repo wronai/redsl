@@ -2,12 +2,14 @@
 path: /home/tom/github/semcod/redsl
 ---
 
-<!-- code2docs:start --># redsl
+<!-- code2docs:start --># ReDSL
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-1051-green)
-> **1051** functions | **126** classes | **181** files | CC̄ = 3.7
+![version](https://img.shields.io/badge/version-1.2.30-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![tests](https://img.shields.io/badge/tests-571%20passing-green) ![e2e](https://img.shields.io/badge/e2e-18%20tests-green)
+> **Re**factor + **DSL** + **S**elf-**L**earning — Autonomiczny System Refaktoryzacji Kodu
 
-> Auto-generated project documentation from source code analysis.
+> **781** functions | **112** classes | **114** files | CC̄ = 4.1 | **19 151** LOC
+
+> Aktualna analiza: 2026-04-19 | Hotspoty krytyczne: 3 | Duplikacje/cykle: 0/0
 
 **Author:** ReDSL Team  
 **License:** Apache-2.0[(LICENSE)](./LICENSE)  
@@ -37,60 +39,76 @@ pip install redsl[dev]    # development tools
 
 ## Quick Start
 
-### CLI Usage
+### CLI Usage — Refaktoryzacja
 
 ```bash
-# Generate full documentation for your project
-redsl ./my-project
+# Analiza projektu (dry-run)
+redsl refactor ./my-project --dry-run --max-actions 10
 
-# Only regenerate README
-redsl ./my-project --readme-only
+# Wykonaj refaktoryzację
+redsl refactor ./my-project --max-actions 5
 
-# Preview what would be generated (no file writes)
-redsl ./my-project --dry-run
+# Hybrydowa refaktoryzacja (bez LLM — szybka)
+redsl batch hybrid /path/to/semcod --max-changes 50
 
-# Check documentation health
-redsl check ./my-project
+# Pełna refaktoryzacja z LLM i refleksją
+redsl batch semcod /path/to/semcod --max-actions 10
 
-# Sync — regenerate only changed modules
-redsl sync ./my-project
+# Sprawdź jakość kodu
+redsl pyqual analyze ./my-project --format yaml
+
+# Automatyczne naprawy jakościowe
+redsl pyqual fix ./my-project
+
+# Uruchom serwer API
+redsl server --host 0.0.0.0 --port 8000
+
+# Zobacz decyzje DSL
+redsl debug decisions ./my-project --limit 20
 ```
 
 ### Python API
 
 ```python
-from redsl import generate_readme, generate_docs, Code2DocsConfig
+from redsl.orchestrator import RefactorOrchestrator
+from redsl.config import AgentConfig
 
-# Quick: generate README
-generate_readme("./my-project")
+# Inicjalizacja orkiestratora
+config = AgentConfig.from_env()
+orchestrator = RefactorOrchestrator(config)
 
-# Full: generate all documentation
-config = Code2DocsConfig(project_name="mylib", verbose=True)
-docs = generate_docs("./my-project", config=config)
+# Uruchom cykl refaktoryzacji
+report = orchestrator.run_cycle(
+    project_dir="./my-project",
+    max_actions=5,
+    dry_run=True
+)
+
+# Analiza bez refaktoryzacji
+analysis = orchestrator.analyzer.analyze_project("./my-project")
+print(f"Znaleziono {len(analysis.issues)} problemów")
 ```
 
 ## Generated Output
 
-When you run `redsl`, the following files are produced:
+ReDSL generuje raporty i historię zmian podczas refaktoryzacji:
 
 ```
 <project>/
-├── README.md                 # Main project README (auto-generated sections)
-├── docs/
-│   ├── api.md               # Consolidated API reference
-│   ├── modules.md           # Module documentation with metrics
-│   ├── architecture.md      # Architecture overview with diagrams
-│   ├── dependency-graph.md  # Module dependency graphs
-│   ├── coverage.md          # Docstring coverage report
-│   ├── getting-started.md   # Getting started guide
-│   ├── configuration.md    # Configuration reference
-│   └── api-changelog.md    # API change tracking
-├── examples/
-│   ├── quickstart.py       # Basic usage examples
-│   └── advanced_usage.py   # Advanced usage examples
-├── CONTRIBUTING.md         # Contribution guidelines
-└── mkdocs.yml             # MkDocs site configuration
+├── .redsl/
+│   └── history.jsonl        # Historia decyzji i zdarzeń (append-only)
+├── redsl_refactor_plan.md   # Plan refaktoryzacji (dry-run)
+├── redsl_refactor_report.md # Raport wykonanej refaktoryzacji
+├── redsl_pyqual_report.md   # Raport analizy jakości (pyqual)
+└── redsl_batch_semcod_report.md  # Raport batch semcod
 ```
+
+Każdy raport zawiera:
+- Szczegółowy plan zmian
+- Metryki przed/po (CC, LOC, pokrycie)
+- Decyzje DSL z uzasadnieniem
+- Refleksję LLM nad zmianami
+- Walidację regresji (regix)
 
 ## Configuration
 
@@ -102,49 +120,47 @@ project:
   source: ./
   output: ./docs/
 
-readme:
-  sections:
-    - overview
-    - install
-    - quickstart
-    - api
-    - structure
-  badges:
-    - version
-    - python
-    - coverage
-  sync_markers: true
+# Reguły refaktoryzacji DSL
+rules:
+  - name: high_complexity
+    condition: cyclomatic_complexity > 15
+    action: EXTRACT_FUNCTIONS
+    priority: 0.9
+  
+  - name: unused_imports
+    condition: unused_import_count > 5
+    action: REMOVE_UNUSED_IMPORTS
+    priority: 0.8
+  
+  - name: long_function
+    condition: function_lines > 50
+    action: SPLIT_FUNCTION
+    priority: 0.7
 
-docs:
-  api_reference: true
-  module_docs: true
-  architecture: true
-  changelog: true
-
-examples:
-  auto_generate: true
-  from_entry_points: true
-
-sync:
-  strategy: markers    # markers | full | git-diff
-  watch: false
-  ignore:
-    - "tests/"
-    - "__pycache__"
+# Wykluczenia z analizy
+exclude:
+  - .venv/
+  - venv/
+  - node_modules/
+  - .git/
+  - tests/
+  - __pycache__/
 ```
 
-## Sync Markers
+## Ecosystem Bridges
 
-redsl can update only specific sections of an existing README using HTML comment markers:
+ReDSL integruje się z ekosystemem semcod:
 
-```markdown
-<!-- redsl:start -->
-# Project Title
-... auto-generated content ...
-<!-- redsl:end -->
-```
-
-Content outside the markers is preserved when regenerating. Enable this with `sync_markers: true` in your configuration.
+| Narzędzie | Bridge | Funkcja |
+|-----------|--------|---------|
+| `code2llm` | `code2llm_bridge.py` | Generowanie plików toon.yaml z metrykami |
+| `regix` | `regix_bridge.py` | Wykrywanie regresji metryk po refaktoryzacji |
+| `pyqual` | `pyqual_bridge.py` | Analiza jakości kodu (ruff, mypy, bandit) |
+| `planfile` | `planfile_bridge.py` | Tworzenie ticketów dla refactoring tasks |
+| `vallm` | `vallm_bridge.py` | Walidacja poprawności kodu przez LLM |
+| `redup` | `redup_bridge.py` | Detekcja duplikacji kodu |
+| `testql` | `testql_bridge.py` | Post-refactoring API validation |
+| `metrun` | `perf_bridge.py` | Profilowanie wydajności |
 
 ## Architecture
 
