@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [1.2.29] - 2026-04-19
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+
+### Other
+- Update sumd.json
+
 ## [1.2.28] - 2026-04-14
 
 ### Docs
