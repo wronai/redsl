@@ -13,15 +13,15 @@ REFACTOR[2]:
   2. split 4 high-CC methods  (CC>15)
 
 PIPELINES[619]:
-  [1] Src [__init__]: __init__
+  [1] Src [register]: register → _register_history_command → _init_manager
       PURITY: 100% pure
-  [2] Src [run]: run
+  [2] Src [worst_projects]: worst_projects
       PURITY: 100% pure
-  [3] Src [_inner_thought]: _inner_thought → get_memory_stats
+  [3] Src [summary]: summary
       PURITY: 100% pure
-  [4] Src [_self_assessment]: _self_assessment
+  [4] Src [to_dict]: to_dict
       PURITY: 100% pure
-  [5] Src [_profile_performance]: _profile_performance → profile_refactor_cycle → _parse_metrun_output
+  [5] Src [__init__]: __init__
       PURITY: 100% pure
 
 LAYERS:
@@ -88,10 +88,10 @@ LAYERS:
   │ _base                       15L  1C    1m  CC=1      ←0
   │
   validation/                     CC̄=4.2    ←in:13  →out:5
-  │ regix_bridge               313L  1C    8m  CC=9      ←1
+  │ regix_bridge               313L  1C    8m  CC=9      ←2
   │ vallm_bridge               306L  1C    7m  CC=10     ←1
   │ testql_bridge              297L  2C   10m  CC=12     ←0
-  │ pyqual_bridge              249L  0C   12m  CC=11     ←2
+  │ pyqual_bridge              249L  0C   12m  CC=11     ←1
   │ sandbox                    210L  3C    9m  CC=11     ←0
   │ __init__                    30L  0C    0m  CC=0.0    ←0
   │
@@ -112,8 +112,8 @@ LAYERS:
   │ _guard_fixers              179L  0C    7m  CC=11     ←1
   │ runner                     177L  1C    7m  CC=8      ←0
   │ _scan_report               158L  0C    8m  CC=10     ←0
-  │ doctor_fstring_fixers      155L  0C   10m  CC=10     ←0
   │ analyzer                   155L  0C    6m  CC=8      ←1
+  │ doctor_fstring_fixers      155L  0C   10m  CC=10     ←0
   │ reporter                   148L  1C    5m  CC=8      ←0
   │ batch                      139L  0C    7m  CC=4      ←0
   │ reporting                  138L  0C    5m  CC=12     ←1
@@ -287,24 +287,24 @@ COUPLING:
         config_standard                                                                    1                                            ←4                      1                                            ←1                                                                                                                                                               ──  hub
   CYCLES: none
   HUB: commands/ (fan-in=8)
-  HUB: commands.autofix/ (fan-in=7)
-  HUB: autonomy/ (fan-in=14)
-  HUB: formatters/ (fan-in=11)
+  HUB: config/ (fan-in=21)
+  HUB: analyzers/ (fan-in=34)
   HUB: validation/ (fan-in=13)
   HUB: llm/ (fan-in=12)
-  HUB: analyzers/ (fan-in=34)
-  HUB: commands.autonomy_pr/ (fan-in=11)
-  HUB: config_standard/ (fan-in=6)
+  HUB: commands.autofix/ (fan-in=7)
   HUB: execution/ (fan-in=15)
-  HUB: config/ (fan-in=21)
+  HUB: config_standard/ (fan-in=6)
+  HUB: autonomy/ (fan-in=14)
+  HUB: formatters/ (fan-in=11)
+  HUB: commands.autonomy_pr/ (fan-in=11)
   SMELL: commands/ fan-out=35 → split needed
+  SMELL: api/ fan-out=17 → split needed
+  SMELL: commands.batch_pyqual/ fan-out=12 → split needed
+  SMELL: cli/ fan-out=20 → split needed
   SMELL: refactors/ fan-out=8 → split needed
   SMELL: commands.autofix/ fan-out=10 → split needed
-  SMELL: autonomy/ fan-out=24 → split needed
-  SMELL: commands.batch_pyqual/ fan-out=12 → split needed
-  SMELL: api/ fan-out=17 → split needed
-  SMELL: cli/ fan-out=20 → split needed
   SMELL: execution/ fan-out=13 → split needed
+  SMELL: autonomy/ fan-out=24 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

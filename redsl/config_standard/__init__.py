@@ -11,6 +11,7 @@ from .agent_bridge import (
 )
 from .applier import ApplyResult, ConfigApplier
 from .models import *  # noqa: F401,F403
+from .nlp_handlers import SUPPORTED_TOOLS, ToolError, dispatch_tool
 from .paths import *  # noqa: F401,F403
 from .security import *  # noqa: F401,F403
 from .store import ConfigStore, ConfigStoreError, ConfigValidationError, ConfigVersionMismatch
@@ -23,7 +24,10 @@ __all__ = [
     "ConfigStoreError",
     "ConfigValidationError",
     "ConfigVersionMismatch",
+    "SUPPORTED_TOOLS",
+    "ToolError",
     "agent_config_from_substrate_or_env",
+    "dispatch_tool",
     "find_config_root",
     "load_agent_config_from_substrate",
     "resolve_secret_ref",

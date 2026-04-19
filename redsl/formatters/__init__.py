@@ -27,6 +27,7 @@ from .refactor import (
 from .cycle import (
     format_cycle_report_yaml,
     format_cycle_report_markdown,
+    format_cycle_report_toon,
     format_plan_yaml,
     _serialize_result,
 )

@@ -197,15 +197,15 @@ Pure-Python implementation that doesn't requ
 - **Methods**: 9
 - **Key Methods**: refactors.engine.RefactorEngine.__init__, refactors.engine.RefactorEngine.estimate_confidence, refactors.engine.RefactorEngine._parse_confidence, refactors.engine.RefactorEngine._resolve_confidence, refactors.engine.RefactorEngine.generate_proposal, refactors.engine.RefactorEngine.reflect_on_proposal, refactors.engine.RefactorEngine.validate_proposal, refactors.engine.RefactorEngine.apply_proposal, refactors.engine.RefactorEngine._save_proposal
 
-### awareness.ecosystem.EcosystemGraph
-> Basic ecosystem graph for semcod-style project collections.
-- **Methods**: 9
-- **Key Methods**: awareness.ecosystem.EcosystemGraph.build, awareness.ecosystem.EcosystemGraph.summarize, awareness.ecosystem.EcosystemGraph.project, awareness.ecosystem.EcosystemGraph.impacted_projects, awareness.ecosystem.EcosystemGraph._build_node, awareness.ecosystem.EcosystemGraph._link_dependencies, awareness.ecosystem.EcosystemGraph._read_dependencies, awareness.ecosystem.EcosystemGraph._extract_dependency_tokens, awareness.ecosystem.EcosystemGraph._is_project_dir
-
 ### llm.selection.ModelSelector
 > Wybiera najtańszy model spełniający wymagania.
 - **Methods**: 9
 - **Key Methods**: llm.selection.ModelSelector.__init__, llm.selection.ModelSelector.candidates, llm.selection.ModelSelector.pick, llm.selection.ModelSelector._apply_strategy, llm.selection.ModelSelector._check_hard_requirements, llm.selection.ModelSelector._score_quality, llm.selection.ModelSelector._pareto_front, llm.selection.ModelSelector._round_robin_pick, llm.selection.ModelSelector._next_tier
+
+### awareness.ecosystem.EcosystemGraph
+> Basic ecosystem graph for semcod-style project collections.
+- **Methods**: 9
+- **Key Methods**: awareness.ecosystem.EcosystemGraph.build, awareness.ecosystem.EcosystemGraph.summarize, awareness.ecosystem.EcosystemGraph.project, awareness.ecosystem.EcosystemGraph.impacted_projects, awareness.ecosystem.EcosystemGraph._build_node, awareness.ecosystem.EcosystemGraph._link_dependencies, awareness.ecosystem.EcosystemGraph._read_dependencies, awareness.ecosystem.EcosystemGraph._extract_dependency_tokens, awareness.ecosystem.EcosystemGraph._is_project_dir
 
 ### autonomy.growth_control.GrowthController
 > Enforce growth budgets on a project.
@@ -244,9 +244,6 @@ Key functions that process and transform data:
 > Process lines to remove guard blocks and fix excess indentation.
 - **Output to**: len, None.rstrip, _GUARD_RE.match, new_lines.append, commands._guard_fixers._handle_guard
 
-### commands.doctor_fstring_fixers._write_if_parses
-- **Output to**: path.write_text, ast.parse
-
 ### commands.cli_autonomy._format_gate_details
 > Format quality gate details as text.
 - **Output to**: None.join, lines.append, lines.append, lines.append, verdict.metrics_before.get
@@ -267,10 +264,6 @@ Key functions that process and transform data:
 > Format growth check result as text.
 - **Output to**: None.join, lines.append, lines.append, lines.append, lines.append
 
-### commands._indent_fixers._process_def_block
-> Handle a def/class/try block: fix body indent or strip excess indent.
-- **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
-
 ### commands.cli_doctor._format_check_report
 > Format doctor check report as text.
 - **Output to**: None.join, lines.append, lines.append, lines.append
@@ -282,6 +275,14 @@ Key functions that process and transform data:
 ### commands.cli_doctor._format_batch_report
 > Format doctor batch report as text.
 - **Output to**: lines.append, None.join, len, len, len
+
+### commands.hybrid._process_single_project
+> Process a single project and return results.
+- **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
+
+### commands._indent_fixers._process_def_block
+> Handle a def/class/try block: fix body indent or strip excess indent.
+- **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
 
 ### commands.batch._process_batch_project
 > Process a single project in the batch.
@@ -302,10 +303,6 @@ Key functions that process and transform data:
 ### commands.batch_pyqual.reporting._format_project_row
 > Format a single project row for the details table.
 
-### commands.hybrid._process_single_project
-> Process a single project and return results.
-- **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
-
 ### commands.batch_pyqual.runner._format_project_status
 > Format project result status into readable parts.
 - **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
@@ -322,16 +319,6 @@ Key functions that process and transform data:
 > Parsuj jedną linię wyjścia mypy.
 - **Output to**: line.split, line.strip, len, int, None.strip
 
-### commands.autonomy_pr.analyzer._parse_worktree_changes
-> Parse `git status --porcelain` output into a list of file paths.
-- **Output to**: status_output.splitlines, None.strip, len, paths.append
-
-### commands.autonomy_pr.validator._step_validate
-> Validate refactored code using available validators.
-
-Runs testql scenarios if available, plus pyqua
-- **Output to**: click.echo, commands.autonomy_pr.validator._run_testql_validation, results.append, commands.autonomy_pr.validator._run_quality_gate, results.append
-
 ### commands.pyqual._format_pyqual_issues
 > Format pyqual issues section.
 - **Output to**: summary.get, summary.get, summary.get, summary.get, summary.get
@@ -339,6 +326,20 @@ Runs testql scenarios if available, plus pyqua
 ### commands.pyqual._format_pyqual_metrics
 > Format pyqual metrics section.
 - **Output to**: metrics.get, metrics.get, metrics.get
+
+### commands.pyqual._format_pyqual_recommendations
+> Format pyqual recommendations section.
+- **Output to**: None.join, lines.append, None.upper
+
+### commands.autonomy_pr.validator._step_validate
+> Validate refactored code using available validators.
+
+Runs testql scenarios if available, plus pyqua
+- **Output to**: click.echo, commands.autonomy_pr.validator._run_testql_validation, results.append, commands.autonomy_pr.validator._run_quality_gate, results.append
+
+### commands.autonomy_pr.analyzer._parse_worktree_changes
+> Parse `git status --porcelain` output into a list of file paths.
+- **Output to**: status_output.splitlines, None.strip, len, paths.append
 
 ## Public API Surface
 
@@ -372,13 +373,13 @@ Functions exposed as public API (no underscore prefix):
 - `cli.config.config_clone` - 21 calls
 - `cli.model_policy.check_model` - 20 calls
 - `cli.config.config_rollback` - 20 calls
-- `awareness.AwarenessManager.build_snapshot` - 20 calls
-- `validation.vallm_bridge.validate_proposal` - 20 calls
 - `awareness.health_model.HealthModel.assess` - 20 calls
+- `validation.vallm_bridge.validate_proposal` - 20 calls
+- `awareness.AwarenessManager.build_snapshot` - 20 calls
 - `config_standard.store.ConfigStore.clone_from` - 19 calls
-- `autonomy.metrics.collect_autonomy_metrics` - 19 calls
 - `formatters.batch.format_batch_results` - 19 calls
 - `formatters.batch.format_batch_report_markdown` - 19 calls
+- `autonomy.metrics.collect_autonomy_metrics` - 19 calls
 - `cli.config.config_validate` - 19 calls
 - `cli.batch.batch_pyqual_run` - 19 calls
 - `cli.models.show_coding_config` - 19 calls

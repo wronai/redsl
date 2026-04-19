@@ -13,6 +13,26 @@
   - Realna ocena projektu: Innowacyjność 9/10, Techniczna spójność 8.5/10, Adopcja 6/10, Ryzyko wysokie
   - Finalna konkluzja: eksperymentalny system operacyjny dla AI-driven software engineering
 
+## [1.2.39] - 2026-04-19
+
+### Docs
+- Update README.md
+- Update redsl/project/context.md
+- Update redsl_scan_report.md
+
+### Other
+- Update redsl/config_standard/__init__.py
+- Update redsl/config_standard/agent_bridge.py
+- Update redsl/config_standard/catalog.py
+- Update redsl/config_standard/core.py
+- Update redsl/config_standard/llm_policy.py
+- Update redsl/config_standard/models.py
+- Update redsl/config_standard/nlp_handlers.py
+- Update redsl/config_standard/profiles.py
+- Update redsl/config_standard/proposals.py
+- Update redsl/config_standard/secrets.py
+- ... and 6 more files
+
 ## [1.2.38] - 2026-04-19
 
 ### Docs

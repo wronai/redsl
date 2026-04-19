@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 from typing import Any
@@ -40,13 +41,133 @@ def resolve_secret_ref(secret: SecretSpec) -> str:
                 raise ConfigBridgeError(f"Cannot read secret file {file_path}: {exc}") from exc
             return ""
 
-    # vault: and doppler: not yet implemented - treat as empty/unresolved
-    if ref.startswith(("vault:", "doppler:")):
-        if secret.required:
-            raise ConfigBridgeError(f"Secret provider not implemented for ref: {ref}")
-        return ""
+    # vault: and doppler: — attempt resolution via env-based fallback or SDK
+    if ref.startswith("vault:"):
+        return _resolve_vault_ref(ref, secret)
+
+    if ref.startswith("doppler:"):
+        return _resolve_doppler_ref(ref, secret)
 
     raise ConfigBridgeError(f"Unsupported secret ref format: {ref}")
+
+
+def _resolve_vault_ref(ref: str, secret: "SecretSpec") -> str:  # noqa: F821
+    """Resolve a ``vault:<path>#<key>`` secret reference via HashiCorp Vault.
+
+    Supports two resolution strategies (tried in order):
+    1. Environment variable fallback — ``VAULT_SECRET_<UPPER_KEY>``
+    2. ``hvac`` SDK if installed and ``VAULT_ADDR`` / ``VAULT_TOKEN`` are set.
+
+    Format: ``vault:secret/data/myapp#my_key``
+    """
+    # Strip scheme
+    remainder = ref[len("vault:"):]
+    path, _, field = remainder.partition("#")
+    field = field or "value"
+
+    # Strategy 1: env fallback (useful for CI/CD that injects vault secrets as env vars)
+    env_key = f"VAULT_SECRET_{field.upper()}"
+    env_val = os.getenv(env_key, "")
+    if env_val:
+        return env_val
+
+    # Strategy 2: hvac SDK
+    vault_addr = os.getenv("VAULT_ADDR", "")
+    vault_token = os.getenv("VAULT_TOKEN", "")
+    if vault_addr and vault_token:
+        try:
+            import hvac  # type: ignore[import-untyped]
+
+            client = hvac.Client(url=vault_addr, token=vault_token)
+            # Support KV v2 (secret/data/path)
+            if "/data/" in path:
+                mount_point, _, secret_path = path.partition("/data/")
+                response = client.secrets.kv.v2.read_secret_version(
+                    path=secret_path, mount_point=mount_point
+                )
+                data: dict[str, Any] = response["data"]["data"]
+            else:
+                response = client.read(path)
+                data = (response or {}).get("data", {}) or {}
+
+            value = str(data.get(field, ""))
+            if not value and secret.required:
+                raise ConfigBridgeError(
+                    f"Key {field!r} not found in Vault path {path!r} (ref: {ref})"
+                )
+            return value
+        except ImportError:
+            pass  # hvac not installed — fall through to error
+
+    if secret.required:
+        raise ConfigBridgeError(
+            f"Cannot resolve vault ref {ref!r}: "
+            "set VAULT_ADDR + VAULT_TOKEN or install 'hvac', "
+            f"or export {env_key} as env fallback."
+        )
+    return ""
+
+
+def _resolve_doppler_ref(ref: str, secret: "SecretSpec") -> str:  # noqa: F821
+    """Resolve a ``doppler:<project>/<config>/<secret>`` reference.
+
+    Supports two resolution strategies (tried in order):
+    1. Environment variable — Doppler CLI injects secrets as env vars by name.
+    2. Doppler REST API via ``DOPPLER_TOKEN``.
+
+    Format: ``doppler:myproject/production/OPENROUTER_API_KEY``
+    """
+    remainder = ref[len("doppler:"):]
+    # Last segment is the secret name
+    parts = remainder.split("/")
+    if len(parts) < 1:
+        raise ConfigBridgeError(f"Invalid doppler ref format: {ref!r}")
+
+    secret_name = parts[-1]
+
+    # Strategy 1: direct env var (Doppler CLI / doppler run injects these)
+    env_val = os.getenv(secret_name, "")
+    if env_val:
+        return env_val
+
+    # Strategy 2: Doppler REST API
+    doppler_token = os.getenv("DOPPLER_TOKEN", "")
+    if doppler_token and len(parts) >= 3:
+        project, config_name = parts[0], parts[1]
+        try:
+            import urllib.request
+            import urllib.error
+
+            url = (
+                f"https://api.doppler.com/v3/configs/config/secret"
+                f"?project={project}&config={config_name}&name={secret_name}"
+            )
+            req = urllib.request.Request(  # noqa: S310
+                url,
+                headers={"Authorization": f"Bearer {doppler_token}"},
+            )
+            with urllib.request.urlopen(req, timeout=10) as resp:  # noqa: S310
+                body = json.loads(resp.read())
+            value = (body.get("secret") or {}).get("computed", "") or ""
+            if not value and secret.required:
+                raise ConfigBridgeError(
+                    f"Doppler returned empty value for {secret_name!r} (ref: {ref})"
+                )
+            return value
+        except (ImportError, Exception) as exc:
+            if secret.required:
+                raise ConfigBridgeError(
+                    f"Doppler API call failed for ref {ref!r}: {exc}"
+                ) from exc
+            return ""
+
+    if secret.required:
+        raise ConfigBridgeError(
+            f"Cannot resolve doppler ref {ref!r}: "
+            "export DOPPLER_TOKEN (and ensure project/config/name format) "
+            f"or export {secret_name} directly as an env var."
+        )
+    return ""
 
 
 def find_config_root(start_path: Path | None = None) -> Path | None:
