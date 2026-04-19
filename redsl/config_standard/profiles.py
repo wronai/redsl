@@ -2,16 +2,20 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 
 import yaml
 
-from .core import CONFIG_AGENT_VERSION, ConfigMetadata, RedslConfigDocument
-from .llm_policy import LLMPolicy, CodingConfig, CodingTiers, CostWeights, DefaultOperationTiers
+from .core import (
+    CONFIG_AGENT_VERSION,
+    CacheConfig,
+    ConfigMetadata,
+    RedslConfigDocument,
+    RedslConfigSpec,
+    RegistrySource,
+)
+from .llm_policy import CodingConfig, LLMPolicy
 from .secrets import SecretSpec
-from .core import RedslConfigSpec, RegistrySource, CacheConfig
-
 
 DEFAULT_PROFILE_OVERRIDES: dict[str, dict[str, Any]] = {
     "default": {},
@@ -76,7 +80,6 @@ def config_doc_to_yaml(document: RedslConfigDocument) -> str:
 
 
 def export_config_schema() -> dict[str, Any]:
-    import json
 
     schema = RedslConfigDocument.model_json_schema()
     schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"

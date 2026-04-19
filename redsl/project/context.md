@@ -4,11 +4,11 @@
 
 - **Project**: /home/tom/github/semcod/redsl/redsl
 - **Primary Language**: python
-- **Languages**: python: 252
+- **Languages**: python: 275
 - **Analysis Mode**: static
-- **Total Functions**: 1235
-- **Total Classes**: 195
-- **Modules**: 252
+- **Total Functions**: 1357
+- **Total Classes**: 201
+- **Modules**: 275
 - **Entry Points**: 0
 
 ## Architecture by Module
@@ -22,14 +22,14 @@
 - **Classes**: 1
 - **File**: `git_timeline.py`
 
+### root.main
+- **Functions**: 23
+- **File**: `main.py`
+
 ### analyzers.radon_analyzer
 - **Functions**: 23
 - **Classes**: 1
 - **File**: `radon_analyzer.py`
-
-### root.main
-- **Functions**: 23
-- **File**: `main.py`
 
 ### batch_1.main
 - **Functions**: 23
@@ -44,9 +44,17 @@
 - **Classes**: 5
 - **File**: `store.py`
 
+### cli.planfile
+- **Functions**: 21
+- **File**: `planfile.py`
+
 ### commands.cli_autonomy
 - **Functions**: 20
 - **File**: `cli_autonomy.py`
+
+### formatters.cycle
+- **Functions**: 18
+- **File**: `cycle.py`
 
 ### root.memory
 - **Functions**: 18
@@ -57,11 +65,6 @@
 - **Functions**: 18
 - **Classes**: 1
 - **File**: `project_parser.py`
-
-### llm.selection
-- **Functions**: 18
-- **Classes**: 6
-- **File**: `selection.py`
 
 ### analyzers.quality_visitor
 - **Functions**: 18
@@ -87,25 +90,20 @@
 - **Classes**: 2
 - **File**: `incremental.py`
 
-### root.awareness
+### root.history
+- **Functions**: 16
+- **Classes**: 3
+- **File**: `history.py`
+
+### commands.plan_sync
 - **Functions**: 16
 - **Classes**: 2
-- **File**: `__init__.py`
+- **File**: `plan_sync.py`
 
 ### autonomy.scheduler
 - **Functions**: 16
 - **Classes**: 2
 - **File**: `scheduler.py`
-
-### batch_1.awareness
-- **Functions**: 16
-- **Classes**: 2
-- **File**: `__init__.py`
-
-### batch_2.awareness
-- **Functions**: 16
-- **Classes**: 2
-- **File**: `__init__.py`
 
 ## Key Entry Points
 
@@ -145,6 +143,11 @@ This is a thin facade that delegates
 - **Methods**: 16
 - **Key Methods**: autonomy.scheduler.Scheduler.__init__, autonomy.scheduler.Scheduler.run, autonomy.scheduler.Scheduler.stop, autonomy.scheduler.Scheduler.run_once, autonomy.scheduler.Scheduler._has_changes_since_last_check, autonomy.scheduler.Scheduler._git_head, autonomy.scheduler.Scheduler._analyze, autonomy.scheduler.Scheduler._check_trends, autonomy.scheduler.Scheduler._check_proactive, autonomy.scheduler.Scheduler._generate_proposals
 
+### llm.registry.aggregator.RegistryAggregator
+> Aggregates model info from multiple sources with caching.
+- **Methods**: 15
+- **Key Methods**: llm.registry.aggregator.RegistryAggregator.__init__, llm.registry.aggregator.RegistryAggregator.get_all, llm.registry.aggregator.RegistryAggregator.get, llm.registry.aggregator.RegistryAggregator._fetch_and_merge, llm.registry.aggregator.RegistryAggregator._merge_model, llm.registry.aggregator.RegistryAggregator._collect_source_info, llm.registry.aggregator.RegistryAggregator._merge_context_length, llm.registry.aggregator.RegistryAggregator._merge_pricing, llm.registry.aggregator.RegistryAggregator._merge_capabilities, llm.registry.aggregator.RegistryAggregator._merge_quality
+
 ### refactors.direct_imports.DirectImportRefactorer
 > Handles import-related direct refactoring.
 - **Methods**: 14
@@ -168,6 +171,11 @@ Pure-Python implementation that doesn't requ
 - **Methods**: 11
 - **Key Methods**: analyzers.sumd_bridge.SumdAnalyzer.__init__, analyzers.sumd_bridge.SumdAnalyzer.analyze, analyzers.sumd_bridge.SumdAnalyzer.generate_map_toon, analyzers.sumd_bridge.SumdAnalyzer._collect_modules, analyzers.sumd_bridge.SumdAnalyzer._detect_language, analyzers.sumd_bridge.SumdAnalyzer._analyze_py_file, analyzers.sumd_bridge.SumdAnalyzer._extract_function_info, analyzers.sumd_bridge.SumdAnalyzer._extract_class_info, analyzers.sumd_bridge.SumdAnalyzer._calculate_cc, analyzers.sumd_bridge.SumdAnalyzer._identify_hotspots
 
+### history.HistoryReader
+> Read-only access to .redsl/history.jsonl for querying and dedup.
+- **Methods**: 10
+- **Key Methods**: history.HistoryReader.__init__, history.HistoryReader.load_events, history.HistoryReader.filter_by_file, history.HistoryReader.filter_by_type, history.HistoryReader.has_recent_proposal, history.HistoryReader.has_recent_ticket, history.HistoryReader._format_event_header, history.HistoryReader._format_event_details, history.HistoryReader._maybe_add_cycle_header, history.HistoryReader.generate_decision_report
+
 ### awareness.timeline_toon.ToonCollector
 > Collects and processes toon files from git history.
 - **Methods**: 10
@@ -183,10 +191,10 @@ Pure-Python implementation that doesn't requ
 - **Methods**: 9
 - **Key Methods**: commands.multi_project.MultiProjectReport.total_projects, commands.multi_project.MultiProjectReport.successful, commands.multi_project.MultiProjectReport.failed, commands.multi_project.MultiProjectReport.aggregate_avg_cc, commands.multi_project.MultiProjectReport.aggregate_critical, commands.multi_project.MultiProjectReport.aggregate_files, commands.multi_project.MultiProjectReport.worst_projects, commands.multi_project.MultiProjectReport.summary, commands.multi_project.MultiProjectReport.to_dict
 
-### llm.registry.aggregator.RegistryAggregator
-> Aggregates model info from multiple sources with caching.
+### llm.selection.selector.ModelSelector
+> Wybiera najtańszy model spełniający wymagania.
 - **Methods**: 9
-- **Key Methods**: llm.registry.aggregator.RegistryAggregator.__init__, llm.registry.aggregator.RegistryAggregator.get_all, llm.registry.aggregator.RegistryAggregator.get, llm.registry.aggregator.RegistryAggregator._fetch_and_merge, llm.registry.aggregator.RegistryAggregator._merge_model, llm.registry.aggregator.RegistryAggregator._cache_is_fresh, llm.registry.aggregator.RegistryAggregator._save_cache, llm.registry.aggregator.RegistryAggregator._load_stale_cache, llm.registry.aggregator.RegistryAggregator.refresh
+- **Key Methods**: llm.selection.selector.ModelSelector.__init__, llm.selection.selector.ModelSelector.candidates, llm.selection.selector.ModelSelector._apply_known_good_override, llm.selection.selector.ModelSelector._check_gate, llm.selection.selector.ModelSelector.pick, llm.selection.selector.ModelSelector._get_passing_candidates, llm.selection.selector.ModelSelector._filter_by_tier, llm.selection.selector.ModelSelector._get_passing_candidates_for_tier, llm.selection.selector.ModelSelector._next_tier
 
 ### refactors.engine.RefactorEngine
 > Silnik refaktoryzacji z pętlą refleksji.
@@ -196,11 +204,6 @@ Pure-Python implementation that doesn't requ
 3
 - **Methods**: 9
 - **Key Methods**: refactors.engine.RefactorEngine.__init__, refactors.engine.RefactorEngine.estimate_confidence, refactors.engine.RefactorEngine._parse_confidence, refactors.engine.RefactorEngine._resolve_confidence, refactors.engine.RefactorEngine.generate_proposal, refactors.engine.RefactorEngine.reflect_on_proposal, refactors.engine.RefactorEngine.validate_proposal, refactors.engine.RefactorEngine.apply_proposal, refactors.engine.RefactorEngine._save_proposal
-
-### llm.selection.ModelSelector
-> Wybiera najtańszy model spełniający wymagania.
-- **Methods**: 9
-- **Key Methods**: llm.selection.ModelSelector.__init__, llm.selection.ModelSelector.candidates, llm.selection.ModelSelector.pick, llm.selection.ModelSelector._apply_strategy, llm.selection.ModelSelector._check_hard_requirements, llm.selection.ModelSelector._score_quality, llm.selection.ModelSelector._pareto_front, llm.selection.ModelSelector._round_robin_pick, llm.selection.ModelSelector._next_tier
 
 ### awareness.ecosystem.EcosystemGraph
 > Basic ecosystem graph for semcod-style project collections.
@@ -229,13 +232,6 @@ Pure-Python implementation that doesn't requ
 - **Methods**: 8
 - **Key Methods**: llm.LLMLayer.__init__, llm.LLMLayer._load_provider_key, llm.LLMLayer._resolve_provider_key, llm.LLMLayer._build_completion_kwargs, llm.LLMLayer.call, llm.LLMLayer.call_json, llm.LLMLayer.reflect, llm.LLMLayer.total_calls
 
-### analyzers.analyzer.CodeAnalyzer
-> Główny analizator kodu — fasada.
-
-Deleguje do ToonAnalyzer (toon), PythonAnalyzer (AST) i PathResolv
-- **Methods**: 8
-- **Key Methods**: analyzers.analyzer.CodeAnalyzer.__init__, analyzers.analyzer.CodeAnalyzer.analyze_project, analyzers.analyzer.CodeAnalyzer.analyze_from_toon_content, analyzers.analyzer.CodeAnalyzer.resolve_file_path, analyzers.analyzer.CodeAnalyzer.extract_function_source, analyzers.analyzer.CodeAnalyzer.find_worst_function, analyzers.analyzer.CodeAnalyzer.resolve_metrics_paths, analyzers.analyzer.CodeAnalyzer._ast_cyclomatic_complexity
-
 ## Data Transformation Functions
 
 Key functions that process and transform data:
@@ -243,6 +239,26 @@ Key functions that process and transform data:
 ### commands._guard_fixers._process_guard_and_indent
 > Process lines to remove guard blocks and fix excess indentation.
 - **Output to**: len, None.rstrip, _GUARD_RE.match, new_lines.append, commands._guard_fixers._handle_guard
+
+### commands.github_source._parse_next_link
+> Parse GitHub Link header to find next page URL.
+- **Output to**: link_header.split, part.strip, None.strip, url_part.startswith, url_part.endswith
+
+### commands.cli_doctor._format_check_report
+> Format doctor check report as text.
+- **Output to**: None.join, lines.append, lines.append, lines.append
+
+### commands.cli_doctor._format_heal_report
+> Format doctor heal report as text.
+- **Output to**: lines.append, None.join, lines.append, lines.append, lines.append
+
+### commands.cli_doctor._format_batch_report
+> Format doctor batch report as text.
+- **Output to**: lines.append, None.join, len, len, len
+
+### commands._indent_fixers._process_def_block
+> Handle a def/class/try block: fix body indent or strip excess indent.
+- **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
 
 ### commands.cli_autonomy._format_gate_details
 > Format quality gate details as text.
@@ -264,29 +280,13 @@ Key functions that process and transform data:
 > Format growth check result as text.
 - **Output to**: None.join, lines.append, lines.append, lines.append, lines.append
 
-### commands.cli_doctor._format_check_report
-> Format doctor check report as text.
-- **Output to**: None.join, lines.append, lines.append, lines.append
-
-### commands.cli_doctor._format_heal_report
-> Format doctor heal report as text.
-- **Output to**: lines.append, None.join, lines.append, lines.append, lines.append
-
-### commands.cli_doctor._format_batch_report
-> Format doctor batch report as text.
-- **Output to**: lines.append, None.join, len, len, len
+### commands.batch._process_batch_project
+> Process a single project in the batch.
+- **Output to**: print, print, print, commands.batch.measure_todo_reduction, print
 
 ### commands.hybrid._process_single_project
 > Process a single project and return results.
 - **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
-
-### commands._indent_fixers._process_def_block
-> Handle a def/class/try block: fix body indent or strip excess indent.
-- **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
-
-### commands.batch._process_batch_project
-> Process a single project in the batch.
-- **Output to**: print, print, print, commands.batch.measure_todo_reduction, print
 
 ### commands.batch_pyqual.reporting._format_summary_verdicts
 > Format verdict and project count lines.
@@ -307,6 +307,17 @@ Key functions that process and transform data:
 > Format project result status into readable parts.
 - **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
 
+### commands.doctor_fstring_fixers._write_if_parses
+- **Output to**: path.write_text, ast.parse
+
+### history.HistoryReader._format_event_header
+> Format event header line with timestamp, type, target and action.
+- **Output to**: ev.get, ev.get, ev.get, ev.get
+
+### history.HistoryReader._format_event_details
+> Format event details (thought, reflection, outcome, reason).
+- **Output to**: ev.get, ev.get, ev.get, ev.get, details.append
+
 ### commands.autofix.runner._format_project_status
 > Format brief status line for a project result.
 - **Output to**: None.join, status_parts.append, status_parts.append, status_parts.append, status_parts.append
@@ -315,31 +326,15 @@ Key functions that process and transform data:
 > Full autofix pipeline for a single project.
 - **Output to**: ProjectFixResult, commands.autofix.pipeline._stage_collect_metrics, commands.autofix.pipeline._stage_ensure_todo, commands.autofix.pipeline._stage_apply_fixes, commands.autofix.pipeline._stage_quality_gate_check
 
-### commands.pyqual.mypy_analyzer.MypyAnalyzer._parse_mypy_line
-> Parsuj jedną linię wyjścia mypy.
-- **Output to**: line.split, line.strip, len, int, None.strip
+### commands.sumr_planfile.parsers.parse_sumr
+> Parse a SUMR.md file and extract refactoring-relevant data.
+- **Output to**: path.read_text, _METADATA_NAME_RE.search, _METADATA_VERSION_RE.search, _REFACTOR_SECTION_RE.search, sorted
 
-### commands.pyqual._format_pyqual_issues
-> Format pyqual issues section.
-- **Output to**: summary.get, summary.get, summary.get, summary.get, summary.get
+### commands.sumr_planfile.parsers.parse_refactor_plan_yaml
+> Parse refactor_plan.yaml content into raw task dicts.
 
-### commands.pyqual._format_pyqual_metrics
-> Format pyqual metrics section.
-- **Output to**: metrics.get, metrics.get, metrics.get
-
-### commands.pyqual._format_pyqual_recommendations
-> Format pyqual recommendations section.
-- **Output to**: None.join, lines.append, None.upper
-
-### commands.autonomy_pr.validator._step_validate
-> Validate refactored code using available validators.
-
-Runs testql scenarios if available, plus pyqua
-- **Output to**: click.echo, commands.autonomy_pr.validator._run_testql_validation, results.append, commands.autonomy_pr.validator._run_quality_gate, results.append
-
-### commands.autonomy_pr.analyzer._parse_worktree_changes
-> Parse `git status --porcelain` output into a list of file paths.
-- **Output to**: status_output.splitlines, None.strip, len, paths.append
+The format is a multi-document YAML (``---`` 
+- **Output to**: list, yaml.safe_load_all, doc.get, doc.get, isinstance
 
 ## Public API Surface
 
@@ -348,43 +343,43 @@ Functions exposed as public API (no underscore prefix):
 - `cli.models.estimate_cost` - 44 calls
 - `examples.pyqual_example.run_pyqual_example` - 41 calls
 - `examples.pr_bot.run_pr_bot_example` - 40 calls
-- `cli.models.list_coding` - 35 calls
 - `examples.custom_rules.run_custom_rules_example` - 34 calls
 - `examples.badge.run_badge_example` - 33 calls
+- `commands.sumr_planfile.extractors.refactor_plan_to_tasks` - 32 calls
 - `analyzers.sumd_bridge.SumdAnalyzer.generate_map_toon` - 32 calls
 - `examples.basic_analysis.run_basic_analysis_example` - 31 calls
 - `cli.models.pick_coding` - 31 calls
 - `commands.autonomy_pr.run_autonomous_pr` - 30 calls
 - `cli.config.config_apply` - 30 calls
-- `llm.selection.build_selector` - 30 calls
 - `llm.registry.sources.base.OpenRouterSource.fetch` - 29 calls
+- `cli.planfile.source_add` - 28 calls
+- `cli.planfile.planfile_gh_sync` - 28 calls
 - `refactors.engine.RefactorEngine.generate_proposal` - 28 calls
-- `analyzers.parsers.duplication_parser.DuplicationParser.parse_duplication_toon` - 27 calls
 - `examples.full_pipeline.run_full_pipeline_example` - 27 calls
-- `examples.api_integration.run_api_integration_example` - 26 calls
+- `analyzers.parsers.duplication_parser.DuplicationParser.parse_duplication_toon` - 27 calls
 - `config_standard.applier.ConfigApplier.apply` - 26 calls
-- `cli.refactor.refactor` - 25 calls
+- `examples.api_integration.run_api_integration_example` - 26 calls
+- `cli.refactor.refactor` - 26 calls
+- `execution.cycle.run_cycle` - 26 calls
 - `commands.pyqual.run_pyqual_fix` - 24 calls
 - `cli.config.config_diff` - 24 calls
 - `cli.llm_banner.print_llm_banner` - 23 calls
 - `cli.config.config_init` - 23 calls
 - `cli.config.config_history` - 23 calls
-- `execution.cycle.run_cycle` - 23 calls
+- `commands.sumr_planfile.core.generate_planfile` - 21 calls
 - `cli.config.config_clone` - 21 calls
-- `cli.model_policy.check_model` - 20 calls
+- `commands.sumr_planfile.parsers.parse_sumr` - 20 calls
 - `cli.config.config_rollback` - 20 calls
+- `cli.model_policy.check_model` - 20 calls
+- `awareness.AwarenessManager.build_snapshot` - 20 calls
 - `awareness.health_model.HealthModel.assess` - 20 calls
 - `validation.vallm_bridge.validate_proposal` - 20 calls
-- `awareness.AwarenessManager.build_snapshot` - 20 calls
+- `commands.github_source.resolve_auth_ref` - 19 calls
 - `config_standard.store.ConfigStore.clone_from` - 19 calls
+- `autonomy.metrics.collect_autonomy_metrics` - 19 calls
 - `formatters.batch.format_batch_results` - 19 calls
 - `formatters.batch.format_batch_report_markdown` - 19 calls
-- `autonomy.metrics.collect_autonomy_metrics` - 19 calls
 - `cli.config.config_validate` - 19 calls
-- `cli.batch.batch_pyqual_run` - 19 calls
-- `cli.models.show_coding_config` - 19 calls
-- `refactors.body_restorer.repair_file` - 19 calls
-- `analyzers.redup_bridge.scan_duplicates` - 19 calls
 
 ## System Interactions
 

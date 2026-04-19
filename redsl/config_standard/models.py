@@ -12,6 +12,8 @@ The actual implementations have been split into submodules:
 
 from __future__ import annotations
 
+# Rebuild CONFIG_AGENT_TOOLS with dynamic schema
+from . import proposals as _proposals_module
 from .catalog import (
     AUDIT_LOG_ALWAYS,
     CONFIG_PATH_CATALOG,
@@ -41,7 +43,6 @@ from .llm_policy import (
     LLMPolicy,
 )
 from .profiles import (
-    CONFIG_AGENT_TOOLS,
     DEFAULT_PROFILE_OVERRIDES,
     build_default_config,
     config_doc_to_yaml,
@@ -58,9 +59,6 @@ from .proposals import (
     proposal_to_yaml,
 )
 from .secrets import SecretRotation, SecretSpec
-
-# Rebuild CONFIG_AGENT_TOOLS with dynamic schema
-from . import proposals as _proposals_module
 
 CONFIG_AGENT_TOOLS = [
     {

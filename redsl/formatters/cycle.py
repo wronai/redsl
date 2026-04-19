@@ -233,6 +233,94 @@ def _serialize_result(result: Any) -> Dict[str, Any]:
     return entry
 
 
+def _toon_header_lines(serialized: dict[str, Any], dry_run: bool, decision_count: int) -> list[str]:
+    """Build TOON header with metadata."""
+    from datetime import datetime
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    total_files = serialized.get("total_files", 0)
+    total_lines = serialized.get("total_lines", 0)
+    avg_cc = serialized.get("avg_complexity", 0)
+    critical_count = serialized.get("critical_count", 0)
+
+    return [
+        f"# redsl | refactor | {date_str}",
+        f"# mode={'dry-run' if dry_run else 'executed'} | files={total_files} | lines={total_lines}",
+        f"# CC̄={avg_cc:.1f} | critical={critical_count} | decisions={decision_count}",
+        "",
+    ]
+
+
+def _toon_status_line(report: Any, dry_run: bool) -> list[str]:
+    """Build STATUS section."""
+    status = "planned" if dry_run else ("success" if not getattr(report, "errors", []) else "partial")
+    return [f"STATUS[{status}]", ""]
+
+
+def _toon_decisions_lines(decision_list: list[Any]) -> list[str]:
+    """Build DECISIONS section."""
+    if not decision_list:
+        return []
+    lines = [f"DECISIONS[{len(decision_list)}]:"]
+    for idx, d in enumerate(decision_list, 1):
+        action_obj = getattr(d, "action", None)
+        action = action_obj.value if hasattr(action_obj, "value") else str(action_obj or "unknown")
+        target = getattr(d, "target_file", "unknown")
+        score = getattr(d, "score", 0)
+        rationale = getattr(d, "rationale", "")[:60]
+        lines.append(f"  {idx}. {action} → {target} (score={score:.2f}) {rationale}")
+    lines.append("")
+    return lines
+
+
+def _toon_execution_lines(report: Any) -> list[str]:
+    """Build EXECUTION section for non-dry-run reports."""
+    if report is None:
+        return []
+    generated = getattr(report, "proposals_generated", 0)
+    applied = getattr(report, "proposals_applied", 0)
+    rejected = getattr(report, "proposals_rejected", 0)
+    success_rate = round(applied / generated, 2) if generated > 0 else 0.0
+
+    lines = [f"EXECUTION[applied={applied}, rejected={rejected}, rate={success_rate}:"]
+    for result in getattr(report, "results", [])[:10]:
+        serialized_result = _serialize_result(result)
+        act = serialized_result.get("action", "unknown")
+        tgt = serialized_result.get("target", "N/A")
+        ok = "✓" if serialized_result.get("applied") else "✗"
+        lines.append(f"  {ok} {act}: {tgt}")
+    lines.append("")
+    return lines
+
+
+def _toon_errors_lines(report: Any) -> list[str]:
+    """Build ERRORS section."""
+    errors = getattr(report, "errors", []) if report else []
+    if not errors:
+        return []
+    lines = [f"ERRORS[{len(errors)}]:"]
+    for err in errors:
+        lines.append(f"  ! {err}")
+    lines.append("")
+    return lines
+
+
+def _toon_metrics_lines(serialized: dict[str, Any]) -> list[str]:
+    """Build METRICS section (like LAYERS in analysis.toon)."""
+    metrics = serialized.get("metrics", [])
+    if not metrics:
+        return []
+    lines = [f"METRICS[{len(metrics)}]:"]
+    for m in metrics[:10]:
+        file_path = m.get("file", "unknown")
+        func = m.get("name", "-")
+        cc = m.get("cc", 0)
+        loc = m.get("loc", 0)
+        flag = "🔴" if cc >= 15 else ("🟡" if cc >= 10 else "🟢")
+        lines.append(f"  {flag} {file_path}::{func} CC={cc} LOC={loc}")
+    lines.append("")
+    return lines
+
+
 def format_cycle_report_toon(
     report: Any,
     decisions: List[Any] | None = None,
@@ -246,82 +334,20 @@ def format_cycle_report_toon(
     TOON format allows planfile to parse report structurally
     and auto-create tickets from decisions.
     """
-    from datetime import datetime
-
-    now = datetime.now()
-    timestamp = now.strftime("%Y-%m-%d %H:%M")
-    date_str = now.strftime("%Y-%m-%d")
     decision_list = decisions or []
+    serialized = _serialize_analysis(analysis) if analysis else {}
 
     lines: list[str] = []
+    lines.extend(_toon_header_lines(serialized, dry_run, len(decision_list)))
+    lines.extend(_toon_status_line(report, dry_run))
+    lines.extend(_toon_decisions_lines(decision_list))
 
-    # Header with metadata (code2llm-style)
-    serialized = _serialize_analysis(analysis) if analysis else {}
-    total_files = serialized.get("total_files", 0)
-    total_lines = serialized.get("total_lines", 0)
-    avg_cc = serialized.get("avg_complexity", 0)
-    critical_count = serialized.get("critical_count", 0)
+    if not dry_run:
+        lines.extend(_toon_execution_lines(report))
 
-    lines.append(f"# redsl | refactor | {date_str}")
-    lines.append(f"# mode={'dry-run' if dry_run else 'executed'} | files={total_files} | lines={total_lines}")
-    lines.append(f"# CC̄={avg_cc:.1f} | critical={critical_count} | decisions={len(decision_list)}")
-    lines.append("")
+    lines.extend(_toon_errors_lines(report))
+    lines.extend(_toon_metrics_lines(serialized))
 
-    # STATUS section
-    status = "planned" if dry_run else ("success" if not getattr(report, "errors", []) else "partial")
-    lines.append(f"STATUS[{status}]")
-    lines.append("")
-
-    # DECISIONS section (like REFACTOR in analysis.toon)
-    if decision_list:
-        lines.append(f"DECISIONS[{len(decision_list)}]:")
-        for idx, d in enumerate(decision_list, 1):
-            action_obj = getattr(d, "action", None)
-            action = action_obj.value if hasattr(action_obj, "value") else str(action_obj or "unknown")
-            target = getattr(d, "target_file", "unknown")
-            score = getattr(d, "score", 0)
-            rationale = getattr(d, "rationale", "")[:60]  # Truncate for TOON
-            lines.append(f"  {idx}. {action} → {target} (score={score:.2f}) {rationale}")
-        lines.append("")
-
-    # EXECUTION section (only for non-dry-run)
-    if report is not None and not dry_run:
-        generated = getattr(report, "proposals_generated", 0)
-        applied = getattr(report, "proposals_applied", 0)
-        rejected = getattr(report, "proposals_rejected", 0)
-        success_rate = round(applied / generated, 2) if generated > 0 else 0.0
-
-        lines.append(f"EXECUTION[applied={applied}, rejected={rejected}, rate={success_rate}]:")
-
-        for result in getattr(report, "results", [])[:10]:
-            serialized_result = _serialize_result(result)
-            act = serialized_result.get("action", "unknown")
-            tgt = serialized_result.get("target", "N/A")
-            ok = "✓" if serialized_result.get("applied") else "✗"
-            lines.append(f"  {ok} {act}: {tgt}")
-        lines.append("")
-
-    # ERRORS section
-    errors = getattr(report, "errors", []) if report else []
-    if errors:
-        lines.append(f"ERRORS[{len(errors)}]:")
-        for err in errors:
-            lines.append(f"  ! {err}")
-        lines.append("")
-
-    # METRICS section (like LAYERS in analysis.toon)
-    if serialized.get("metrics"):
-        lines.append(f"METRICS[{len(serialized['metrics'])}]:")
-        for m in serialized["metrics"][:10]:
-            file_path = m.get("file", "unknown")
-            func = m.get("name", "-")
-            cc = m.get("cc", 0)
-            loc = m.get("loc", 0)
-            flag = "🔴" if cc >= 15 else ("🟡" if cc >= 10 else "🟢")
-            lines.append(f"  {flag} {file_path}::{func} CC={cc} LOC={loc}")
-        lines.append("")
-
-    # Footer with log reference
     if log_file:
         lines.append(f"LOG: {log_file}")
 

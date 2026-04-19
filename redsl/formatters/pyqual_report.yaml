@@ -1,0 +1,673 @@
+issues:
+  bandit: []
+  magic_numbers:
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/batch.py
+    line: 158
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/cycle.py
+    line: 269
+    message: 'Magic number: 60'
+    value: 60
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/cycle.py
+    line: 318
+    message: 'Magic number: 15'
+    value: 15
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/refactor.py
+    line: 64
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/refactor.py
+    line: 65
+    message: 'Magic number: 6'
+    value: 6
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/refactor.py
+    line: 72
+    message: 'Magic number: 5'
+    value: 5
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/refactor.py
+    line: 90
+    message: 'Magic number: 5'
+    value: 5
+  missing_docstrings:
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/batch.py
+    line: 41
+    message: Missing docstring for FunctionDef
+    name: _as_int
+    type: FunctionDef
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/batch.py
+    line: 48
+    message: Missing docstring for FunctionDef
+    name: _batch_detail_name
+    type: FunctionDef
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/batch.py
+    line: 63
+    message: Missing docstring for FunctionDef
+    name: _batch_report_totals
+    type: FunctionDef
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/batch.py
+    line: 72
+    message: Missing docstring for FunctionDef
+    name: _batch_header_lines
+    type: FunctionDef
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/batch.py
+    line: 96
+    message: Missing docstring for FunctionDef
+    name: _batch_summary_lines
+    type: FunctionDef
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/batch.py
+    line: 116
+    message: Missing docstring for FunctionDef
+    name: _batch_project_lines
+    type: FunctionDef
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/batch.py
+    line: 151
+    message: Missing docstring for FunctionDef
+    name: _batch_top_improvement_lines
+    type: FunctionDef
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/batch.py
+    line: 170
+    message: Missing docstring for FunctionDef
+    name: _batch_error_lines
+    type: FunctionDef
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/cycle.py
+    line: 43
+    message: Missing docstring for FunctionDef
+    name: _cycle_report_header_lines
+    type: FunctionDef
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/cycle.py
+    line: 95
+    message: Missing docstring for FunctionDef
+    name: _cycle_summary_lines
+    type: FunctionDef
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/cycle.py
+    line: 104
+    message: Missing docstring for FunctionDef
+    name: _cycle_top_decisions_lines
+    type: FunctionDef
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/cycle.py
+    line: 134
+    message: Missing docstring for FunctionDef
+    name: _cycle_execution_results_lines
+    type: FunctionDef
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/cycle.py
+    line: 152
+    message: Missing docstring for FunctionDef
+    name: _cycle_error_lines
+    type: FunctionDef
+  mypy:
+  - file: redsl/refactors/direct_constants.py
+    line: 41
+    message: Incompatible types in assignment (expression has type "int | None", variable
+      has type "int")  [assignment]
+    type: error
+  - file: redsl/refactors/direct_imports.py
+    line: 162
+    message: '"AST" has no attribute "lineno"  [attr-defined]'
+    type: error
+  - file: redsl/refactors/direct_imports.py
+    line: 163
+    message: '"AST" has no attribute "lineno"  [attr-defined]'
+    type: error
+  - file: redsl/refactors/direct_imports.py
+    line: 163
+    message: Argument 2 to "range" has incompatible type "Any | None"; expected "SupportsIndex"  [arg-type]
+    type: error
+  - file: redsl/refactors/direct_imports.py
+    line: 168
+    message: '"AST" has no attribute "lineno"  [attr-defined]'
+    type: error
+  - file: redsl/refactors/direct_imports.py
+    line: 169
+    message: '"AST" has no attribute "lineno"  [attr-defined]'
+    type: error
+  - file: redsl/refactors/direct_imports.py
+    line: 169
+    message: Argument 2 to "range" has incompatible type "Any | None"; expected "SupportsIndex"  [arg-type]
+    type: error
+  - file: redsl/validation/test_generator.py
+    line: 22
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/dsl/rule_generator.py
+    line: 25
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/dsl/rule_generator.py
+    line: 178
+    message: Item "None" of "Any | None" has no attribute "get_action_history"  [union-attr]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 80
+    message: Returning Any from function declared to return "bool"  [no-any-return]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 82
+    message: Returning Any from function declared to return "bool"  [no-any-return]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 84
+    message: Returning Any from function declared to return "bool"  [no-any-return]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 86
+    message: Returning Any from function declared to return "bool"  [no-any-return]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 88
+    message: Returning Any from function declared to return "bool"  [no-any-return]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 90
+    message: Returning Any from function declared to return "bool"  [no-any-return]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 190
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/dsl/engine.py
+    line: 256
+    message: 'Need type annotation for "decision_types" (hint: "decision_types: dict[<type>,
+      <type>] = ...")  [var-annotated]'
+    type: error
+  - file: redsl/analyzers/semantic_chunker.py
+    line: 87
+    message: Incompatible return value type (got "tuple[AST, list[str], str, FunctionDef
+      | AsyncFunctionDef, ClassDef | None]", expected "tuple[AST, list[str], str,
+      FunctionDef, ClassDef | None] | None")  [return-value]
+    type: error
+  - file: redsl/memory/__init__.py
+    line: 51
+    message: Cannot find implementation or library stub for module named "chromadb"  [import-not-found]
+    type: error
+  - file: redsl/memory/__init__.py
+    line: 108
+    message: Returning Any from function declared to return "int"  [no-any-return]
+    type: error
+  - file: redsl/bridges/base.py
+    line: 79
+    message: Returning Any from function declared to return "dict[Any, Any]"  [no-any-return]
+    type: error
+  - file: redsl/bridges/base.py
+    line: 86
+    message: Returning Any from function declared to return "dict[Any, Any]"  [no-any-return]
+    type: error
+  - file: redsl/validation/regix_bridge.py
+    line: 82
+    message: Returning Any from function declared to return "dict[Any, Any] | None"  [no-any-return]
+    type: error
+  - file: redsl/validation/regix_bridge.py
+    line: 121
+    message: Returning Any from function declared to return "dict[Any, Any] | None"  [no-any-return]
+    type: error
+  - file: redsl/validation/regix_bridge.py
+    line: 160
+    message: Returning Any from function declared to return "dict[Any, Any] | None"  [no-any-return]
+    type: error
+  - file: redsl/analyzers/radon_analyzer.py
+    line: 204
+    message: Argument 1 to "_collect_existing_metrics" has incompatible type "list[CodeMetrics]
+      | list[Any] | AnalysisResult"; expected "list[Any]"  [arg-type]
+    type: error
+  - file: redsl/analyzers/radon_analyzer.py
+    line: 209
+    message: Argument 3 to "_process_radon_results" has incompatible type "list[CodeMetrics]
+      | list[Any] | AnalysisResult"; expected "list[Any]"  [arg-type]
+    type: error
+  - file: redsl/analyzers/radon_analyzer.py
+    line: 213
+    message: Argument 2 to "_update_result_stats" has incompatible type "list[CodeMetrics]
+      | list[Any] | AnalysisResult"; expected "list[Any]"  [arg-type]
+    type: error
+  - file: redsl/analyzers/redup_bridge.py
+    line: 99
+    message: Returning Any from function declared to return "list[dict[Any, Any]]"  [no-any-return]
+    type: error
+  - file: redsl/analyzers/redup_bridge.py
+    line: 156
+    message: Name "Any" is not defined  [name-defined]
+    type: error
+  - file: redsl/analyzers/redup_bridge.py
+    line: 156
+    message: 'Did you forget to import it from "typing"? (Suggestion: "from typing
+      import Any")'
+    type: note
+  - file: redsl/analyzers/redup_bridge.py
+    line: 158
+    message: Name "Any" is not defined  [name-defined]
+    type: error
+  - file: redsl/analyzers/redup_bridge.py
+    line: 158
+    message: 'Did you forget to import it from "typing"? (Suggestion: "from typing
+      import Any")'
+    type: note
+  - file: redsl/analyzers/redup_bridge.py
+    line: 229
+    message: Returning Any from function declared to return "list[dict[Any, Any]]"  [no-any-return]
+    type: error
+  - file: redsl/llm/llx_router.py
+    line: 140
+    message: Returning Any from function declared to return "int"  [no-any-return]
+    type: error
+  - file: redsl/llm/llx_router.py
+    line: 309
+    message: Returning Any from function declared to return "str | None"  [no-any-return]
+    type: error
+  - file: redsl/analyzers/python_analyzer.py
+    line: 148
+    message: '"CodeMetrics" has no attribute "_quality_details"  [attr-defined]'
+    type: error
+  - file: redsl/analyzers/python_analyzer.py
+    line: 268
+    message: '"CodeMetrics" has no attribute "_quality_details"  [attr-defined]'
+    type: error
+  - file: redsl/validation/vallm_bridge.py
+    line: 268
+    message: Name "scores" already defined on line 247  [no-redef]
+    type: error
+  - file: redsl/validation/vallm_bridge.py
+    line: 269
+    message: Name "failures" already defined on line 248  [no-redef]
+    type: error
+  - file: redsl/refactors/diff_manager.py
+    line: 65
+    message: '"RefactorProposal" has no attribute "action"  [attr-defined]'
+    type: error
+  - file: redsl/refactors/diff_manager.py
+    line: 66
+    message: '"RefactorProposal" has no attribute "file_path"  [attr-defined]'
+    type: error
+  - file: redsl/refactors/diff_manager.py
+    line: 76
+    message: '"FileChange" has no attribute "get"  [attr-defined]'
+    type: error
+  - file: redsl/refactors/diff_manager.py
+    line: 76
+    message: '"RefactorProposal" has no attribute "file_path"  [attr-defined]'
+    type: error
+  - file: redsl/refactors/diff_manager.py
+    line: 77
+    message: '"FileChange" has no attribute "get"  [attr-defined]'
+    type: error
+  - file: redsl/refactors/diff_manager.py
+    line: 78
+    message: '"FileChange" has no attribute "get"  [attr-defined]'
+    type: error
+  - file: redsl/formatters/refactor.py
+    line: 8
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/formatters/refactor.py
+    line: 42
+    message: Returning Any from function declared to return "str"  [no-any-return]
+    type: error
+  - file: redsl/formatters/refactor.py
+    line: 133
+    message: Incompatible return value type (got "None", expected "dict[str, Any]")  [return-value]
+    type: error
+  - file: redsl/formatters/refactor.py
+    line: 179
+    message: 'Need type annotation for "types" (hint: "types: dict[<type>, <type>]
+      = ...")  [var-annotated]'
+    type: error
+  - file: redsl/formatters/debug.py
+    line: 16
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/formatters/debug.py
+    line: 17
+    message: Returning Any from function declared to return "str"  [no-any-return]
+    type: error
+  - file: redsl/formatters/batch.py
+    line: 9
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/formatters/batch.py
+    line: 9
+    message: 'Hint: "python3 -m pip install types-PyYAML"'
+    type: note
+  - file: redsl/formatters/batch.py
+    line: 9
+    message: (or run "mypy --install-types" to install all missing stub packages)
+    type: note
+  - file: redsl/formatters/batch.py
+    line: 9
+    message: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
+    type: note
+  - file: redsl/formatters/batch.py
+    line: 17
+    message: Returning Any from function declared to return "str"  [no-any-return]
+    type: error
+  - file: redsl/formatters/batch.py
+    line: 49
+    message: Returning Any from function declared to return "str"  [no-any-return]
+    type: error
+  - file: redsl/formatters/cycle.py
+    line: 8
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/formatters/cycle.py
+    line: 14
+    message: Incompatible default for argument "decisions" (default has type "None",
+      argument has type "list[Any]")  [assignment]
+    type: error
+  - file: redsl/formatters/cycle.py
+    line: 14
+    message: PEP 484 prohibits implicit Optional. Accordingly, mypy has changed its
+      default to no_implicit_optional=True
+    type: note
+  - file: redsl/formatters/cycle.py
+    line: 14
+    message: Use https://github.com/hauntsaninja/no_implicit_optional to automatically
+      upgrade your codebase
+    type: note
+  - file: redsl/formatters/cycle.py
+    line: 40
+    message: Returning Any from function declared to return "str"  [no-any-return]
+    type: error
+  - file: redsl/formatters/cycle.py
+    line: 208
+    message: Returning Any from function declared to return "str"  [no-any-return]
+    type: error
+  - file: redsl/formatters/cycle.py
+    line: 266
+    message: Item "None" of "Any | None" has no attribute "value"  [union-attr]
+    type: error
+  - file: redsl/analyzers/incremental.py
+    line: 115
+    message: Returning Any from function declared to return "dict[str, dict[Any, Any]]"  [no-any-return]
+    type: error
+  - file: redsl/awareness/health_model.py
+    line: 98
+    message: Item "None" of "TrendAnalysis | None" has no attribute "trend"  [union-attr]
+    type: error
+  - file: redsl/awareness/proactive.py
+    line: 86
+    message: Argument "project_path" to "GitTimelineAnalyzer" has incompatible type
+      "str"; expected "Path"  [arg-type]
+    type: error
+  - file: redsl/llm/registry/sources/base.py
+    line: 37
+    message: Returning Any from function declared to return "dict[Any, Any]"  [no-any-return]
+    type: error
+  - file: redsl/llm/registry/sources/base.py
+    line: 300
+    message: Returning Any from function declared to return "dict[Any, Any]"  [no-any-return]
+    type: error
+  - file: redsl/llm/registry/sources/base.py
+    line: 306
+    message: Returning Any from function declared to return "float | None"  [no-any-return]
+    type: error
+  - file: redsl/llm/registry/sources/base.py
+    line: 311
+    message: Returning Any from function declared to return "float | None"  [no-any-return]
+    type: error
+  - file: redsl/llm/registry/sources/base.py
+    line: 324
+    message: Returning Any from function declared to return "float | None"  [no-any-return]
+    type: error
+  - file: redsl/llm/registry/sources/base.py
+    line: 329
+    message: Returning Any from function declared to return "float | None"  [no-any-return]
+    type: error
+  - file: redsl/llm/registry/sources/base.py
+    line: 334
+    message: Returning Any from function declared to return "float | None"  [no-any-return]
+    type: error
+  - file: redsl/llm/registry/aggregator.py
+    line: 43
+    message: Incompatible return value type (got "dict[str, ModelInfo] | None", expected
+      "dict[str, ModelInfo]")  [return-value]
+    type: error
+  - file: redsl/llm/registry/aggregator.py
+    line: 52
+    message: Incompatible return value type (got "dict[str, ModelInfo] | None", expected
+      "dict[str, ModelInfo]")  [return-value]
+    type: error
+  - file: redsl/llm/registry/aggregator.py
+    line: 120
+    message: 'Need type annotation for "sources" (hint: "sources: list[<type>] = ...")  [var-annotated]'
+    type: error
+  - file: redsl/llm/registry/aggregator.py
+    line: 133
+    message: Name "Pricing" is not defined  [name-defined]
+    type: error
+  - file: redsl/llm/registry/aggregator.py
+    line: 141
+    message: Name "Capabilities" is not defined  [name-defined]
+    type: error
+  - file: redsl/llm/registry/aggregator.py
+    line: 151
+    message: Name "QualitySignals" is not defined  [name-defined]
+    type: error
+  - file: redsl/llm/gate.py
+    line: 109
+    message: Unsupported operand types for < ("int" and "None")  [operator]
+    type: error
+  - file: redsl/llm/gate.py
+    line: 109
+    message: Left operand is of type "int | None"
+    type: note
+  - file: redsl/llm/gate.py
+    line: 120
+    message: No overload variant of "__sub__" of "datetime" matches argument type
+      "None"  [operator]
+    type: error
+  - file: redsl/llm/gate.py
+    line: 120
+    message: 'Possible overload variants:'
+    type: note
+  - file: redsl/llm/gate.py
+    line: 120
+    message: def __sub__(self, datetime, /) -> timedelta
+    type: note
+  - file: redsl/llm/gate.py
+    line: 120
+    message: def __sub__(self, timedelta, /) -> datetime
+    type: note
+  - file: redsl/llm/gate.py
+    line: 120
+    message: Right operand is of type "datetime | None"
+    type: note
+  - file: redsl/config_standard/proposals.py
+    line: 88
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/config_standard/proposals.py
+    line: 91
+    message: Returning Any from function declared to return "str"  [no-any-return]
+    type: error
+  - file: redsl/config_standard/profiles.py
+    line: 7
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/config_standard/profiles.py
+    line: 79
+    message: Returning Any from function declared to return "str"  [no-any-return]
+    type: error
+  - file: redsl/config.py
+    line: 38
+    message: Incompatible return value type (got "str | None", expected "str")  [return-value]
+    type: error
+  - file: redsl/config_standard/store.py
+    line: 14
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/config_standard/store.py
+    line: 197
+    message: Returning Any from function declared to return "dict[str, Any]"  [no-any-return]
+    type: error
+  - file: redsl/config_standard/applier.py
+    line: 114
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  - file: redsl/config_standard/applier.py
+    line: 175
+    message: Returning Any from function declared to return "str"  [no-any-return]
+    type: error
+  - file: redsl/config_standard/agent_bridge.py
+    line: 219
+    message: Module "redsl.config_standard.models" has no attribute "deep_merge"  [attr-defined]
+    type: error
+  - file: redsl/llm/selection.py
+    line: 42
+    message: Unsupported operand types for * ("None" and "Decimal")  [operator]
+    type: error
+  - file: redsl/llm/selection.py
+    line: 42
+    message: Left operand is of type "Decimal | None"
+    type: note
+  - file: redsl/llm/selection.py
+    line: 43
+    message: Unsupported operand types for * ("None" and "Decimal")  [operator]
+    type: error
+  - file: redsl/llm/selection.py
+    line: 43
+    message: Left operand is of type "Decimal | None"
+    type: note
+  - file: redsl/llm/selection.py
+    line: 192
+    message: Too many arguments for "_get_passing_candidates" of "ModelSelector"  [call-arg]
+    type: error
+  - file: redsl/llm/selection.py
+    line: 434
+    message: '"type[LLMConfig]" has no attribute "from_env"  [attr-defined]'
+    type: error
+  - file: redsl/llm/selection.py
+    line: 435
+    message: Returning Any from function declared to return "str"  [no-any-return]
+    type: error
+  - file: redsl/llm/selection.py
+    line: 463
+    message: Cannot find implementation or library stub for module named "prometheus_client"  [import-not-found]
+    type: error
+  - file: redsl/llm/__init__.py
+    line: 261
+    message: Argument 1 to "append" of "list" has incompatible type "ModelsDevSource";
+      expected "OpenRouterSource"  [arg-type]
+    type: error
+  - file: redsl/llm/__init__.py
+    line: 263
+    message: Argument 1 to "append" of "list" has incompatible type "OpenAIProviderSource";
+      expected "OpenRouterSource"  [arg-type]
+    type: error
+  - file: redsl/llm/__init__.py
+    line: 265
+    message: Argument 1 to "append" of "list" has incompatible type "AnthropicProviderSource";
+      expected "OpenRouterSource"  [arg-type]
+    type: error
+  - file: redsl/llm/__init__.py
+    line: 277
+    message: Argument "sources" to "RegistryAggregator" has incompatible type "list[OpenRouterSource]";
+      expected "list[ModelRegistrySource]"  [arg-type]
+    type: error
+  - file: redsl/llm/__init__.py
+    line: 277
+    message: '"list" is invariant -- see https://mypy.readthedocs.io/en/stable/common_issues.html#variance'
+    type: note
+  - file: redsl/llm/__init__.py
+    line: 277
+    message: Consider using "Sequence" instead, which is covariant
+    type: note
+  - file: redsl/llm/__init__.py
+    line: 324
+    message: Cannot find implementation or library stub for module named "litellm"  [import-not-found]
+    type: error
+  - file: redsl/execution/decision.py
+    line: 29
+    message: Name "AnalysisResult" is not defined  [name-defined]
+    type: error
+  - file: redsl/execution/decision.py
+    line: 64
+    message: Argument "proposal" to "RefactorResult" has incompatible type "None";
+      expected "RefactorProposal"  [arg-type]
+    type: error
+  - file: redsl/execution/decision.py
+    line: 99
+    message: Argument "proposal" to "RefactorResult" has incompatible type "None";
+      expected "RefactorProposal"  [arg-type]
+    type: error
+  - file: redsl/execution/decision.py
+    line: 112
+    message: Argument "proposal" to "RefactorResult" has incompatible type "None";
+      expected "RefactorProposal"  [arg-type]
+    type: error
+  - file: redsl/execution/decision.py
+    line: 204
+    message: Name "Proposal" is not defined  [name-defined]
+    type: error
+  - file: redsl/execution/decision.py
+    line: 282
+    message: Name "Proposal" is not defined  [name-defined]
+    type: error
+  - file: redsl/execution/decision.py
+    line: 361
+    message: Argument "proposal" to "RefactorResult" has incompatible type "None";
+      expected "RefactorProposal"  [arg-type]
+    type: error
+  - file: redsl/execution/cycle.py
+    line: 156
+    message: Name "project_dir" is not defined  [name-defined]
+    type: error
+  - file: redsl/orchestrator.py
+    line: 144
+    message: Library stubs not installed for "yaml"  [import-untyped]
+    type: error
+  print_statements:
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/__init__.py
+    line: 44
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/core.py
+    line: 8
+    message: 'Module execution block detected: Assign'
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/core.py
+    line: 8
+    message: 'Module execution block detected: Call'
+  ruff: []
+  unused_imports:
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/batch.py
+    line: 11
+    message: 'Unused import: _get_timestamp'
+    name: _get_timestamp
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/cycle.py
+    line: 11
+    message: 'Unused import: _get_ts'
+    name: _get_ts
+  - file: /home/tom/github/semcod/redsl/redsl/formatters/debug.py
+    line: 6
+    message: 'Unused import: List'
+    name: List
+metrics:
+  average_complexity: 0
+  average_maintainability: 0
+  max_complexity: 0
+  total_lines: 0
+project_root: /home/tom/github/semcod/redsl
+recommendations:
+- action: REMOVE_UNUSED_IMPORTS
+  message: Remove 3 unused imports
+  priority: high
+  type: cleanup
+- action: EXTRACT_CONSTANTS
+  message: Extract 7 magic numbers to constants
+  priority: medium
+  type: quality
+- action: FIX_MODULE_EXECUTION_BLOCK
+  message: Remove or replace 3 print statements
+  priority: medium
+  type: quality
+- action: null
+  message: Add docstrings to 13 functions/classes
+  priority: low
+  type: documentation
+summary:
+  magic_numbers: 7
+  missing_docstrings: 13
+  mypy_issues: 123
+  print_statements: 3
+  ruff_errors: 0
+  ruff_warnings: 0
+  security_issues: 0
+  total_files: 6
+  unused_imports: 3
+timestamp: '2026-04-19T19:44:34.628227'

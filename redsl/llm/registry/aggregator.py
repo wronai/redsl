@@ -87,45 +87,86 @@ class RegistryAggregator:
 
     def _merge_model(self, model_id: str, infos: list[ModelInfo]) -> ModelInfo:
         """Merge multiple ModelInfo entries for same model from different sources."""
-        from .models import ModelInfo, Pricing, Capabilities, QualitySignals
+        from .models import ModelInfo
 
-        # Collect all dates from different sources
+        base_info = infos[0]
+        source_dates, sources = self._collect_source_info(infos)
+        deprecated = any(info.deprecated for info in infos)
+        context_length = self._merge_context_length(infos)
+
+        merged_pricing = self._merge_pricing(infos)
+        merged_capabilities = self._merge_capabilities(infos)
+        merged_quality = self._merge_quality(infos)
+
+        release_date = self._compute_release_date(source_dates, model_id)
+
+        return ModelInfo(
+            id=model_id,
+            provider=base_info.provider,
+            release_date=release_date,
+            deprecated=deprecated,
+            context_length=context_length,
+            sources=tuple(set(sources)),
+            source_dates=source_dates,
+            raw=base_info.raw,
+            pricing=merged_pricing,
+            capabilities=merged_capabilities,
+            quality=merged_quality,
+        )
+
+    def _collect_source_info(self, infos: list[ModelInfo]) -> tuple[dict, list]:
+        """Collect source dates and sources from all infos."""
         source_dates = {}
         sources = []
-        deprecated = False
-        context_length = None
-
-        # For new fields: merge intelligently
-        merged_pricing = Pricing()
-        merged_capabilities = Capabilities()
-        merged_quality = QualitySignals()
-
         for info in infos:
             sources.extend(info.sources)
             source_dates.update(info.source_dates)
-            if info.deprecated:
-                deprecated = True
-            if info.context_length and not context_length:
-                context_length = info.context_length
+        return source_dates, sources
 
-            # Merge pricing: take first known
-            if not merged_pricing.is_known and info.pricing.is_known:
-                merged_pricing = info.pricing
+    def _merge_context_length(self, infos: list[ModelInfo]) -> int | None:
+        """Find the first available context length."""
+        for info in infos:
+            if info.context_length:
+                return info.context_length
+        return None
 
-            # Merge capabilities: take highest values
-            if info.capabilities.context_length and (not merged_capabilities.context_length or info.capabilities.context_length > merged_capabilities.context_length):
-                merged_capabilities = info.capabilities
+    def _merge_pricing(self, infos: list[ModelInfo]) -> "Pricing":
+        """Take first known pricing."""
+        from .models import Pricing
+        for info in infos:
+            if info.pricing.is_known:
+                return info.pricing
+        return Pricing()
 
-            # Merge quality: OR flags, take max scores
-            merged_quality = QualitySignals(
-                openrouter_category_programming=merged_quality.openrouter_category_programming or info.quality.openrouter_category_programming,
-                aider_polyglot_score=max(filter(None, [merged_quality.aider_polyglot_score, info.quality.aider_polyglot_score]), default=None),
-                livebench_coding_score=max(filter(None, [merged_quality.livebench_coding_score, info.quality.livebench_coding_score]), default=None),
-                in_known_good_list=merged_quality.in_known_good_list or info.quality.in_known_good_list,
+    def _merge_capabilities(self, infos: list[ModelInfo]) -> "Capabilities":
+        """Merge capabilities taking highest context length."""
+        from .models import Capabilities
+        merged = Capabilities()
+        for info in infos:
+            cap = info.capabilities
+            if cap.context_length and (not merged.context_length or cap.context_length > merged.context_length):
+                merged = cap
+        return merged
+
+    def _merge_quality(self, infos: list[ModelInfo]) -> "QualitySignals":
+        """Merge quality signals with OR flags and max scores."""
+        from .models import QualitySignals
+        merged = QualitySignals()
+        for info in infos:
+            q = info.quality
+            merged = QualitySignals(
+                openrouter_category_programming=merged.openrouter_category_programming or q.openrouter_category_programming,
+                aider_polyglot_score=max(filter(None, [merged.aider_polyglot_score, q.aider_polyglot_score]), default=None),
+                livebench_coding_score=max(filter(None, [merged.livebench_coding_score, q.livebench_coding_score]), default=None),
+                in_known_good_list=merged.in_known_good_list or q.in_known_good_list,
             )
+        return merged
 
-        # Check for disagreement between sources
+    def _compute_release_date(self, source_dates: dict, model_id: str) -> "datetime | None":
+        """Compute conservative release date from source dates."""
+        from datetime import datetime
         dates_only = [d for d in source_dates.values() if d is not None]
+
         if len(dates_only) >= 2:
             spread = (max(dates_only) - min(dates_only)).days
             if spread > self.disagreement_days:
@@ -133,25 +174,10 @@ class RegistryAggregator:
                     "Model %s: sources disagree by %d days: %s",
                     model_id,
                     spread,
-                    {k: v.isoformat() for k, v in source_dates.items()},
+                    {k: v.isoformat() if isinstance(v, datetime) else v for k, v in source_dates.items()},
                 )
 
-        # Conservative: earliest known date (model is not "younger" than this)
-        release_date = min(dates_only) if dates_only else None
-
-        return ModelInfo(
-            id=model_id,
-            provider=infos[0].provider,
-            release_date=release_date,
-            deprecated=deprecated,
-            context_length=context_length,
-            sources=tuple(set(sources)),
-            source_dates=source_dates,
-            raw=infos[0].raw,
-            pricing=merged_pricing,
-            capabilities=merged_capabilities,
-            quality=merged_quality,
-        )
+        return min(dates_only) if dates_only else None
 
     def _cache_is_fresh(self) -> bool:
         """Check if in-memory cache is fresh."""

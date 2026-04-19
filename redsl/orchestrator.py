@@ -100,6 +100,7 @@ class RefactorOrchestrator:
         rollback_on_failure: bool = False,
         use_sandbox: bool = False,
         target_file: str | None = None,
+        run_tests: bool = False,
     ) -> CycleReport:
         effective_max = self._resolve_limits(project_dir, max_actions)
         return _run_cycle(
@@ -111,6 +112,7 @@ class RefactorOrchestrator:
             rollback_on_failure=rollback_on_failure,
             use_sandbox=use_sandbox,
             target_file=target_file,
+            run_tests=run_tests,
         )
 
     def run_from_toon_content(

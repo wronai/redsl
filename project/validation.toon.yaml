@@ -1,27 +1,28 @@
-# vallm batch | 340f | 254✓ 3⚠ 0✗ | 2026-04-19
+# vallm batch | 359f | 269✓ 3⚠ 0✗ | 2026-04-19
 
 SUMMARY:
-  scanned: 340  passed: 254 (74.7%)  warnings: 3  errors: 0  unsupported: 86
+  scanned: 359  passed: 269 (74.9%)  warnings: 3  errors: 0  unsupported: 90
 
 WARNINGS[3]{path,score}:
+  redsl/commands/sumr_planfile.py,0.93
+    issues[4]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,_extract_complexity_layers has cyclomatic complexity 20 (max: 15),219
+      complexity.cyclomatic,warning,refactor_plan_to_tasks has cyclomatic complexity 17 (max: 15),345
+      complexity.lizard_cc,warning,_extract_complexity_layers: CC=20 exceeds limit 15,219
+      complexity.lizard_cc,warning,refactor_plan_to_tasks: CC=17 exceeds limit 15,345
   test_refactor_bad/complex_code.py,0.93
     issues[4]{rule,severity,message,line}:
       complexity.cyclomatic,warning,process_data has cyclomatic complexity 25 (max: 15),5
       complexity.cyclomatic,warning,process_data_copy has cyclomatic complexity 25 (max: 15),63
       complexity.lizard_cc,warning,process_data: CC=25 exceeds limit 15,5
       complexity.lizard_cc,warning,process_data_copy: CC=25 exceeds limit 15,63
-  redsl/cli/models.py,0.97
-    issues[2]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,list_coding has cyclomatic complexity 27 (max: 15),160
-      complexity.lizard_cc,warning,list_coding: CC=27 exceeds limit 15,160
-  redsl/llm/registry/aggregator.py,0.97
-    issues[2]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,_merge_model has cyclomatic complexity 18 (max: 15),88
-      complexity.lizard_cc,warning,_merge_model: CC=18 exceeds limit 15,88
+  redsl/cli/models.py,0.98
+    issues[1]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,pick_coding has cyclomatic complexity 16 (max: 15),76
 
 UNSUPPORTED[5]{bucket,count}:
-  *.md,61
+  *.md,64
   Dockerfile*,1
-  *.txt,3
+  *.txt,4
   *.yml,2
   other,19

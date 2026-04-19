@@ -51,7 +51,7 @@ def resolve_secret_ref(secret: SecretSpec) -> str:
     raise ConfigBridgeError(f"Unsupported secret ref format: {ref}")
 
 
-def _resolve_vault_ref(ref: str, secret: "SecretSpec") -> str:  # noqa: F821
+def _resolve_vault_ref(ref: str, secret: SecretSpec) -> str:  # noqa: F821
     """Resolve a ``vault:<path>#<key>`` secret reference via HashiCorp Vault.
 
     Supports two resolution strategies (tried in order):
@@ -108,7 +108,7 @@ def _resolve_vault_ref(ref: str, secret: "SecretSpec") -> str:  # noqa: F821
     return ""
 
 
-def _resolve_doppler_ref(ref: str, secret: "SecretSpec") -> str:  # noqa: F821
+def _resolve_doppler_ref(ref: str, secret: SecretSpec) -> str:  # noqa: F821
     """Resolve a ``doppler:<project>/<config>/<secret>`` reference.
 
     Supports two resolution strategies (tried in order):
@@ -135,8 +135,8 @@ def _resolve_doppler_ref(ref: str, secret: "SecretSpec") -> str:  # noqa: F821
     if doppler_token and len(parts) >= 3:
         project, config_name = parts[0], parts[1]
         try:
-            import urllib.request
             import urllib.error
+            import urllib.request
 
             url = (
                 f"https://api.doppler.com/v3/configs/config/secret"
@@ -283,7 +283,7 @@ def _select_model_from_policy(llm_policy: Any, secrets: dict[str, str]) -> str:
     if secrets.get("anthropic_api_key"):
         return "anthropic/claude-sonnet-4-20250514"
     if secrets.get("openai_api_key"):
-        return "openai/gpt-5.4-mini"
+        return "moonshotai/kimi-k2.5"
 
     # Fallback - will likely fail but maintains structure
     return "openrouter/x-ai/grok-code-fast-1"

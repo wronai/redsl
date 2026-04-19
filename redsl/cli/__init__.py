@@ -13,7 +13,13 @@ load_dotenv()
 import click
 
 from redsl.cli.logging import setup_logging as _setup_logging
-from redsl.cli.refactor import register_refactor, _save_refactor_markdown_report
+from redsl.cli.refactor import register_refactor, _save_refactor_reports
+
+
+def _save_refactor_markdown_report(*args, **kwargs):
+    """Backward-compatible wrapper that returns only the markdown path."""
+    md_path, _ = _save_refactor_reports(*args, **kwargs)
+    return md_path
 from redsl.cli.batch import register_batch
 from redsl.cli.pyqual import register_pyqual
 from redsl.cli.config import register_config
@@ -23,6 +29,7 @@ from redsl.cli.scan import scan
 from redsl.cli.utils import perf_command, cost_command
 from redsl.cli.model_policy import register_model_policy
 from redsl.cli.models import register_models
+from redsl.cli.planfile import register as _register_planfile
 
 # Import for test compatibility
 from redsl.orchestrator import RefactorOrchestrator
@@ -33,7 +40,7 @@ from redsl.formatters import format_plan_yaml, _serialize_analysis, format_refac
 __all__ = [
     "cli",
     "_setup_logging",
-    "_save_refactor_markdown_report",
+    "_save_refactor_markdown_report",  # alias for _save_refactor_reports
     "RefactorOrchestrator",
     "batch_pyqual_commands",
     "format_plan_yaml",
@@ -71,6 +78,7 @@ def _register_all(cli_group: click.Group) -> None:
     register_examples(cli_group)
     register_model_policy(cli_group)
     register_models(cli_group)
+    _register_planfile(cli_group)
     cli_group.add_command(perf_command)
     cli_group.add_command(cost_command)
     from redsl.commands.cli_doctor import register as _register_doctor

@@ -1,0 +1,642 @@
+"""SUMR.md → planfile.yaml bridge.
+
+Reads a SUMR.md from any project, extracts refactoring decisions from:
+  - ``## Refactoring Analysis`` section (embedded TOON files via markpact blocks)
+  - ``redsl_refactor_plan.toon.yaml`` if present next to SUMR.md
+  - ``project/analysis.toon.yaml`` / ``project/refactor_plan.yaml``
+
+Generates or updates ``planfile.yaml`` in the project root with structured
+tasks ready for planfile CLI consumption.
+
+Public API
+----------
+    parse_sumr(path: Path) -> SumrData
+    toon_to_tasks(toon_content: str, source: str) -> list[PlanTask]
+    refactor_plan_to_tasks(yaml_content: str, source: str) -> list[PlanTask]
+    generate_planfile(project_path: Path, *, dry_run: bool = False) -> PlanfileResult
+"""
+
+from __future__ import annotations
+
+import logging
+import re
+from dataclasses import dataclass, field
+from datetime import date
+from pathlib import Path
+from typing import Any
+
+import yaml
+
+logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Data classes
+# ---------------------------------------------------------------------------
+
+@dataclass
+class PlanTask:
+    id: str
+    title: str
+    description: str
+    file: str
+    action: str
+    priority: int = 3          # 1=critical, 2=high, 3=medium, 4=low
+    effort: str = "medium"     # low | medium | high
+    status: str = "todo"       # todo | in_progress | done
+    labels: list[str] = field(default_factory=list)
+    source: str = ""           # where task came from
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "file": self.file,
+            "action": self.action,
+            "priority": self.priority,
+            "effort": self.effort,
+            "status": self.status,
+            "labels": self.labels,
+            "source": self.source,
+        }
+
+
+@dataclass
+class SumrData:
+    project_name: str
+    project_version: str
+    refactor_sections: list[str]           # raw TOON/yaml text blocks
+    refactor_plan_path: Path | None        # path to refactor_plan.yaml if found
+    toon_paths: list[Path]                 # paths to *.toon.yaml files found
+
+
+@dataclass
+class PlanfileResult:
+    project_path: Path
+    planfile_path: Path
+    tasks: list[PlanTask]
+    written: bool
+    dry_run: bool
+    sources: list[str]
+
+
+# ---------------------------------------------------------------------------
+# SUMR.md parser
+# ---------------------------------------------------------------------------
+
+_MARKPACT_BLOCK_RE = re.compile(
+    r"```(?:\w+\s+)?markpact[^\n]*\n(.*?)```",
+    re.DOTALL,
+)
+# Raw ```toon[attrs]... ``` blocks embedded in SUMR (handles: ```toon, ```toon markpact:..., etc.)
+_TOON_BLOCK_RE = re.compile(
+    r"```toon(?:[^\n]*)\n(.*?)```",
+    re.DOTALL,
+)
+_METADATA_NAME_RE = re.compile(r"\*\*name\*\*[:\s]+`([^`]+)`")
+_METADATA_VERSION_RE = re.compile(r"\*\*version\*\*[:\s]+`([^`]+)`")
+_REFACTOR_SECTION_RE = re.compile(
+    r"## Refactoring Analysis.*?(?=\n## |\Z)",
+    re.DOTALL,
+)
+
+
+def parse_sumr(path: Path) -> SumrData:
+    """Parse a SUMR.md file and extract refactoring-relevant data."""
+    text = path.read_text(encoding="utf-8")
+    project_root = path.parent
+
+    name = _METADATA_NAME_RE.search(text)
+    version = _METADATA_VERSION_RE.search(text)
+
+    # Extract markpact blocks AND raw toon blocks from refactoring section
+    refactor_match = _REFACTOR_SECTION_RE.search(text)
+    refactor_raw = refactor_match.group(0) if refactor_match else ""
+    refactor_blocks = [m.group(1).strip() for m in _MARKPACT_BLOCK_RE.finditer(refactor_raw)]
+    refactor_blocks += [m.group(1).strip() for m in _TOON_BLOCK_RE.finditer(refactor_raw)]
+
+    # Discover toon files in project/
+    toon_paths = sorted(project_root.glob("project/*.toon.yaml"))
+    toon_paths += sorted(project_root.glob("*.toon.yaml"))
+
+    # Locate refactor_plan.yaml
+    plan_candidates = [
+        project_root / "project" / "refactor_plan.yaml",
+        project_root / "refactor_plan.yaml",
+        project_root / "redsl_refactor_plan.yaml",
+    ]
+    plan_path = next((p for p in plan_candidates if p.exists()), None)
+
+    return SumrData(
+        project_name=name.group(1) if name else project_root.name,
+        project_version=version.group(1) if version else "0.0.0",
+        refactor_sections=refactor_blocks,
+        refactor_plan_path=plan_path,
+        toon_paths=toon_paths,
+    )
+
+
+# ---------------------------------------------------------------------------
+# TOON parser → PlanTask list
+# ---------------------------------------------------------------------------
+
+# Matches: "  [1] ○ extract_function   → redsl/some/file.py"
+_TOON_DECISION_RE = re.compile(
+    r"^\s+\[(\d+)\]\s+[○●*-]\s+([\w_]+)\s+→\s+(\S+)",
+    re.MULTILINE,
+)
+# Matches: "      WHY: some reason text"
+_TOON_WHY_RE = re.compile(
+    r"^\s+WHY:\s+(.+)$",
+    re.MULTILINE,
+)
+_TOON_REFACTOR_RE = re.compile(
+    r"^REFACTOR\[(\d+)\](?::\s*(.*))?$",
+    re.MULTILINE,
+)
+# Matches: "  │ module_name   386L  0C   16m  CC=10" inside "  dir/   CC̄=..."
+_TOON_LAYER_RE = re.compile(
+    r"^\s*[│|]\s+(\S+)\s+(\d+)L\s+(\d+)C\s+\S+\s+CC=(\d+)",
+    re.MULTILINE,
+)
+# Matches: "  somedir/   CC̄=4.8    ←..." — directory context line
+_TOON_DIR_RE = re.compile(
+    r"^\s{2}(\S+/)\s+CC",
+    re.MULTILINE,
+)
+_TOON_HEALTH_RE = re.compile(r"^HEALTH\[(\d+)\]", re.MULTILINE)
+# Matches DUPLICATES section entry:
+#   [hash] ! STRU  funcname  L=N N=M saved=X
+#       filepath:start-end  (funcname)
+_TOON_DUP_GROUP_RE = re.compile(
+    r"^\s+\[[0-9a-f]+\]\s+[!\s]\s*\w+\s+(\S+)\s+L=(\d+)\s+N=(\d+)\s+saved=(\d+)",
+    re.MULTILINE,
+)
+_TOON_DUP_FILE_RE = re.compile(
+    r"^\s{6}(\S+\.py):(\d+)-(\d+)",
+    re.MULTILINE,
+)
+
+
+def _make_id_generator():
+    """Return a closure that generates sequential IDs with given prefix."""
+    counter = [0]
+
+    def _next_id(prefix: str) -> str:
+        counter[0] += 1
+        return f"{prefix}{counter[0]:02d}"
+
+    return _next_id
+
+
+def _extract_refactor_decisions(
+    toon_content: str, source: str, _next_id
+) -> list[PlanTask]:
+    """Extract tasks from refactor cycle TOON (DECISIONS[] section)."""
+    tasks: list[PlanTask] = []
+    why_lines = [(m.start(), m.group(1)) for m in _TOON_WHY_RE.finditer(toon_content)]
+
+    for m in _TOON_DECISION_RE.finditer(toon_content):
+        idx, action, target = m.groups()
+        pos = m.end()
+        rationale = next((why for why_pos, why in why_lines if why_pos > pos), "")
+        effort = "high" if action in ("split_module", "split_class") else "medium"
+        tasks.append(PlanTask(
+            id=_next_id("R"),
+            title=f"{action}: {Path(target).name}",
+            description=rationale.strip() or f"{action} → {target}",
+            file=target,
+            action=action,
+            priority=3,
+            effort=effort,
+            status="todo",
+            labels=["refactor", action.replace("_", "-")],
+            source=source,
+        ))
+    return tasks
+
+
+def _extract_complexity_layers(
+    toon_content: str, source: str, _next_id
+) -> list[PlanTask]:
+    """Extract tasks from code analysis TOON (LAYERS with high CC)."""
+    tasks: list[PlanTask] = []
+    dir_positions = [(m.start(), m.group(1)) for m in _TOON_DIR_RE.finditer(toon_content)]
+
+    for m in _TOON_LAYER_RE.finditer(toon_content):
+        module, loc, complexity_count, cc = m.groups()
+        cc_int = int(cc)
+        if cc_int < 10:
+            continue
+        pos = m.start()
+        dir_ctx = next((d for dp, d in reversed(dir_positions) if dp < pos), "")
+        file_path = f"{dir_ctx}{module}.py" if dir_ctx else module
+        priority = 1 if cc_int >= 20 else (2 if cc_int >= 15 else 3)
+        tasks.append(PlanTask(
+            id=_next_id("Q"),
+            title=f"reduce_complexity: {module} (CC={cc_int})",
+            description=(
+                f"Module {module!r} has cyclomatic complexity CC={cc_int} "
+                f"({loc} lines, {complexity_count} complex functions). "
+                "Apply guard clauses, extract helpers, reduce nesting."
+            ),
+            file=file_path,
+            action="reduce_complexity",
+            priority=priority,
+            effort="medium" if cc_int < 15 else "high",
+            status="todo",
+            labels=["refactor", "complexity", f"cc-{cc_int}"],
+            source=source,
+        ))
+    return tasks
+
+
+def _extract_duplications(
+    toon_content: str, source: str, _next_id
+) -> list[PlanTask]:
+    """Extract tasks from Duplication TOON (DUPLICATES section)."""
+    tasks: list[PlanTask] = []
+    dup_file_positions = [(m.start(), m.group(1)) for m in _TOON_DUP_FILE_RE.finditer(toon_content)]
+
+    for m in _TOON_DUP_GROUP_RE.finditer(toon_content):
+        func_name, loc, count, saved = m.groups()
+        saved_int = int(saved)
+        if saved_int < 10:
+            continue
+        pos = m.end()
+        next_group_match = _TOON_DUP_GROUP_RE.search(toon_content, pos)
+        end_pos = next_group_match.start() if next_group_match else len(toon_content)
+        group_files = [fp for fp_pos, fp in dup_file_positions if pos <= fp_pos < end_pos]
+        primary_file = group_files[0] if group_files else ""
+        priority = 2 if saved_int >= 30 else 3
+        tasks.append(PlanTask(
+            id=_next_id("D"),
+            title=f"extract_function: {func_name} (saves {saved_int}L)",
+            description=(
+                f"Duplicated {func_name!r}: {count} occurrences, {loc} lines each, "
+                f"saves {saved_int} lines. Files: {', '.join(group_files[:3])}"
+            ),
+            file=primary_file,
+            action="extract_function",
+            priority=priority,
+            effort="low" if saved_int >= 20 else "medium",
+            status="todo",
+            labels=["refactor", "duplication", "extract-function"],
+            source=source,
+        ))
+    return tasks
+
+
+def toon_to_tasks(toon_content: str, source: str = "") -> list[PlanTask]:
+    """Extract PlanTask list from TOON-format content.
+
+    Handles two TOON subtypes:
+    - refactor cycle TOON (DECISIONS[] section) → direct action tasks
+    - code analysis TOON (REFACTOR[], LAYERS section) → quality tasks
+    """
+    _next_id = _make_id_generator()
+
+    tasks: list[PlanTask] = []
+    tasks.extend(_extract_refactor_decisions(toon_content, source, _next_id))
+    tasks.extend(_extract_complexity_layers(toon_content, source, _next_id))
+    tasks.extend(_extract_duplications(toon_content, source, _next_id))
+
+    return tasks
+
+
+# ---------------------------------------------------------------------------
+# refactor_plan.yaml parser → PlanTask list
+# ---------------------------------------------------------------------------
+
+def refactor_plan_to_tasks(yaml_content: str, source: str = "") -> list[PlanTask]:
+    """Convert a redsl ``refactor_plan.yaml`` to PlanTask list.
+
+    The format is a multi-document YAML (``---`` separated) where each
+    document is either a ``meta`` block or a ``phase`` block with ``tasks``.
+    """
+    tasks: list[PlanTask] = []
+    docs = list(yaml.safe_load_all(yaml_content))
+
+    for doc in docs:
+        if not isinstance(doc, dict):
+            continue
+        phase_tasks = doc.get("tasks", [])
+        phase_name = doc.get("name", "")
+        for raw in phase_tasks:
+            if not isinstance(raw, dict):
+                continue
+            # Skip already-done tasks
+            status_raw = str(raw.get("status", "")).lower()
+            if "done" in status_raw:
+                status = "done"
+            elif "in_progress" in status_raw or "in-progress" in status_raw:
+                status = "in_progress"
+            else:
+                status = "todo"
+
+            task_id = str(raw.get("id", ""))
+            action = raw.get("type", raw.get("pattern", "refactor"))
+            target = raw.get("file", raw.get("target", ""))
+            locations = raw.get("locations", [])
+            if not target and locations:
+                # Extract file path from first location (format: "path.py:line-line")
+                target = locations[0].split(":")[0]
+
+            action_text = raw.get("action", "")
+            if hasattr(action_text, "strip"):
+                action_text = action_text.strip()
+
+            priority_raw = raw.get("priority", 3)
+            try:
+                priority = int(priority_raw)
+            except (TypeError, ValueError):
+                priority = 3
+
+            effort_map = {"low": "low", "quick_wins": "low", "structural": "medium"}
+            effort = effort_map.get(phase_name, "medium")
+            if raw.get("saved_lines", 0) >= 20:
+                effort = "low"  # mechanical dedup = easy
+
+            labels = ["refactor", phase_name.replace("_", "-")]
+            if action:
+                labels.append(action.replace("_", "-"))
+
+            tasks.append(PlanTask(
+                id=task_id or f"{phase_name[:1].upper()}{len(tasks)+1}",
+                title=f"{action}: {Path(target).name}" if target else action,
+                description=action_text or f"{action} in {target}",
+                file=target,
+                action=action,
+                priority=priority,
+                effort=effort,
+                status=status,
+                labels=labels,
+                source=source,
+            ))
+
+    return tasks
+
+
+# ---------------------------------------------------------------------------
+# planfile.yaml writer
+# ---------------------------------------------------------------------------
+
+_PLANFILE_TASK_SCHEMA_VERSION = "1.0"
+
+_PRIORITY_LABELS = {1: "critical", 2: "high", 3: "medium", 4: "low"}
+
+
+def _tasks_to_planfile_yaml(
+    tasks: list[PlanTask],
+    project_name: str,
+    project_version: str,
+    sources: list[str],
+) -> str:
+    """Serialise tasks to planfile.yaml YAML string."""
+    today = date.today().isoformat()
+
+    # Group by status
+    todo = [t for t in tasks if t.status == "todo"]
+    done = [t for t in tasks if t.status == "done"]
+
+    header: dict[str, Any] = {
+        "schema": _PLANFILE_TASK_SCHEMA_VERSION,
+        "project": project_name,
+        "version": project_version,
+        "generated": today,
+        "generator": "redsl planfile sync",
+        "sources": sources,
+        "stats": {
+            "total": len(tasks),
+            "todo": len(todo),
+            "done": len(done),
+        },
+    }
+
+    task_dicts = []
+    for t in tasks:
+        d = t.to_dict()
+        d["priority_label"] = _PRIORITY_LABELS.get(t.priority, "medium")
+        task_dicts.append(d)
+
+    output = yaml.safe_dump(header, sort_keys=False, allow_unicode=True)
+    output += "\n"
+    output += yaml.safe_dump({"tasks": task_dicts}, sort_keys=False, allow_unicode=True)
+    return output
+
+
+# ---------------------------------------------------------------------------
+# Main entry point
+# ---------------------------------------------------------------------------
+
+def _collect_tasks_from_sumr(
+    sumr_file: Path,
+    project_path: Path,
+) -> tuple[list[PlanTask], list[str], str, str]:
+    """Collect tasks from SUMR.md and related files (Sources 1-3).
+
+    Returns: (tasks, sources, project_name, project_version)
+    """
+    all_tasks: list[PlanTask] = []
+    sources: list[str] = []
+
+    try:
+        sumr = parse_sumr(sumr_file)
+    except Exception as exc:
+        logger.warning("Failed to parse SUMR.md at %s: %s", sumr_file, exc)
+        sumr = SumrData(
+            project_name=project_path.name,
+            project_version="0.0.0",
+            refactor_sections=[],
+            refactor_plan_path=None,
+            toon_paths=[],
+        )
+
+    project_name = sumr.project_name
+    project_version = sumr.project_version
+
+    # Source 1: SUMR.md embedded refactoring blocks
+    for idx, block in enumerate(sumr.refactor_sections):
+        src = f"SUMR.md#refactoring-block-{idx+1}"
+        tasks = toon_to_tasks(block, source=src)
+        if tasks:
+            sources.append(src)
+            all_tasks.extend(tasks)
+
+    # Source 2: project/refactor_plan.yaml
+    if sumr.refactor_plan_path and sumr.refactor_plan_path.exists():
+        src = str(sumr.refactor_plan_path.relative_to(project_path))
+        try:
+            tasks = refactor_plan_to_tasks(
+                sumr.refactor_plan_path.read_text(encoding="utf-8"),
+                source=src,
+            )
+            if tasks:
+                sources.append(src)
+                all_tasks.extend(tasks)
+        except Exception as exc:
+            logger.warning("Failed to parse refactor_plan.yaml: %s", exc)
+
+    # Source 3: standalone *.toon.yaml files
+    for toon_path in sumr.toon_paths:
+        src = str(toon_path.relative_to(project_path))
+        try:
+            tasks = toon_to_tasks(toon_path.read_text(encoding="utf-8"), source=src)
+            if tasks:
+                sources.append(src)
+                all_tasks.extend(tasks)
+        except Exception as exc:
+            logger.warning("Failed to parse toon file %s: %s", toon_path, exc)
+
+    return all_tasks, sources, project_name, project_version
+
+
+def _collect_tasks_from_generated_files(
+    project_path: Path,
+) -> tuple[list[PlanTask], list[str]]:
+    """Collect tasks from redsl-generated TOON files (Source 4).
+
+    Returns: (tasks, sources)
+    """
+    all_tasks: list[PlanTask] = []
+    sources: list[str] = []
+
+    for candidate in [
+        project_path / "redsl_refactor_plan.toon.yaml",
+        project_path / "redsl_refactor_report.toon.yaml",
+    ]:
+        if candidate.exists():
+            src = candidate.name
+            try:
+                tasks = toon_to_tasks(candidate.read_text(encoding="utf-8"), source=src)
+                if tasks:
+                    sources.append(src)
+                    all_tasks.extend(tasks)
+            except Exception as exc:
+                logger.warning("Failed to parse %s: %s", candidate.name, exc)
+
+    return all_tasks, sources
+
+
+def _deduplicate_tasks(tasks: list[PlanTask]) -> list[PlanTask]:
+    """Remove duplicate tasks with same (action, file) pair."""
+    seen: set[tuple[str, str]] = set()
+    deduped: list[PlanTask] = []
+    for t in tasks:
+        key = (t.action, t.file)
+        if key not in seen:
+            seen.add(key)
+            deduped.append(t)
+    return deduped
+
+
+def _merge_with_existing_planfile(
+    tasks: list[PlanTask],
+    planfile_path: Path,
+) -> None:
+    """Merge task statuses with existing planfile (preserve in_progress/done)."""
+    if not planfile_path.exists():
+        return
+
+    try:
+        content = planfile_path.read_text(encoding="utf-8")
+        if "\ntasks:" not in content:
+            return
+
+        existing_tasks_raw = yaml.safe_load("tasks:" + content.split("\ntasks:")[1])
+        existing_tasks = (existing_tasks_raw or {}).get("tasks", [])
+        keep = {
+            t["id"]: t
+            for t in existing_tasks
+            if isinstance(t, dict) and t.get("status") in ("in_progress", "done")
+        }
+        # Update status for tasks present in existing
+        for t in tasks:
+            if t.id in keep:
+                t.status = keep[t.id].get("status", t.status)
+    except Exception as exc:
+        logger.debug("Could not merge existing planfile: %s", exc)
+
+
+def generate_planfile(
+    project_path: Path,
+    *,
+    dry_run: bool = False,
+    merge: bool = True,
+    sumr_path: Path | None = None,
+) -> PlanfileResult:
+    """Generate or update planfile.yaml for *project_path* from SUMR.md.
+
+    Parameters
+    ----------
+    project_path:
+        Root of the target project.
+    dry_run:
+        If True, build tasks but do not write planfile.yaml.
+    merge:
+        If True and planfile.yaml exists, preserve 'in_progress'/'done' tasks.
+    sumr_path:
+        Override SUMR.md location (default: project_path/SUMR.md).
+    """
+    project_path = Path(project_path).resolve()
+    sumr_file = sumr_path or project_path / "SUMR.md"
+    planfile_path = project_path / "planfile.yaml"
+
+    all_tasks: list[PlanTask] = []
+    sources: list[str] = []
+    project_name: str
+    project_version: str
+
+    # --- Source 1-3: SUMR.md and related files ---
+    if sumr_file.exists():
+        sumr_tasks, sumr_sources, project_name, project_version = _collect_tasks_from_sumr(
+            sumr_file, project_path
+        )
+        all_tasks.extend(sumr_tasks)
+        sources.extend(sumr_sources)
+    else:
+        logger.warning("SUMR.md not found at %s", sumr_file)
+        project_name = project_path.name
+        project_version = "0.0.0"
+
+    # --- Source 4: redsl-generated files ---
+    gen_tasks, gen_sources = _collect_tasks_from_generated_files(project_path)
+    all_tasks.extend(gen_tasks)
+    sources.extend(gen_sources)
+
+    # --- Dedup ---
+    all_tasks = _deduplicate_tasks(all_tasks)
+
+    # --- Merge with existing planfile ---
+    if merge and not dry_run:
+        _merge_with_existing_planfile(all_tasks, planfile_path)
+
+    # --- Write ---
+    written = False
+    if not dry_run and all_tasks:
+        content = _tasks_to_planfile_yaml(
+            all_tasks, project_name, project_version, sources
+        )
+        planfile_path.write_text(content, encoding="utf-8")
+        written = True
+        logger.info("planfile.yaml written: %d tasks → %s", len(all_tasks), planfile_path)
+
+    return PlanfileResult(
+        project_path=project_path,
+        planfile_path=planfile_path,
+        tasks=all_tasks,
+        written=written,
+        dry_run=dry_run,
+        sources=sources,
+    )
+
+
+__all__ = [
+    "PlanTask",
+    "PlanfileResult",
+    "SumrData",
+    "generate_planfile",
+    "parse_sumr",
+    "refactor_plan_to_tasks",
+    "toon_to_tasks",
+]

@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -53,10 +54,9 @@ class CacheConfig(BaseModel):
     stale_grace_seconds: int = Field(default=604800, ge=0)
 
 
-# Forward imports to avoid circular deps
-from pathlib import Path  # noqa: E402
+# Runtime imports for Pydantic field type resolution
+from .llm_policy import CodingConfig, LLMPolicy  # noqa: E402
 from .secrets import SecretSpec  # noqa: E402
-from .llm_policy import LLMPolicy, CodingConfig  # noqa: E402
 
 
 class RedslConfigSpec(BaseModel):
@@ -109,3 +109,7 @@ __all__ = [
     "RegistrySource",
     "_utcnow",
 ]
+
+# Rebuild models to resolve forward references from TYPE_CHECKING imports
+RedslConfigSpec.model_rebuild()
+RedslConfigDocument.model_rebuild()

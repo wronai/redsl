@@ -2,18 +2,14 @@
 
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, Literal
+from datetime import UTC, datetime
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-if TYPE_CHECKING:
-    from .core import _utcnow
-else:
-    from datetime import UTC, datetime as _dt
 
-    def _utcnow() -> _dt:
-        return _dt.now(UTC)
+def _utcnow() -> datetime:
+    return datetime.now(UTC)
 
 
 CONFIG_PROPOSAL_KIND = "ConfigChangeProposal"
@@ -80,7 +76,6 @@ class ConfigChangeProposal(BaseModel):
 
 
 def export_proposal_schema() -> dict[str, Any]:
-    import json
 
     schema = ConfigChangeProposal.model_json_schema()
     schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"

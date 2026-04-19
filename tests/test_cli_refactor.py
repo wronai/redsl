@@ -142,6 +142,7 @@ def test_refactor_live_json_emits_payload_and_passes_flags(tmp_path: Path, monke
         "rollback_on_failure": True,
         "use_sandbox": True,
         "target_file": None,
+        "run_tests": False,
     }
 
 

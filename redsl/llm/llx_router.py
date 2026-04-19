@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import subprocess
 from dataclasses import dataclass
 
@@ -23,15 +24,18 @@ from redsl.utils.tool_check import is_tool_available
 
 logger = logging.getLogger(__name__)
 
-_REFLECTION_MODEL_DEFAULT = "openai/gpt-4o-mini"
+_REFLECTION_MODEL_DEFAULT = "moonshotai/kimi-k2.5"
 _REFLECTION_MODEL_LOCAL = "ollama/llama3"
-_HARD_REFRACTOR_MODEL = "google/gemini-3.1-flash-lite-preview"
-_CHEAP_DEFAULT_MODEL = "openai/gpt-4o-mini"
+_HARD_REFRACTOR_MODEL = os.getenv(
+    "REFACTOR_LLM_MODEL",
+    os.getenv("LLM_MODEL", "openrouter/google/gemini-flash-1.5"),
+)
+_CHEAP_DEFAULT_MODEL = os.getenv("LLM_MODEL", "moonshotai/kimi-k2.5")
 
 _PRICES_PER_M_TOKENS: dict[str, float] = {
     "openai/gpt-4o": 15.0,
     "gpt-4o": 15.0,
-    "openai/gpt-4o-mini": 0.6,
+    "moonshotai/kimi-k2.5": 0.6,
     "gpt-5.4-mini": 0.6,  # legacy alias
     "google/gemini-3.1-flash-lite-preview": 0.15,
     "ollama/llama3": 0.0,
@@ -177,7 +181,9 @@ def select_model(
     action_value = action.value if hasattr(action, "value") else str(action)
     tier = _classify_complexity(context)
 
-    model = _MODEL_MATRIX.get(
+    # Read env var at call time (dotenv loaded by then)
+    env_model = os.getenv("REFACTOR_LLM_MODEL") or os.getenv("LLM_MODEL")
+    model = env_model or _MODEL_MATRIX.get(
         (action_value, tier),
         _MODEL_MATRIX.get((action_value, "any"), _CHEAP_DEFAULT_MODEL),
     )
@@ -208,7 +214,8 @@ def select_reflection_model(use_local: bool = False) -> str:
     """
     if use_local and _ollama_available():
         return _REFLECTION_MODEL_LOCAL
-    return _REFLECTION_MODEL_DEFAULT
+    # Respect env var at call time (after dotenv is loaded)
+    return os.getenv("LLM_MODEL") or os.getenv("REFACTOR_LLM_MODEL") or _REFLECTION_MODEL_DEFAULT
 
 
 def estimate_cycle_cost(decisions: list, contexts: list[dict]) -> list[dict]:
@@ -238,7 +245,7 @@ def apply_provider_prefix(model: str, configured_model: str) -> str:
     Rules:
     * If ``configured_model`` starts with ``openrouter/``, route *every* model
       through OpenRouter — attach the ``openrouter/`` prefix to any
-      ``provider/model`` (e.g. ``openai/gpt-4o-mini`` → ``openrouter/openai/gpt-4o-mini``).
+      ``provider/model`` (e.g. ``moonshotai/kimi-k2.5`` → ``openrouter/moonshotai/kimi-k2.5``).
     * A bare model name like ``gpt-4o-mini`` is assumed to be an OpenAI model
       and gets the full ``openrouter/openai/`` path when routed via OpenRouter.
     * Ollama and direct xAI providers keep the configured model unchanged for

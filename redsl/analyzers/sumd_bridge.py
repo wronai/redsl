@@ -388,6 +388,11 @@ def _parse_map_metrics(map_content: str) -> dict[str, Any]:
 
     # Parse header line: # proj | 10f 500L | py:10 | 2024-01-01
     for line in map_content.splitlines()[:5]:
+        if line.startswith("# ") and "|" in line and "f " in line:
+            # Extract files count (e.g., "10f" -> 10)
+            match = re.search(r"(\d+)f\s+\d+L", line)
+            if match:
+                metrics["files"] = int(match.group(1))
         if line.startswith("# stats:"):
             # Extract: X func | Y cls | Z mod | CC̄=W | critical:V
             match = re.search(

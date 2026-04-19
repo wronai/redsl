@@ -81,7 +81,7 @@ class CycleRequest(BaseModel):
     project_dir: str = Field(description="Path to project directory")
     max_actions: int = Field(3, description="Maximum number of actions to apply")
     clear_history: bool = Field(True, description="Clear decision history before running (avoids duplicate blocks)")
-    llm_model: str | None = Field(None, description="Override LLM model (e.g. openrouter/openai/gpt-4o-mini)")
+    llm_model: str | None = Field(None, description="Override LLM model (e.g. openrouter/moonshotai/kimi-k2.5)")
 
 
 class CycleResponse(BaseModel):

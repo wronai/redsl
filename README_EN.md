@@ -381,7 +381,7 @@ Once the server is running, visit:
 
 Environment variables:
 - `OPENAI_API_KEY` or `OPENROUTER_API_KEY` — API key
-- `REFACTOR_LLM_MODEL` — LLM model (e.g., `openrouter/openai/gpt-5.4-mini`)
+- `REFACTOR_LLM_MODEL` — LLM model (e.g., `openrouter/moonshotai/kimi-k2.5`)
 - `REFACTOR_DRY_RUN` — test mode (`true`/`false`)
 
 ## Examples

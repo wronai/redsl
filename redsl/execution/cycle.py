@@ -55,11 +55,13 @@ def run_cycle(
     rollback_on_failure: bool = False,
     use_sandbox: bool = False,
     target_file: str | None = None,
+    run_tests: bool = False,
 ) -> "CycleReport":
     """Run a complete refactoring cycle."""
     from redsl.execution.decision import _execute_decisions
     from redsl.execution.reflector import _reflect_on_cycle
     from redsl.execution.resolution import _consult_memory_for_decisions
+    from redsl.execution.test_validation import run_tests_baseline, validate_with_tests
     from redsl.execution.validation import _snapshot_regix_before, _validate_with_regix
 
     orchestrator._cycle_count += 1
@@ -91,12 +93,25 @@ def run_cycle(
         regix_before = _snapshot_regix_before(project_dir, validate_regix)
         _consult_memory_for_decisions(orchestrator, decisions)
 
+        # Capture test baseline BEFORE applying changes
+        tests_baseline = run_tests_baseline(project_dir) if run_tests else None
+
         logger.info("=== CYCLE %d: PLAN + EXECUTE ===", orchestrator._cycle_count)
         _execute_decisions(orchestrator, decisions, project_dir, use_sandbox, report)
 
         if validate_regix and report.proposals_applied > 0:
             logger.info("=== CYCLE %d: VALIDATE (regix) ===", orchestrator._cycle_count)
             _validate_with_regix(project_dir, regix_before, rollback_on_failure, report)
+
+        if run_tests and report.proposals_applied > 0:
+            logger.info("=== CYCLE %d: VALIDATE (tests) ===", orchestrator._cycle_count)
+            applied_files = [
+                ch.file_path
+                for r in report.results
+                if r.applied and r.proposal
+                for ch in r.proposal.changes
+            ]
+            validate_with_tests(project_dir, tests_baseline, applied_files, report)
 
         logger.info("=== CYCLE %d: REFLECT ===", orchestrator._cycle_count)
         _reflect_on_cycle(orchestrator, report)

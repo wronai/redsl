@@ -10,7 +10,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 if TYPE_CHECKING:
     from .core import _utcnow
 else:
-    from datetime import UTC, datetime as _dt
+    from datetime import UTC
+    from datetime import datetime as _dt
 
     def _utcnow() -> _dt:
         return _dt.now(UTC)

@@ -212,6 +212,7 @@ def _generate_proposal_with_reflection(
 
     # Check model against age policy
     from redsl.llm import check_model_policy
+    policy_result = {"allowed": True, "reason": "ok", "age_days": None, "sources_used": []}
     try:
         policy_result = check_model_policy(model)
         if not policy_result["allowed"]:
@@ -220,10 +221,13 @@ def _generate_proposal_with_reflection(
             model = configured_model
             policy_result = check_model_policy(model)
             if not policy_result["allowed"]:
+                logger.error("Fallback model %s also rejected: %s", model, policy_result["reason"])
                 raise ModelRejectedError(f"Both router model and fallback rejected: {policy_result['reason']}")
     except ModelRejectedError as e:
         logger.error("Model policy rejection: %s", e)
-        raise
+        # Return a failed result instead of crashing - allows cycle to continue
+        from redsl.refactors import RefactorResult
+        raise RuntimeError(f"Model policy rejection: {e}")
 
     logger.info(
         "llx_router: %s → model=%s est_cost=$%.4f (policy: %s)",
@@ -348,7 +352,19 @@ def _execute_decision(
         action=decision.action.value,
         context=decision.context,
     )
-    proposal = _generate_proposal_with_reflection(orchestrator, decision, source_code, signature)
+    try:
+        proposal = _generate_proposal_with_reflection(orchestrator, decision, source_code, signature)
+    except RuntimeError as e:
+        if "Model policy rejection" in str(e):
+            logger.error("Failed to execute decision %s: %s", decision.rule_name, e)
+            return RefactorResult(
+                proposal=None,
+                applied=False,
+                validated=False,
+                errors=[str(e)],
+                warnings=["Model rejected by policy, skipping this decision"],
+            )
+        raise
     return _apply_and_record_result(orchestrator, decision, proposal, project_dir)
 
 

@@ -5,8 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
-
 
 @dataclass(slots=True)
 class PathCatalogEntry:
@@ -226,22 +224,6 @@ def search_schema_matches(
         if needle in haystack:
             matches.append(entry.as_dict())
     return matches
-
-
-# Import at bottom to avoid circular dependencies
-from .core import _utcnow  # noqa: E402
-
-
-class LLMPolicy(BaseModel):
-    """Forward declaration - actual implementation in llm_policy.py"""
-
-    model_config = ConfigDict(extra="forbid")
-
-
-class CodingConfig(BaseModel):
-    """Forward declaration - actual implementation in llm_policy.py"""
-
-    model_config = ConfigDict(extra="forbid")
 
 
 __all__ = [

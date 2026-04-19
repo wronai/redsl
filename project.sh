@@ -24,6 +24,7 @@ $PIP install glon --upgrade --quiet
 $PIP install goal --upgrade --quiet
 $PIP install code2logic --upgrade --quiet
 $PIP install code2llm --upgrade --quiet
+$PIP install --force-reinstall -e . --quiet  # Re-apply editable install after PyPI upgrades
 $VENV/bin/code2llm ./ -f all -o ./project --no-chunk
 rm -f project/analysis.json
 rm -f project/analysis.yaml

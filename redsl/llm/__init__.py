@@ -326,7 +326,7 @@ def safe_completion(model: str, **kwargs):
     decision = get_gate().check(model)
     if not decision.allowed:
         raise ModelRejectedError(decision.reason)
-    return completion(model=decision.model, **kwargs)
+    return completion(model=model, **kwargs)
 
 
 def check_model_policy(model: str) -> dict:

@@ -199,13 +199,13 @@ class TestParseMapMetrics:
         assert metrics == {}
 
     def test_parse_without_stats_line(self) -> None:
-        """Test parsing content without stats line."""
+        """Test parsing content without stats line - still extracts files from header."""
         content = """# testproj | 10f 500L | py:10 | 2024-01-01
 M[10]:
   file.py,100
 """
         metrics = _parse_map_metrics(content)
-        assert metrics == {}
+        assert metrics == {"files": 10}
 
 
 class TestSumdIntegration:

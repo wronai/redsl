@@ -1,0 +1,163 @@
+schema: '1.0'
+project: redsl
+version: 1.2.40
+generated: '2026-04-19'
+generator: radon-cc-analysis
+sources:
+- radon cc redsl/
+stats:
+  total: 10
+  todo: 6
+  done: 4
+
+tasks:
+- id: R01
+  title: 'reduce_complexity: generate_planfile (CC=32)'
+  description: Function 'generate_planfile' at line 406 has cyclomatic complexity
+    CC=32. Extract helper methods to reduce complexity.
+  file: redsl/commands/sumr_planfile.py
+  action: reduce_complexity
+  priority: 2
+  effort: medium
+  status: done
+  labels:
+  - refactor
+  - complexity
+  - cc-32
+  source: radon-analysis
+  priority_label: high
+- id: R02
+  title: 'reduce_complexity: toon_to_tasks (CC=25)'
+  description: Function 'toon_to_tasks' at line 181 has cyclomatic complexity CC=25.
+    Extract helper methods to reduce complexity.
+  file: redsl/commands/sumr_planfile.py
+  action: reduce_complexity
+  priority: 2
+  effort: medium
+  status: done
+  labels:
+  - refactor
+  - complexity
+  - cc-25
+  source: radon-analysis
+  priority_label: high
+- id: R03
+  title: 'reduce_complexity: format_cycle_report_toon (CC=23)'
+  description: Function 'format_cycle_report_toon' at line 236 has cyclomatic complexity
+    CC=23. Extract helper methods to reduce complexity.
+  file: redsl/formatters/cycle.py
+  action: reduce_complexity
+  priority: 2
+  effort: medium
+  status: done
+  labels:
+  - refactor
+  - complexity
+  - cc-23
+  source: radon-analysis
+  priority_label: high
+- id: R04
+  title: 'reduce_complexity: planfile_sync (CC=20)'
+  description: Function 'planfile_sync' at line 53 has cyclomatic complexity CC=20.
+    Extract helper methods to reduce complexity.
+  file: redsl/cli/planfile.py
+  action: reduce_complexity
+  priority: 2
+  effort: medium
+  status: done
+  labels:
+  - refactor
+  - complexity
+  - cc-20
+  source: radon-analysis
+  priority_label: high
+- id: R05
+  title: 'reduce_complexity: refactor_plan_to_tasks (CC=17)'
+  description: Function 'refactor_plan_to_tasks' at line 285 has cyclomatic complexity
+    CC=17. Extract helper methods to reduce complexity.
+  file: redsl/commands/sumr_planfile.py
+  action: reduce_complexity
+  priority: 2
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-17
+  source: radon-analysis
+  priority_label: high
+- id: R06
+  title: 'reduce_complexity: pick_coding (CC=16)'
+  description: Function 'pick_coding' at line 76 has cyclomatic complexity CC=16.
+    Extract helper methods to reduce complexity.
+  file: redsl/cli/models.py
+  action: reduce_complexity
+  priority: 2
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-16
+  source: radon-analysis
+  priority_label: high
+- id: R07
+  title: 'reduce_complexity: planfile_show (CC=14)'
+  description: Function 'planfile_show' at line 159 has cyclomatic complexity CC=14.
+    Extract helper methods to reduce complexity.
+  file: redsl/cli/planfile.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-14
+  source: radon-analysis
+  priority_label: medium
+- id: R10
+  title: 'reduce_complexity: run_autonomous_pr (CC=13)'
+  description: Function 'run_autonomous_pr' at line 47 has cyclomatic complexity CC=13.
+    Extract helper methods to reduce complexity.
+  file: redsl/commands/autonomy_pr/__init__.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-13
+  source: radon-analysis
+  priority_label: medium
+- id: R14
+  title: 'reduce_complexity: _format_project_row (CC=12)'
+  description: Function '_format_project_row' at line 252 has cyclomatic complexity
+    CC=12. Extract helper methods to reduce complexity.
+  file: redsl/commands/batch_pyqual/reporting.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-12
+  source: radon-analysis
+  priority_label: medium
+- id: R15
+  title: 'reduce_complexity: _aggregate_totals (CC=12)'
+  description: Function '_aggregate_totals' at line 12 has cyclomatic complexity CC=12.
+    Extract helper methods to reduce complexity.
+  file: redsl/commands/autofix/reporting.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-12
+  source: radon-analysis
+  priority_label: medium

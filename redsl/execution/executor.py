@@ -41,6 +41,13 @@ from redsl.execution.resolution import (
 # Re-export from sandbox_execution module
 from redsl.execution.sandbox_execution import execute_sandboxed
 
+# Re-export from test_validation module
+from redsl.execution.test_validation import (
+    create_regression_task,
+    run_tests_baseline,
+    validate_with_tests,
+)
+
 # Re-export from validation module
 from redsl.execution.validation import (
     _snapshot_regix_before,
@@ -69,6 +76,10 @@ __all__ = [
     # Validation
     "_snapshot_regix_before",
     "_validate_with_regix",
+    # Test validation
+    "run_tests_baseline",
+    "validate_with_tests",
+    "create_regression_task",
     # Sandbox
     "execute_sandboxed",
 ]

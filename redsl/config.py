@@ -22,7 +22,7 @@ def _default_llm_model() -> str:
     if os.getenv("XAI_API_KEY"):
         return _DEFAULT_XAI_MODEL
     if os.getenv("OPENAI_API_KEY"):
-        return "openai/gpt-5.4-mini"
+        return "moonshotai/kimi-k2.5"
     return _DEFAULT_LLM_MODEL
 
 

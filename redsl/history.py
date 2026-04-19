@@ -171,40 +171,57 @@ class HistoryReader:
                     return True
         return False
 
+    def _format_event_header(self, ev: dict[str, Any]) -> str:
+        """Format event header line with timestamp, type, target and action."""
+        ts = ev.get("created_at", "?")[:19]
+        etype = ev.get("event_type", "?")
+        target = ev.get("target_file", "")
+        action = ev.get("action", "")
+        header = f"- **[{ts}] {etype}**"
+        if target:
+            header += f" `{target}`"
+        if action:
+            header += f" → {action}"
+        return header
+
+    def _format_event_details(self, ev: dict[str, Any]) -> list[str]:
+        """Format event details (thought, reflection, outcome, reason)."""
+        details: list[str] = []
+        if ev.get("thought"):
+            details.append(f"  - 💭 Thought: {ev['thought']}")
+        if ev.get("reflection"):
+            details.append(f"  - 🪞 Reflection: {ev['reflection'][:300]}")
+        if ev.get("outcome_reason"):
+            details.append(f"  - ❌ Outcome: {ev['outcome_reason']}")
+        if ev.get("reason"):
+            details.append(f"  - Reason: {ev['reason']}")
+        return details
+
+    def _maybe_add_cycle_header(
+        self, ev: dict[str, Any], current_cycle: int | None
+    ) -> tuple[int | None, list[str]]:
+        """Return (new_cycle, lines_to_add) if cycle changed."""
+        cycle = ev.get("cycle_number")
+        if cycle is not None and cycle != current_cycle:
+            return cycle, [f"\n## Cycle {cycle}\n"]
+        return current_cycle, []
+
     def generate_decision_report(self) -> str:
         """Generate a Markdown report of all decisions, thoughts and outcomes."""
         events = self.load_events()
         if not events:
             return "# ReDSL Decision History\n\nNo events recorded yet.\n"
 
-        lines = ["# ReDSL Decision History\n"]
+        lines: list[str] = ["# ReDSL Decision History\n"]
         current_cycle: int | None = None
 
         for ev in events:
-            cycle = ev.get("cycle_number")
-            if cycle is not None and cycle != current_cycle:
-                current_cycle = cycle
-                lines.append(f"\n## Cycle {cycle}\n")
+            new_cycle, cycle_lines = self._maybe_add_cycle_header(ev, current_cycle)
+            lines.extend(cycle_lines)
+            current_cycle = new_cycle
 
-            ts = ev.get("created_at", "?")[:19]
-            etype = ev.get("event_type", "?")
-            target = ev.get("target_file", "")
-            action = ev.get("action", "")
-            header = f"- **[{ts}] {etype}**"
-            if target:
-                header += f" `{target}`"
-            if action:
-                header += f" → {action}"
-            lines.append(header)
-
-            if ev.get("thought"):
-                lines.append(f"  - 💭 Thought: {ev['thought']}")
-            if ev.get("reflection"):
-                lines.append(f"  - 🪞 Reflection: {ev['reflection'][:300]}")
-            if ev.get("outcome_reason"):
-                lines.append(f"  - ❌ Outcome: {ev['outcome_reason']}")
-            if ev.get("reason"):
-                lines.append(f"  - Reason: {ev['reason']}")
+            lines.append(self._format_event_header(ev))
+            lines.extend(self._format_event_details(ev))
 
         lines.append("")
         return "\n".join(lines)

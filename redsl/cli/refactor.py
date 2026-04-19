@@ -45,6 +45,7 @@ def _resolve_cli_export(name: str, fallback: Any) -> Any:
 @click.option("--rollback", is_flag=True, help="Auto-rollback changes if regix detects regression")
 @click.option("--sandbox", is_flag=True, help="Test each refactoring in a Docker sandbox")
 @click.option("--target-file", type=str, default=None, help="Restrict decisions to a project-relative file or path prefix")
+@click.option("--run-tests", is_flag=True, help="Run project test suite after applying changes; roll back and create planfile task on regression")
 @click.pass_context
 def refactor(
     ctx: click.Context,
@@ -57,6 +58,7 @@ def refactor(
     rollback: bool,
     sandbox: bool,
     target_file: str | None,
+    run_tests: bool,
 ) -> None:
     """Run refactoring on a project."""
     verbose = ctx.obj.get("verbose", False)
@@ -88,14 +90,16 @@ def refactor(
         orchestrator, project_path, max_actions, use_code2llm,
         validate_regix, rollback, sandbox, target_file,
         decisions, analysis, format, log_file,
+        run_tests=run_tests,
     )
 
 
 def _handle_dry_run(format: str, decisions: list[Any], analysis: Any, project_path: Path, log_file: Path) -> None:
-    """Handle dry-run path: emit plan and save markdown report."""
+    """Handle dry-run path: emit plan and save markdown + toon reports."""
     _emit_refactor_dry_run(format, decisions, analysis)
-    markdown_report = _save_refactor_markdown_report(project_path, None, decisions, analysis, log_file, dry_run=True)
-    click.echo(f"Markdown report saved to: {markdown_report}", err=True)
+    md_report, toon_report = _save_refactor_reports(project_path, None, decisions, analysis, log_file, dry_run=True)
+    click.echo(f"Markdown report saved to: {md_report}", err=True)
+    click.echo(f"TOON report saved to: {toon_report}", err=True)
 
 
 def _execute_refactor_cycle(
@@ -111,6 +115,7 @@ def _execute_refactor_cycle(
     analysis: Any,
     format: str,
     log_file: Path,
+    run_tests: bool = False,
 ) -> None:
     """Execute the refactor cycle (non dry-run path)."""
     if not _prepare_refactor_application(format, sandbox, decisions, analysis):
@@ -124,12 +129,14 @@ def _execute_refactor_cycle(
         rollback_on_failure=rollback,
         use_sandbox=sandbox,
         target_file=target_file,
+        run_tests=run_tests,
     )
 
     _emit_refactor_live_output(report, decisions, analysis, format)
 
-    markdown_report = _save_refactor_markdown_report(project_path, report, decisions, analysis, log_file, dry_run=False)
-    click.echo(f"Markdown report saved to: {markdown_report}", err=True)
+    md_report, toon_report = _save_refactor_reports(project_path, report, decisions, analysis, log_file, dry_run=False)
+    click.echo(f"Markdown report saved to: {md_report}", err=True)
+    click.echo(f"TOON report saved to: {toon_report}", err=True)
 
     logger.info("reDSL refactor complete. Log: %s", log_file)
     click.echo(f"# log: {log_file}", err=True)
@@ -247,19 +254,30 @@ def _emit_refactor_live_output(report: Any, decisions: list[Any], analysis: Any,
         click.echo(formatter(report, decisions, analysis))
 
 
-def _save_refactor_markdown_report(
+def _save_refactor_reports(
     project_path: Path,
     report: Any,
     decisions: list[Any],
     analysis: Any,
     log_file: Path,
     dry_run: bool = False,
-) -> Path:
-    # Use fixed filenames for test compatibility
-    report_name = "redsl_refactor_plan.md" if dry_run else "redsl_refactor_report.md"
-    report_file = project_path / report_name
+) -> tuple[Path, Path]:
+    """Save both Markdown and TOON reports.
 
-    content = format_cycle_report_markdown(
+    Returns:
+        Tuple of (markdown_path, toon_path)
+    """
+    from ..formatters import format_cycle_report_toon
+
+    # Use fixed filenames for test compatibility
+    md_name = "redsl_refactor_plan.md" if dry_run else "redsl_refactor_report.md"
+    toon_name = "redsl_refactor_plan.toon.yaml" if dry_run else "redsl_refactor_report.toon.yaml"
+
+    md_file = project_path / md_name
+    toon_file = project_path / toon_name
+
+    # Markdown report (for humans)
+    md_content = format_cycle_report_markdown(
         report=report,
         decisions=decisions,
         project_path=project_path,
@@ -267,9 +285,20 @@ def _save_refactor_markdown_report(
         log_file=log_file,
         dry_run=dry_run,
     )
+    md_file.write_text(md_content, encoding="utf-8")
 
-    report_file.write_text(content, encoding="utf-8")
-    return report_file
+    # TOON report (for planfile integration)
+    toon_content = format_cycle_report_toon(
+        report=report,
+        decisions=decisions,
+        project_path=project_path,
+        analysis=analysis,
+        log_file=log_file,
+        dry_run=dry_run,
+    )
+    toon_file.write_text(toon_content, encoding="utf-8")
+
+    return md_file, toon_file
 
 
 def _prepare_refactor_application(

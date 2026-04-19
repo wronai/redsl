@@ -1,6 +1,7 @@
 examples/11-model-policy/.env.template
 .idea
 dist
+.redsl
 refactor_output
 redsl-*
 archive/

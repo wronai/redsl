@@ -171,18 +171,25 @@ def list_coding(tier: str, limit: int, show_rejected: bool, sort: str, source: s
         redsl models list-coding --tier cheap --limit 10
         redsl models list-coding --show-rejected  # debug rejected models
     """
-    selector = _build_selector()
-    candidates = selector.candidates()
+    from redsl.llm.selection import ModelCandidate
 
+    selector = _build_selector()
+    candidates = _filter_candidates(
+        selector.candidates(), selector, tier, source, show_rejected
+    )
+    candidates = _sort_candidates(candidates, sort)[:limit]
+    _render_model_table(candidates, tier, sort, source)
+
+
+def _filter_candidates(
+    candidates: list, selector, tier: str, source: str, show_rejected: bool
+) -> list:
+    """Apply filters to candidate list."""
     if not show_rejected:
         candidates = [c for c in candidates if c.passes_requirements]
 
-    # Filter by source
     if source == "openrouter":
-        candidates = [
-            c for c in candidates
-            if "openrouter" in c.info.sources
-        ]
+        candidates = [c for c in candidates if "openrouter" in c.info.sources]
 
     if tier != "all":
         max_cost = selector.tiers.get(tier)
@@ -192,22 +199,22 @@ def list_coding(tier: str, limit: int, show_rejected: bool, sort: str, source: s
                 if c.weighted_cost_per_1m and c.weighted_cost_per_1m <= max_cost
             ]
 
-    # Sort by requested criteria
+    return candidates
+
+
+def _sort_candidates(candidates: list, sort: str) -> list:
+    """Sort candidates by specified criteria."""
     if sort == "cost":
-        candidates = sorted(
-            candidates,
-            key=lambda c: (c.weighted_cost_per_1m or float('inf'))
-        )
+        return sorted(candidates, key=lambda c: (c.weighted_cost_per_1m or float('inf')))
     elif sort == "quality":
-        candidates = sorted(candidates, key=lambda c: -c.quality_score)
+        return sorted(candidates, key=lambda c: -c.quality_score)
     elif sort == "context":
-        candidates = sorted(
-            candidates,
-            key=lambda c: -(c.info.capabilities.context_length or 0)
-        )
+        return sorted(candidates, key=lambda c: -(c.info.capabilities.context_length or 0))
+    return candidates
 
-    candidates = candidates[:limit]
 
+def _render_model_table(candidates: list, tier: str, sort: str, source: str) -> None:
+    """Render the model table output."""
     table = Table(title=f"Coding models — tier={tier}, sort={sort}, source={source}")
     table.add_column("Provider", style="magenta", no_wrap=True)
     table.add_column("Model", style="cyan", no_wrap=True)
@@ -218,39 +225,38 @@ def list_coding(tier: str, limit: int, show_rejected: bool, sort: str, source: s
     table.add_column("Status")
 
     for c in candidates:
-        if c.passes_requirements:
-            status = "✓"
-        else:
-            reason = c.rejection_reason or "unknown"
-            status = f"✗ {reason[:25]}"
-
-        cost_str = f"${c.weighted_cost_per_1m:.2f}" if c.weighted_cost_per_1m else "?"
-        release_str = "?"
-        if c.info.release_date:
-            release_str = c.info.release_date.date().isoformat()
-
-        context_str = f"{c.info.capabilities.context_length:,}" if c.info.capabilities.context_length else "?"
-
-        # Split model ID into provider/model
-        parts = c.info.id.split("/", 1)
-        provider = parts[0] if len(parts) > 0 else "?"
-        model_name = parts[1] if len(parts) > 1 else c.info.id
-
-        # OpenRouter availability
-        or_available = "✓" if "openrouter" in c.info.sources else "✗"
-
-        table.add_row(
-            provider,
-            model_name,
-            cost_str,
-            f"{c.quality_score:.0f}" if c.quality_score else "—",
-            context_str,
-            or_available,
-            status,
-        )
+        row = _build_table_row(c)
+        table.add_row(*row)
 
     Console().print(table)
     Console().print(f"\n[dim]Showing {len(candidates)} models[/dim]")
+
+
+def _build_table_row(c) -> tuple:
+    """Build a single table row from a candidate."""
+    if c.passes_requirements:
+        status = "✓"
+    else:
+        reason = c.rejection_reason or "unknown"
+        status = f"✗ {reason[:25]}"
+
+    cost_str = f"${c.weighted_cost_per_1m:.2f}" if c.weighted_cost_per_1m else "?"
+    context_str = f"{c.info.capabilities.context_length:,}" if c.info.capabilities.context_length else "?"
+
+    parts = c.info.id.split("/", 1)
+    provider = parts[0] if len(parts) > 0 else "?"
+    model_name = parts[1] if len(parts) > 1 else c.info.id
+    or_available = "✓" if "openrouter" in c.info.sources else "✗"
+
+    return (
+        provider,
+        model_name,
+        cost_str,
+        f"{c.quality_score:.0f}" if c.quality_score else "—",
+        context_str,
+        or_available,
+        status,
+    )
 
 
 @models_group.command(name="estimate-cost")
