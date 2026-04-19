@@ -1,3 +1,5 @@
+# System Architecture Analysis
+
 ## Overview
 
 - **Project**: /home/tom/github/semcod/redsl/redsl/dsl
@@ -8,6 +10,8 @@
 - **Total Classes**: 8
 - **Modules**: 3
 - **Entry Points**: 21
+
+## Architecture by Module
 
 ### engine
 - **Functions**: 12
@@ -121,6 +125,8 @@ Args:
 > Args:
     memory: AgentMemory instance (lub None → pusty generator)
 
+### engine.Condition.__repr__
+
 ## Process Flows
 
 Key execution flows identified:
@@ -176,6 +182,8 @@ _history_to_patterns [rule_generator.RuleGenerator]
 ```
 _calculate_impact [engine.Rule]
 ```
+
+## Key Classes
 
 ### rule_generator.RuleGenerator
 > Generuje nowe reguły DSL z historii refaktoryzacji w pamięci agenta.
@@ -277,6 +285,14 @@ graph TD
     _load_default_rules --> open
     _load_default_rules --> safe_load
 ```
+
+## Reverse Engineering Guidelines
+
+1. **Entry Points**: Start analysis from the entry points listed above
+2. **Core Logic**: Focus on classes with many methods
+3. **Data Flow**: Follow data transformation functions
+4. **Process Flows**: Use the flow diagrams for execution paths
+5. **API Surface**: Public API functions reveal the interface
 
 ## Context for LLM
 

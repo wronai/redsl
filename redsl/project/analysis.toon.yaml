@@ -1,4 +1,4 @@
-# code2llm | 154f 22644L | python:198 | 2026-04-12
+# code2llm | 154f 22644L | python:198 | 2026-04-14
 # CC̄=3.8 | critical:0/1037 | dups:0 | cycles:0
 
 HEALTH[0]: ok
@@ -225,23 +225,23 @@ COUPLING:
                    main                                                                                           3                                             1                                                                                                                                                                                      ──                       
      consciousness_loop                                                                                           1                                             1                                                                                                                                                                                                             ──
   CYCLES: none
-  HUB: commands.autonomy_pr/ (fan-in=10)
+  HUB: commands/ (fan-in=8)
   HUB: formatters/ (fan-in=11)
+  HUB: analyzers/ (fan-in=26)
+  HUB: commands.autonomy_pr/ (fan-in=10)
   HUB: validation/ (fan-in=13)
   HUB: commands.autofix/ (fan-in=7)
-  HUB: config/ (fan-in=17)
-  HUB: analyzers/ (fan-in=26)
-  HUB: commands/ (fan-in=8)
-  HUB: autonomy/ (fan-in=13)
   HUB: execution/ (fan-in=14)
-  SMELL: cli/ fan-out=8 → split needed
-  SMELL: api/ fan-out=14 → split needed
-  SMELL: refactors/ fan-out=8 → split needed
-  SMELL: commands.autofix/ fan-out=10 → split needed
-  SMELL: commands.batch_pyqual/ fan-out=12 → split needed
+  HUB: autonomy/ (fan-in=13)
+  HUB: config/ (fan-in=17)
   SMELL: commands/ fan-out=29 → split needed
-  SMELL: autonomy/ fan-out=24 → split needed
+  SMELL: cli/ fan-out=8 → split needed
+  SMELL: refactors/ fan-out=8 → split needed
+  SMELL: api/ fan-out=14 → split needed
+  SMELL: commands.batch_pyqual/ fan-out=12 → split needed
+  SMELL: commands.autofix/ fan-out=10 → split needed
   SMELL: execution/ fan-out=11 → split needed
+  SMELL: autonomy/ fan-out=24 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

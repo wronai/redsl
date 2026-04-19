@@ -1,0 +1,170 @@
+app {
+  name: "redsl";
+  version: "1.2.28";
+}
+
+interface[type="cli"] {
+  framework: click;
+}
+interface[type="cli"] page[name="redsl"] {
+
+}
+
+workflow[name="install"] {
+  trigger: "manual";
+  step-1: run cmd=$(PIP) install -r requirements.txt;
+}
+
+workflow[name="dev-install"] {
+  trigger: "manual";
+  step-1: run cmd=$(PIP) install -r requirements.txt;
+  step-2: run cmd=$(PIP) install -e ".[dev]";
+}
+
+workflow[name="test"] {
+  trigger: "manual";
+  step-1: run cmd=$(PYTHON) -m pytest tests/ -v -m "not slow";
+}
+
+workflow[name="test-fast"] {
+  trigger: "manual";
+  step-1: run cmd=$(PYTHON) -m pytest tests/ -q -m "not slow and not integration and not e2e";
+}
+
+workflow[name="test-all"] {
+  trigger: "manual";
+  step-1: run cmd=$(PYTHON) -m pytest tests/ -v;
+}
+
+workflow[name="lint"] {
+  trigger: "manual";
+  step-1: run cmd=$(PYTHON) -m ruff check redsl/ tests/;
+}
+
+workflow[name="type-check"] {
+  trigger: "manual";
+  step-1: run cmd=$(PYTHON) -m mypy redsl/;
+}
+
+workflow[name="format"] {
+  trigger: "manual";
+  step-1: run cmd=$(PYTHON) -m ruff format redsl/ tests/;
+  step-2: run cmd=$(PYTHON) -m ruff check --fix redsl/ tests/;
+}
+
+workflow[name="format-check"] {
+  trigger: "manual";
+  step-1: run cmd=$(PYTHON) -m ruff format --check redsl/ tests/;
+}
+
+workflow[name="docker-up"] {
+  trigger: "manual";
+  step-1: run cmd=$(DOCKER_COMPOSE) up -d;
+}
+
+workflow[name="docker-down"] {
+  trigger: "manual";
+  step-1: run cmd=$(DOCKER_COMPOSE) down;
+}
+
+workflow[name="docker-build"] {
+  trigger: "manual";
+  step-1: run cmd=$(DOCKER_COMPOSE) build;
+}
+
+workflow[name="run"] {
+  trigger: "manual";
+  step-1: depend target=docker-up;
+}
+
+workflow[name="run-local"] {
+  trigger: "manual";
+  step-1: run cmd=$(PYTHON) -m uvicorn redsl.api:app --reload --host 0.0.0.0 --port 8000;
+}
+
+workflow[name="clean"] {
+  trigger: "manual";
+  step-1: run cmd=find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true;
+  step-2: run cmd=find . -type f -name "*.pyc" -delete 2>/dev/null || true;
+  step-3: run cmd=find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true;
+  step-4: run cmd=find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true;
+  step-5: run cmd=rm -rf refactor_output/ 2>/dev/null || true;
+}
+
+workflow[name="fmt"] {
+  trigger: "manual";
+  step-1: run cmd=ruff format .;
+}
+
+workflow[name="build"] {
+  trigger: "manual";
+  step-1: run cmd=python -m build;
+}
+
+workflow[name="health"] {
+  trigger: "manual";
+  step-1: run cmd=docker compose ps;
+  step-2: run cmd=docker compose exec app echo "Health check passed";
+}
+
+workflow[name="up"] {
+  trigger: "manual";
+  step-1: run cmd=docker compose up -d;
+}
+
+workflow[name="down"] {
+  trigger: "manual";
+  step-1: run cmd=docker compose down;
+}
+
+workflow[name="logs"] {
+  trigger: "manual";
+  step-1: run cmd=docker compose logs -f;
+}
+
+workflow[name="ps"] {
+  trigger: "manual";
+  step-1: run cmd=docker compose ps;
+}
+
+workflow[name="import-makefile-hint"] {
+  trigger: "manual";
+  step-1: run cmd=echo 'Run: taskfile import Makefile to import existing targets.';
+}
+
+workflow[name="help"] {
+  trigger: "manual";
+  step-1: run cmd=echo \"Dost\u0119pne komendy:\; 
+  step-2: run cmd=echo \"  install       - Instalacja zale\u017Cno\u015Bci produkcyjnych\; 
+  step-3: run cmd=echo \"  dev-install   - Instalacja zale\u017Cno\u015Bci deweloperskich\; 
+  step-4: run cmd=echo \"  test          - Uruchomienie test\xF3w pytest (bez slow)\; 
+  step-5: run cmd=echo "  test-fast     - Szybkie testy (bez slow/integration/e2e)";
+  step-6: run cmd=echo \"  test-all      - Wszystkie testy w\u0142\u0105cznie z slow\; 
+  step-7: run cmd=echo "  lint          - Sprawdzenie lintingu ruff";
+  step-8: run cmd=echo \"  type-check    - Sprawdzenie typ\xF3w mypy\; 
+  step-9: run cmd=echo "  format        - Formatowanie kodu ruff";
+  step-10: run cmd=echo "  format-check  - Sprawdzenie formatowania kodu";
+  step-11: run cmd=echo \"  docker-up     - Uruchomienie us\u0142ug Docker\; 
+  step-12: run cmd=echo \"  docker-down   - Zatrzymanie us\u0142ug Docker\; 
+  step-13: run cmd=echo \"  docker-build  - Budowanie obraz\xF3w Docker\; 
+  step-14: run cmd=echo "  run           - Uruchomienie aplikacji w Docker";
+  step-15: run cmd=echo "  run-local     - Uruchomienie aplikacji lokalnie";
+  step-16: run cmd=echo \"  clean         - Czyszczenie plik\xF3w tymczasowych\; 
+}
+
+deploy {
+  target: docker-compose;
+  compose_file: docker-compose.yml;
+}
+
+environment[name="local"] {
+  runtime: docker-compose;
+  env_file: ".env";
+}
+
+workflow[name="all"] {
+  trigger: "manual";
+  step-1: run cmd=taskfile run install;
+  step-2: run cmd=taskfile run lint;
+  step-3: run cmd=taskfile run test;
+}

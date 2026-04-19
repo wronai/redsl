@@ -1,20 +1,20 @@
-# code2llm | 166f 23952L | python:164,shell:2 | 2026-04-12
-# CC̄=3.8 | critical:0/1093 | dups:0 | cycles:0
+# code2llm | 190f 25445L | python:188,shell:2 | 2026-04-19
+# CC̄=3.7 | critical:0/1096 | dups:0 | cycles:0
 
 HEALTH[0]: ok
 
 REFACTOR[0]: none needed
 
-PIPELINES[513]:
+PIPELINES[515]:
   [1] Src [main]: main → run_api_integration_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
       PURITY: 100% pure
-  [2] Src [main]: main → run_memory_learning_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
+  [2] Src [main]: main → run_pr_bot_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
       PURITY: 100% pure
-  [3] Src [main]: main → run_full_pipeline_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
+  [3] Src [main]: main → run_basic_analysis_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
       PURITY: 100% pure
-  [4] Src [process_order]: process_order → _is_order_terminal
+  [4] Src [main]: main → run_memory_learning_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
       PURITY: 100% pure
-  [5] Src [main]: main → run_custom_rules_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
+  [5] Src [main]: main → run_full_pipeline_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
       PURITY: 100% pure
 
 LAYERS:
@@ -27,7 +27,7 @@ LAYERS:
   │ debug_decisions             62L  0C    1m  CC=7      ←0
   │ debug_llm_config            55L  0C    1m  CC=5      ←0
   │
-  redsl/                          CC̄=3.8    ←in:17  →out:19  !! split
+  redsl/                          CC̄=3.8    ←in:18  →out:19  !! split
   │ pipeline                   398L  1C   15m  CC=10     ←1
   │ radon_analyzer             388L  0C   23m  CC=10     ←1
   │ decision                   372L  0C    9m  CC=8      ←6
@@ -37,7 +37,7 @@ LAYERS:
   │ quality_gate               325L  1C   10m  CC=11     ←3
   │ __init__                   325L  2C   16m  CC=10     ←0
   │ doctor_detectors           319L  0C   16m  CC=10     ←1
-  │ regix_bridge               317L  0C    8m  CC=9      ←2
+  │ regix_bridge               317L  0C    8m  CC=9      ←1
   │ vallm_bridge               314L  0C    8m  CC=10     ←1
   │ hybrid                     304L  0C   14m  CC=9      ←0
   │ project_parser             300L  1C   18m  CC=12     ←0
@@ -60,7 +60,7 @@ LAYERS:
   │ github_actions             260L  1C    6m  CC=6      ←0
   │ multi_project              251L  3C   10m  CC=5      ←0
   │ metrics                    249L  1C   11m  CC=7      ←2
-  │ pyqual_bridge              249L  0C   12m  CC=11     ←1
+  │ pyqual_bridge              249L  0C   12m  CC=11     ←2
   │ redup_bridge               245L  0C    8m  CC=9      ←1
   │ __init__                   235L  4C   18m  CC=8      ←0
   │ cycle                      233L  0C   11m  CC=9      ←1
@@ -90,6 +90,8 @@ LAYERS:
   │ git_timeline               165L  1C   23m  CC=5      ←0
   │ doctor_fstring_fixers      161L  0C   11m  CC=10     ←1
   │ _scan_report               158L  0C    8m  CC=10     ←0
+  │ badge                      158L  0C    8m  CC=6      ←2
+  │ audit                      157L  0C    4m  CC=6      ←2
   │ analyzer                   155L  0C    6m  CC=8      ←1
   │ resolution                 154L  0C    6m  CC=9      ←3
   │ health_model               151L  3C    6m  CC=9      ←0
@@ -100,6 +102,7 @@ LAYERS:
   │ batch                      139L  0C    7m  CC=4      ←0
   │ reporting                  138L  0C    5m  CC=12     ←1
   │ proactive                  138L  2C    5m  CC=7      ←0
+  │ pr_bot                     136L  0C    6m  CC=7      ←2
   │ config                     134L  5C    4m  CC=6      ←17
   │ ecosystem                  134L  2C   10m  CC=10     ←0
   │ direct_guard               132L  1C    7m  CC=8      ←0
@@ -114,6 +117,7 @@ LAYERS:
   │ smart_scorer               122L  0C    5m  CC=7      ←0
   │ examples                   121L  0C   13m  CC=4      ←1
   │ self_model                 121L  3C    7m  CC=6      ←0
+  │ memory_learning            117L  0C    3m  CC=9      ←2
   │ cli_doctor                 116L  0C    8m  CC=8      ←0
   │ batch                      116L  0C    6m  CC=3      ←1
   │ verdict                    109L  0C    7m  CC=10     ←1
@@ -121,9 +125,11 @@ LAYERS:
   │ timeline_models            107L  3C    3m  CC=3      ←0
   │ adaptive_executor          106L  1C    3m  CC=7      ←0
   │ reflector                  106L  0C    2m  CC=5      ←1
+  │ awareness                  101L  0C    6m  CC=6      ←2
   │ resolver                    97L  1C    4m  CC=8      ←1
   │ models                      96L  13C    0m  CC=0.0    ←0
   │ example_routes              95L  0C    4m  CC=7      ←1
+  │ _common                     94L  0C    6m  CC=4      ←12
   │ ast_analyzer                88L  1C    2m  CC=7      ←0
   │ config_gen                  87L  0C    4m  CC=4      ←1
   │ __init__                    87L  0C    0m  CC=0.0    ←0
@@ -132,11 +138,14 @@ LAYERS:
   │ discovery                   81L  0C    7m  CC=7      ←2
   │ __init__                    81L  0C    3m  CC=1      ←0
   │ metrics                     81L  2C    2m  CC=2      ←0
+  │ pyqual_example              74L  0C    2m  CC=8      ←2
   │ executor                    74L  0C    0m  CC=0.0    ←0
   │ todo_gen                    72L  0C    3m  CC=8      ←1
   │ analyzer                    71L  1C    8m  CC=1      ←0
   │ __init__                    70L  0C    2m  CC=1      ←0
   │ sandbox_execution           69L  0C    1m  CC=4      ←1
+  │ custom_rules                68L  0C    3m  CC=6      ←2
+  │ full_pipeline               67L  0C    2m  CC=4      ←2
   │ __init__                    65L  0C    0m  CC=0.0    ←0
   │ direct                      63L  1C    6m  CC=1      ←0
   │ __init__                    63L  0C    0m  CC=0.0    ←0
@@ -149,12 +158,14 @@ LAYERS:
   │ runner                      56L  0C    2m  CC=6      ←0
   │ debug_routes                56L  0C    1m  CC=1      ←1
   │ __init__                    55L  0C    0m  CC=0.0    ←0
+  │ basic_analysis              54L  0C    2m  CC=3      ←2
   │ ruff_analyzer               49L  1C    1m  CC=10     ←0
   │ models                      49L  3C    0m  CC=0.0    ←0
   │ logging                     48L  0C    1m  CC=6      ←3
   │ bandit_analyzer             47L  1C    1m  CC=9      ←0
   │ utils                       45L  0C    2m  CC=3      ←0
   │ doctor_data                 41L  2C    1m  CC=2      ←0
+  │ api_integration             41L  0C    2m  CC=2      ←2
   │ scan                        41L  0C    2m  CC=6      ←0
   │ __init__                    41L  0C    0m  CC=0.0    ←0
   │ doctor_helpers              40L  0C    2m  CC=5      ←1
@@ -165,6 +176,7 @@ LAYERS:
   │ debug                       36L  0C    1m  CC=6      ←0
   │ pyqual                      35L  0C    4m  CC=1      ←1
   │ pyqual_routes               33L  0C    1m  CC=1      ←1
+  │ __init__                    33L  0C    0m  CC=0.0    ←0
   │ doctor_indent_fixers        31L  0C    0m  CC=0.0    ←0
   │ models                      30L  1C    0m  CC=0.0    ←0
   │ __init__                    29L  1C    0m  CC=0.0    ←0
@@ -183,9 +195,25 @@ LAYERS:
   │ __main__                     1L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │
+  test_sample_project/            CC̄=2.3    ←in:0  →out:0
+  │ sample                      32L  0C    3m  CC=4      ←0
+  │
   .goal/                          CC̄=2.0    ←in:0  →out:0
   │ pre-commit-hook             23L  0C    1m  CC=2      ←0
   │ vallm-pre-commit.sh         17L  0C    0m  CC=0.0    ←0
+  │
+  examples/                       CC̄=1.9    ←in:0  →out:0
+  │ 00_orders__service          88L  0C    6m  CC=6      ←0
+  │ main                        32L  0C    1m  CC=1      ←0
+  │ main                        30L  0C    1m  CC=1      ←0
+  │ main                        29L  0C    1m  CC=1      ←0
+  │ main                        27L  0C    1m  CC=1      ←0
+  │ main                        27L  0C    1m  CC=1      ←0
+  │ main                        27L  0C    1m  CC=1      ←0
+  │ main                        26L  0C    1m  CC=1      ←0
+  │ main                        25L  0C    1m  CC=1      ←0
+  │ main                        25L  0C    1m  CC=1      ←0
+  │ main                        25L  0C    1m  CC=1      ←0
   │
   refactor_output/                CC̄=1.4    ←in:0  →out:0
   │ 00_app__models              29L  0C    5m  CC=3      ←0
@@ -198,41 +226,42 @@ LAYERS:
   │
 
 COUPLING:
-                                  redsl.commands          redsl.autonomy                   redsl         redsl.analyzers         redsl.execution               redsl.api        redsl.validation               redsl.cli  archive.legacy_scripts        redsl.formatters         redsl.refactors               redsl.llm       redsl.diagnostics      redsl.integrations         redsl.awareness
-          redsl.commands                      ──                      12                       2                       6                       3                                               7                                               6                       2                       1                                                                                                  hub
-          redsl.autonomy                       7                      ──                       6                       8                       3                                                                      ←1                                                                                                                                                                          hub
-                   redsl                      ←2                      ←6                      ──                                               4                       6                                               5                      ←3                                                                       2                       2                      ←1                          hub
-         redsl.analyzers                      ←6                      ←8                                              ──                      ←3                                              ←1                                              ←1                                              ←5                                                                                              ←1  hub
-         redsl.execution                      ←3                      ←3                      ←4                       3                      ──                      ←3                       3                      ←1                       1                                               1                       4                                                                          hub
-               redsl.api                                                                       3                                               3                      ──                                                                                               6                                                                                               1                          hub
-        redsl.validation                      ←7                                                                       1                      ←3                                              ──                                                                                              ←3                                                                                                  hub
-               redsl.cli                                               1                       2                                               1                                                                      ──                                               3                                                                       1                                                  hub
-  archive.legacy_scripts                      ←6                                               3                       1                      ←1                                                                                              ──                                                                                                                                                  hub
-        redsl.formatters                      ←2                                                                                                                      ←6                                              ←3                                              ──                                                                                                                          hub
-         redsl.refactors                      ←1                                                                       5                      ←1                                               3                                                                                              ──                                                                                                  !! fan-out
-               redsl.llm                                                                      ←2                                              ←4                                                                                                                                                                      ──                                                                          hub
-       redsl.diagnostics                                                                      ←2                                                                                                                      ←1                                                                                                                      ──                                                
-      redsl.integrations                                                                       1                                                                      ←1                                                                                                                                                                                              ──                        
-         redsl.awareness                                                                                               1                                                                                                                                                                                                                                                                      ──
+                                  redsl.commands                   redsl          redsl.autonomy         redsl.analyzers         redsl.execution          redsl.examples               redsl.cli               redsl.api        redsl.validation  archive.legacy_scripts        redsl.formatters         redsl.refactors               redsl.llm       redsl.diagnostics      redsl.integrations
+          redsl.commands                      ──                       2                      12                       6                       3                                                                                               7                       6                       2                       1                                                                          hub
+                   redsl                      ←2                      ──                      ←6                                               4                      ←1                       5                       6                                              ←3                                                                       2                       2                      ←1  hub
+          redsl.autonomy                       7                       6                      ──                       8                       3                                              ←1                                                                                                                                                                                                  hub
+         redsl.analyzers                      ←6                                              ←8                      ──                      ←3                      ←1                                                                      ←1                      ←1                                              ←5                                                                          hub
+         redsl.execution                      ←3                      ←4                      ←3                       3                      ──                      ←1                      ←1                      ←3                       3                       1                                               1                       4                                                  hub
+          redsl.examples                                               1                                               1                       1                      ──                     ←11                      ←2                                                                                                                                                                          hub
+               redsl.cli                                               2                       1                                               1                      11                      ──                                                                                               3                                                                       1                          hub
+               redsl.api                                               3                                                                       3                       2                                              ──                                                                       6                                                                                               1  hub
+        redsl.validation                      ←7                                                                       1                      ←3                                                                                              ──                                                                      ←3                                                                          hub
+  archive.legacy_scripts                      ←6                       3                                               1                      ←1                                                                                                                      ──                                                                                                                          hub
+        redsl.formatters                      ←2                                                                                                                                              ←3                      ←6                                                                      ──                                                                                                  hub
+         redsl.refactors                      ←1                                                                       5                      ←1                                                                                               3                                                                      ──                                                                          !! fan-out
+               redsl.llm                                              ←2                                                                      ←4                                                                                                                                                                                              ──                                                  hub
+       redsl.diagnostics                                              ←2                                                                                                                      ←1                                                                                                                                                                      ──                        
+      redsl.integrations                                               1                                                                                                                                              ←1                                                                                                                                                                      ──
   CYCLES: none
-  HUB: redsl.validation/ (fan-in=13)
-  HUB: archive.legacy_scripts/ (fan-in=7)
-  HUB: redsl.execution/ (fan-in=14)
-  HUB: redsl.analyzers/ (fan-in=26)
-  HUB: redsl.commands/ (fan-in=7)
-  HUB: redsl.autonomy/ (fan-in=13)
-  HUB: redsl.formatters/ (fan-in=11)
-  HUB: redsl.cli/ (fan-in=5)
-  HUB: redsl.llm/ (fan-in=6)
-  HUB: redsl/ (fan-in=17)
+  HUB: redsl.execution/ (fan-in=15)
   HUB: redsl.api/ (fan-in=6)
+  HUB: redsl.validation/ (fan-in=13)
+  HUB: redsl.autonomy/ (fan-in=13)
+  HUB: redsl/ (fan-in=18)
+  HUB: redsl.llm/ (fan-in=6)
+  HUB: redsl.formatters/ (fan-in=11)
+  HUB: archive.legacy_scripts/ (fan-in=7)
+  HUB: redsl.cli/ (fan-in=5)
+  HUB: redsl.commands/ (fan-in=7)
+  HUB: redsl.examples/ (fan-in=23)
+  HUB: redsl.analyzers/ (fan-in=27)
   SMELL: redsl.execution/ fan-out=12 → split needed
-  SMELL: redsl.commands/ fan-out=39 → split needed
+  SMELL: redsl.api/ fan-out=15 → split needed
   SMELL: redsl.autonomy/ fan-out=24 → split needed
-  SMELL: redsl.refactors/ fan-out=8 → split needed
-  SMELL: redsl.cli/ fan-out=8 → split needed
   SMELL: redsl/ fan-out=19 → split needed
-  SMELL: redsl.api/ fan-out=13 → split needed
+  SMELL: redsl.cli/ fan-out=19 → split needed
+  SMELL: redsl.commands/ fan-out=39 → split needed
+  SMELL: redsl.refactors/ fan-out=8 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

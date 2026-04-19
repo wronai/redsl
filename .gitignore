@@ -4,6 +4,7 @@ refactor_output
 redsl-*
 archive/
 logs/
+logs
 .env.example
 .env
 .env.local
