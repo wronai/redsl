@@ -16,7 +16,7 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project refactorizati
 ## Metadata
 
 - **name**: `redsl`
-- **version**: `1.2.43`
+- **version**: `1.2.45`
 - **python_requires**: `>=3.11`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/openai/gpt-5-mini`
@@ -713,7 +713,7 @@ class AgentConfig:  # Główna konfiguracja agenta.
 class CycleReport:  # Raport z jednego cyklu refaktoryzacji.
 class RefactorOrchestrator:  # Główny orkiestrator — „mózg" systemu.
     def __init__(config)  # CC=2
-    def run_cycle(project_dir, max_actions, use_code2llm, validate_regix, rollback_on_failure, use_sandbox, target_file)  # CC=1
+    def run_cycle(project_dir, max_actions, use_code2llm, validate_regix, rollback_on_failure, use_sandbox, target_file, run_tests)  # CC=1
     def run_from_toon_content(project_toon, duplication_toon, validation_toon, source_files, max_actions)  # CC=1
     def add_custom_rules(rules_yaml)  # CC=1
     def _resolve_limits(project_dir, default_max)  # CC=8

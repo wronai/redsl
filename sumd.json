@@ -11,7 +11,7 @@
     {
       "name": "metadata",
       "type": "metadata",
-      "content": "- **name**: `redsl`\n- **version**: `1.2.43`\n- **python_requires**: `>=3.11`\n- **license**: Apache-2.0\n- **ai_model**: `openrouter/openai/gpt-5-mini`\n- **ecosystem**: SUMD + DOQL + testql + taskfile\n- **generated_from**: pyproject.toml, requirements.txt, Taskfile.yml, Makefile, app.doql.css, goal.yaml, .env.example, Dockerfile, docker-compose.yml, src(5 mod), project/(5 analysis files)",
+      "content": "- **name**: `redsl`\n- **version**: `1.2.45`\n- **python_requires**: `>=3.11`\n- **license**: Apache-2.0\n- **ai_model**: `openrouter/openai/gpt-5-mini`\n- **ecosystem**: SUMD + DOQL + testql + taskfile\n- **generated_from**: pyproject.toml, requirements.txt, Taskfile.yml, Makefile, app.doql.css, goal.yaml, .env.example, Dockerfile, docker-compose.yml, src(5 mod), project/(5 analysis files)",
       "level": 2
     },
     {
@@ -101,7 +101,7 @@
     {
       "name": "# `redsl.orchestrator` (`redsl/orchestrator.py`)",
       "type": "unknown",
-      "content": "```python\nclass CycleReport:  # Raport z jednego cyklu refaktoryzacji.\nclass RefactorOrchestrator:  # Główny orkiestrator — „mózg\" systemu.\n    def __init__(config)  # CC=2\n    def run_cycle(project_dir, max_actions, use_code2llm, validate_regix, rollback_on_failure, use_sandbox, target_file)  # CC=1\n    def run_from_toon_content(project_toon, duplication_toon, validation_toon, source_files, max_actions)  # CC=1\n    def add_custom_rules(rules_yaml)  # CC=1\n    def _resolve_limits(project_dir, default_max)  # CC=8\n```",
+      "content": "```python\nclass CycleReport:  # Raport z jednego cyklu refaktoryzacji.\nclass RefactorOrchestrator:  # Główny orkiestrator — „mózg\" systemu.\n    def __init__(config)  # CC=2\n    def run_cycle(project_dir, max_actions, use_code2llm, validate_regix, rollback_on_failure, use_sandbox, target_file, run_tests)  # CC=1\n    def run_from_toon_content(project_toon, duplication_toon, validation_toon, source_files, max_actions)  # CC=1\n    def add_custom_rules(rules_yaml)  # CC=1\n    def _resolve_limits(project_dir, default_max)  # CC=8\n```",
       "level": 2
     },
     {

@@ -1,0 +1,146 @@
+// @ts-check
+/**
+ * E2E Tests for Proposal Selection Page
+ * @see propozycje.php
+ */
+
+const { test, expect } = require('@playwright/test');
+
+test.describe('Proposal Selection', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/propozycje.php');
+  });
+
+  test('should display proposal selection page', async ({ page }) => {
+    await expect(page).toHaveTitle(/Propozycje refaktoryzacji/);
+    await expect(page.locator('h1')).toContainText('Propozycje refaktoryzacji');
+  });
+
+  test('should display proposal list', async ({ page }) => {
+    // Check that proposals are listed
+    await expect(page.locator('.proposal-item')).toHaveCount(9); // Header + 8 proposals
+    
+    // Check first proposal
+    await expect(page.locator('.proposal-item').nth(1)).toContainText('Refaktoryzacja klasy UserService');
+    await expect(page.locator('.proposal-item').nth(1)).toContainText('10 zł');
+  });
+
+  test('should allow selecting "all" option', async ({ page }) => {
+    // Select "all" radio
+    await page.check('input[value="all"]');
+    
+    // Should be checked
+    await expect(page.locator('input[value="all"]')).toBeChecked();
+  });
+
+  test('should allow selecting "custom" option', async ({ page }) => {
+    // Select "custom" radio
+    await page.check('input[value="custom"]');
+    
+    // Custom input should be visible and fillable
+    const customInput = page.locator('input[name="custom_input"]');
+    await expect(customInput).toBeVisible();
+    
+    // Enter custom selection
+    await customInput.fill('1, 3, 7, 12-15, 24');
+    
+    // Should accept the input
+    await expect(customInput).toHaveValue('1, 3, 7, 12-15, 24');
+  });
+
+  test('should display effort labels correctly', async ({ page }) => {
+    // Check effort labels
+    await expect(page.locator('.prop-effort')).toContainText('S (~2h)');
+    await expect(page.locator('.prop-effort')).toContainText('M (~4h)');
+    await expect(page.locator('.prop-effort')).toContainText('L (~8h)');
+  });
+
+  test('should display price for each proposal', async ({ page }) => {
+    // All proposals should show 10 zł
+    const prices = page.locator('.prop-price');
+    const count = await prices.count();
+    
+    for (let i = 0; i < count; i++) {
+      await expect(prices.nth(i)).toContainText('zł');
+    }
+  });
+
+  test('should show instructions', async ({ page }) => {
+    await expect(page.locator('.instructions')).toContainText('Jak wybrać');
+    await expect(page.locator('.instructions')).toContainText('1, 3, 7');
+    await expect(page.locator('.instructions')).toContainText('12-15');
+  });
+
+  test('should submit form with selection', async ({ page }) => {
+    // Select custom
+    await page.check('input[value="custom"]');
+    await page.fill('input[name="custom_input"]', '1, 3, 5');
+    
+    // Submit
+    await page.click('button:has-text("Potwierdź wybór")');
+    
+    // Should show success message
+    await expect(page.locator('.alert')).toContainText('Wybrano');
+    await expect(page.locator('.alert')).toContainText('30 zł'); // 3 tickets * 10 zł
+  });
+
+  test('should display correct line count for each proposal', async ({ page }) => {
+    // Check line counts are displayed
+    await expect(page.locator('.prop-lines')).toContainText('~');
+  });
+
+  test('should display file paths', async ({ page }) => {
+    // Check file paths
+    await expect(page.locator('.prop-file')).toContainText('src/');
+  });
+});
+
+test.describe('Proposal Selection - Selection Parser', () => {
+  test('should correctly parse single numbers', async ({ page }) => {
+    await page.goto('/propozycje.php');
+    
+    await page.check('input[value="custom"]');
+    await page.fill('input[name="custom_input"]', '1, 3, 7');
+    await page.click('button:has-text("Potwierdź wybór")');
+    
+    await expect(page.locator('.alert')).toContainText('Wybrano 3 ticketów');
+    await expect(page.locator('.alert')).toContainText('30 zł');
+  });
+
+  test('should correctly parse ranges', async ({ page }) => {
+    await page.goto('/propozycje.php');
+    
+    await page.check('input[value="custom"]');
+    await page.fill('input[name="custom_input"]', '12-15');
+    await page.click('button:has-text("Potwierdź wybór")');
+    
+    // 12, 13, 14, 15 = 4 tickets
+    await expect(page.locator('.alert')).toContainText('Wybrano 4 ticketów');
+    await expect(page.locator('.alert')).toContainText('40 zł');
+  });
+
+  test('should correctly parse mixed format', async ({ page }) => {
+    await page.goto('/propozycje.php');
+    
+    await page.check('input[value="custom"]');
+    await page.fill('input[name="custom_input"]', '1, 3, 7, 12-15, 24');
+    await page.click('button:has-text("Potwierdź wybór")');
+    
+    // 1, 3, 7, 12, 13, 14, 15 = 7 tickets (max available is 8, 24 is beyond)
+    await expect(page.locator('.alert')).toContainText('Wybrano');
+  });
+});
+
+test.describe('Proposal Selection - Mobile', () => {
+  test.use({ viewport: { width: 375, height: 667 } });
+
+  test('should be responsive on mobile', async ({ page }) => {
+    await page.goto('/propozycje.php');
+    
+    // Page should still be usable
+    await expect(page.locator('h1')).toContainText('Propozycje refaktoryzacji');
+    
+    // Proposal list should be visible
+    await expect(page.locator('.proposal-item')).toHaveCount.greaterThan(0);
+  });
+});

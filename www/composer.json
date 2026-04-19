@@ -1,0 +1,21 @@
+{
+    "name": "redsl/landing",
+    "description": "REDSL Landing Page",
+    "type": "project",
+    "require": {
+        "phpmailer/phpmailer": "^6.9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0"
+    },
+    "config": {
+        "optimize-autoloader": true
+    },
+    "scripts": {
+        "test": "phpunit tests/",
+        "test:gui": "phpunit tests/ --filter 'ConfigEditor|ProposalSelection|NdaForm|ConfigApi'",
+        "test:e2e": "npx playwright test",
+        "test:e2e:ui": "npx playwright test --ui",
+        "test:e2e:debug": "npx playwright test --debug"
+    }
+}
