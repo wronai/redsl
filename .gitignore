@@ -1,4 +1,5 @@
 examples/11-model-policy/.env.template
+vendor/
 .idea
 dist
 .redsl

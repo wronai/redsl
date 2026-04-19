@@ -6,7 +6,7 @@
 - **Primary Language**: python
 - **Languages**: python: 276
 - **Analysis Mode**: static
-- **Total Functions**: 1378
+- **Total Functions**: 1392
 - **Total Classes**: 201
 - **Modules**: 276
 - **Entry Points**: 0
@@ -52,14 +52,14 @@
 - **Functions**: 20
 - **File**: `cli_autonomy.py`
 
+### formatters.cycle
+- **Functions**: 18
+- **File**: `cycle.py`
+
 ### root.memory
 - **Functions**: 18
 - **Classes**: 4
 - **File**: `__init__.py`
-
-### formatters.cycle
-- **Functions**: 18
-- **File**: `cycle.py`
 
 ### analyzers.parsers.project_parser
 - **Functions**: 18
@@ -100,10 +100,10 @@
 - **Classes**: 3
 - **File**: `history.py`
 
-### root.awareness
+### autonomy.scheduler
 - **Functions**: 16
 - **Classes**: 2
-- **File**: `__init__.py`
+- **File**: `scheduler.py`
 
 ## Key Entry Points
 
@@ -154,15 +154,15 @@ This is a thin facade that delegates
 - **Key Methods**: refactors.direct_imports.DirectImportRefactorer.__init__, refactors.direct_imports.DirectImportRefactorer.remove_unused_imports, refactors.direct_imports.DirectImportRefactorer._collect_unused_import_edits, refactors.direct_imports.DirectImportRefactorer._collect_import_edits, refactors.direct_imports.DirectImportRefactorer._collect_import_from_edits, refactors.direct_imports.DirectImportRefactorer._is_star_import, refactors.direct_imports.DirectImportRefactorer._build_import_from_replacement, refactors.direct_imports.DirectImportRefactorer._alias_name, refactors.direct_imports.DirectImportRefactorer._format_alias, refactors.direct_imports.DirectImportRefactorer._remove_statement_lines
 - **Inherits**: DirectRefactorBase
 
-### analyzers.toon_analyzer.ToonAnalyzer
-> Analizator plików toon — przetwarza dane z code2llm.
-- **Methods**: 13
-- **Key Methods**: analyzers.toon_analyzer.ToonAnalyzer.__init__, analyzers.toon_analyzer.ToonAnalyzer.analyze_project, analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content, analyzers.toon_analyzer.ToonAnalyzer._find_toon_files, analyzers.toon_analyzer.ToonAnalyzer._select_project_key, analyzers.toon_analyzer.ToonAnalyzer._process_project_ton, analyzers.toon_analyzer.ToonAnalyzer._convert_modules_to_metrics, analyzers.toon_analyzer.ToonAnalyzer._process_hotspots, analyzers.toon_analyzer.ToonAnalyzer._process_alerts, analyzers.toon_analyzer.ToonAnalyzer._process_duplicates
-
 ### awareness.AwarenessManager
 > Facade that combines all awareness layers into one snapshot.
 - **Methods**: 13
 - **Key Methods**: awareness.AwarenessManager.__init__, awareness.AwarenessManager._memory_fingerprint, awareness.AwarenessManager._git_head, awareness.AwarenessManager._build_cache_key, awareness.AwarenessManager.build_snapshot, awareness.AwarenessManager.build_context, awareness.AwarenessManager.build_prompt_context, awareness.AwarenessManager.history, awareness.AwarenessManager.ecosystem, awareness.AwarenessManager.health
+
+### analyzers.toon_analyzer.ToonAnalyzer
+> Analizator plików toon — przetwarza dane z code2llm.
+- **Methods**: 13
+- **Key Methods**: analyzers.toon_analyzer.ToonAnalyzer.__init__, analyzers.toon_analyzer.ToonAnalyzer.analyze_project, analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content, analyzers.toon_analyzer.ToonAnalyzer._find_toon_files, analyzers.toon_analyzer.ToonAnalyzer._select_project_key, analyzers.toon_analyzer.ToonAnalyzer._process_project_ton, analyzers.toon_analyzer.ToonAnalyzer._convert_modules_to_metrics, analyzers.toon_analyzer.ToonAnalyzer._process_hotspots, analyzers.toon_analyzer.ToonAnalyzer._process_alerts, analyzers.toon_analyzer.ToonAnalyzer._process_duplicates
 
 ### analyzers.sumd_bridge.SumdAnalyzer
 > Native project analyzer using sumd extractor patterns.
@@ -236,9 +236,6 @@ Pure-Python implementation that doesn't requ
 
 Key functions that process and transform data:
 
-### commands.doctor_fstring_fixers._write_if_parses
-- **Output to**: path.write_text, ast.parse
-
 ### commands._guard_fixers._process_guard_and_indent
 > Process lines to remove guard blocks and fix excess indentation.
 - **Output to**: len, None.rstrip, _GUARD_RE.match, new_lines.append, commands._guard_fixers._handle_guard
@@ -246,6 +243,9 @@ Key functions that process and transform data:
 ### commands.github_source._parse_next_link
 > Parse GitHub Link header to find next page URL.
 - **Output to**: link_header.split, part.strip, None.strip, url_part.startswith, url_part.endswith
+
+### commands.doctor_fstring_fixers._write_if_parses
+- **Output to**: path.write_text, ast.parse
 
 ### commands.cli_doctor._format_check_report
 > Format doctor check report as text.
@@ -258,14 +258,6 @@ Key functions that process and transform data:
 ### commands.cli_doctor._format_batch_report
 > Format doctor batch report as text.
 - **Output to**: lines.append, None.join, len, len, len
-
-### commands.hybrid._process_single_project
-> Process a single project and return results.
-- **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
-
-### commands._indent_fixers._process_def_block
-> Handle a def/class/try block: fix body indent or strip excess indent.
-- **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
 
 ### commands.cli_autonomy._format_gate_details
 > Format quality gate details as text.
@@ -291,9 +283,17 @@ Key functions that process and transform data:
 > Process a single project in the batch.
 - **Output to**: print, print, print, commands.batch.measure_todo_reduction, print
 
-### commands.autofix.runner._format_project_status
-> Format brief status line for a project result.
-- **Output to**: None.join, status_parts.append, status_parts.append, status_parts.append, status_parts.append
+### commands._indent_fixers._process_def_block
+> Handle a def/class/try block: fix body indent or strip excess indent.
+- **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
+
+### commands.hybrid._process_single_project
+> Process a single project and return results.
+- **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
+
+### commands.batch_pyqual.runner._format_project_status
+> Format project result status into readable parts.
+- **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
 
 ### commands.batch_pyqual.reporting._format_summary_verdicts
 > Format verdict and project count lines.
@@ -310,21 +310,9 @@ Key functions that process and transform data:
 ### commands.batch_pyqual.reporting._format_project_row
 > Format a single project row for the details table.
 
-### commands.autofix.pipeline._process_project
-> Full autofix pipeline for a single project.
-- **Output to**: ProjectFixResult, commands.autofix.pipeline._stage_collect_metrics, commands.autofix.pipeline._stage_ensure_todo, commands.autofix.pipeline._stage_apply_fixes, commands.autofix.pipeline._stage_quality_gate_check
-
-### commands.batch_pyqual.runner._format_project_status
-> Format project result status into readable parts.
-- **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
-
-### commands.pyqual.mypy_analyzer.MypyAnalyzer._parse_mypy_line
-> Parsuj jedną linię wyjścia mypy.
-- **Output to**: line.split, line.strip, len, int, None.strip
-
-### commands.sumr_planfile.extractors._parse_priority
-> Parse priority from raw task data.
-- **Output to**: raw.get, int
+### commands.autofix.runner._format_project_status
+> Format brief status line for a project result.
+- **Output to**: None.join, status_parts.append, status_parts.append, status_parts.append, status_parts.append
 
 ### commands.sumr_planfile.parsers.parse_sumr
 > Parse a SUMR.md file and extract refactoring-relevant data.
@@ -335,6 +323,18 @@ Key functions that process and transform data:
 
 The format is a multi-document YAML (``---`` 
 - **Output to**: list, yaml.safe_load_all, doc.get, doc.get, isinstance
+
+### commands.sumr_planfile.extractors._parse_priority
+> Parse priority from raw task data.
+- **Output to**: raw.get, int
+
+### commands.pyqual.mypy_analyzer.MypyAnalyzer._parse_mypy_line
+> Parsuj jedną linię wyjścia mypy.
+- **Output to**: line.split, line.strip, len, int, None.strip
+
+### commands.autofix.pipeline._process_project
+> Full autofix pipeline for a single project.
+- **Output to**: ProjectFixResult, commands.autofix.pipeline._stage_collect_metrics, commands.autofix.pipeline._stage_ensure_todo, commands.autofix.pipeline._stage_apply_fixes, commands.autofix.pipeline._stage_quality_gate_check
 
 ## Public API Surface
 
@@ -347,18 +347,16 @@ Functions exposed as public API (no underscore prefix):
 - `examples.badge.run_badge_example` - 33 calls
 - `analyzers.sumd_bridge.SumdAnalyzer.generate_map_toon` - 32 calls
 - `examples.basic_analysis.run_basic_analysis_example` - 31 calls
-- `cli.models.pick_coding` - 31 calls
 - `commands.autonomy_pr.run_autonomous_pr` - 30 calls
 - `cli.config.config_apply` - 30 calls
 - `llm.registry.sources.base.OpenRouterSource.fetch` - 29 calls
-- `execution.cycle.run_cycle` - 29 calls
+- `cli.refactor.refactor` - 28 calls
 - `cli.planfile.source_add` - 28 calls
 - `refactors.engine.RefactorEngine.generate_proposal` - 28 calls
 - `examples.full_pipeline.run_full_pipeline_example` - 27 calls
 - `analyzers.parsers.duplication_parser.DuplicationParser.parse_duplication_toon` - 27 calls
 - `examples.api_integration.run_api_integration_example` - 26 calls
 - `config_standard.applier.ConfigApplier.apply` - 26 calls
-- `cli.refactor.refactor` - 26 calls
 - `commands.pyqual.run_pyqual_fix` - 24 calls
 - `cli.config.config_diff` - 24 calls
 - `cli.llm_banner.print_llm_banner` - 23 calls
@@ -369,17 +367,19 @@ Functions exposed as public API (no underscore prefix):
 - `commands.sumr_planfile.parsers.parse_sumr` - 20 calls
 - `cli.config.config_rollback` - 20 calls
 - `cli.model_policy.check_model` - 20 calls
+- `awareness.AwarenessManager.build_snapshot` - 20 calls
 - `awareness.health_model.HealthModel.assess` - 20 calls
 - `validation.vallm_bridge.validate_proposal` - 20 calls
-- `awareness.AwarenessManager.build_snapshot` - 20 calls
 - `commands.github_source.resolve_auth_ref` - 19 calls
 - `config_standard.store.ConfigStore.clone_from` - 19 calls
 - `autonomy.metrics.collect_autonomy_metrics` - 19 calls
 - `formatters.batch.format_batch_results` - 19 calls
 - `formatters.batch.format_batch_report_markdown` - 19 calls
-- `cli.models.show_coding_config` - 19 calls
-- `cli.batch.batch_pyqual_run` - 19 calls
 - `cli.config.config_validate` - 19 calls
+- `cli.batch.batch_pyqual_run` - 19 calls
+- `cli.models.show_coding_config` - 19 calls
+- `refactors.body_restorer.repair_file` - 19 calls
+- `analyzers.redup_bridge.scan_duplicates` - 19 calls
 
 ## System Interactions
 

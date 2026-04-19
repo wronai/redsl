@@ -44,6 +44,110 @@ def _step_finalize(
     _print_workflow_complete(git_url, resolved_branch_name, clone_url)
 
 
+def _setup_workflow(git_url: str) -> tuple[bool, str]:
+    """Setup: determine gh availability and clone URL."""
+    _mod = _sys.modules[__name__]
+    use_gh = _mod._gh_available()
+    clone_url = _mod._https_to_ssh(git_url) if "github.com" in git_url else git_url
+    return use_gh, clone_url
+
+
+def _run_clone_step(
+    git_url: str, clone_url: str, work_dir: Path, fmt: str
+) -> Path | None:
+    """Step 1: Clone repository. Returns clone_path or None on failure."""
+    click.echo("Step 1: Cloning repository...")
+    clone_result = _step_clone(git_url, clone_url, work_dir)
+    if not clone_result.clone_path:
+        click.echo(f"  ✗ {clone_result.error}")
+        if fmt == "json":
+            import json
+            click.echo(json.dumps({"status": "error", "step": "clone", "error": clone_result.error}))
+        return None
+    return clone_result.clone_path
+
+
+def _output_dry_run_json(analyze_result) -> None:
+    """Output dry run results as JSON."""
+    import json
+    click.echo(json.dumps({
+        "status": "dry_run",
+        "decisions": getattr(analyze_result, "decisions", []),
+        "estimated_cost": getattr(analyze_result, "estimated_cost", 0),
+    }, default=str))
+
+
+def _output_dry_run_text(analyze_result) -> None:
+    """Output dry run results as text."""
+    click.echo("\nDry run complete - no PR created")
+
+
+def _run_dry_run(
+    clone_path: Path, max_actions: int, target_file: str | None, fmt: str
+) -> bool:
+    """Run dry-run mode: analyze only. Returns True if should exit."""
+    analyze_result = _step_analyze(clone_path, max_actions, target_file)
+    if not analyze_result.success:
+        click.echo(f"  ✗ {analyze_result.error}")
+        if fmt == "json":
+            import json
+            click.echo(json.dumps({"status": "error", "step": "analyze", "error": analyze_result.error}))
+        return True
+
+    if fmt == "json":
+        _output_dry_run_json(analyze_result)
+    else:
+        _output_dry_run_text(analyze_result)
+    return True
+
+
+def _run_analyze_step(
+    clone_path: Path, max_actions: int, target_file: str | None, auto_apply: bool
+) -> bool:
+    """Step 2: Analyze project. Skipped if auto_apply (combined with apply)."""
+    if auto_apply:
+        click.echo(f"\nStep 2+3: Analyzing & applying fixes (single pass)...")
+        return True
+
+    analyze_result = _step_analyze(clone_path, max_actions, target_file)
+    if not analyze_result.success:
+        click.echo(f"  ✗ {analyze_result.error}")
+        return False
+    return True
+
+
+def _run_apply_step(
+    clone_path: Path, max_actions: int, target_file: str | None, auto_apply: bool
+) -> list[str] | None:
+    """Step 3: Apply refactoring. Returns list of changed files or None on failure."""
+    apply_result = _step_apply(clone_path, max_actions, target_file, auto_apply)
+    if not apply_result.success:
+        _abort_no_changes(apply_result)
+        return None
+    return apply_result.real_changes
+
+
+def _run_validate_step(clone_path: Path) -> bool:
+    """Step 4: Validate changes with testql."""
+    validate_result = _step_validate(clone_path)
+    if not validate_result.success:
+        click.echo(f"  ✗ Validation failed: {validate_result.error}")
+        click.echo("  Refusing to create PR until tests pass")
+        return False
+    return True
+
+
+def _output_success_json(real_changes: list[str], branch_name: str) -> None:
+    """Output success result as JSON."""
+    import json
+    click.echo(json.dumps({
+        "status": "pr_created",
+        "changes": len(real_changes),
+        "branch": branch_name,
+        "files": real_changes,
+    }, default=str))
+
+
 def run_autonomous_pr(
     git_url: str,
     max_actions: int,
@@ -60,75 +164,34 @@ def run_autonomous_pr(
     1. Clone repository
     2. Run reDSL analysis
     3. Apply refactoring suggestions
-    4. Create branch
-    5. Commit changes
-    6. Push to GitHub
-    7. Create a Pull Request
+    4. Validate changes
+    5. Create branch
+    6. Commit changes
+    7. Push to GitHub and create PR
     """
-    _mod = _sys.modules[__name__]
-    use_gh = _mod._gh_available()
-    clone_url = _mod._https_to_ssh(git_url) if "github.com" in git_url else git_url
-
+    use_gh, clone_url = _setup_workflow(git_url)
     _print_workflow_header(git_url, clone_url, use_gh, max_actions, branch_name, target_file)
 
     work_dir.mkdir(parents=True, exist_ok=True)
-    click.echo("Step 1: Cloning repository...")
-    clone_result = _step_clone(git_url, clone_url, work_dir)
-    if not clone_result.clone_path:
-        click.echo(f"  ✗ {clone_result.error}")
-        if fmt == "json":
-            import json
-            click.echo(json.dumps({"status": "error", "step": "clone", "error": clone_result.error}))
+    clone_path = _run_clone_step(git_url, clone_url, work_dir, fmt)
+    if clone_path is None:
         return
-    clone_path = clone_result.clone_path
 
     if dry_run:
-        analyze_result = _step_analyze(clone_path, max_actions, target_file)
-        if not analyze_result.success:
-            click.echo(f"  ✗ {analyze_result.error}")
-            if fmt == "json":
-                import json
-                click.echo(json.dumps({"status": "error", "step": "analyze", "error": analyze_result.error}))
+        if _run_dry_run(clone_path, max_actions, target_file, fmt):
             return
-        if fmt == "json":
-            import json
-            click.echo(json.dumps({
-                "status": "dry_run",
-                "decisions": getattr(analyze_result, "decisions", []),
-                "estimated_cost": getattr(analyze_result, "estimated_cost", 0),
-            }, default=str))
-        else:
-            click.echo("\nDry run complete - no PR created")
+
+    if not _run_analyze_step(clone_path, max_actions, target_file, auto_apply):
         return
 
-    if auto_apply:
-        click.echo(f"\nStep 2+3: Analyzing & applying fixes (single pass)...")
-    else:
-        analyze_result = _step_analyze(clone_path, max_actions, target_file)
-        if not analyze_result.success:
-            click.echo(f"  ✗ {analyze_result.error}")
-            return
+    real_changes = _run_apply_step(clone_path, max_actions, target_file, auto_apply)
+    if real_changes is None:
+        return
 
-    apply_result = _step_apply(clone_path, max_actions, target_file, auto_apply)
-    if not apply_result.success:
-        _abort_no_changes(apply_result)
-
-    real_changes = apply_result.real_changes
-
-    # Step 4: Validate changes with testql (if scenarios exist)
-    validate_result = _step_validate(clone_path)
-    if not validate_result.success:
-        click.echo(f"  ✗ Validation failed: {validate_result.error}")
-        click.echo("  Refusing to create PR until tests pass")
+    if not _run_validate_step(clone_path):
         return
 
     _step_finalize(clone_path, branch_name, real_changes, max_actions, use_gh, git_url, clone_url)
 
     if fmt == "json":
-        import json
-        click.echo(json.dumps({
-            "status": "pr_created",
-            "changes": len(real_changes),
-            "branch": branch_name,
-            "files": real_changes,
-        }, default=str))
+        _output_success_json(real_changes, branch_name)

@@ -7,9 +7,8 @@ sources:
 - radon cc redsl/
 stats:
   total: 10
-  todo: 6
-  done: 4
-
+  todo: 5
+  done: 5
 tasks:
 - id: R01
   title: 'reduce_complexity: generate_planfile (CC=32)'
@@ -124,13 +123,14 @@ tasks:
   action: reduce_complexity
   priority: 3
   effort: medium
-  status: todo
+  status: done
   labels:
   - refactor
   - complexity
   - cc-13
   source: radon-analysis
   priority_label: medium
+  completed_at: '2026-04-19T18:57:10.694967+00:00'
 - id: R14
   title: 'reduce_complexity: _format_project_row (CC=12)'
   description: Function '_format_project_row' at line 252 has cyclomatic complexity

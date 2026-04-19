@@ -1,0 +1,27 @@
+# redsl | refactor | 2026-04-19
+# mode=executed | files=284 | lines=44866
+# CC̄=8.0 | critical=40 | decisions=2
+
+STATUS[success]
+
+DECISIONS[2]:
+  1. split_module → tests/test_tier3.py (score=1.62) God module — zbyt duży plik z za dużą liczbą funkcji
+  2. split_module → tests/test_autonomy.py (score=1.62) God module — zbyt duży plik z za dużą liczbą funkcji
+
+EXECUTION[applied=2, rejected=0, rate=1.0:
+  ✓ split_module: tests/test_tier3.py
+  ✓ split_module: tests/test_autonomy.py
+
+METRICS[10]:
+  🟢 app/models.py::None CC=1 LOC=48
+  🔴 test_refactor_bad/complex_code.py::process_data CC=25 LOC=137
+  🔴 test_refactor_bad/complex_code.py::process_data_copy CC=25 LOC=137
+  🔴 test_refactor_bad/complex_code.py::None CC=25 LOC=137
+  🟡 tests/test_batch_pyqual.py::test_build_summary_aggregates_correctly CC=12 LOC=311
+  🔴 tests/test_batch_pyqual.py::_assert_smoke_calls CC=19 LOC=311
+  🟡 tests/test_batch_pyqual.py::_assert_smoke_summary CC=13 LOC=311
+  🔴 tests/test_batch_pyqual.py::None CC=19 LOC=311
+  🟢 tests/test_tier3.py::None CC=7 LOC=683
+  🟡 tests/test_api.py::test_examples_list_endpoint CC=13 LOC=80
+
+LOG: /home/tom/github/semcod/redsl/logs/redsl_20260419_205729.log
