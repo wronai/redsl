@@ -1,6 +1,7 @@
 """Model registry sources."""
 
 from .base import (
+    AiderLeaderboardSource,
     ModelRegistrySource,
     OpenRouterSource,
     ModelsDevSource,
@@ -14,4 +15,5 @@ __all__ = [
     "ModelsDevSource",
     "OpenAIProviderSource",
     "AnthropicProviderSource",
+    "AiderLeaderboardSource",
 ]

@@ -227,12 +227,27 @@ from pathlib import Path
 from .gate import ModelAgeGate, ModelRejectedError
 from .registry.aggregator import RegistryAggregator
 from .registry.sources.base import (
+    AiderLeaderboardSource,
     AnthropicProviderSource,
     ModelsDevSource,
     OpenAIProviderSource,
     OpenRouterSource,
 )
 from .registry.models import PolicyMode, UnknownReleaseAction
+
+# Export selection module
+from . import selection
+from .selection import (
+    ModelSelector,
+    ModelSelectionError,
+    ModelCandidate,
+    SelectionStrategy,
+    CostProfile,
+    CodingRequirements,
+    select_model_for_operation,
+    get_selector,
+    build_selector,
+)
 
 _gate: ModelAgeGate | None = None
 
@@ -253,6 +268,11 @@ def _build_gate() -> ModelAgeGate:
         os.getenv("LLM_REGISTRY_CACHE_PATH", "/tmp/redsl_registry.json")
     )
 
+    # Build enrichers
+    enrichers = []
+    if os.getenv("AIDER_LEADERBOARD_ENABLED", "true").lower() == "true":
+        enrichers.append(AiderLeaderboardSource())
+
     agg = RegistryAggregator(
         sources=sources,
         cache_path=cache_path,
@@ -261,6 +281,7 @@ def _build_gate() -> ModelAgeGate:
         disagreement_threshold_days=int(
             os.getenv("LLM_POLICY_SOURCE_DISAGREEMENT_DAYS", "14")
         ),
+        enrichers=enrichers,
     )
 
     fallback_map = dict(

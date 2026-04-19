@@ -1,6 +1,14 @@
 """Model registry for LLM age policy enforcement."""
 
-from .models import ModelInfo, PolicyDecision, PolicyMode, UnknownReleaseAction
+from .models import (
+    ModelInfo,
+    PolicyDecision,
+    PolicyMode,
+    UnknownReleaseAction,
+    Pricing,
+    Capabilities,
+    QualitySignals,
+)
 from .aggregator import RegistryAggregator
 
 __all__ = [
@@ -9,4 +17,7 @@ __all__ = [
     "PolicyMode",
     "UnknownReleaseAction",
     "RegistryAggregator",
+    "Pricing",
+    "Capabilities",
+    "QualitySignals",
 ]

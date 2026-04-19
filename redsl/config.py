@@ -82,6 +82,9 @@ class AnalyzerConfig:
 
     cc_threshold: int = 15
     fan_out_threshold: int = 10
+    # Per-context fan_out overrides (D1 — thresholds in config)
+    fan_out_threshold_api: int = 20    # endpoint registration functions
+    fan_out_threshold_example: int = 5  # example/demo scripts
     god_module_lines: int = 400
     god_module_functions: int = 15
     duplicate_similarity: float = 0.95

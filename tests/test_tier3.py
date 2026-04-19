@@ -232,17 +232,22 @@ class TestLlxRouter:
             }
 
         # Mock the gate to allow xai models for this test
+        from unittest.mock import MagicMock
+        mock_gate = MagicMock()
+
         def mock_check(model):
             from redsl.llm.registry.models import PolicyDecision
             return PolicyDecision(
                 allowed=True, model=model, reason="test_allow", age_days=0, sources_used=("test",)
             )
 
+        mock_gate.check = mock_check
+        monkeypatch.setattr("redsl.llm.get_gate", lambda: mock_gate)
+
         monkeypatch.setenv("XAI_API_KEY", "xai-test-key")
         monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
         monkeypatch.delenv("OPENAI_API_KEY", raising=False)
         monkeypatch.setattr("litellm.completion", fake_completion)
-        monkeypatch.setattr("redsl.llm.get_gate").return_value.check = mock_check
 
         layer = LLMLayer(LLMConfig(model="x-ai/grok-code-fast-1", provider_key=""))
         response = layer.call([{"role": "user", "content": "hi"}])

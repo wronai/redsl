@@ -55,6 +55,17 @@ rules:
 
   # === MEDIUM — regularne usprawnienia ===
 
+  - name: auto_extract_duplicate
+    description: "Duplikaty wysokopodobne (sim>=0.95, N>=3 grupy, L>=4L) — auto-ekstrakcja do utils"
+    tags: [duplication, auto]
+    when:
+      duplicate_similarity: {gte: 0.95}
+      duplicate_group_count: {gte: 3}
+      duplicate_lines: {gte: 4}
+    then:
+      action: deduplicate
+      priority: 0.85
+
   - name: deduplicate_structural
     description: "Strukturalne duplikaty — zunifikuj wzorzec"
     tags: [duplication]

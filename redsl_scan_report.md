@@ -1,6 +1,6 @@
 # reDSL Project Scan Report
 
-> Generated: **2026-04-19 16:21**  
+> Generated: **2026-04-19 16:25**  
 > Folder: `/home/tom/github/semcod/redsl`  
 > Projects found: **6** (6 analysed, 0 errors)
 
@@ -11,7 +11,7 @@
 | # | Project | Tier | Files | LoC | Avg CC | Max CC | Critical | Tests | Commits/30d |
 |---|---------|------|------:|----:|-------:|-------:|---------:|:-----:|------------:|
 | 1 | `redsl` | 🔴 Critical | 190 | 26,806 | 7.7 | 14 | 17 | ✅ | 82 |
-| 2 | `tests` | 🔴 Critical | 31 | 8,608 | 9.0 | 19 | 8 | ✅ | 82 |
+| 2 | `tests` | 🔴 Critical | 31 | 8,623 | 9.0 | 19 | 8 | ✅ | 82 |
 | 3 | `test_refactor_bad` | 🔴 Critical | 1 | 137 | 25.0 | 25 | 2 | ❌ | 82 |
 | 4 | `test_refactor_project` | 🟠 High | 1 | 24 | 5.0 | 5 | 0 | ❌ | 82 |
 | 5 | `app` | 🟠 High | 1 | 48 | 1.0 | 1 | 0 | ❌ | 82 |
@@ -40,7 +40,7 @@
 #### `tests`
 
 - **Languages**: Python
-- **Python files**: 31  |  **LoC**: 8,608
+- **Python files**: 31  |  **LoC**: 8,623
 - **Avg CC**: 9.0  |  **Max CC**: 19  |  **Critical functions**: 8
 - **Recent activity**: 82 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ✅ yes  |  **Toon files**: ❌ none

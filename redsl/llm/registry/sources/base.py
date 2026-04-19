@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from datetime import datetime
+from decimal import Decimal
 from typing import TYPE_CHECKING
 
 import httpx
@@ -43,16 +44,24 @@ class OpenRouterSource(ModelRegistrySource):
     URL = "https://openrouter.ai/api/v1/models"
 
     def fetch(self) -> list[ModelInfo]:
-        """Fetch models from OpenRouter."""
-        from ..models import ModelInfo
+        """Fetch models from OpenRouter with full pricing and capabilities."""
+        from ..models import ModelInfo, Pricing, Capabilities, QualitySignals
 
         data = self._http_get(self.URL)
+        programming_ids = self._fetch_programming_category()
+
         out = []
         for m in data.get("data", []):
             created = m.get("created")
             release_date = datetime.utcfromtimestamp(created) if created else None
             model_id = m["id"]  # e.g., "openai/gpt-4o"
             provider = model_id.split("/")[0] if "/" in model_id else "unknown"
+
+            pricing_raw = m.get("pricing", {})
+            arch = m.get("architecture", {})
+            top_provider = m.get("top_provider", {})
+            supported_params = m.get("supported_parameters", [])
+
             out.append(
                 ModelInfo(
                     id=model_id,
@@ -61,10 +70,45 @@ class OpenRouterSource(ModelRegistrySource):
                     context_length=m.get("context_length"),
                     sources=(self.name,),
                     source_dates={self.name: release_date} if release_date else {},
+                    pricing=Pricing(
+                        prompt=self._to_decimal(pricing_raw.get("prompt")),
+                        completion=self._to_decimal(pricing_raw.get("completion")),
+                        request=self._to_decimal(pricing_raw.get("request")),
+                        image=self._to_decimal(pricing_raw.get("image")),
+                    ),
+                    capabilities=Capabilities(
+                        context_length=m.get("context_length"),
+                        supports_tool_calling="tools" in supported_params,
+                        supports_json_mode="response_format" in supported_params,
+                        supports_streaming=True,  # OR streaming jest uniwersalne
+                        supports_vision="image" in (arch.get("input_modalities") or []),
+                        output_modalities=tuple(arch.get("output_modalities", ["text"])),
+                        max_output_tokens=top_provider.get("max_completion_tokens"),
+                    ),
+                    quality=QualitySignals(
+                        openrouter_category_programming=(model_id in programming_ids),
+                    ),
                     raw=m,
                 )
             )
         return out
+
+    def _fetch_programming_category(self) -> set[str]:
+        """Fetch model IDs from OpenRouter programming category."""
+        try:
+            data = self._http_get(f"{self.URL}?category=programming")
+            return {m["id"] for m in data.get("data", [])}
+        except Exception:
+            return set()
+
+    def _to_decimal(self, value) -> Decimal | None:
+        """Convert value to Decimal, handling None and empty strings."""
+        if value is None or value == "":
+            return None
+        try:
+            return Decimal(str(value))
+        except Exception:
+            return None
 
 
 class ModelsDevSource(ModelRegistrySource):
@@ -180,3 +224,98 @@ class AnthropicProviderSource(ModelRegistrySource):
                 )
             )
         return out
+
+
+class AiderLeaderboardSource:
+    """
+    Drugie niezależne źródło — benchmark polyglot od Aider.
+    Wzbogaca istniejące modele o quality.aider_polyglot_score.
+    NIE tworzy nowych modeli (to ModelInfoEnricher, nie Source).
+    """
+
+    name = "aider"
+    # Verified actual URL for Aider polyglot leaderboard JSON
+    URL = "https://raw.githubusercontent.com/Aider-AI/aider/main/aider/website/assets/polyglot-benchmarks.json"
+
+    def enrich(self, models: dict[str, ModelInfo]) -> dict[str, ModelInfo]:
+        """Enrich existing models with Aider polyglot scores."""
+        from dataclasses import replace
+        from ..models import QualitySignals
+        import logging
+
+        try:
+            data = self._http_get(self.URL)
+        except Exception as e:
+            log = logging.getLogger(__name__)
+            log.warning("Aider leaderboard fetch failed: %s", e)
+            return models
+
+        # Map: model_name → score (pass_rate_2 or similar field)
+        aider_scores = {}
+        for row in data if isinstance(data, list) else data.get("data", []):
+            model_name = row.get("model")
+            score = row.get("pass_rate_2") or row.get("score") or row.get("percent")
+            if model_name and score is not None:
+                try:
+                    aider_scores[model_name] = float(score)
+                except (ValueError, TypeError):
+                    continue
+
+        # Aider uses different names than OpenRouter — need mapping
+        updated = {}
+        for mid, info in models.items():
+            score = self._match_score(mid, aider_scores)
+            if score is None:
+                updated[mid] = info
+                continue
+            updated[mid] = replace(
+                info,
+                quality=replace(
+                    info.quality,
+                    aider_polyglot_score=score,
+                ),
+                sources=info.sources + (self.name,),
+            )
+        return updated
+
+    def _http_get(self, url: str, headers: dict | None = None, timeout: int = 10) -> dict:
+        """Make HTTP GET request and return JSON."""
+        with httpx.Client(timeout=timeout) as client:
+            r = client.get(url, headers=headers or {})
+            r.raise_for_status()
+            return r.json()
+
+    def _match_score(self, model_id: str, aider_scores: dict) -> float | None:
+        """Match OpenRouter model ID to Aider score."""
+        # Exact match
+        if model_id in aider_scores:
+            return aider_scores[model_id]
+
+        # Strip provider prefix
+        bare = model_id.split("/", 1)[-1] if "/" in model_id else model_id
+        if bare in aider_scores:
+            return aider_scores[bare]
+
+        # Common provider aliases
+        aliases = {
+            "claude-sonnet-4-5": "claude-sonnet-4-5",
+            "claude-sonnet-4-5": "claude-3.5-sonnet",
+            "claude-haiku-4-5": "claude-haiku-4-5",
+            "gpt-5.4": "gpt-4",
+            "gpt-5.4-mini": "gpt-4-mini",
+        }
+        for alias, target in aliases.items():
+            if alias in model_id or bare.startswith(alias):
+                if target in aider_scores:
+                    return aider_scores[target]
+
+        # Fuzzy: 'claude-sonnet-4-5' vs 'claude-sonnet-4-5-20250929'
+        for k, v in aider_scores.items():
+            if k.startswith(bare) or bare.startswith(k):
+                return v
+            # Also try without version suffixes
+            k_base = k.split("-")[0] if "-" in k else k
+            bare_base = bare.split("-")[0] if "-" in bare else bare
+            if k_base == bare_base:
+                return v
+        return None
