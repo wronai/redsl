@@ -13,6 +13,84 @@
   - Realna ocena projektu: Innowacyjność 9/10, Techniczna spójność 8.5/10, Adopcja 6/10, Ryzyko wysokie
   - Finalna konkluzja: eksperymentalny system operacyjny dla AI-driven software engineering
 
+## [1.2.38] - 2026-04-19
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update docs/README.md
+- Update redsl/project/README.md
+- Update redsl/project/context.md
+- Update redsl_scan_report.md
+
+### Test
+- Update tests/test_agent_bridge.py
+- Update tests/test_api.py
+- Update tests/test_cli_config.py
+- Update tests/test_config_standard.py
+
+### Other
+- Update VERSION
+- Update project/duplication.toon.yaml
+- Update project/validation.toon.yaml
+- Update redsl/__init__.py
+- Update redsl/api/debug_routes.py
+- Update redsl/cli/__init__.py
+- Update redsl/cli/config.py
+- Update redsl/cli/models.py
+- Update redsl/config.py
+- Update redsl/config_standard/__init__.py
+- ... and 14 more files
+
+## [1.2.37] - 2026-04-19
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update docs/README.md
+- Update redsl/project/README.md
+- Update redsl/project/context.md
+- Update redsl_scan_report.md
+
+### Test
+- Update tests/test_api.py
+- Update tests/test_cli_config.py
+- Update tests/test_config_standard.py
+
+### Other
+- Update VERSION
+- Update project/duplication.toon.yaml
+- Update project/validation.toon.yaml
+- Update redsl/__init__.py
+- Update redsl/api/debug_routes.py
+- Update redsl/cli/__init__.py
+- Update redsl/cli/config.py
+- Update redsl/cli/models.py
+- Update redsl/config_standard/__init__.py
+- Update redsl/config_standard/applier.py
+- ... and 12 more files
+
+## [1.2.36] - 2026-04-19
+
+### Docs
+- Update README.md
+- Update docs/README.md
+- Update redsl/project/README.md
+- Update redsl/project/context.md
+- Update redsl_scan_report.md
+
+### Other
+- Update project/duplication.toon.yaml
+- Update project/validation.toon.yaml
+- Update redsl/cli/models.py
+- Update redsl/llm/registry/sources/base.py
+- Update redsl/llm/selection.py
+- Update redsl/project/analysis.toon.yaml
+- Update redsl/project/batch_1/analysis.toon.yaml
+- Update redsl/project/batch_2/analysis.toon.yaml
+- Update redsl/project/evolution.toon.yaml
+- Update redsl/project/root/analysis.toon.yaml
+
 ## [1.2.35] - 2026-04-19
 
 ### Docs

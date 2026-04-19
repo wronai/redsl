@@ -16,6 +16,7 @@ from redsl.cli.logging import setup_logging as _setup_logging
 from redsl.cli.refactor import register_refactor, _save_refactor_markdown_report
 from redsl.cli.batch import register_batch
 from redsl.cli.pyqual import register_pyqual
+from redsl.cli.config import register_config
 from redsl.cli.debug import register_debug
 from redsl.cli.examples import register_examples
 from redsl.cli.scan import scan
@@ -65,6 +66,7 @@ def _register_all(cli_group: click.Group) -> None:
     register_refactor(cli_group)
     register_batch(cli_group)
     register_pyqual(cli_group)
+    register_config(cli_group)
     register_debug(cli_group)
     register_examples(cli_group)
     register_model_policy(cli_group)

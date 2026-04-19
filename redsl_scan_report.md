@@ -1,6 +1,6 @@
 # reDSL Project Scan Report
 
-> Generated: **2026-04-19 16:25**  
+> Generated: **2026-04-19 17:32**  
 > Folder: `/home/tom/github/semcod/redsl`  
 > Projects found: **6** (6 analysed, 0 errors)
 
@@ -10,11 +10,11 @@
 
 | # | Project | Tier | Files | LoC | Avg CC | Max CC | Critical | Tests | Commits/30d |
 |---|---------|------|------:|----:|-------:|-------:|---------:|:-----:|------------:|
-| 1 | `redsl` | 🔴 Critical | 190 | 26,806 | 7.7 | 14 | 17 | ✅ | 82 |
-| 2 | `tests` | 🔴 Critical | 31 | 8,623 | 9.0 | 19 | 8 | ✅ | 82 |
-| 3 | `test_refactor_bad` | 🔴 Critical | 1 | 137 | 25.0 | 25 | 2 | ❌ | 82 |
-| 4 | `test_refactor_project` | 🟠 High | 1 | 24 | 5.0 | 5 | 0 | ❌ | 82 |
-| 5 | `app` | 🟠 High | 1 | 48 | 1.0 | 1 | 0 | ❌ | 82 |
+| 1 | `redsl` | 🔴 Critical | 200 | 30,111 | 8.2 | 27 | 25 | ✅ | 84 |
+| 2 | `tests` | 🔴 Critical | 34 | 9,100 | 9.2 | 19 | 11 | ✅ | 84 |
+| 3 | `test_refactor_bad` | 🔴 Critical | 1 | 137 | 25.0 | 25 | 2 | ❌ | 84 |
+| 4 | `test_refactor_project` | 🟠 High | 1 | 24 | 5.0 | 5 | 0 | ❌ | 84 |
+| 5 | `app` | 🟠 High | 1 | 48 | 1.0 | 1 | 0 | ❌ | 84 |
 | 6 | `test_sample_project` | 🟢 Low | 1 | 32 | 4.0 | 4 | 0 | ❌ | 3 |
 
 ---
@@ -26,37 +26,37 @@
 #### `redsl`
 
 - **Languages**: Python
-- **Python files**: 190  |  **LoC**: 26,806
-- **Avg CC**: 7.7  |  **Max CC**: 14  |  **Critical functions**: 17
-- **Recent activity**: 82 commits in last 30 days  |  Last commit: 0d ago
+- **Python files**: 200  |  **LoC**: 30,111
+- **Avg CC**: 8.2  |  **Max CC**: 27  |  **Critical functions**: 25
+- **Recent activity**: 84 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ✅ yes  |  **Toon files**: ❌ none
 - **Top hotspots** (CC):
+  - `cli/models.py` — CC 27
+  - `llm/registry/aggregator.py` — CC 18
+  - `llm/selection.py` — CC 15
   - `analyzers/toon_analyzer.py` — CC 14
-  - `analyzers/parsers/validation_parser.py` — CC 13
-  - `analyzers/parsers/duplication_parser.py` — CC 13
-  - `commands/autonomy_pr/__init__.py` — CC 13
-  - `refactors/engine.py` — CC 12
+  - `llm/registry/sources/base.py` — CC 14
 
 #### `tests`
 
 - **Languages**: Python
-- **Python files**: 31  |  **LoC**: 8,623
-- **Avg CC**: 9.0  |  **Max CC**: 19  |  **Critical functions**: 8
-- **Recent activity**: 82 commits in last 30 days  |  Last commit: 0d ago
+- **Python files**: 34  |  **LoC**: 9,100
+- **Avg CC**: 9.2  |  **Max CC**: 19  |  **Critical functions**: 11
+- **Recent activity**: 84 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ✅ yes  |  **Toon files**: ❌ none
 - **Top hotspots** (CC):
   - `test_batch_pyqual.py` — CC 19
   - `test_cli_refactor.py` — CC 15
   - `test_api.py` — CC 13
   - `test_autonomy.py` — CC 13
-  - `test_direct_refactor.py` — CC 11
+  - `test_config_standard.py` — CC 13
 
 #### `test_refactor_bad`
 
 - **Languages**: Python
 - **Python files**: 1  |  **LoC**: 137
 - **Avg CC**: 25.0  |  **Max CC**: 25  |  **Critical functions**: 2
-- **Recent activity**: 82 commits in last 30 days  |  Last commit: 0d ago
+- **Recent activity**: 84 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ❌ none found  |  **Toon files**: ❌ none
 - **Top hotspots** (CC):
   - `complex_code.py` — CC 25
@@ -68,7 +68,7 @@
 - **Languages**: Python
 - **Python files**: 1  |  **LoC**: 24
 - **Avg CC**: 5.0  |  **Max CC**: 5  |  **Critical functions**: 0
-- **Recent activity**: 82 commits in last 30 days  |  Last commit: 0d ago
+- **Recent activity**: 84 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ❌ none found  |  **Toon files**: ❌ none
 - **Top hotspots** (CC):
   - `bad_code.py` — CC 5
@@ -78,7 +78,7 @@
 - **Languages**: Python
 - **Python files**: 1  |  **LoC**: 48
 - **Avg CC**: 1.0  |  **Max CC**: 1  |  **Critical functions**: 0
-- **Recent activity**: 82 commits in last 30 days  |  Last commit: 0d ago
+- **Recent activity**: 84 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ❌ none found  |  **Toon files**: ❌ none
 
 ### 🟢 Low (1 projects)

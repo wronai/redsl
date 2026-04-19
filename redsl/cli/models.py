@@ -22,9 +22,24 @@ def _build_selector(min_context: int | None = None, require_tools: bool | None =
     """Build ModelSelector with optional overrides."""
     from redsl.llm import get_gate
     from redsl.llm.selection import build_selector, CodingRequirements, CostProfile
+    from redsl.llm.gate import ModelAgeGate
     import os
 
     gate = get_gate()
+
+    # Create a relaxed gate for model selection (don't reject on single source)
+    # Keep the same aggregator but with relaxed policy
+    relaxed_gate = ModelAgeGate(
+        aggregator=gate.agg,
+        mode=os.getenv("LLM_POLICY_MODE", "frontier_lag"),
+        max_age_days=int(os.getenv("LLM_POLICY_MAX_AGE_DAYS", "180")),
+        strict=False,  # Non-strict for selection - use fallback instead of error
+        unknown_action="allow",  # Allow models with unknown dates
+        min_sources_agree=1,  # Only 1 source needed for selection
+        blocklist=gate.blocklist,
+        allowlist=gate.allowlist,
+        fallback_map=gate.fallback_map,
+    )
 
     # Apply overrides
     if min_context is not None:
@@ -32,7 +47,7 @@ def _build_selector(min_context: int | None = None, require_tools: bool | None =
     if require_tools is not None:
         os.environ["LLM_CODING_REQUIRE_TOOL_CALLING"] = "true" if require_tools else "false"
 
-    return build_selector(gate.agg, gate)
+    return build_selector(gate.agg, relaxed_gate)
 
 
 @models_group.command(name="pick-coding")
@@ -97,12 +112,19 @@ def pick_coding(tier: str, min_context: int | None, require_tools: bool, show_al
                 )
         else:
             pick = selector.pick(tier=tier)
-            console.print(f"[green]Selected:[/green] [bold]{pick.info.id}[/bold]")
+            # Split provider/model for 3-element path display
+            parts = pick.info.id.split("/", 1)
+            provider = parts[0] if len(parts) > 0 else "?"
+            model_name = parts[1] if len(parts) > 1 else pick.info.id
+            or_status = "✓ Available" if "openrouter" in pick.info.sources else "✗ Not in OpenRouter"
+
+            console.print(f"[green]Selected:[/green] [magenta]{provider}[/magenta]/[bold cyan]{model_name}[/bold cyan]")
+            console.print(f"OpenRouter: {or_status}")
             console.print(f"Cost: ${pick.weighted_cost_per_1m:.2f}/1M tokens (weighted)")
             console.print(f"Quality: {pick.quality_score:.0f}/100")
             console.print(f"Context: {pick.info.capabilities.context_length:,}")
             console.print(
-                f"Release: {pick.info.release_date.date() if pick.info.release_date else '?'}"
+                f"Release: {pick.info.release_date.date() if pick.info.release_date else '?' }"
             )
             console.print(f"Sources: {', '.join(pick.info.sources)}")
             console.print(f"Tier: {tier}")
@@ -136,7 +158,13 @@ def pick_coding(tier: str, min_context: int | None, require_tools: bool, show_al
     default="cost",
     help="Sort order"
 )
-def list_coding(tier: str, limit: int, show_rejected: bool, sort: str):
+@click.option(
+    "--source",
+    type=click.Choice(["openrouter", "all"]),
+    default="openrouter",
+    help="Filter by source (default: openrouter only)"
+)
+def list_coding(tier: str, limit: int, show_rejected: bool, sort: str, source: str):
     """Tabela modeli spełniających wymagania coding, posortowana po cenie.
 
     Example:
@@ -148,6 +176,13 @@ def list_coding(tier: str, limit: int, show_rejected: bool, sort: str):
 
     if not show_rejected:
         candidates = [c for c in candidates if c.passes_requirements]
+
+    # Filter by source
+    if source == "openrouter":
+        candidates = [
+            c for c in candidates
+            if "openrouter" in c.info.sources
+        ]
 
     if tier != "all":
         max_cost = selector.tiers.get(tier)
@@ -173,12 +208,13 @@ def list_coding(tier: str, limit: int, show_rejected: bool, sort: str):
 
     candidates = candidates[:limit]
 
-    table = Table(title=f"Coding models — tier={tier}, sort={sort}")
+    table = Table(title=f"Coding models — tier={tier}, sort={sort}, source={source}")
+    table.add_column("Provider", style="magenta", no_wrap=True)
     table.add_column("Model", style="cyan", no_wrap=True)
     table.add_column("$/1M", justify="right")
     table.add_column("Quality", justify="right")
     table.add_column("Context", justify="right")
-    table.add_column("Released", justify="right")
+    table.add_column("OR", justify="center")
     table.add_column("Status")
 
     for c in candidates:
@@ -186,7 +222,7 @@ def list_coding(tier: str, limit: int, show_rejected: bool, sort: str):
             status = "✓"
         else:
             reason = c.rejection_reason or "unknown"
-            status = f"✗ {reason[:30]}"
+            status = f"✗ {reason[:25]}"
 
         cost_str = f"${c.weighted_cost_per_1m:.2f}" if c.weighted_cost_per_1m else "?"
         release_str = "?"
@@ -195,12 +231,21 @@ def list_coding(tier: str, limit: int, show_rejected: bool, sort: str):
 
         context_str = f"{c.info.capabilities.context_length:,}" if c.info.capabilities.context_length else "?"
 
+        # Split model ID into provider/model
+        parts = c.info.id.split("/", 1)
+        provider = parts[0] if len(parts) > 0 else "?"
+        model_name = parts[1] if len(parts) > 1 else c.info.id
+
+        # OpenRouter availability
+        or_available = "✓" if "openrouter" in c.info.sources else "✗"
+
         table.add_row(
-            c.info.id,
+            provider,
+            model_name,
             cost_str,
             f"{c.quality_score:.0f}" if c.quality_score else "—",
             context_str,
-            release_str,
+            or_available,
             status,
         )
 

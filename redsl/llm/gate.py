@@ -155,8 +155,13 @@ class ModelAgeGate:
 
     def _normalize(self, model: str) -> str:
         """Normalize alias to 'provider/model' format."""
+        # Strip router prefix (OpenRouter uses 'openrouter/provider/model' format)
+        if model.startswith("openrouter/"):
+            return model[11:]  # Remove 'openrouter/' prefix
+
         if "/" in model:
             return model
+
         # Simple heuristics for common providers
         if model.startswith("gpt-") or model.startswith("o1-"):
             return f"openai/{model}"

@@ -234,8 +234,12 @@ class AiderLeaderboardSource:
     """
 
     name = "aider"
-    # Verified actual URL for Aider polyglot leaderboard JSON
-    URL = "https://raw.githubusercontent.com/Aider-AI/aider/main/aider/website/assets/polyglot-benchmarks.json"
+    # Aider leaderboard URLs - they change frequently, try multiple
+    URLS = [
+        "https://raw.githubusercontent.com/Aider-AI/aider/main/aider/website/assets/polyglot-leaderboard.json",
+        "https://aider.chat/assets/polyglot-leaderboard.json",
+        "https://raw.githubusercontent.com/Aider-AI/aider/main/aider/website/_data/polyglot_leaderboard.yml",
+    ]
 
     def enrich(self, models: dict[str, ModelInfo]) -> dict[str, ModelInfo]:
         """Enrich existing models with Aider polyglot scores."""
@@ -243,11 +247,21 @@ class AiderLeaderboardSource:
         from ..models import QualitySignals
         import logging
 
-        try:
-            data = self._http_get(self.URL)
-        except Exception as e:
-            log = logging.getLogger(__name__)
-            log.warning("Aider leaderboard fetch failed: %s", e)
+        log = logging.getLogger(__name__)
+        data = None
+
+        # Try multiple URLs
+        for url in self.URLS:
+            try:
+                data = self._http_get(url)
+                log.debug("Aider leaderboard loaded from: %s", url)
+                break
+            except Exception as e:
+                log.debug("Aider URL failed %s: %s", url, e)
+                continue
+
+        if data is None:
+            log.warning("Aider leaderboard fetch failed from all URLs")
             return models
 
         # Map: model_name → score (pass_rate_2 or similar field)

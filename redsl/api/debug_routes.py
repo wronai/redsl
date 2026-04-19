@@ -24,11 +24,14 @@ def _register_debug_routes(app: Any, orchestrator: Any) -> None:
         if show_env:
             import os
 
-            info["env_vars"] = {
+            from redsl.config_standard.security import mask_sensitive_mapping
+
+            raw_env = {
                 k: v
                 for k, v in os.environ.items()
                 if k.startswith(("REFACTOR_", "OPENAI_", "OPENROUTER_"))
             }
+            info["env_vars"] = mask_sensitive_mapping(raw_env)
 
         return info
 

@@ -123,6 +123,13 @@ class AgentConfig:
     @classmethod
     def from_env(cls) -> "AgentConfig":
         """Tworzenie konfiguracji z zmiennych środowiskowych."""
+        # Try config substrate first (non-breaking - falls back to env)
+        try:
+            from redsl.config_standard import agent_config_from_substrate_or_env
+            return agent_config_from_substrate_or_env()
+        except Exception:
+            pass
+
         model = _default_llm_model()
         return cls(
             llm=LLMConfig(

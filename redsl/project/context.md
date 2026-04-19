@@ -4,11 +4,11 @@
 
 - **Project**: /home/tom/github/semcod/redsl/redsl
 - **Primary Language**: python
-- **Languages**: python: 240
+- **Languages**: python: 252
 - **Analysis Mode**: static
-- **Total Functions**: 1128
-- **Total Classes**: 156
-- **Modules**: 240
+- **Total Functions**: 1235
+- **Total Classes**: 195
+- **Modules**: 252
 - **Entry Points**: 0
 
 ## Architecture by Module
@@ -22,14 +22,14 @@
 - **Classes**: 1
 - **File**: `git_timeline.py`
 
-### root.main
-- **Functions**: 23
-- **File**: `main.py`
-
 ### analyzers.radon_analyzer
 - **Functions**: 23
 - **Classes**: 1
 - **File**: `radon_analyzer.py`
+
+### root.main
+- **Functions**: 23
+- **File**: `main.py`
 
 ### batch_1.main
 - **Functions**: 23
@@ -38,6 +38,11 @@
 ### batch_2.main
 - **Functions**: 23
 - **File**: `main.py`
+
+### config_standard.store
+- **Functions**: 22
+- **Classes**: 5
+- **File**: `store.py`
 
 ### commands.cli_autonomy
 - **Functions**: 20
@@ -52,6 +57,11 @@
 - **Functions**: 18
 - **Classes**: 1
 - **File**: `project_parser.py`
+
+### llm.selection
+- **Functions**: 18
+- **Classes**: 6
+- **File**: `selection.py`
 
 ### analyzers.quality_visitor
 - **Functions**: 18
@@ -77,15 +87,15 @@
 - **Classes**: 2
 - **File**: `incremental.py`
 
-### autonomy.scheduler
-- **Functions**: 16
-- **Classes**: 2
-- **File**: `scheduler.py`
-
 ### root.awareness
 - **Functions**: 16
 - **Classes**: 2
 - **File**: `__init__.py`
+
+### autonomy.scheduler
+- **Functions**: 16
+- **Classes**: 2
+- **File**: `scheduler.py`
 
 ### batch_1.awareness
 - **Functions**: 16
@@ -96,15 +106,6 @@
 - **Functions**: 16
 - **Classes**: 2
 - **File**: `__init__.py`
-
-### llm.llx_router
-- **Functions**: 15
-- **Classes**: 1
-- **File**: `llx_router.py`
-
-### commands.hybrid
-- **Functions**: 14
-- **File**: `hybrid.py`
 
 ## Key Entry Points
 
@@ -122,6 +123,11 @@ Key execution flows identified:
 This is a thin facade that delegates 
 - **Methods**: 23
 - **Key Methods**: awareness.git_timeline.GitTimelineAnalyzer.__init__, awareness.git_timeline.GitTimelineAnalyzer.build_timeline, awareness.git_timeline.GitTimelineAnalyzer.analyze_trends, awareness.git_timeline.GitTimelineAnalyzer.predict_future_state, awareness.git_timeline.GitTimelineAnalyzer.find_degradation_sources, awareness.git_timeline.GitTimelineAnalyzer.summarize, awareness.git_timeline.GitTimelineAnalyzer._resolve_repo_root, awareness.git_timeline.GitTimelineAnalyzer._project_rel_path, awareness.git_timeline.GitTimelineAnalyzer._git_log, awareness.git_timeline.GitTimelineAnalyzer._snapshot_for_commit
+
+### config_standard.store.ConfigStore
+> Manage a redsl-config directory with manifest, profiles and history.
+- **Methods**: 22
+- **Key Methods**: config_standard.store.ConfigStore.__init__, config_standard.store.ConfigStore.resolve, config_standard.store.ConfigStore.ensure_layout, config_standard.store.ConfigStore.create_default, config_standard.store.ConfigStore.apply_profile, config_standard.store.ConfigStore.load_document, config_standard.store.ConfigStore.load, config_standard.store.ConfigStore.load_any, config_standard.store.ConfigStore.save, config_standard.store.ConfigStore.write_schema_files
 
 ### analyzers.parsers.project_parser.ProjectParser
 > Parser sekcji project_toon.
@@ -145,15 +151,15 @@ This is a thin facade that delegates
 - **Key Methods**: refactors.direct_imports.DirectImportRefactorer.__init__, refactors.direct_imports.DirectImportRefactorer.remove_unused_imports, refactors.direct_imports.DirectImportRefactorer._collect_unused_import_edits, refactors.direct_imports.DirectImportRefactorer._collect_import_edits, refactors.direct_imports.DirectImportRefactorer._collect_import_from_edits, refactors.direct_imports.DirectImportRefactorer._is_star_import, refactors.direct_imports.DirectImportRefactorer._build_import_from_replacement, refactors.direct_imports.DirectImportRefactorer._alias_name, refactors.direct_imports.DirectImportRefactorer._format_alias, refactors.direct_imports.DirectImportRefactorer._remove_statement_lines
 - **Inherits**: DirectRefactorBase
 
-### analyzers.toon_analyzer.ToonAnalyzer
-> Analizator plików toon — przetwarza dane z code2llm.
-- **Methods**: 13
-- **Key Methods**: analyzers.toon_analyzer.ToonAnalyzer.__init__, analyzers.toon_analyzer.ToonAnalyzer.analyze_project, analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content, analyzers.toon_analyzer.ToonAnalyzer._find_toon_files, analyzers.toon_analyzer.ToonAnalyzer._select_project_key, analyzers.toon_analyzer.ToonAnalyzer._process_project_ton, analyzers.toon_analyzer.ToonAnalyzer._convert_modules_to_metrics, analyzers.toon_analyzer.ToonAnalyzer._process_hotspots, analyzers.toon_analyzer.ToonAnalyzer._process_alerts, analyzers.toon_analyzer.ToonAnalyzer._process_duplicates
-
 ### awareness.AwarenessManager
 > Facade that combines all awareness layers into one snapshot.
 - **Methods**: 13
 - **Key Methods**: awareness.AwarenessManager.__init__, awareness.AwarenessManager._memory_fingerprint, awareness.AwarenessManager._git_head, awareness.AwarenessManager._build_cache_key, awareness.AwarenessManager.build_snapshot, awareness.AwarenessManager.build_context, awareness.AwarenessManager.build_prompt_context, awareness.AwarenessManager.history, awareness.AwarenessManager.ecosystem, awareness.AwarenessManager.health
+
+### analyzers.toon_analyzer.ToonAnalyzer
+> Analizator plików toon — przetwarza dane z code2llm.
+- **Methods**: 13
+- **Key Methods**: analyzers.toon_analyzer.ToonAnalyzer.__init__, analyzers.toon_analyzer.ToonAnalyzer.analyze_project, analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content, analyzers.toon_analyzer.ToonAnalyzer._find_toon_files, analyzers.toon_analyzer.ToonAnalyzer._select_project_key, analyzers.toon_analyzer.ToonAnalyzer._process_project_ton, analyzers.toon_analyzer.ToonAnalyzer._convert_modules_to_metrics, analyzers.toon_analyzer.ToonAnalyzer._process_hotspots, analyzers.toon_analyzer.ToonAnalyzer._process_alerts, analyzers.toon_analyzer.ToonAnalyzer._process_duplicates
 
 ### analyzers.sumd_bridge.SumdAnalyzer
 > Native project analyzer using sumd extractor patterns.
@@ -177,6 +183,11 @@ Pure-Python implementation that doesn't requ
 - **Methods**: 9
 - **Key Methods**: commands.multi_project.MultiProjectReport.total_projects, commands.multi_project.MultiProjectReport.successful, commands.multi_project.MultiProjectReport.failed, commands.multi_project.MultiProjectReport.aggregate_avg_cc, commands.multi_project.MultiProjectReport.aggregate_critical, commands.multi_project.MultiProjectReport.aggregate_files, commands.multi_project.MultiProjectReport.worst_projects, commands.multi_project.MultiProjectReport.summary, commands.multi_project.MultiProjectReport.to_dict
 
+### llm.registry.aggregator.RegistryAggregator
+> Aggregates model info from multiple sources with caching.
+- **Methods**: 9
+- **Key Methods**: llm.registry.aggregator.RegistryAggregator.__init__, llm.registry.aggregator.RegistryAggregator.get_all, llm.registry.aggregator.RegistryAggregator.get, llm.registry.aggregator.RegistryAggregator._fetch_and_merge, llm.registry.aggregator.RegistryAggregator._merge_model, llm.registry.aggregator.RegistryAggregator._cache_is_fresh, llm.registry.aggregator.RegistryAggregator._save_cache, llm.registry.aggregator.RegistryAggregator._load_stale_cache, llm.registry.aggregator.RegistryAggregator.refresh
+
 ### refactors.engine.RefactorEngine
 > Silnik refaktoryzacji z pętlą refleksji.
 
@@ -186,24 +197,15 @@ Pure-Python implementation that doesn't requ
 - **Methods**: 9
 - **Key Methods**: refactors.engine.RefactorEngine.__init__, refactors.engine.RefactorEngine.estimate_confidence, refactors.engine.RefactorEngine._parse_confidence, refactors.engine.RefactorEngine._resolve_confidence, refactors.engine.RefactorEngine.generate_proposal, refactors.engine.RefactorEngine.reflect_on_proposal, refactors.engine.RefactorEngine.validate_proposal, refactors.engine.RefactorEngine.apply_proposal, refactors.engine.RefactorEngine._save_proposal
 
-### llm.registry.aggregator.RegistryAggregator
-> Aggregates model info from multiple sources with caching.
-- **Methods**: 9
-- **Key Methods**: llm.registry.aggregator.RegistryAggregator.__init__, llm.registry.aggregator.RegistryAggregator.get_all, llm.registry.aggregator.RegistryAggregator.get, llm.registry.aggregator.RegistryAggregator._fetch_and_merge, llm.registry.aggregator.RegistryAggregator._merge_model, llm.registry.aggregator.RegistryAggregator._cache_is_fresh, llm.registry.aggregator.RegistryAggregator._save_cache, llm.registry.aggregator.RegistryAggregator._load_stale_cache, llm.registry.aggregator.RegistryAggregator.refresh
-
 ### awareness.ecosystem.EcosystemGraph
 > Basic ecosystem graph for semcod-style project collections.
 - **Methods**: 9
 - **Key Methods**: awareness.ecosystem.EcosystemGraph.build, awareness.ecosystem.EcosystemGraph.summarize, awareness.ecosystem.EcosystemGraph.project, awareness.ecosystem.EcosystemGraph.impacted_projects, awareness.ecosystem.EcosystemGraph._build_node, awareness.ecosystem.EcosystemGraph._link_dependencies, awareness.ecosystem.EcosystemGraph._read_dependencies, awareness.ecosystem.EcosystemGraph._extract_dependency_tokens, awareness.ecosystem.EcosystemGraph._is_project_dir
 
-### llm.LLMLayer
-> Warstwa abstrakcji nad LLM z obsługą:
-- wywołań tekstowych
-- odpowiedzi JSON
-- zliczania tokenów
-- f
-- **Methods**: 8
-- **Key Methods**: llm.LLMLayer.__init__, llm.LLMLayer._load_provider_key, llm.LLMLayer._resolve_provider_key, llm.LLMLayer._build_completion_kwargs, llm.LLMLayer.call, llm.LLMLayer.call_json, llm.LLMLayer.reflect, llm.LLMLayer.total_calls
+### llm.selection.ModelSelector
+> Wybiera najtańszy model spełniający wymagania.
+- **Methods**: 9
+- **Key Methods**: llm.selection.ModelSelector.__init__, llm.selection.ModelSelector.candidates, llm.selection.ModelSelector.pick, llm.selection.ModelSelector._apply_strategy, llm.selection.ModelSelector._check_hard_requirements, llm.selection.ModelSelector._score_quality, llm.selection.ModelSelector._pareto_front, llm.selection.ModelSelector._round_robin_pick, llm.selection.ModelSelector._next_tier
 
 ### autonomy.growth_control.GrowthController
 > Enforce growth budgets on a project.
@@ -218,22 +220,21 @@ Pure-Python implementation that doesn't requ
 - **Methods**: 8
 - **Key Methods**: memory.AgentMemory.__init__, memory.AgentMemory.remember_action, memory.AgentMemory.recall_similar_actions, memory.AgentMemory.learn_pattern, memory.AgentMemory.recall_patterns, memory.AgentMemory.store_strategy, memory.AgentMemory.recall_strategies, memory.AgentMemory.stats
 
+### llm.LLMLayer
+> Warstwa abstrakcji nad LLM z obsługą:
+- wywołań tekstowych
+- odpowiedzi JSON
+- zliczania tokenów
+- f
+- **Methods**: 8
+- **Key Methods**: llm.LLMLayer.__init__, llm.LLMLayer._load_provider_key, llm.LLMLayer._resolve_provider_key, llm.LLMLayer._build_completion_kwargs, llm.LLMLayer.call, llm.LLMLayer.call_json, llm.LLMLayer.reflect, llm.LLMLayer.total_calls
+
 ### analyzers.analyzer.CodeAnalyzer
 > Główny analizator kodu — fasada.
 
 Deleguje do ToonAnalyzer (toon), PythonAnalyzer (AST) i PathResolv
 - **Methods**: 8
 - **Key Methods**: analyzers.analyzer.CodeAnalyzer.__init__, analyzers.analyzer.CodeAnalyzer.analyze_project, analyzers.analyzer.CodeAnalyzer.analyze_from_toon_content, analyzers.analyzer.CodeAnalyzer.resolve_file_path, analyzers.analyzer.CodeAnalyzer.extract_function_source, analyzers.analyzer.CodeAnalyzer.find_worst_function, analyzers.analyzer.CodeAnalyzer.resolve_metrics_paths, analyzers.analyzer.CodeAnalyzer._ast_cyclomatic_complexity
-
-### dsl.rule_generator.RuleGenerator
-> Generuje nowe reguły DSL z historii refaktoryzacji w pamięci agenta.
-- **Methods**: 8
-- **Key Methods**: dsl.rule_generator.RuleGenerator.__init__, dsl.rule_generator.RuleGenerator.generate, dsl.rule_generator.RuleGenerator.generate_from_history, dsl.rule_generator.RuleGenerator.save, dsl.rule_generator.RuleGenerator.load_and_register, dsl.rule_generator.RuleGenerator._extract_patterns, dsl.rule_generator.RuleGenerator._history_to_patterns, dsl.rule_generator.RuleGenerator._patterns_to_rules
-
-### llm.gate.ModelAgeGate
-> Enforces model age and lifecycle policy before LLM calls.
-- **Methods**: 7
-- **Key Methods**: llm.gate.ModelAgeGate.__init__, llm.gate.ModelAgeGate.check, llm.gate.ModelAgeGate._check_age, llm.gate.ModelAgeGate._handle_unknown, llm.gate.ModelAgeGate._reject, llm.gate.ModelAgeGate._normalize, llm.gate.ModelAgeGate.list_allowed
 
 ## Data Transformation Functions
 
@@ -242,6 +243,9 @@ Key functions that process and transform data:
 ### commands._guard_fixers._process_guard_and_indent
 > Process lines to remove guard blocks and fix excess indentation.
 - **Output to**: len, None.rstrip, _GUARD_RE.match, new_lines.append, commands._guard_fixers._handle_guard
+
+### commands.doctor_fstring_fixers._write_if_parses
+- **Output to**: path.write_text, ast.parse
 
 ### commands.cli_autonomy._format_gate_details
 > Format quality gate details as text.
@@ -263,6 +267,10 @@ Key functions that process and transform data:
 > Format growth check result as text.
 - **Output to**: None.join, lines.append, lines.append, lines.append, lines.append
 
+### commands._indent_fixers._process_def_block
+> Handle a def/class/try block: fix body indent or strip excess indent.
+- **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
+
 ### commands.cli_doctor._format_check_report
 > Format doctor check report as text.
 - **Output to**: None.join, lines.append, lines.append, lines.append
@@ -275,21 +283,9 @@ Key functions that process and transform data:
 > Format doctor batch report as text.
 - **Output to**: lines.append, None.join, len, len, len
 
-### commands._indent_fixers._process_def_block
-> Handle a def/class/try block: fix body indent or strip excess indent.
-- **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
-
-### commands.hybrid._process_single_project
-> Process a single project and return results.
-- **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
-
 ### commands.batch._process_batch_project
 > Process a single project in the batch.
 - **Output to**: print, print, print, commands.batch.measure_todo_reduction, print
-
-### commands.batch_pyqual.runner._format_project_status
-> Format project result status into readable parts.
-- **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
 
 ### commands.batch_pyqual.reporting._format_summary_verdicts
 > Format verdict and project count lines.
@@ -306,23 +302,17 @@ Key functions that process and transform data:
 ### commands.batch_pyqual.reporting._format_project_row
 > Format a single project row for the details table.
 
+### commands.hybrid._process_single_project
+> Process a single project and return results.
+- **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
+
+### commands.batch_pyqual.runner._format_project_status
+> Format project result status into readable parts.
+- **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
+
 ### commands.autofix.runner._format_project_status
 > Format brief status line for a project result.
 - **Output to**: None.join, status_parts.append, status_parts.append, status_parts.append, status_parts.append
-
-### commands.batch_pyqual.pipeline._validate_config
-> Validate pyqual config.
-- **Output to**: pyqual_bridge.validate_config, print, ctx.result.errors.append, print, print
-
-### commands.batch_pyqual.pipeline._process_gate_result
-> Populate result fields from a pyqual gate check response.
-- **Output to**: gate_result.get, list, len, sum, gate_result.get
-
-### commands.batch_pyqual.pipeline.process_project
-> Full ReDSL + pyqual pipeline for a single project.
-
-This is the main entry point that orchestrates a
-- **Output to**: commands.batch_pyqual.pipeline._init_project_context, commands.batch_pyqual.pipeline._validate_config, commands.batch_pyqual.pipeline._run_analysis_stage, commands.batch_pyqual.pipeline._run_redsl_fix_stage, commands.batch_pyqual.pipeline._run_gates_stage
 
 ### commands.autofix.pipeline._process_project
 > Full autofix pipeline for a single project.
@@ -336,54 +326,64 @@ This is the main entry point that orchestrates a
 > Parse `git status --porcelain` output into a list of file paths.
 - **Output to**: status_output.splitlines, None.strip, len, paths.append
 
+### commands.autonomy_pr.validator._step_validate
+> Validate refactored code using available validators.
+
+Runs testql scenarios if available, plus pyqua
+- **Output to**: click.echo, commands.autonomy_pr.validator._run_testql_validation, results.append, commands.autonomy_pr.validator._run_quality_gate, results.append
+
 ### commands.pyqual._format_pyqual_issues
 > Format pyqual issues section.
 - **Output to**: summary.get, summary.get, summary.get, summary.get, summary.get
+
+### commands.pyqual._format_pyqual_metrics
+> Format pyqual metrics section.
+- **Output to**: metrics.get, metrics.get, metrics.get
 
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
 
+- `cli.models.estimate_cost` - 44 calls
 - `examples.pyqual_example.run_pyqual_example` - 41 calls
 - `examples.pr_bot.run_pr_bot_example` - 40 calls
+- `cli.models.list_coding` - 35 calls
 - `examples.custom_rules.run_custom_rules_example` - 34 calls
 - `examples.badge.run_badge_example` - 33 calls
 - `analyzers.sumd_bridge.SumdAnalyzer.generate_map_toon` - 32 calls
 - `examples.basic_analysis.run_basic_analysis_example` - 31 calls
+- `cli.models.pick_coding` - 31 calls
 - `commands.autonomy_pr.run_autonomous_pr` - 30 calls
+- `cli.config.config_apply` - 30 calls
+- `llm.selection.build_selector` - 30 calls
+- `llm.registry.sources.base.OpenRouterSource.fetch` - 29 calls
 - `refactors.engine.RefactorEngine.generate_proposal` - 28 calls
-- `examples.full_pipeline.run_full_pipeline_example` - 27 calls
 - `analyzers.parsers.duplication_parser.DuplicationParser.parse_duplication_toon` - 27 calls
+- `examples.full_pipeline.run_full_pipeline_example` - 27 calls
 - `examples.api_integration.run_api_integration_example` - 26 calls
+- `config_standard.applier.ConfigApplier.apply` - 26 calls
 - `cli.refactor.refactor` - 25 calls
 - `commands.pyqual.run_pyqual_fix` - 24 calls
+- `cli.config.config_diff` - 24 calls
 - `cli.llm_banner.print_llm_banner` - 23 calls
+- `cli.config.config_init` - 23 calls
+- `cli.config.config_history` - 23 calls
 - `execution.cycle.run_cycle` - 23 calls
+- `cli.config.config_clone` - 21 calls
 - `cli.model_policy.check_model` - 20 calls
-- `awareness.health_model.HealthModel.assess` - 20 calls
-- `validation.vallm_bridge.validate_proposal` - 20 calls
+- `cli.config.config_rollback` - 20 calls
 - `awareness.AwarenessManager.build_snapshot` - 20 calls
+- `validation.vallm_bridge.validate_proposal` - 20 calls
+- `awareness.health_model.HealthModel.assess` - 20 calls
+- `config_standard.store.ConfigStore.clone_from` - 19 calls
+- `autonomy.metrics.collect_autonomy_metrics` - 19 calls
 - `formatters.batch.format_batch_results` - 19 calls
 - `formatters.batch.format_batch_report_markdown` - 19 calls
+- `cli.config.config_validate` - 19 calls
 - `cli.batch.batch_pyqual_run` - 19 calls
-- `autonomy.metrics.collect_autonomy_metrics` - 19 calls
+- `cli.models.show_coding_config` - 19 calls
 - `refactors.body_restorer.repair_file` - 19 calls
 - `analyzers.redup_bridge.scan_duplicates` - 19 calls
-- `analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content` - 19 calls
-- `cli.logging.setup_logging` - 19 calls
-- `commands.batch_pyqual.runner.run_pyqual_batch` - 18 calls
-- `examples.audit.run_audit_example` - 18 calls
-- `commands.planfile_bridge.create_ticket` - 18 calls
-- `cli.model_policy.list_models` - 18 calls
-- `autonomy.scheduler.Scheduler.run` - 18 calls
-- `autonomy.growth_control.check_module_budget` - 18 calls
-- `history.HistoryReader.generate_decision_report` - 18 calls
-- `dsl.engine.DSLEngine.add_rules_from_yaml` - 18 calls
-- `commands.doctor_fixers.fix_module_level_exit` - 17 calls
-- `examples.awareness.run_awareness_example` - 17 calls
-- `examples.memory_learning.run_memory_learning_example` - 17 calls
-- `refactors.engine.RefactorEngine.validate_proposal` - 17 calls
-- `refactors.prompts.build_ecosystem_context` - 17 calls
 
 ## System Interactions
 

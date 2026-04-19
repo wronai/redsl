@@ -65,3 +65,16 @@ def test_examples_run_unknown_returns_error():
     assert response.status_code == 200
     payload = response.json()
     assert "error" in payload
+
+
+def test_debug_config_masks_sensitive_environment_values(monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-v1-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    monkeypatch.setenv("REFACTOR_DRY_RUN", "true")
+    client = TestClient(create_app())
+
+    response = client.get("/debug/config?show_env=true")
+    assert response.status_code == 200
+    payload = response.json()
+
+    assert payload["env_vars"]["OPENROUTER_API_KEY"] == "<redacted>"
+    assert payload["env_vars"]["REFACTOR_DRY_RUN"] == "true"

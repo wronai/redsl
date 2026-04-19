@@ -112,15 +112,26 @@ class ModelSelector:
                     quality=replace(info.quality, in_known_good_list=True),
                 )
 
-            # 2. Policy gate (wiek, deprecation)
-            gate_decision = self.gate.check(mid)
-            if not gate_decision.allowed:
+            # 2. Policy gate (wiek, deprecation) - catch ModelRejectedError in strict mode
+            try:
+                gate_decision = self.gate.check(mid)
+                if not gate_decision.allowed:
+                    result.append(ModelCandidate(
+                        info=info,
+                        weighted_cost_per_1m=None,
+                        quality_score=0,
+                        passes_requirements=False,
+                        rejection_reason=f"policy: {gate_decision.reason}",
+                    ))
+                    continue
+            except Exception as e:
+                # ModelRejectedError in strict mode
                 result.append(ModelCandidate(
                     info=info,
                     weighted_cost_per_1m=None,
                     quality_score=0,
                     passes_requirements=False,
-                    rejection_reason=f"policy: {gate_decision.reason}",
+                    rejection_reason=f"policy: {e}",
                 ))
                 continue
 
