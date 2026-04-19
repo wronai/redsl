@@ -142,6 +142,29 @@ Formularz ma ukryte pole `website`. Boty które scrape'ują HTML często je wype
 
 **Zmiana cennika** — sekcja `.pricing` w `index.php`. Jeśli zmienisz liczby, pamiętaj zmienić też w sekcji FAQ i kontakt.
 
+## Testy
+
+### PHPUnit (backend logic)
+
+```bash
+cd www
+composer install
+composer test              # wszystkie testy
+composer test:gui          # tylko testy GUI
+```
+
+### Playwright (E2E browser tests)
+
+```bash
+cd www/tests/e2e
+npm install
+npm run install:browsers
+npm run test               # headless
+npm run test:ui            # interaktywny tryb
+```
+
+Szczegóły w [`tests/README_TESTS.md`](tests/README_TESTS.md).
+
 ## Znane ograniczenia
 
 - `mail()` — domyślna funkcja PHP często ląduje w spamie. Dla poważnego użytku podłącz SMTP (komentarze w `.env.example`).
