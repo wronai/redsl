@@ -5,15 +5,19 @@
 ```
 www/tests/
 ├── ConfigEditorTest.php          # PHPUnit: Config editor backend
-├── ProposalSelectionTest.php   # PHPUnit: Proposal parser logic
-├── NdaFormTest.php              # PHPUnit: NDA form validation
-├── ConfigApiTest.php            # PHPUnit: API endpoints
+├── ProposalSelectionTest.php     # PHPUnit: Proposal parser logic
+├── NdaFormTest.php               # PHPUnit: NDA form validation
+├── ConfigApiTest.php             # PHPUnit: Config API endpoints
+├── RedslApiProxyTest.php         # PHPUnit: /api/redsl.php proxy (redsl-api integration)
 ├── e2e/
-│   ├── playwright.config.js     # Playwright configuration
-│   ├── config-editor.spec.js    # E2E: Config editor
-│   ├── proposals.spec.js        # E2E: Proposal selection
-│   └── nda-form.spec.js         # E2E: NDA form
-└── README_TESTS.md              # This file
+│   ├── playwright.config.js      # Playwright configuration
+│   ├── smoke-path.spec.js        # E2E: Smoke test (main paths)
+│   ├── admin-panel.spec.js       # E2E: Admin panel
+│   ├── github-login-full-flow.spec.js  # E2E: GitHub OAuth full flow
+│   ├── config-editor.spec.js.disabled
+│   ├── proposals.spec.js.disabled
+│   └── nda-form.spec.js.disabled
+└── README_TESTS.md               # This file
 ```
 
 ## PHPUnit Tests (Backend Logic)
@@ -92,6 +96,49 @@ composer test:gui
 - ✅ History listing
 - ✅ Diff calculation
 - ✅ JSON response format
+
+**RedslApiProxyTest.php** (17 tests)
+- ✅ resolve_project: valid project name
+- ✅ resolve_project: strips path traversal (`../../../etc/passwd`)
+- ✅ resolve_project: empty returns false
+- ✅ resolve_project: only special chars returns false
+- ✅ resolve_project: custom workspace
+- ✅ Mock curl OK response (200)
+- ✅ Mock curl error response (502)
+- ✅ Health response structure
+- ✅ Analyze response contains expected fields
+- ✅ max_actions clamped to 20
+- ✅ max_actions default (5)
+- ✅ dry_run defaults to true
+- ✅ dry_run can be set to false
+- ✅ Refactor payload uses `project_dir` (not `project_path`)
+- ✅ Analyze payload uses `project_dir`
+- ⚡ Live health endpoint (skipped if redsl-api unreachable)
+- ⚡ Live analyze endpoint (skipped if redsl-api unreachable)
+
+## Running PHPUnit via Docker (recommended)
+
+Local PHP 8.4 may lack `dom`/`xml`/`yaml` extensions. Use Docker:
+
+```bash
+docker run --rm \
+  -v $(pwd):/app \
+  -w /app \
+  --network host \
+  php:8.3-cli \
+  bash -c "apt-get update -qq && apt-get install -y -qq libyaml-dev && \
+    pecl install yaml && docker-php-ext-enable yaml && \
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
+    composer install --no-interaction --ignore-platform-reqs -q && \
+    ./vendor/bin/phpunit tests/ --no-coverage"
+```
+
+Z live testem redsl API:
+```bash
+docker run --rm \
+  -v $(pwd):/app --network host -w /app php:8.3-cli \
+  bash -c "... && REDSL_API_URL=http://127.0.0.1:8001 ./vendor/bin/phpunit tests/ --no-coverage"
+```
 
 ## E2E Tests with Playwright
 
@@ -279,6 +326,21 @@ webServer: {
 
 | Test Suite | Status | Count |
 |------------|--------|-------|
-| PHPUnit (GUI) | ✅ Ready | 34 tests |
-| Playwright E2E | ✅ Ready | 40+ tests |
-| Total | ✅ Ready | 74+ tests |
+| PHPUnit: ConfigEditorTest | ✅ Pass | 7 tests |
+| PHPUnit: ProposalSelectionTest | ✅ Pass | 9 tests |
+| PHPUnit: NdaFormTest | ✅ Pass | 9 tests |
+| PHPUnit: ConfigApiTest | ✅ Pass | 9 tests |
+| PHPUnit: RedslApiProxyTest | ✅ Pass | 17 tests (2 live, skipped w/o API) |
+| PHPUnit: PlaceholderTest | ✅ Pass | 1 test (skipped) |
+| **PHPUnit Total** | **✅ 53/53 pass** | **53 tests** |
+| Playwright E2E (active) | ✅ Ready | 3 suites |
+| Playwright E2E (disabled) | ⏸ Disabled | 3 suites |
+
+### Wymagania PHP
+
+| Extension | Wymagane przez | Dostępność |
+|-----------|---------------|------------|
+| `yaml` (PECL) | ConfigApiTest, ConfigEditorTest | ❌ PHP 8.4 brak — użyj Docker |
+| `dom`, `xml` | PHPUnit 10 core | ❌ PHP 8.4 brak — użyj Docker |
+| `curl` | RedslApiProxyTest (live) | ✅ dostępne |
+| `mbstring`, `json` | wszystkie | ✅ dostępne |

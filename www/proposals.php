@@ -62,24 +62,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $customInput = trim($_POST['custom_input'] ?? '');
 
     // Parse selection
+    $ticketPriceUsd = 10.0;
     if ($selection === 'all') {
         $selectedIds = array_column($proposals, 'id');
-        $totalPrice = count($proposals) * 10;
+        $totalPriceUsd = count($proposals) * $ticketPriceUsd;
     } elseif ($selection === 'under_15') {
-        // All under $15 — all are $10 so same as all
+        // All under threshold — all are same price
         $selectedIds = array_column($proposals, 'id');
-        $totalPrice = count($proposals) * 10;
+        $totalPriceUsd = count($proposals) * $ticketPriceUsd;
     } elseif ($selection === 'custom' && $customInput) {
         // Parse "1, 3, 7, 12-15, 24"
         $selectedIds = parseSelection($customInput);
-        $totalPrice = count($selectedIds) * 10;
+        $totalPriceUsd = count($selectedIds) * $ticketPriceUsd;
     }
 
     if (!empty($selectedIds)) {
+        $totalPriceFormatted = $formatPrice($totalPriceUsd);
         $message = sprintf(
-            "Selected %d tickets. Total: $%d. Confirmation sent to email.",
+            $t('proposals.success'),
             count($selectedIds),
-            $totalPrice
+            $totalPriceFormatted
         );
         // In production: save to database, send confirmation email
     }
@@ -110,6 +112,7 @@ function h(string $s): string {
 
 $priorityEmoji = [1 => '🔴', 2 => '🟠', 3 => '🟡'];
 $humanHours = ['S' => '~2h', 'M' => '~4h', 'L' => '~8h'];
+$ticketPrice = $formatPrice(10.0);
 
 $year = date('Y');
 $issue = date('Y.m');
@@ -405,13 +408,13 @@ $issue = date('Y.m');
             <label class="option-row">
                 <input type="radio" name="selection" value="all" checked>
                 <span class="option-label">All proposals</span>
-                <span class="option-price">$<?= count($proposals) * 10 ?></span>
+                <span class="option-price"><?=h($formatPrice(count($proposals) * 10.0))?></span>
             </label>
 
             <label class="option-row">
                 <input type="radio" name="selection" value="under_15">
-                <span class="option-label">Everything under $15 (all tickets)</span>
-                <span class="option-price">$<?= count($proposals) * 10 ?></span>
+                <span class="option-label">Everything under <?=h($formatPrice(15.0))?> (all tickets)</span>
+                <span class="option-price"><?=h($formatPrice(count($proposals) * 10.0))?></span>
             </label>
 
             <label class="option-row" style="flex-wrap: wrap;">
@@ -419,7 +422,7 @@ $issue = date('Y.m');
                 <span class="option-label" style="flex: 0 0 auto;">Custom selection:</span>
                 <input type="text" name="custom_input" class="custom-input" placeholder="e.g. 1, 3, 7, 12-15, 24" style="flex: 1; min-width: 200px;">
             </label>
-            <p class="hint">Each ticket: <strong>$10</strong> (up to 500 LOC, after PR merge)</p>
+            <p class="hint">Each ticket: <strong><?=h($ticketPrice)?></strong> (up to 500 LOC, after PR merge)</p>
         </div>
 
         <div class="proposals-list">
@@ -441,7 +444,7 @@ $issue = date('Y.m');
                 <div class="prop-effort" style="text-align:center" title="ReDSL execution time"><?= $p['redsl_min'] ?> min</div>
                 <div class="prop-effort" style="text-align:center; color:#888" title="Estimated manual effort"><?= $humanHours[$p['effort']] ?></div>
                 <div class="prop-lines">~<?= $p['lines'] ?></div>
-                <div class="prop-price">$<?= $p['price'] ?></div>
+                <div class="prop-price"><?=h($formatPrice($p['price']))?></div>
             </div>
             <?php endforeach; ?>
         </div>
