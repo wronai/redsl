@@ -3,7 +3,12 @@
 # =============================================================
 
 # ---- Protect sensitive files from direct access ----
-<FilesMatch "^\.env|composer\.(json|lock)|\.git">
+<FilesMatch "^\.env|composer\.(json|lock)|\.git|\.gitignore|\.gitattributes|package\.json|package-lock\.json|Dockerfile|docker-compose\.ya?ml">
+    Require all denied
+</FilesMatch>
+
+# Block by extension: logs, SQL dumps, markdown docs, shell scripts, yaml configs
+<FilesMatch "\.(log|sql|md|sh|bash|yml|yaml|ini|conf|bak|swp|tmp|dist|example)$">
     Require all denied
 </FilesMatch>
 
@@ -14,6 +19,25 @@
 <Files ".env.example">
     Require all denied
 </Files>
+
+# ---- Block access to application internals ----
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Block: lib/, migrations/, tests/, cron/, var/, mock-github/ (prod)
+    RewriteRule ^lib/ - [F,L]
+    RewriteRule ^migrations/ - [F,L]
+    RewriteRule ^tests/ - [F,L]
+    RewriteRule ^cron/ - [F,L]
+    RewriteRule ^var/ - [F,L]
+    # Block mock-github/ in production (allow on localhost for dev)
+    RewriteCond %{HTTP_HOST} !^localhost [NC]
+    RewriteCond %{HTTP_HOST} !^127\. [NC]
+    RewriteRule ^mock-github/ - [F,L]
+    # Block node_modules and playwright artifacts
+    RewriteRule ^node_modules/ - [F,L]
+    RewriteRule ^playwright-report/ - [F,L]
+    RewriteRule ^test-results/ - [F,L]
+</IfModule>
 
 # ---- Disable directory listing ----
 Options -Indexes
@@ -56,7 +80,8 @@ Options -Indexes
     # Allow access to existing files/directories
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    # Rewrite /page to /page.php
+    # Only rewrite if target .php actually exists (prevents 500 on missing pages)
+    RewriteCond %{DOCUMENT_ROOT}/$1.php -f
     RewriteRule ^([^/]+)/?$ $1.php [L]
 </IfModule>
 

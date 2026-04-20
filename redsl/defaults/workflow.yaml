@@ -11,6 +11,8 @@ spec:
 
   decide:
     max_actions: 5
+    llm_model: auto           # auto = env LLM_MODEL / config default; lub np. openrouter/x-ai/grok-code-fast-1
+    llm_temperature: null     # null = użyj domyślnej temperatury z konfiguracji
 
   execute:
     use_sandbox: false
@@ -38,3 +40,19 @@ spec:
 
   reflect:
     enabled: true
+
+  # Storage: gdzie trafiają logi i konwersacje LLM
+  storage:
+    base_dir: .redsl            # katalog artefaktów w projekcie
+    system_log_enabled: true    # logs/redsl_YYYYMMDD.log
+    chat_log_enabled: true      # .redsl/chat.jsonl — każdy prompt + response
+    chat_log_filename: chat.jsonl
+    history_enabled: true       # .redsl/history.jsonl — decyzje i wyniki
+    history_filename: history.jsonl
+
+  # Deploy: push do git i/lub publish do registry po cyklu
+  deploy:
+    enabled: auto           # auto | true | false
+    push: auto              # auto = uruchom jeśli wykryto mechanizm
+    publish: false          # domyślnie NIE publikuj do PyPI/registry
+    on_success_only: true   # deployuj tylko gdy cycle zastosował ≥1 akcję

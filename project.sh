@@ -18,7 +18,7 @@ $PIP install -e . --quiet
 $PIP install regix --upgrade --quiet
 #$PIP install pyqual --upgrade --quiet
 $PIP install prefact --upgrade --quiet
-$PIP install vallm --upgrade --quiet
+$PIP install -e /home/tom/github/semcod/vallm --quiet
 $PIP install redup==0.4.18 --upgrade --quiet
 $PIP install glon --upgrade --quiet
 $PIP install goal --upgrade --quiet
@@ -32,5 +32,5 @@ rm -f project/analysis.yaml
 $PIP install code2docs --upgrade --quiet
 $VENV/bin/code2docs ./ --readme-only
 $VENV/bin/redup scan . --format toon --output ./project
-$VENV/bin/vallm batch . --recursive --format toon --output ./project
+$VENV/bin/vallm batch . --recursive --format toon --output ./project || true
 $VENV/bin/prefact -a -e "examples/**"

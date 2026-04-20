@@ -4,24 +4,14 @@
 
 - **Project**: /home/tom/github/semcod/redsl
 - **Primary Language**: python
-- **Languages**: python: 239, php: 85, shell: 2, javascript: 1
+- **Languages**: python: 240, php: 24, shell: 4, javascript: 1
 - **Analysis Mode**: static
-- **Total Functions**: 1721
-- **Total Classes**: 217
-- **Modules**: 327
-- **Entry Points**: 877
+- **Total Functions**: 1504
+- **Total Classes**: 215
+- **Modules**: 269
+- **Entry Points**: 774
 
 ## Architecture by Module
-
-### www.vendor.phpmailer.phpmailer.src.PHPMailer
-- **Functions**: 124
-- **Classes**: 1
-- **File**: `PHPMailer.php`
-
-### www.vendor.phpmailer.phpmailer.src.SMTP
-- **Functions**: 42
-- **Classes**: 1
-- **File**: `SMTP.php`
 
 ### redsl.cli.planfile
 - **Functions**: 27
@@ -30,11 +20,6 @@
 ### redsl.commands.batch_pyqual.reporting
 - **Functions**: 25
 - **File**: `reporting.py`
-
-### www.vendor.composer.ClassLoader
-- **Functions**: 24
-- **Classes**: 1
-- **File**: `ClassLoader.php`
 
 ### redsl.main
 - **Functions**: 23
@@ -59,14 +44,14 @@
 - **Functions**: 20
 - **File**: `cli_autonomy.py`
 
+### redsl.formatters.cycle
+- **Functions**: 18
+- **File**: `cycle.py`
+
 ### redsl.memory
 - **Functions**: 18
 - **Classes**: 4
 - **File**: `__init__.py`
-
-### redsl.formatters.cycle
-- **Functions**: 18
-- **File**: `cycle.py`
 
 ### redsl.analyzers.parsers.project_parser
 - **Functions**: 18
@@ -107,6 +92,20 @@
 - **Classes**: 2
 - **File**: `scheduler.py`
 
+### redsl.llm.registry.aggregator
+- **Functions**: 16
+- **Classes**: 1
+- **File**: `aggregator.py`
+
+### redsl.awareness
+- **Functions**: 16
+- **Classes**: 2
+- **File**: `__init__.py`
+
+### redsl.execution.cycle
+- **Functions**: 16
+- **File**: `cycle.py`
+
 ## Key Entry Points
 
 Main execution flows into the system:
@@ -141,9 +140,6 @@ Returns:
 > Fetch models from OpenRouter with full pricing and capabilities.
 - **Calls**: self._http_get, self._fetch_programming_category, data.get, m.get, m.get, m.get, m.get, m.get
 
-### www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer\PHPMailer.PHPMailer.msgHTML
-- **Calls**: www.vendor.phpmailer.phpmailer.src.PHPMailer.preg_match_all, www.vendor.phpmailer.phpmailer.src.PHPMailer.array_key_exists, www.vendor.phpmailer.phpmailer.src.PHPMailer.strlen, www.vendor.phpmailer.phpmailer.src.PHPMailer.substr, www.vendor.phpmailer.phpmailer.src.PHPMailer.foreach, www.vendor.phpmailer.phpmailer.src.PHPMailer.preg_match, www.vendor.phpmailer.phpmailer.src.PHPMailer.count, www.vendor.phpmailer.phpmailer.src.PHPMailer.base64_decode
-
 ### redsl.cli.refactor.refactor
 > Run refactoring on a project.
 - **Calls**: click.command, click.argument, click.option, click.option, click.option, click.option, click.option, click.option
@@ -163,6 +159,10 @@ Examples:
 
 ### redsl.config_standard.applier.ConfigApplier.apply
 - **Calls**: self.store.lock, self.store.load, self._check_preconditions, self._backup, current.model_dump, datetime.now, updated.compute_fingerprint, self.store.validate
+
+### redsl.cli.workflow.workflow_show
+> Show effective workflow config for PROJECT_DIR (resolved with fallbacks).
+- **Calls**: workflow_group.command, click.argument, None.resolve, redsl.execution.workflow.load_workflow, click.echo, click.echo, click.echo, click.echo
 
 ### redsl.commands.pyqual.run_pyqual_fix
 > Run automatic fixes based on pyqual analysis.
@@ -195,10 +195,6 @@ Examples:
 > Run all demos.
 - **Calls**: print, print, print, print, print, examples.11-model-policy.main.demo_strict_mode, examples.11-model-policy.main.demo_safe_completion, print
 
-### redsl.cli.config.config_rollback
-> Rollback config to a previous version atomically.
-- **Calls**: config.command, click.option, click.option, click.option, redsl.cli.config._resolve_store, ConfigApplier, applier.rollback, redsl.cli.config._dump_json
-
 ### redsl.cli.model_policy.check_model
 > Check if a model is allowed by policy.
 
@@ -206,6 +202,10 @@ Example:
     redsl model-policy check gpt-4o
     redsl model-policy check anthropic/claude-3-5-sonnet -j
 - **Calls**: model_policy.command, click.argument, click.option, redsl.llm.check_model_policy, click.echo, click.echo, click.echo, click.echo
+
+### redsl.cli.config.config_rollback
+> Rollback config to a previous version atomically.
+- **Calls**: config.command, click.option, click.option, click.option, redsl.cli.config._resolve_store, ConfigApplier, applier.rollback, redsl.cli.config._dump_json
 
 ### redsl.awareness.AwarenessManager.build_snapshot
 - **Calls**: None.resolve, self._build_cache_key, GitTimelineAnalyzer, timeline_analyzer.build_timeline, timeline_analyzer.analyze_trends, ChangePatternLearner, pattern_learner.learn_from_timeline, self.health_model.assess
@@ -219,7 +219,7 @@ Example:
 Args:
     proposal: Propozycja z listą FileChange.
     project_dir: Opcjonalny katalog projektu
-- **Calls**: redsl.validation.vallm_bridge.is_available, Path, www.vendor.composer.ClassLoader.Composer\Autoload.ClassLoader.set, redsl.validation.vallm_bridge.validate_patch, scores.append, tempfile.mkdtemp, shutil.rmtree, failures.append
+- **Calls**: redsl.validation.vallm_bridge.is_available, Path, redsl.analyzers.incremental.EvolutionaryCache.set, redsl.validation.vallm_bridge.validate_patch, scores.append, tempfile.mkdtemp, shutil.rmtree, failures.append
 
 ### redsl.analyzers.parsers.project_parser.ProjectParser._parse_emoji_alert_line
 > T001: Parsuj linie code2llm v2: 🟡 CC func_name CC=41 (limit:10)
@@ -277,22 +277,17 @@ config_apply [redsl.cli.config]
 fetch [redsl.llm.registry.sources.base.OpenRouterSource]
 ```
 
-### Flow 6: msgHTML
-```
-msgHTML [www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer\PHPMailer.PHPMailer]
-```
-
-### Flow 7: refactor
+### Flow 6: refactor
 ```
 refactor [redsl.cli.refactor]
 ```
 
-### Flow 8: source_add
+### Flow 7: source_add
 ```
 source_add [redsl.cli.planfile]
 ```
 
-### Flow 9: generate_proposal
+### Flow 8: generate_proposal
 ```
 generate_proposal [redsl.refactors.engine.RefactorEngine]
   └─ →> build_ecosystem_context
@@ -300,24 +295,19 @@ generate_proposal [redsl.refactors.engine.RefactorEngine]
       └─> _format_alerts
 ```
 
-### Flow 10: apply
+### Flow 9: apply
 ```
 apply [redsl.config_standard.applier.ConfigApplier]
 ```
 
+### Flow 10: workflow_show
+```
+workflow_show [redsl.cli.workflow]
+  └─ →> load_workflow
+      └─> default_workflow
+```
+
 ## Key Classes
-
-### www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer\PHPMailer.PHPMailer
-- **Methods**: 124
-- **Key Methods**: www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer.__construct, www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer.__destruct, www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer.mailPassthru, www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer.edebug, www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer.isHTML, www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer.isSMTP, www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer.isMail, www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer.isSendmail, www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer.isQmail, www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer.addAddress
-
-### www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP
-- **Methods**: 42
-- **Key Methods**: www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.edebug, www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.connect, www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.getSMTPConnection, www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.startTLS, www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.authenticate, www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.hmac, www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.connected, www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.close, www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.data, www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.hello
-
-### www.vendor.composer.ClassLoader.Composer\Autoload.ClassLoader
-- **Methods**: 24
-- **Key Methods**: www.vendor.composer.ClassLoader.ClassLoader.__construct, www.vendor.composer.ClassLoader.ClassLoader.getPrefixes, www.vendor.composer.ClassLoader.ClassLoader.getPrefixesPsr4, www.vendor.composer.ClassLoader.ClassLoader.getFallbackDirs, www.vendor.composer.ClassLoader.ClassLoader.getFallbackDirsPsr4, www.vendor.composer.ClassLoader.ClassLoader.getClassMap, www.vendor.composer.ClassLoader.ClassLoader.addClassMap, www.vendor.composer.ClassLoader.ClassLoader.add, www.vendor.composer.ClassLoader.ClassLoader.addPsr4, www.vendor.composer.ClassLoader.ClassLoader.set
 
 ### redsl.awareness.git_timeline.GitTimelineAnalyzer
 > Build a historical metric timeline from git commits — facade.
@@ -347,10 +337,6 @@ This is a thin facade that delegates
 - **Methods**: 16
 - **Key Methods**: redsl.autonomy.scheduler.Scheduler.__init__, redsl.autonomy.scheduler.Scheduler.run, redsl.autonomy.scheduler.Scheduler.stop, redsl.autonomy.scheduler.Scheduler.run_once, redsl.autonomy.scheduler.Scheduler._has_changes_since_last_check, redsl.autonomy.scheduler.Scheduler._git_head, redsl.autonomy.scheduler.Scheduler._analyze, redsl.autonomy.scheduler.Scheduler._check_trends, redsl.autonomy.scheduler.Scheduler._check_proactive, redsl.autonomy.scheduler.Scheduler._generate_proposals
 
-### www.vendor.composer.InstalledVersions.Composer.InstalledVersions
-- **Methods**: 15
-- **Key Methods**: www.vendor.composer.InstalledVersions.InstalledVersions.getInstalledPackages, www.vendor.composer.InstalledVersions.InstalledVersions.getInstalledPackagesByType, www.vendor.composer.InstalledVersions.InstalledVersions.isInstalled, www.vendor.composer.InstalledVersions.InstalledVersions.satisfies, www.vendor.composer.InstalledVersions.InstalledVersions.getVersionRanges, www.vendor.composer.InstalledVersions.InstalledVersions.getVersion, www.vendor.composer.InstalledVersions.InstalledVersions.getPrettyVersion, www.vendor.composer.InstalledVersions.InstalledVersions.getReference, www.vendor.composer.InstalledVersions.InstalledVersions.getInstallPath, www.vendor.composer.InstalledVersions.InstalledVersions.getRootPackage
-
 ### test_refactor_bad.complex_code.GodClass
 > A god class with too many responsibilities.
 - **Methods**: 15
@@ -376,10 +362,6 @@ This is a thin facade that delegates
 > Analizator plików toon — przetwarza dane z code2llm.
 - **Methods**: 13
 - **Key Methods**: redsl.analyzers.toon_analyzer.ToonAnalyzer.__init__, redsl.analyzers.toon_analyzer.ToonAnalyzer.analyze_project, redsl.analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content, redsl.analyzers.toon_analyzer.ToonAnalyzer._find_toon_files, redsl.analyzers.toon_analyzer.ToonAnalyzer._select_project_key, redsl.analyzers.toon_analyzer.ToonAnalyzer._process_project_ton, redsl.analyzers.toon_analyzer.ToonAnalyzer._convert_modules_to_metrics, redsl.analyzers.toon_analyzer.ToonAnalyzer._process_hotspots, redsl.analyzers.toon_analyzer.ToonAnalyzer._process_alerts, redsl.analyzers.toon_analyzer.ToonAnalyzer._process_duplicates
-
-### www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3
-- **Methods**: 11
-- **Key Methods**: www.vendor.phpmailer.phpmailer.src.POP3.POP3.popBeforeSmtp, www.vendor.phpmailer.phpmailer.src.POP3.POP3.authorise, www.vendor.phpmailer.phpmailer.src.POP3.POP3.connect, www.vendor.phpmailer.phpmailer.src.POP3.POP3.login, www.vendor.phpmailer.phpmailer.src.POP3.POP3.disconnect, www.vendor.phpmailer.phpmailer.src.POP3.POP3.getResponse, www.vendor.phpmailer.phpmailer.src.POP3.POP3.sendString, www.vendor.phpmailer.phpmailer.src.POP3.POP3.checkResponse, www.vendor.phpmailer.phpmailer.src.POP3.POP3.setError, www.vendor.phpmailer.phpmailer.src.POP3.POP3.getErrors
 
 ### redsl.analyzers.sumd_bridge.SumdAnalyzer
 > Native project analyzer using sumd extractor patterns.
@@ -408,21 +390,42 @@ Pure-Python implementation that doesn't requ
 - **Methods**: 9
 - **Key Methods**: redsl.commands.multi_project.MultiProjectReport.total_projects, redsl.commands.multi_project.MultiProjectReport.successful, redsl.commands.multi_project.MultiProjectReport.failed, redsl.commands.multi_project.MultiProjectReport.aggregate_avg_cc, redsl.commands.multi_project.MultiProjectReport.aggregate_critical, redsl.commands.multi_project.MultiProjectReport.aggregate_files, redsl.commands.multi_project.MultiProjectReport.worst_projects, redsl.commands.multi_project.MultiProjectReport.summary, redsl.commands.multi_project.MultiProjectReport.to_dict
 
+### redsl.llm.selection.selector.ModelSelector
+> Wybiera najtańszy model spełniający wymagania.
+- **Methods**: 9
+- **Key Methods**: redsl.llm.selection.selector.ModelSelector.__init__, redsl.llm.selection.selector.ModelSelector.candidates, redsl.llm.selection.selector.ModelSelector._apply_known_good_override, redsl.llm.selection.selector.ModelSelector._check_gate, redsl.llm.selection.selector.ModelSelector.pick, redsl.llm.selection.selector.ModelSelector._get_passing_candidates, redsl.llm.selection.selector.ModelSelector._filter_by_tier, redsl.llm.selection.selector.ModelSelector._get_passing_candidates_for_tier, redsl.llm.selection.selector.ModelSelector._next_tier
+
+### redsl.refactors.engine.RefactorEngine
+> Silnik refaktoryzacji z pętlą refleksji.
+
+1. Generuj propozycję (LLM)
+2. Reflektuj (self-critique)
+3
+- **Methods**: 9
+- **Key Methods**: redsl.refactors.engine.RefactorEngine.__init__, redsl.refactors.engine.RefactorEngine.estimate_confidence, redsl.refactors.engine.RefactorEngine._parse_confidence, redsl.refactors.engine.RefactorEngine._resolve_confidence, redsl.refactors.engine.RefactorEngine.generate_proposal, redsl.refactors.engine.RefactorEngine.reflect_on_proposal, redsl.refactors.engine.RefactorEngine.validate_proposal, redsl.refactors.engine.RefactorEngine.apply_proposal, redsl.refactors.engine.RefactorEngine._save_proposal
+
+### redsl.awareness.ecosystem.EcosystemGraph
+> Basic ecosystem graph for semcod-style project collections.
+- **Methods**: 9
+- **Key Methods**: redsl.awareness.ecosystem.EcosystemGraph.build, redsl.awareness.ecosystem.EcosystemGraph.summarize, redsl.awareness.ecosystem.EcosystemGraph.project, redsl.awareness.ecosystem.EcosystemGraph.impacted_projects, redsl.awareness.ecosystem.EcosystemGraph._build_node, redsl.awareness.ecosystem.EcosystemGraph._link_dependencies, redsl.awareness.ecosystem.EcosystemGraph._read_dependencies, redsl.awareness.ecosystem.EcosystemGraph._extract_dependency_tokens, redsl.awareness.ecosystem.EcosystemGraph._is_project_dir
+
+### redsl.autonomy.growth_control.GrowthController
+> Enforce growth budgets on a project.
+- **Methods**: 8
+- **Key Methods**: redsl.autonomy.growth_control.GrowthController.__init__, redsl.autonomy.growth_control.GrowthController.check_growth, redsl.autonomy.growth_control.GrowthController.suggest_consolidation, redsl.autonomy.growth_control.GrowthController._measure_weekly_growth, redsl.autonomy.growth_control.GrowthController._find_untested_new_modules, redsl.autonomy.growth_control.GrowthController._find_oversized_files, redsl.autonomy.growth_control.GrowthController._find_tiny_modules, redsl.autonomy.growth_control.GrowthController._group_by_prefix
+
+### redsl.llm.LLMLayer
+> Warstwa abstrakcji nad LLM z obsługą:
+- wywołań tekstowych
+- odpowiedzi JSON
+- zliczania tokenów
+- f
+- **Methods**: 8
+- **Key Methods**: redsl.llm.LLMLayer.__init__, redsl.llm.LLMLayer._load_provider_key, redsl.llm.LLMLayer._resolve_provider_key, redsl.llm.LLMLayer._build_completion_kwargs, redsl.llm.LLMLayer.call, redsl.llm.LLMLayer.call_json, redsl.llm.LLMLayer.reflect, redsl.llm.LLMLayer.total_calls
+
 ## Data Transformation Functions
 
 Key functions that process and transform data:
-
-### examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service.process_order
-> Funkcja z CC=25 i fan-out=10 — idealny kandydat do refaktoryzacji.
-- **Output to**: examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service._is_order_terminal, examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service._calculate_order_total, shipping.calculate, examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service._finalize_order, examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service._validate_order_and_user
-
-### examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service._validate_order_and_user
-> Validate that order and user exist.
-- **Output to**: logger.error, logger.error
-
-### examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service._process_physical_item
-> Process physical item inventory and pricing logic.
-- **Output to**: inventory.check, logger.warning, inventory.backorder, ValueError
 
 ### www.propozycje.parseSelection
 - **Output to**: www.propozycje.array_map, www.propozycje.explode, www.propozycje.foreach, www.propozycje.strpos, www.propozycje.intval
@@ -430,20 +433,16 @@ Key functions that process and transform data:
 ### www.config-api.validateConfig
 - **Output to**: www.config-api.isset, www.config-api.elseif, www.config-api.apiVersion, www.config-api.kind, www.config-api.is_array
 
-### www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.parseDSN
-- **Output to**: www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.parseUrl, www.vendor.phpmailer.phpmailer.src.DSNConfigurator.isset, www.vendor.phpmailer.phpmailer.src.DSNConfigurator.Exception, www.vendor.phpmailer.phpmailer.src.DSNConfigurator.parse_str
+### www.admin.auth.validateCsrfToken
+- **Output to**: www.admin.auth.hash_equals, www.admin.auth.http_response_code, www.admin.auth.exit
 
-### www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.parseUrl
-- **Output to**: www.vendor.phpmailer.phpmailer.src.DSNConfigurator.strpos, www.vendor.phpmailer.phpmailer.src.DSNConfigurator.parse_url, www.vendor.phpmailer.phpmailer.src.DSNConfigurator.explode, www.vendor.phpmailer.phpmailer.src.DSNConfigurator.is_array
+### redsl.history.HistoryReader._format_event_header
+> Format event header line with timestamp, type, target and action.
+- **Output to**: ev.get, ev.get, ev.get, ev.get
 
-### test_sample_project.sample.process_items
-- **Output to**: results.append, results.append
-
-### test_sample_project.sample.format_data
-- **Output to**: formatted.append
-
-### www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.parseHelloFields
-- **Output to**: www.vendor.phpmailer.phpmailer.src.SMTP.explode, www.vendor.phpmailer.phpmailer.src.SMTP.foreach, www.vendor.phpmailer.phpmailer.src.SMTP.trim, www.vendor.phpmailer.phpmailer.src.SMTP.substr, www.vendor.phpmailer.phpmailer.src.SMTP.empty
+### redsl.history.HistoryReader._format_event_details
+> Format event details (thought, reflection, outcome, reason).
+- **Output to**: ev.get, ev.get, ev.get, ev.get, details.append
 
 ### test_refactor_bad.complex_code.process_data
 > Very complex function with high CC.
@@ -463,6 +462,18 @@ Key functions that process and transform data:
 ### redsl.commands.github_source._parse_next_link
 > Parse GitHub Link header to find next page URL.
 - **Output to**: link_header.split, part.strip, None.strip, url_part.startswith, url_part.endswith
+
+### redsl.commands.cli_doctor._format_check_report
+> Format doctor check report as text.
+- **Output to**: None.join, lines.append, lines.append, lines.append
+
+### redsl.commands.cli_doctor._format_heal_report
+> Format doctor heal report as text.
+- **Output to**: lines.append, None.join, lines.append, lines.append, lines.append
+
+### redsl.commands.cli_doctor._format_batch_report
+> Format doctor batch report as text.
+- **Output to**: lines.append, None.join, len, len, len
 
 ### redsl.commands.cli_autonomy._format_gate_details
 > Format quality gate details as text.
@@ -484,17 +495,9 @@ Key functions that process and transform data:
 > Format growth check result as text.
 - **Output to**: None.join, lines.append, lines.append, lines.append, lines.append
 
-### redsl.commands.cli_doctor._format_check_report
-> Format doctor check report as text.
-- **Output to**: None.join, lines.append, lines.append, lines.append
-
-### redsl.commands.cli_doctor._format_heal_report
-> Format doctor heal report as text.
-- **Output to**: lines.append, None.join, lines.append, lines.append, lines.append
-
-### redsl.commands.cli_doctor._format_batch_report
-> Format doctor batch report as text.
-- **Output to**: lines.append, None.join, len, len, len
+### redsl.commands.hybrid._process_single_project
+> Process a single project and return results.
+- **Output to**: redsl.commands.hybrid._count_todo_issues, redsl.commands.hybrid.run_hybrid_quality_refactor, redsl.commands.hybrid._regenerate_todo, redsl.commands.hybrid._count_todo_issues, print
 
 ### redsl.commands._indent_fixers._process_def_block
 > Handle a def/class/try block: fix body indent or strip excess indent.
@@ -504,12 +507,23 @@ Key functions that process and transform data:
 > Process a single project in the batch.
 - **Output to**: print, print, print, redsl.commands.batch.measure_todo_reduction, print
 
-## Behavioral Patterns
+### redsl.commands.autofix.runner._format_project_status
+> Format brief status line for a project result.
+- **Output to**: None.join, status_parts.append, status_parts.append, status_parts.append, status_parts.append
 
-### recursion_mask_sensitive_mapping
-- **Type**: recursion
-- **Confidence**: 0.90
-- **Functions**: redsl.config_standard.security.mask_sensitive_mapping
+### redsl.commands.batch_pyqual.reporting._format_summary_verdicts
+> Format verdict and project count lines.
+- **Output to**: None.join
+
+### redsl.commands.batch_pyqual.reporting._format_summary_config_and_gates
+> Format config, gates, and fix lines.
+- **Output to**: lines.append, lines.append, lines.append, None.join, lines.append
+
+### redsl.commands.batch_pyqual.reporting._format_summary_pipeline_and_totals
+> Format pipeline, git, and size lines.
+- **Output to**: lines.append, lines.append, None.join, lines.append, lines.append
+
+## Behavioral Patterns
 
 ### recursion_deep_merge
 - **Type**: recursion
@@ -526,20 +540,15 @@ Key functions that process and transform data:
 - **Confidence**: 0.90
 - **Functions**: redsl.config_standard.paths.walk_paths
 
+### recursion_mask_sensitive_mapping
+- **Type**: recursion
+- **Confidence**: 0.90
+- **Functions**: redsl.config_standard.security.mask_sensitive_mapping
+
 ### recursion__flatten_radon_blocks
 - **Type**: recursion
 - **Confidence**: 0.90
 - **Functions**: redsl.analyzers.radon_analyzer._flatten_radon_blocks
-
-### state_machine_POP3
-- **Type**: state_machine
-- **Confidence**: 0.70
-- **Functions**: www.vendor.phpmailer.phpmailer.src.POP3.POP3.popBeforeSmtp, www.vendor.phpmailer.phpmailer.src.POP3.POP3.authorise, www.vendor.phpmailer.phpmailer.src.POP3.POP3.connect, www.vendor.phpmailer.phpmailer.src.POP3.POP3.login, www.vendor.phpmailer.phpmailer.src.POP3.POP3.disconnect
-
-### state_machine_SMTP
-- **Type**: state_machine
-- **Confidence**: 0.70
-- **Functions**: www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.edebug, www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.connect, www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.getSMTPConnection, www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.startTLS, www.vendor.phpmailer.phpmailer.src.SMTP.SMTP.authenticate
 
 ### state_machine_DirectImportRefactorer
 - **Type**: state_machine
@@ -558,43 +567,43 @@ Functions exposed as public API (no underscore prefix):
 - `redsl.cli.models.estimate_cost` - 44 calls
 - `redsl.examples.pyqual_example.run_pyqual_example` - 41 calls
 - `redsl.examples.pr_bot.run_pr_bot_example` - 40 calls
-- `www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer\PHPMailer.PHPMailer.preSend` - 38 calls
 - `redsl.examples.custom_rules.run_custom_rules_example` - 34 calls
 - `redsl.examples.badge.run_badge_example` - 33 calls
 - `redsl.analyzers.sumd_bridge.SumdAnalyzer.generate_map_toon` - 32 calls
 - `redsl.examples.basic_analysis.run_basic_analysis_example` - 31 calls
 - `redsl.cli.config.config_apply` - 30 calls
-- `www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer\PHPMailer.PHPMailer.smtpConnect` - 29 calls
 - `redsl.llm.registry.sources.base.OpenRouterSource.fetch` - 29 calls
-- `www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer\PHPMailer.PHPMailer.createBody` - 28 calls
-- `www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer\PHPMailer.PHPMailer.msgHTML` - 28 calls
 - `redsl.cli.refactor.refactor` - 28 calls
 - `redsl.cli.planfile.source_add` - 28 calls
 - `redsl.refactors.engine.RefactorEngine.generate_proposal` - 28 calls
 - `redsl.examples.full_pipeline.run_full_pipeline_example` - 27 calls
 - `redsl.examples.api_integration.run_api_integration_example` - 26 calls
 - `redsl.config_standard.applier.ConfigApplier.apply` - 26 calls
+- `redsl.cli.workflow.workflow_show` - 26 calls
 - `examples.11-model-policy.main.demo_strict_mode` - 25 calls
 - `redsl.commands.pyqual.run_pyqual_fix` - 24 calls
 - `redsl.cli.config.config_diff` - 24 calls
-- `www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer\PHPMailer.PHPMailer.DKIM_Add` - 23 calls
 - `redsl.cli.llm_banner.print_llm_banner` - 23 calls
 - `redsl.cli.config.config_init` - 23 calls
 - `redsl.cli.config.config_history` - 23 calls
-- `www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.get_lines` - 22 calls
 - `redsl.commands.sumr_planfile.core.generate_planfile` - 21 calls
 - `redsl.cli.config.config_clone` - 21 calls
 - `examples.11-model-policy.main.main` - 20 calls
 - `redsl.commands.sumr_planfile.parsers.parse_sumr` - 20 calls
-- `www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer\PHPMailer.PHPMailer.mailSend` - 20 calls
-- `www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer\PHPMailer.PHPMailer.smtpSend` - 20 calls
-- `redsl.cli.config.config_rollback` - 20 calls
 - `redsl.cli.model_policy.check_model` - 20 calls
+- `redsl.cli.config.config_rollback` - 20 calls
 - `redsl.awareness.AwarenessManager.build_snapshot` - 20 calls
 - `redsl.awareness.health_model.HealthModel.assess` - 20 calls
 - `redsl.validation.vallm_bridge.validate_proposal` - 20 calls
 - `redsl.commands.github_source.resolve_auth_ref` - 19 calls
 - `redsl.config_standard.store.ConfigStore.clone_from` - 19 calls
+- `redsl.autonomy.metrics.collect_autonomy_metrics` - 19 calls
+- `redsl.formatters.batch.format_batch_results` - 19 calls
+- `redsl.formatters.batch.format_batch_report_markdown` - 19 calls
+- `redsl.cli.config.config_validate` - 19 calls
+- `redsl.cli.batch.batch_pyqual_run` - 19 calls
+- `redsl.cli.models.show_coding_config` - 19 calls
+- `redsl.refactors.body_restorer.repair_file` - 19 calls
 
 ## System Interactions
 
@@ -619,11 +628,6 @@ graph TD
     fetch --> _http_get
     fetch --> _fetch_programming_c
     fetch --> get
-    msgHTML --> preg_match_all
-    msgHTML --> array_key_exists
-    msgHTML --> strlen
-    msgHTML --> substr
-    msgHTML --> foreach
     refactor --> command
     refactor --> argument
     refactor --> option
@@ -632,6 +636,11 @@ graph TD
     generate_proposal --> get
     generate_proposal --> build_ecosystem_cont
     generate_proposal --> format
+    generate_proposal --> call_json
+    apply --> lock
+    apply --> load
+    apply --> _check_preconditions
+    apply --> _backup
 ```
 
 ## Reverse Engineering Guidelines

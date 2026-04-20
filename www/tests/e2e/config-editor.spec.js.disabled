@@ -6,9 +6,23 @@
 
 const { test, expect } = require('@playwright/test');
 
+// Run tests serially since they modify shared state (config file)
+test.describe.configure({ mode: 'serial' });
+
+// Helper: Ensure config exists, creating if needed
+async function ensureConfig(page) {
+  const noConfig = await page.locator('h2:has-text("No configuration found")').count() > 0;
+  if (noConfig) {
+    await page.click('button:has-text("Create Default Config")');
+    await page.waitForTimeout(1000);
+    await page.reload();
+  }
+}
+
 test.describe('Config Editor', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/config-editor.php');
+    await page.waitForSelector('h1', { timeout: 5000 });
   });
 
   test('should display config editor page', async ({ page }) => {
@@ -17,22 +31,26 @@ test.describe('Config Editor', () => {
   });
 
   test('should show "No configuration" when config does not exist', async ({ page }) => {
-    await expect(page.locator('.alert')).toContainText('No configuration found');
+    await expect(page.locator('h2')).toContainText('No configuration found');
     await expect(page.locator('button:has-text("Create Default Config")')).toBeVisible();
   });
 
   test('should create default config on button click', async ({ page }) => {
-    // Click create default config
+    // Click create default config (triggers form POST)
     await page.click('button:has-text("Create Default Config")');
     
+    // Wait for POST to complete and reload
+    await page.waitForTimeout(1000);
+    await page.reload();
+    
     // Should show editor with default config
-    await expect(page.locator('textarea[name="config_yaml"]')).toBeVisible();
+    await expect(page.locator('textarea[name="config_yaml"]')).toBeVisible({ timeout: 10000 });
     await expect(page.locator('.badge')).toContainText('Config Found');
   });
 
   test('should display risk levels in sidebar', async ({ page }) => {
-    // First create a config
-    await page.click('button:has-text("Create Default Config")');
+    // Ensure config exists
+    await ensureConfig(page);
     
     // Check risk levels are displayed
     await expect(page.locator('.risk-list')).toContainText('Low Risk');
@@ -41,8 +59,8 @@ test.describe('Config Editor', () => {
   });
 
   test('should redact secrets in display', async ({ page }) => {
-    // Create default config
-    await page.click('button:has-text("Create Default Config")');
+    // Ensure config exists
+    await ensureConfig(page);
     
     // Check that secrets are shown with refs, not values
     const textarea = page.locator('textarea[name="config_yaml"]');
@@ -51,8 +69,8 @@ test.describe('Config Editor', () => {
   });
 
   test('should allow editing and saving config', async ({ page }) => {
-    // Create default config
-    await page.click('button:has-text("Create Default Config")');
+    // Ensure config exists
+    await ensureConfig(page);
     
     // Edit the config
     const textarea = page.locator('textarea[name="config_yaml"]');
@@ -63,16 +81,18 @@ metadata:
   version: 2
 profile: development`);
     
-    // Save
+    // Save (triggers form submit)
     await page.click('button:has-text("Save Changes")');
+    await page.waitForTimeout(1000);
+    await page.reload();
     
     // Should show success message
-    await expect(page.locator('.alert')).toContainText('saved successfully');
+    await expect(page.locator('.alert-success')).toContainText('saved successfully');
   });
 
   test('should show common paths in sidebar', async ({ page }) => {
-    // Create default config
-    await page.click('button:has-text("Create Default Config")');
+    // Ensure config exists
+    await ensureConfig(page);
     
     // Check common paths
     await expect(page.locator('.path-list')).toContainText('spec.llm_policy.mode');
@@ -80,23 +100,25 @@ profile: development`);
   });
 
   test('should validate YAML syntax on save', async ({ page }) => {
-    // Create default config
-    await page.click('button:has-text("Create Default Config")');
+    // Ensure config exists
+    await ensureConfig(page);
     
     // Enter invalid YAML
     const textarea = page.locator('textarea[name="config_yaml"]');
     await textarea.fill('invalid: yaml: syntax: [');
     
-    // Save
+    // Save (triggers form submit)
     await page.click('button:has-text("Save Changes")');
+    await page.waitForTimeout(1000);
+    await page.reload();
     
     // Should show error
-    await expect(page.locator('.alert')).toContainText('Invalid YAML');
+    await expect(page.locator('.alert-error')).toContainText('Invalid YAML');
   });
 
   test('should display config info in sidebar', async ({ page }) => {
-    // Create default config
-    await page.click('button:has-text("Create Default Config")');
+    // Ensure config exists
+    await ensureConfig(page);
     
     // Check config info
     await expect(page.locator('.panel')).toContainText('Version');
@@ -111,8 +133,8 @@ test.describe('Config Editor - Mobile', () => {
   test('should be responsive on mobile', async ({ page }) => {
     await page.goto('/config-editor.php');
     
-    // Create config
-    await page.click('button:has-text("Create Default Config")');
+    // Ensure config exists
+    await ensureConfig(page);
     
     // Editor should be visible and usable
     await expect(page.locator('textarea[name="config_yaml"]')).toBeVisible();

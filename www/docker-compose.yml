@@ -1,20 +1,63 @@
-version: '3.8'
-
 services:
-  redsl-www:
+
+  # ── Aplikacja PHP / Apache ──────────────────────────────────────
+  app:
     build: .
-    container_name: redsl-landing
+    container_name: redsl-www
     ports:
       - "8080:80"
     volumes:
-      # Montuj .env lokalnie aby zmiany były natychmiastowe
-      - ./.env:/var/www/html/.env
+      - ./.env:/var/www/html/.env:ro
+      - ./var:/var/www/html/var
     environment:
-      - APACHE_LOG_DIR=/var/log/apache2
+      APACHE_LOG_DIR: /var/log/apache2
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      test: ["CMD", "curl", "-sf", "http://localhost/"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 15s
+
+  # ── MySQL ───────────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: redsl-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS:-rootsecret}
+      MYSQL_DATABASE: ${DB_NAME:-redsl}
+      MYSQL_USER: ${DB_USER:-redsl_user}
+      MYSQL_PASSWORD: ${DB_PASS:-change_me_in_production}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASS:-rootsecret}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ── Mock GitHub OAuth (dev/test only) ──────────────────────────
+  mock-github:
+    image: php:8.3-apache
+    container_name: redsl-mock-github
+    volumes:
+      - ./mock-github:/var/www/html:ro
+    ports:
+      - "8181:80"
+    profiles:
+      - dev
+      - test
+    restart: unless-stopped
+
+volumes:
+  db_data:

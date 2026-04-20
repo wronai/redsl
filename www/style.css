@@ -24,6 +24,10 @@
 
     --container: 1120px;
     --r: 2px;
+
+    --shadow-sm: 0 1px 4px rgba(26,24,22,0.08);
+    --shadow-md: 0 4px 16px rgba(26,24,22,0.12);
+    --transition: 0.15s ease;
 }
 
 html { scroll-behavior: smooth; }
@@ -56,6 +60,14 @@ a:hover { color: var(--red); }
 /* =========== MASTHEAD =========== */
 .masthead {
     padding-top: 18px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--paper);
+    transition: box-shadow var(--transition);
+}
+.masthead.scrolled {
+    box-shadow: var(--shadow-md);
 }
 .masthead-inner {
     max-width: var(--container);
@@ -68,7 +80,7 @@ a:hover { color: var(--red); }
 }
 .masthead-left {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--muted);
@@ -98,11 +110,27 @@ a:hover { color: var(--red); }
     justify-content: flex-end;
     gap: 22px;
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
-.masthead-right a { text-decoration: none; }
+.masthead-right a {
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 2px;
+}
+.masthead-right a::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--red);
+    transition: width var(--transition);
+}
+.masthead-right a:hover::after { width: 100%; }
+.masthead-right a:hover { color: var(--ink); }
 .rule {
     max-width: var(--container);
     margin: 16px auto 0;
@@ -118,7 +146,7 @@ a:hover { color: var(--red); }
 }
 .kicker {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--red);
@@ -191,6 +219,8 @@ a:hover { color: var(--red); }
     border-radius: var(--r);
     cursor: pointer;
     transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
 }
 .btn-primary {
     background: var(--ink);
@@ -202,6 +232,10 @@ a:hover { color: var(--red); }
     box-shadow: 6px 6px 0 var(--red);
     color: var(--paper);
 }
+.btn-primary:active {
+    transform: translate(0, 0);
+    box-shadow: 2px 2px 0 var(--red);
+}
 .btn-ghost {
     background: transparent;
     color: var(--ink);
@@ -212,6 +246,16 @@ a:hover { color: var(--red); }
 .btn-ghost:hover {
     color: var(--red);
 }
+.btn-outline {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--ink);
+}
+.btn-outline:hover {
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+}
 .btn-block {
     width: 100%;
     justify-content: center;
@@ -219,7 +263,7 @@ a:hover { color: var(--red); }
 
 .hero-meta {
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
     display: flex;
     flex-wrap: wrap;
@@ -228,6 +272,21 @@ a:hover { color: var(--red); }
 }
 .hero-meta strong { color: var(--green); font-weight: 500; }
 .hero-meta .sep { color: var(--rule); margin: 0 8px; }
+
+.hero-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 28px 0 28px 0;
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--muted);
+}
+.hero-bullets li {
+    margin: 12px 0;
+    padding-left: 0;
+}
+.hero-bullets li:first-child { margin-top: 0; }
+.hero-bullets li:last-child { margin-bottom: 0; }
 
 /* =========== FLASH =========== */
 .flash {
@@ -242,13 +301,24 @@ a:hover { color: var(--red); }
 
 /* =========== SECTION COMMON =========== */
 .section {
-    padding: 80px 0;
+    padding: 60px 0;
     border-bottom: 1px solid var(--rule);
 }
 .section:last-of-type { border-bottom: none; }
+
+/* CSS-driven reveal (JS adds .revealed class) */
+.section-reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.55s ease-out, transform 0.55s ease-out;
+}
+.section-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
 .section-label {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--red);
@@ -263,7 +333,7 @@ a:hover { color: var(--red); }
     font-size: clamp(32px, 5vw, 56px);
     line-height: 1.05;
     letter-spacing: -0.025em;
-    margin: 0 0 48px;
+    margin: 0 0 32px;
     max-width: 800px;
 }
 
@@ -272,59 +342,78 @@ a:hover { color: var(--red); }
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0;
-    margin: 40px 0 36px;
+    margin: 32px 0 32px;
     border: 1px solid var(--rule);
+    border-radius: var(--r);
+    overflow: hidden;
 }
 .pain-col {
-    padding: 32px 36px;
+    padding: 28px 32px;
 }
 .pain-col ul {
     list-style: none;
-    margin: 12px 0 0;
+    margin: 16px 0 0;
     padding: 0;
-    font-size: 16px;
-    line-height: 1.7;
+    font-size: 15px;
+    line-height: 1.8;
     color: var(--ink-soft);
 }
 .pain-col ul li {
-    padding: 4px 0;
+    padding: 3px 0;
+    padding-left: 22px;
+    position: relative;
+}
+.pain-col ul li::before {
+    position: absolute;
+    left: 0;
 }
 .pain-before {
     border-right: 1px solid var(--rule);
-    background: rgba(200, 68, 45, 0.04);
+    background: rgba(200, 68, 45, 0.06);
 }
 .pain-before .pain-label {
     color: var(--red);
 }
 .pain-before ul li::before {
-    content: "✗ ";
+    content: "✗";
     color: var(--red);
-    font-weight: 600;
+    font-weight: 700;
 }
 .pain-after {
-    background: rgba(61, 107, 74, 0.05);
+    background: rgba(61, 107, 74, 0.07);
 }
 .pain-after .pain-label {
     color: var(--green);
 }
 .pain-after ul li::before {
-    content: "✓ ";
+    content: "✓";
     color: var(--green);
-    font-weight: 600;
+    font-weight: 700;
 }
 .pain-label {
     font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.14em;
+    font-size: 12px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    font-weight: 600;
-    margin-bottom: 4px;
+    font-weight: 700;
+    margin-bottom: 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
+.pain-icon {
+    font-size: 16px;
+    line-height: 1;
+}
+.pain-before .pain-icon { color: var(--red); }
+.pain-after  .pain-icon { color: var(--green); }
 .pain-punchline {
     font-family: var(--font-display);
     font-weight: 300;
-    font-size: clamp(20px, 2.5vw, 28px);
-    line-height: 1.4;
+    font-size: clamp(18px, 2.2vw, 24px);
+    line-height: 1.5;
     color: var(--ink);
     max-width: 680px;
     margin: 0;
@@ -400,7 +489,7 @@ a:hover { color: var(--red); }
 }
 .step-meta {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 400;
     color: var(--muted);
     letter-spacing: 0.08em;
@@ -408,7 +497,7 @@ a:hover { color: var(--red); }
 }
 .step-saas {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--red);
     background: rgba(200, 68, 45, 0.08);
@@ -467,7 +556,7 @@ a:hover { color: var(--red); }
 
 .price-label {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--muted);
@@ -494,7 +583,7 @@ a:hover { color: var(--red); }
 }
 .price-unit {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     color: var(--muted);
     margin-top: 8px;
     letter-spacing: 0.06em;
@@ -623,6 +712,7 @@ a:hover { color: var(--red); }
     border-top: 1px solid var(--rule);
     padding: 20px 0;
     cursor: pointer;
+    transition: background var(--transition);
 }
 .faq .q:last-of-type { border-bottom: 1px solid var(--rule); }
 .faq summary {
@@ -645,11 +735,16 @@ a:hover { color: var(--red); }
     font-size: 28px;
     font-weight: 300;
     color: var(--red);
-    transition: transform 0.2s ease;
+    transition: transform 0.25s ease, color 0.15s ease;
     flex-shrink: 0;
+    display: inline-block;
 }
 .faq details[open] summary::after {
     content: "−";
+    transform: rotate(0deg);
+}
+.faq details[open] summary {
+    color: var(--red);
 }
 .faq .q p {
     margin: 14px 0 0;
@@ -689,7 +784,7 @@ a:hover { color: var(--red); }
     position: relative;
     margin: 28px 0;
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--muted);
@@ -723,7 +818,7 @@ a:hover { color: var(--red); }
 }
 .contact-form label span {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
@@ -750,6 +845,16 @@ a:hover { color: var(--red); }
 .contact-form textarea:focus {
     outline: none;
     box-shadow: 3px 3px 0 var(--red);
+    border-color: var(--red);
+}
+.contact-form input[aria-invalid="true"],
+.contact-form textarea[aria-invalid="true"] {
+    border-color: var(--red);
+    box-shadow: 3px 3px 0 rgba(200,68,45,0.25);
+}
+.contact-form input[aria-invalid="false"]:not(:placeholder-shown),
+.contact-form textarea[aria-invalid="false"]:not(:placeholder-shown) {
+    border-color: var(--green);
 }
 .contact-form textarea {
     resize: vertical;
@@ -778,7 +883,7 @@ a:hover { color: var(--red); }
 .contact-right .sidebar-block:first-child { border-top: 2px solid var(--ink); }
 .contact-right h4 {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--red);
@@ -835,7 +940,7 @@ a:hover { color: var(--red); }
 }
 .colophon h5 {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--red);
@@ -855,7 +960,7 @@ a:hover { color: var(--red); }
     padding-top: 24px;
     border-top: 1px solid var(--rule);
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.04em;
     color: var(--muted);
     text-align: center;
@@ -868,7 +973,7 @@ a:hover { color: var(--red); }
 /* =========== RESPONSIVE =========== */
 @media (max-width: 900px) {
     .masthead-inner { grid-template-columns: 1fr; text-align: center; gap: 10px; }
-    .masthead-right { justify-content: center; }
+    .masthead-right { justify-content: center; flex-wrap: wrap; }
     .masthead-left { justify-content: center; text-align: center; }
 
     .hero { padding: 48px 0 40px; }
@@ -900,9 +1005,12 @@ a:hover { color: var(--red); }
     .container { padding: 0 20px; }
     .hero-cta { flex-direction: column; align-items: stretch; }
     .hero-cta .btn { width: 100%; justify-content: center; }
+    .btn-block { width: 100%; justify-content: center; }
     .price-value .amount { font-size: 72px; }
     .faq summary { font-size: 18px; }
     .colophon-grid { grid-template-columns: 1fr; }
+    .security-grid { grid-template-columns: 1fr 1fr; }
+    .contact-container { gap: 32px; }
 }
 
 /* =========== A11Y =========== */

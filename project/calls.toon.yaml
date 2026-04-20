@@ -1,6 +1,6 @@
 # code2llm call graph | /home/tom/github/semcod/redsl
-# nodes: 489 | edges: 500 | modules: 102
-# CC̄=3.9
+# nodes: 475 | edges: 500 | modules: 101
+# CC̄=3.7
 
 HUBS[20]:
   redsl.examples.pyqual_example.run_pyqual_example
@@ -9,40 +9,40 @@ HUBS[20]:
     CC=3  in:2  out:40  total:42
   redsl.examples.custom_rules.run_custom_rules_example
     CC=6  in:2  out:34  total:36
-  redsl.examples.badge.run_badge_example
-    CC=5  in:2  out:33  total:35
   redsl.cli.llm_banner.print_llm_banner
     CC=7  in:12  out:23  total:35
-  redsl.examples.basic_analysis.run_basic_analysis_example
-    CC=3  in:2  out:31  total:33
+  redsl.examples.badge.run_badge_example
+    CC=5  in:2  out:33  total:35
   redsl.config.AgentConfig.from_env
     CC=4  in:21  out:12  total:33
+  redsl.examples.basic_analysis.run_basic_analysis_example
+    CC=3  in:2  out:31  total:33
+  redsl.analyzers.incremental.EvolutionaryCache.set
+    CC=1  in:29  out:2  total:31
   redsl.config_standard.nlp_handlers._handle_propose_changes
     CC=12  in:1  out:29  total:30
   redsl.examples.full_pipeline.run_full_pipeline_example
     CC=4  in:2  out:27  total:29
-  www.vendor.composer.ClassLoader.Composer\Autoload.ClassLoader.set
-    CC=2  in:29  out:0  total:29
   redsl.examples.api_integration.run_api_integration_example
     CC=2  in:2  out:26  total:28
-  examples.11-model-policy.main.demo_strict_mode
-    CC=3  in:1  out:25  total:26
   redsl.commands.sumr_planfile.core._collect_from_sumr_source
     CC=11  in:1  out:25  total:26
-  redsl.commands.pyqual.run_pyqual_fix
-    CC=7  in:0  out:24  total:24
-  www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer\PHPMailer.PHPMailer.edebug
-    CC=8  in:13  out:11  total:24
-  www.vendor.phpmailer.phpmailer.src.PHPMailer.PHPMailer\PHPMailer.PHPMailer.lang
-    CC=4  in:21  out:3  total:24
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.sendCommand
-    CC=11  in:12  out:12  total:24
+  examples.11-model-policy.main.demo_strict_mode
+    CC=3  in:1  out:25  total:26
+  redsl.diagnostics.perf_bridge._parse_metrun_output
+    CC=5  in:1  out:23  total:24
   redsl.commands.sumr_planfile._raw_task_to_plan_task
     CC=7  in:1  out:23  total:24
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.get_lines
-    CC=17  in:2  out:22  total:24
+  redsl.commands.pyqual.run_pyqual_fix
+    CC=7  in:0  out:24  total:24
   redsl.autonomy.quality_gate.run_quality_gate
     CC=11  in:8  out:15  total:23
+  redsl.commands.autonomy_pr.validator._step_validate
+    CC=9  in:1  out:21  total:22
+  redsl.commands.sumr_planfile.core.generate_planfile
+    CC=7  in:1  out:21  total:22
+  redsl.autonomy.metrics.collect_autonomy_metrics
+    CC=3  in:2  out:19  total:21
 
 MODULES:
   examples.01-basic-analysis.main  [1 funcs]
@@ -51,13 +51,6 @@ MODULES:
     main  CC=1  out:1
   examples.03-full-pipeline.main  [1 funcs]
     main  CC=1  out:1
-  examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service  [6 funcs]
-    _calculate_order_total  CC=6  out:8
-    _finalize_order  CC=1  out:3
-    _is_order_terminal  CC=3  out:2
-    _process_physical_item  CC=3  out:4
-    _validate_order_and_user  CC=3  out:2
-    process_order  CC=4  out:6
   examples.04-memory-learning.main  [1 funcs]
     main  CC=1  out:1
   examples.05-api-integration.main  [1 funcs]
@@ -78,20 +71,53 @@ MODULES:
     demo_safe_completion  CC=4  out:12
     demo_strict_mode  CC=3  out:25
     main  CC=3  out:20
+  redsl.analyzers.incremental  [1 funcs]
+    set  CC=1  out:2
+  redsl.analyzers.python_analyzer  [1 funcs]
+    ast_cyclomatic_complexity  CC=1  out:7
   redsl.analyzers.utils  [2 funcs]
     _load_gitignore_patterns  CC=7  out:8
     _should_ignore_file  CC=4  out:2
+  redsl.autonomy.adaptive_executor  [1 funcs]
+    execute_adaptive  CC=7  out:13
   redsl.autonomy.auto_fix  [1 funcs]
     auto_fix_violations  CC=4  out:12
-  redsl.autonomy.intent  [1 funcs]
+  redsl.autonomy.intent  [7 funcs]
+    _assess_risk  CC=8  out:3
+    _changed_python_files  CC=6  out:9
+    _recent_commit_messages  CC=5  out:6
+    _score_from_files  CC=6  out:3
+    _score_from_messages  CC=5  out:2
+    _select_primary_and_active  CC=5  out:3
     analyze_commit_intent  CC=2  out:10
-  redsl.autonomy.metrics  [1 funcs]
+  redsl.autonomy.metrics  [5 funcs]
+    _check_gate_installed  CC=4  out:3
+    _check_scheduler_running  CC=2  out:1
+    _count_gate_blocks_last_week  CC=6  out:8
+    _get_growth_last_week  CC=4  out:9
     collect_autonomy_metrics  CC=3  out:19
-  redsl.autonomy.quality_gate  [2 funcs]
+  redsl.autonomy.quality_gate  [9 funcs]
+    _cli_main  CC=4  out:9
+    _collect_python_files  CC=5  out:6
+    _file_cc_functions  CC=4  out:6
+    _get_metrics_at_ref  CC=1  out:2
+    _get_metrics_current  CC=9  out:16
+    _git_diff_names  CC=6  out:11
+    _measure_metrics  CC=6  out:11
     install_pre_commit_hook  CC=1  out:5
     run_quality_gate  CC=11  out:15
-  redsl.autonomy.review  [1 funcs]
+  redsl.autonomy.review  [5 funcs]
+    _get_diff  CC=5  out:5
+    _llm_review  CC=1  out:1
+    _parse_changed_files_from_diff  CC=4  out:5
+    _static_review  CC=9  out:13
     review_staged_changes  CC=3  out:9
+  redsl.autonomy.smart_scorer  [5 funcs]
+    _confidence_multiplier  CC=4  out:3
+    _coupling_multiplier  CC=3  out:5
+    _ecosystem_multiplier  CC=5  out:5
+    _trend_multiplier  CC=7  out:3
+    smart_score  CC=2  out:5
   redsl.cli.llm_banner  [1 funcs]
     print_llm_banner  CC=7  out:23
   redsl.commands._fixer_utils  [1 funcs]
@@ -198,7 +224,7 @@ MODULES:
     _is_package  CC=2  out:2
     _matches_any  CC=2  out:2
     _normalize_patterns  CC=5  out:4
-  redsl.commands.batch_pyqual.pipeline  [14 funcs]
+  redsl.commands.batch_pyqual.pipeline  [13 funcs]
     _commit_changes  CC=3  out:6
     _finalize_result  CC=6  out:5
     _init_project_context  CC=5  out:14
@@ -324,6 +350,17 @@ MODULES:
     _save_results  CC=1  out:4
   redsl.commands.multi_project  [1 funcs]
     __init__  CC=2  out:2
+  redsl.commands.plan_sync  [14 funcs]
+    _apply_external_update  CC=4  out:2
+    _atomic_write  CC=1  out:4
+    _classify_incoming  CC=4  out:10
+    _detect_archived  CC=3  out:3
+    _generate_task_id  CC=4  out:6
+    _issue_to_task  CC=1  out:3
+    _load_tasks  CC=6  out:4
+    _merge_archived  CC=5  out:5
+    _partition_tasks  CC=5  out:4
+    _planfile_fingerprint  CC=2  out:5
   redsl.commands.planfile_bridge  [7 funcs]
     _build_ticket_cmd  CC=3  out:0
     _extract_ticket_id  CC=10  out:11
@@ -384,8 +421,10 @@ MODULES:
   redsl.commands.sumr_planfile.utils  [2 funcs]
     deduplicate_tasks  CC=3  out:3
     make_id_generator  CC=1  out:0
-  redsl.config  [1 funcs]
+  redsl.config  [3 funcs]
     from_env  CC=4  out:12
+    _default_llm_model  CC=6  out:5
+    _resolve_provider_key  CC=6  out:10
   redsl.config_standard.agent_bridge  [8 funcs]
     _document_to_agent_config  CC=7  out:9
     _resolve_doppler_ref  CC=12  out:16
@@ -440,35 +479,69 @@ MODULES:
     __init__  CC=2  out:2
     _inner_thought  CC=3  out:6
     _profile_performance  CC=3  out:7
-  redsl.diagnostics.perf_bridge  [2 funcs]
+  redsl.diagnostics.perf_bridge  [11 funcs]
+    _build_fallback_suggestions  CC=2  out:1
+    _fallback_profile  CC=1  out:4
+    _metrun_available  CC=1  out:1
+    _parse_metrun_output  CC=5  out:23
+    _parse_profile_bottlenecks  CC=5  out:10
+    _profile_fallback_target  CC=2  out:9
+    _render_profile_stats  CC=1  out:5
     generate_optimization_report  CC=6  out:9
-    profile_refactor_cycle  CC=3  out:12
-  redsl.examples._common  [3 funcs]
+    profile_llm_latency  CC=4  out:3
+    profile_memory_operations  CC=4  out:4
+  redsl.examples._common  [6 funcs]
+    _examples_root  CC=2  out:4
+    _resolve_yaml_path  CC=2  out:4
+    list_available_examples  CC=4  out:10
     load_example_yaml  CC=3  out:6
     parse_scenario  CC=1  out:3
     print_banner  CC=2  out:3
-  redsl.examples.api_integration  [1 funcs]
+  redsl.examples.api_integration  [2 funcs]
+    main  CC=1  out:2
     run_api_integration_example  CC=2  out:26
-  redsl.examples.audit  [1 funcs]
+  redsl.examples.audit  [10 funcs]
+    _compute_score  CC=1  out:12
+    _grade_for_score  CC=3  out:2
+    _print_badge  CC=1  out:9
+    _print_connect_section  CC=1  out:6
+    _print_grade_box  CC=1  out:8
+    _print_metrics_table  CC=2  out:14
+    _print_recommendations  CC=4  out:12
+    _print_scan_phases  CC=2  out:7
+    main  CC=1  out:2
     run_audit_example  CC=1  out:18
-  redsl.examples.awareness  [1 funcs]
+  redsl.examples.awareness  [5 funcs]
+    _build_timeline  CC=2  out:14
+    _print_patterns  CC=4  out:9
+    _print_signals  CC=4  out:9
+    main  CC=1  out:2
     run_awareness_example  CC=1  out:17
-  redsl.examples.badge  [1 funcs]
+  redsl.examples.badge  [6 funcs]
+    _dimension_color  CC=6  out:0
+    _format_dimension_badges  CC=3  out:4
+    _grade_for_score  CC=3  out:0
+    _print_summary  CC=4  out:12
+    main  CC=1  out:2
     run_badge_example  CC=5  out:33
   redsl.examples.basic_analysis  [2 funcs]
     main  CC=1  out:2
     run_basic_analysis_example  CC=3  out:31
-  redsl.examples.custom_rules  [1 funcs]
+  redsl.examples.custom_rules  [2 funcs]
+    main  CC=1  out:2
     run_custom_rules_example  CC=6  out:34
   redsl.examples.full_pipeline  [1 funcs]
     run_full_pipeline_example  CC=4  out:27
   redsl.examples.memory_learning  [1 funcs]
     run_memory_learning_example  CC=1  out:17
-  redsl.examples.pr_bot  [1 funcs]
+  redsl.examples.pr_bot  [2 funcs]
+    main  CC=1  out:2
     run_pr_bot_example  CC=3  out:40
-  redsl.examples.pyqual_example  [1 funcs]
+  redsl.examples.pyqual_example  [2 funcs]
+    main  CC=1  out:2
     run_pyqual_example  CC=8  out:41
-  redsl.execution.decision  [1 funcs]
+  redsl.execution.decision  [2 funcs]
+    _execute_decision  CC=6  out:15
     _execute_direct_refactor  CC=8  out:17
   redsl.execution.reporter  [1 funcs]
     get_memory_stats  CC=1  out:2
@@ -484,12 +557,16 @@ MODULES:
     safe_completion  CC=2  out:4
   redsl.refactors.body_restorer  [1 funcs]
     repair_file  CC=11  out:19
+  redsl.utils.tool_check  [1 funcs]
+    is_tool_available  CC=2  out:1
   redsl.validation.pyqual_bridge  [5 funcs]
     check_gates  CC=4  out:6
     git_commit  CC=5  out:6
     git_push  CC=5  out:6
     run_pipeline  CC=6  out:11
     validate_config  CC=4  out:6
+  redsl.validation.regix_bridge  [1 funcs]
+    check_gates  CC=5  out:8
   www.app  [4 funcs]
     form  CC=17  out:13
     setInvalid  CC=4  out:2
@@ -499,118 +576,55 @@ MODULES:
     env  CC=3  out:1
     send_notification  CC=5  out:6
     send_notification_smtp  CC=4  out:10
-  www.vendor.composer.ClassLoader  [6 funcs]
-    __construct  CC=1  out:1
-    findFile  CC=12  out:5
-    findFileWithExtension  CC=13  out:8
-    initializeIncludeClosure  CC=2  out:1
-    loadClass  CC=2  out:2
-    set  CC=2  out:0
-  www.vendor.composer.InstalledVersions  [13 funcs]
-    getAllRawData  CC=1  out:1
-    getInstallPath  CC=3  out:4
-    getInstalled  CC=26  out:9
-    getInstalledPackages  CC=2  out:7
-    getInstalledPackagesByType  CC=3  out:4
-    getPrettyVersion  CC=3  out:4
-    getRawData  CC=5  out:4
-    getReference  CC=3  out:4
-    getRootPackage  CC=1  out:1
-    getVersion  CC=3  out:4
-  www.vendor.phpmailer.phpmailer.src.DSNConfigurator  [7 funcs]
-    applyConfig  CC=8  out:9
-    configure  CC=1  out:2
-    configureOptions  CC=13  out:8
-    configureSMTP  CC=6  out:2
-    mailer  CC=2  out:3
-    parseDSN  CC=5  out:4
-    parseUrl  CC=5  out:4
-  www.vendor.phpmailer.phpmailer.src.OAuth  [3 funcs]
-    getGrant  CC=1  out:1
-    getOauth64  CC=4  out:3
-    getToken  CC=1  out:2
-  www.vendor.phpmailer.phpmailer.src.PHPMailer  [21 funcs]
-    __destruct  CC=1  out:1
-    addAddress  CC=1  out:1
-    addAnAddress  CC=9  out:12
-    addBCC  CC=1  out:1
-    addCC  CC=1  out:1
-    addOrEnqueueAnAddress  CC=10  out:16
-    addReplyTo  CC=1  out:1
-    edebug  CC=8  out:11
-    encodeHeader  CC=18  out:18
-    generateId  CC=5  out:9
-  www.vendor.phpmailer.phpmailer.src.POP3  [10 funcs]
-    authorise  CC=5  out:3
-    catchWarning  CC=1  out:1
-    checkResponse  CC=2  out:2
-    connect  CC=5  out:10
-    disconnect  CC=4  out:3
-    getResponse  CC=2  out:1
-    login  CC=6  out:5
-    popBeforeSmtp  CC=1  out:2
-    sendString  CC=3  out:2
-    setError  CC=2  out:2
-  www.vendor.phpmailer.phpmailer.src.SMTP  [29 funcs]
-    authenticate  CC=24  out:15
-    client_send  CC=3  out:7
-    close  CC=3  out:3
-    connect  CC=10  out:13
-    connected  CC=5  out:4
-    data  CC=16  out:14
-    edebug  CC=12  out:12
-    errorHandler  CC=1  out:2
-    getError  CC=1  out:0
-    getLastReply  CC=1  out:0
 
 EDGES:
-  examples.05-api-integration.main.main → redsl.examples.api_integration.run_api_integration_example
-  examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service.process_order → examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service._is_order_terminal
-  examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service.process_order → examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service._calculate_order_total
-  examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service.process_order → examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service._finalize_order
-  examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service.process_order → examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service._validate_order_and_user
-  examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service._calculate_order_total → examples.03-full-pipeline.refactor_output.refactor_extract_functions_20260407_145021.00_orders__service._process_physical_item
-  examples.02-custom-rules.main.main → redsl.examples.custom_rules.run_custom_rules_example
   www.index.send_notification → www.index.env
   www.index.send_notification → www.index.send_notification_smtp
   www.index.send_notification_smtp → www.index.env
   www.app.form → www.app.setInvalid
   www.app.form → www.app.validEmail
   www.app.form → www.app.validRepo
-  www.vendor.phpmailer.phpmailer.src.OAuth.PHPMailer\PHPMailer.OAuth.getToken → www.vendor.phpmailer.phpmailer.src.OAuth.PHPMailer\PHPMailer.OAuth.getGrant
-  www.vendor.phpmailer.phpmailer.src.OAuth.PHPMailer\PHPMailer.OAuth.getOauth64 → www.vendor.phpmailer.phpmailer.src.OAuth.PHPMailer\PHPMailer.OAuth.getToken
-  www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.mailer → www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.configure
-  www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.configure → www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.parseDSN
-  www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.configure → www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.applyConfig
-  www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.parseDSN → www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.parseUrl
-  www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.applyConfig → www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.configureSMTP
-  www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.applyConfig → www.vendor.phpmailer.phpmailer.src.DSNConfigurator.PHPMailer\PHPMailer.DSNConfigurator.configureOptions
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.popBeforeSmtp → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.authorise
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.authorise → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.connect
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.authorise → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.login
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.authorise → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.disconnect
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.connect → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.setError
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.connect → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.getResponse
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.connect → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.checkResponse
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.login → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.setError
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.login → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.sendString
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.login → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.getResponse
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.login → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.checkResponse
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.disconnect → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.sendString
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.disconnect → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.getResponse
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.checkResponse → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.setError
-  www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.catchWarning → www.vendor.phpmailer.phpmailer.src.POP3.PHPMailer\PHPMailer.POP3.setError
+  examples.03-full-pipeline.main.main → redsl.examples.full_pipeline.run_full_pipeline_example
+  redsl.consciousness_loop.ConsciousnessLoop.__init__ → redsl.config.AgentConfig.from_env
+  redsl.consciousness_loop.ConsciousnessLoop._inner_thought → redsl.execution.reporter.get_memory_stats
+  redsl.consciousness_loop.ConsciousnessLoop._profile_performance → redsl.diagnostics.perf_bridge.profile_refactor_cycle
+  redsl.consciousness_loop.ConsciousnessLoop._profile_performance → redsl.diagnostics.perf_bridge.generate_optimization_report
+  examples.07-pyqual.main.main → redsl.examples.pyqual_example.run_pyqual_example
   examples.08-audit.main.main → redsl.examples.audit.run_audit_example
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.edebug → www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.client_send
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.connect → www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.setError
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.connect → www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.connected
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.connect → www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.edebug
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.connect → www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.getSMTPConnection
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.connect → www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.get_lines
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.getSMTPConnection → www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.edebug
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.startTLS → www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.sendCommand
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.authenticate → www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.setError
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.authenticate → www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.edebug
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.authenticate → www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.sendCommand
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.connected → www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.edebug
-  www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.connected → www.vendor.phpmailer.phpmailer.src.SMTP.PHPMailer\PHPMailer.SMTP.close
+  examples.01-basic-analysis.main.main → redsl.examples.basic_analysis.run_basic_analysis_example
+  redsl.commands.cli_awareness._register_history_command → redsl.commands.cli_awareness._init_manager
+  redsl.commands.cli_awareness._register_history_command → redsl.commands.cli_awareness._echo_json
+  redsl.commands.cli_awareness._register_ecosystem_command → redsl.commands.cli_awareness._init_manager
+  redsl.commands.cli_awareness._register_ecosystem_command → redsl.commands.cli_awareness._echo_json
+  redsl.commands.cli_awareness._register_health_command → redsl.commands.cli_awareness._init_manager
+  redsl.commands.cli_awareness._register_health_command → redsl.commands.cli_awareness._echo_json
+  redsl.commands.cli_awareness._register_predict_command → redsl.commands.cli_awareness._init_manager
+  redsl.commands.cli_awareness._register_predict_command → redsl.commands.cli_awareness._echo_json
+  redsl.commands.cli_awareness._register_self_assess_command → redsl.commands.cli_awareness._init_manager
+  redsl.commands.cli_awareness._register_self_assess_command → redsl.commands.cli_awareness._echo_json
+  redsl.commands.cli_awareness.register → redsl.commands.cli_awareness._register_history_command
+  redsl.commands.cli_awareness.register → redsl.commands.cli_awareness._register_ecosystem_command
+  redsl.commands.cli_awareness.register → redsl.commands.cli_awareness._register_health_command
+  redsl.commands.cli_awareness.register → redsl.commands.cli_awareness._register_predict_command
+  redsl.commands.cli_awareness.register → redsl.commands.cli_awareness._register_self_assess_command
+  redsl.history.HistoryWriter.__init__ → redsl.history._default_history_dir
+  redsl.history.HistoryReader.__init__ → redsl.history._default_history_dir
+  redsl.commands.doctor.heal → redsl.commands.doctor.diagnose
+  redsl.commands.doctor.heal_batch → redsl.commands.doctor.heal
+  examples.09-pr-bot.main.main → redsl.examples.pr_bot.run_pr_bot_example
+  redsl.commands._scan_report._build_recommendations → redsl.commands._scan_report._tier_names
+  redsl.commands._scan_report.render_markdown → redsl.commands._scan_report._group_results_by_tier
+  redsl.commands._scan_report.render_markdown → redsl.commands._scan_report._render_report_header
+  redsl.commands._scan_report.render_markdown → redsl.commands._scan_report._render_executive_summary
+  redsl.commands.doctor_fstring_fixers._apply_single_line_fstring_fixes → redsl.commands.doctor_fstring_fixers._fix_single_line_fstring_line
+  redsl.commands.doctor_fstring_fixers._fix_multiline_fstring_chunk → redsl.commands.doctor_fstring_fixers._escape_fstring_body_braces
+  redsl.commands.doctor_fstring_fixers._consume_open_fstring_brace → redsl.commands.doctor_fstring_fixers._is_fstring_expr
+  redsl.commands.doctor_fstring_fixers._fix_broken_fstring → redsl.commands._fixer_utils._read_source
+  redsl.commands.doctor_fstring_fixers._fix_broken_fstring → redsl.commands.doctor_fstring_fixers._fix_multiline_fstring_braces
+  redsl.commands.doctor_fstring_fixers._fix_broken_fstring → redsl.commands.doctor_fstring_fixers._apply_single_line_fstring_fixes
+  redsl.commands.doctor_fstring_fixers._fix_broken_fstring → redsl.commands.doctor_fstring_fixers._write_if_parses
+  redsl.commands.doctor_fstring_fixers._fix_multiline_fstring_braces → redsl.commands.doctor_fstring_fixers._fix_multiline_fstring_chunk
+  redsl.commands.doctor_fstring_fixers._escape_fstring_body_braces → redsl.commands.doctor_fstring_fixers._consume_open_fstring_brace
+  redsl.commands.doctor_fstring_fixers._escape_fstring_body_braces → redsl.commands.doctor_fstring_fixers._consume_close_fstring_brace
+  redsl.commands.planfile_bridge.create_ticket → redsl.commands.planfile_bridge.list_tickets
+  redsl.commands.planfile_bridge.create_ticket → redsl.commands.planfile_bridge._build_ticket_cmd

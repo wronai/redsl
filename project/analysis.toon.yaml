@@ -1,137 +1,35 @@
-# code2llm | 327f 47890L | python:239,php:85,shell:2,javascript:1 | 2026-04-20
-# CC̄=3.9 | critical:21/1721 | dups:0 | cycles:0
+# code2llm | 269f 41234L | python:240,php:24,shell:4,javascript:1 | 2026-04-20
+# CC̄=3.7 | critical:5/1504 | dups:0 | cycles:0
 
-HEALTH[20]:
+HEALTH[5]:
   🟡 CC    validateConfig CC=17 (limit:15)
   🟡 CC    form CC=17 (limit:15)
-  🟡 CC    authenticate CC=24 (limit:15)
-  🟡 CC    data CC=16 (limit:15)
-  🟡 CC    get_lines CC=17 (limit:15)
-  🟡 CC    getInstalled CC=26 (limit:15)
   🟡 CC    process_data CC=25 (limit:15)
   🟡 CC    process_data_copy CC=25 (limit:15)
-  🟡 CC    parseAddresses CC=19 (limit:15)
-  🟡 CC    validateAddress CC=37 (limit:15)
-  🟡 CC    preSend CC=40 (limit:15)
-  🟡 CC    sendmailSend CC=16 (limit:15)
-  🟡 CC    smtpConnect CC=35 (limit:15)
-  🟡 CC    wrapText CC=15 (limit:15)
-  🟡 CC    createHeader CC=18 (limit:15)
-  🟡 CC    getMailMIME CC=15 (limit:15)
-  🟡 CC    createBody CC=38 (limit:15)
-  🟡 CC    attachAll CC=19 (limit:15)
-  🟡 CC    encodeHeader CC=18 (limit:15)
-  🟡 CC    msgHTML CC=20 (limit:15)
+  🟡 CC    _run_project_validators_phase CC=17 (limit:15)
 
 REFACTOR[1]:
-  1. split 20 high-CC methods  (CC>15)
+  1. split 5 high-CC methods  (CC>15)
 
-PIPELINES[767]:
-  [1] Src [main]: main → run_api_integration_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
+PIPELINES[703]:
+  [1] Src [parseSelection]: parseSelection
       PURITY: 100% pure
-  [2] Src [process_order]: process_order → _is_order_terminal
+  [2] Src [h]: h
       PURITY: 100% pure
-  [3] Src [main]: main → run_custom_rules_example → load_example_yaml → _resolve_yaml_path → ...(1 more)
+  [3] Src [loadConfig]: loadConfig
       PURITY: 100% pure
-  [4] Src [parseSelection]: parseSelection
+  [4] Src [saveConfig]: saveConfig
       PURITY: 100% pure
-  [5] Src [h]: h
+  [5] Src [getNestedValue]: getNestedValue
       PURITY: 100% pure
 
 LAYERS:
-  www/                            CC̄=4.6    ←in:0  →out:0
-  │ !! PHPMailer.php             5362L  1C  124m  CC=40     ←0
-  │ !! SMTP.php                  1547L  1C   42m  CC=24     ←0
-  │ !! index.php                  665L  0C    7m  CC=5      ←0
-  │ !! ClassLoader.php            579L  1C   24m  CC=13     ←25
-  │ !! nda-form.php               544L  0C    3m  CC=11     ←0
-  │ !! config-editor.php          507L  0C    4m  CC=4      ←0
-  │ POP3.php                   469L  1C   11m  CC=6      ←0
-  │ propozycje.php             383L  0C    2m  CC=3      ←0
-  │ !! InstalledVersions.php      380L  1C   15m  CC=26     ←0
-  │ DSNConfigurator.php        245L  1C    7m  CC=13     ←0
-  │ !! config-api.php             223L  0C    3m  CC=17     ←0
-  │ get_oauth_token.php        182L  0C    0m  CC=0.0    ←0
-  │ OAuth.php                  139L  1C    4m  CC=4      ←0
-  │ !! app.js                     127L  0C   14m  CC=17     ←0
-  │ email-notifications.php    125L  0C    4m  CC=6      ←0
-  │ polityka-prywatnosci.php    46L  0C    0m  CC=0.0    ←0
-  │ regulamin.php               46L  0C    0m  CC=0.0    ←0
-  │ OAuthTokenProvider.php      44L  1C    1m  CC=1      ←0
-  │ autoload_static.php         43L  1C    1m  CC=1      ←0
-  │ Exception.php               40L  1C    1m  CC=1      ←0
-  │ autoload_real.php           38L  1C    2m  CC=2      ←0
-  │ phpmailer.lang-tr.php       38L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-pt_br.php    38L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-ja.php       37L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-ru.php       36L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-zh_cn.php    36L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-sl.php       36L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-es.php       36L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-da.php       36L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-fr.php       36L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-bn.php       35L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-as.php       35L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-hi.php       35L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-nl.php       34L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-pt.php       34L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-si.php       34L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-el.php       33L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-pl.php       33L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-nb.php       33L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-ro.php       33L  0C    0m  CC=0.0    ←0
-  │ installed.php               32L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-id.php       31L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-ur.php       30L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-sk.php       30L  0C    0m  CC=0.0    ←0
-  │ index.php                   29L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-zh.php       29L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-tl.php       28L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-sr_latn.php    28L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-uk.php       28L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-sr.php       28L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-fa.php       28L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-it.php       28L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-de.php       28L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-et.php       28L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-cs.php       28L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-lt.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-hy.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-mn.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-fo.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-ka.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-be.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-ar.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-ms.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-vi.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-mg.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-lv.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-gl.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-bg.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-az.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-ko.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-hu.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-ba.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-ca.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-hr.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-fi.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-ku.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-sv.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-he.php       27L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-af.php       26L  0C    0m  CC=0.0    ←0
-  │ phpmailer.lang-eo.php       26L  0C    0m  CC=0.0    ←0
-  │ platform_check.php          26L  0C    0m  CC=0.0    ←0
-  │ autoload.php                22L  0C    0m  CC=0.0    ←0
-  │ autoload_classmap.php       17L  0C    0m  CC=0.0    ←0
-  │ autoload_psr4.php           10L  0C    0m  CC=0.0    ←0
-  │ autoload_namespaces.php      9L  0C    0m  CC=0.0    ←0
-  │ nda-wzor.php                 6L  0C    0m  CC=0.0    ←0
-  │
   test_refactor_project/          CC̄=4.0    ←in:0  →out:0
   │ bad_code                    24L  1C    2m  CC=4      ←0
   │
   redsl/                          CC̄=3.8    ←in:30  →out:26  !! split
   │ !! planfile                   533L  0C   27m  CC=8      ←0
+  │ !! cycle                      467L  0C   16m  CC=17     ←1
   │ models                     435L  0C   14m  CC=12     ←1
   │ sumd_bridge                417L  2C   13m  CC=11     ←0
   │ config                     410L  0C   13m  CC=7      ←1
@@ -145,16 +43,16 @@ LAYERS:
   │ __init__                   349L  2C   12m  CC=8      ←6
   │ base                       336L  6C   13m  CC=14     ←0
   │ engine                     336L  1C    9m  CC=12     ←1
-  │ reporting                  332L  0C   25m  CC=12     ←1
-  │ planfile_updater           329L  0C   13m  CC=7      ←2
+  │ reporting                  332L  0C   25m  CC=12     ←2
+  │ planfile_updater           331L  0C   13m  CC=7      ←2
   │ quality_gate               325L  1C   10m  CC=11     ←4
   │ __init__                   325L  2C   16m  CC=10     ←0
   │ plan_sync                  324L  2C   16m  CC=8      ←1
+  │ aggregator                 324L  1C   16m  CC=8      ←0
   │ agent_bridge               320L  1C    8m  CC=12     ←2
   │ doctor_detectors           319L  0C   17m  CC=8      ←1
-  │ aggregator                 318L  1C   16m  CC=8      ←0
   │ validator                  314L  0C    7m  CC=12     ←1
-  │ regix_bridge               313L  1C    8m  CC=9      ←1
+  │ regix_bridge               313L  1C    8m  CC=9      ←2
   │ llx_router                 312L  1C   15m  CC=10     ←2
   │ vallm_bridge               306L  1C    7m  CC=10     ←1
   │ hybrid                     304L  0C   14m  CC=9      ←4
@@ -163,15 +61,16 @@ LAYERS:
   │ testql_bridge              299L  2C   10m  CC=12     ←0
   │ toon_analyzer              296L  1C   13m  CC=14     ←0
   │ store                      294L  5C   22m  CC=8      ←1
-  │ incremental                291L  2C   17m  CC=8      ←0
+  │ workflow                   292L  9C    6m  CC=7      ←2
+  │ incremental                291L  2C   17m  CC=8      ←25
   │ refactor_routes            291L  0C    8m  CC=6      ←1
   │ engine                     290L  6C   12m  CC=10     ←0
   │ perf_bridge                289L  3C   11m  CC=6      ←2
   │ __init__                   288L  1C   13m  CC=7      ←0
+  │ pyqual_bridge              286L  0C   13m  CC=11     ←1
   │ diff_manager               283L  0C    9m  CC=9      ←0
   │ growth_control             277L  3C   12m  CC=11     ←0
   │ prompts                    277L  0C    3m  CC=9      ←1
-  │ cycle                      277L  0C   13m  CC=6      ←1
   │ python_analyzer            273L  1C    8m  CC=12     ←3
   │ main                       272L  0C   23m  CC=6      ←1
   │ rule_generator             271L  2C   11m  CC=6      ←0
@@ -180,7 +79,6 @@ LAYERS:
   │ github_actions             260L  1C    6m  CC=6      ←0
   │ multi_project              251L  3C   10m  CC=5      ←0
   │ metrics                    249L  1C   11m  CC=7      ←2
-  │ pyqual_bridge              249L  0C   12m  CC=11     ←2
   │ github_source              246L  0C    9m  CC=10     ←0
   │ redup_bridge               246L  1C    7m  CC=9      ←1
   │ scan                       243L  4C   13m  CC=8      ←0
@@ -230,7 +128,7 @@ LAYERS:
   │ llm_banner                 140L  0C    5m  CC=8      ←5
   │ utils                      140L  0C    9m  CC=7      ←4
   │ batch                      139L  0C    7m  CC=4      ←0
-  │ reporting                  138L  0C    5m  CC=12     ←2
+  │ reporting                  138L  0C    5m  CC=12     ←1
   │ proactive                  138L  2C    5m  CC=7      ←0
   │ models                     138L  0C    0m  CC=0.0    ←0
   │ profiles                   136L  0C    3m  CC=1      ←2
@@ -254,7 +152,7 @@ LAYERS:
   │ __init__                   116L  0C    0m  CC=0.0    ←0
   │ core                       115L  6C    3m  CC=1      ←0
   │ config                     114L  0C    7m  CC=4      ←2
-  │ models                     110L  7C    0m  CC=0.0    ←0
+  │ models                     113L  7C    0m  CC=0.0    ←0
   │ verdict                    109L  0C    7m  CC=10     ←1
   │ webhook                    109L  0C    3m  CC=4      ←1
   │ utils                      108L  0C    4m  CC=10     ←2
@@ -266,9 +164,9 @@ LAYERS:
   │ proposals                  103L  5C    4m  CC=3      ←1
   │ awareness                  101L  0C    6m  CC=6      ←1
   │ checks                      98L  0C    9m  CC=5      ←1
+  │ __init__                    97L  0C    4m  CC=1      ←0
   │ resolver                    97L  1C    4m  CC=8      ←1
   │ models                      96L  13C    0m  CC=0.0    ←0
-  │ __init__                    95L  0C    4m  CC=1      ←0
   │ example_routes              95L  0C    4m  CC=7      ←1
   │ _common                     94L  0C    6m  CC=4      ←12
   │ base                        89L  1C    2m  CC=6      ←2
@@ -276,6 +174,7 @@ LAYERS:
   │ config_gen                  87L  1C    3m  CC=4      ←1
   │ __init__                    87L  0C    0m  CC=0.0    ←0
   │ reporter                    86L  0C    4m  CC=9      ←6
+  │ workflow                    85L  0C    4m  CC=4      ←0
   │ executor                    85L  0C    0m  CC=0.0    ←0
   │ cli_awareness               83L  0C    8m  CC=1      ←0
   │ metrics                     81L  2C    2m  CC=2      ←0
@@ -353,13 +252,46 @@ LAYERS:
   │ __main__                     1L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │ __init__                     0L  0C    0m  CC=0.0    ←0
   │
   test_refactor_bad/              CC̄=3.8    ←in:0  →out:0
   │ !! complex_code               137L  1C   17m  CC=25     ←0
   │
-  examples/                       CC̄=2.3    ←in:0  →out:0
+  www/                            CC̄=3.2    ←in:0  →out:0
+  │ !! index.php                  719L  0C    7m  CC=5      ←0
+  │ !! nda-form.php               614L  0C    3m  CC=11     ←0
+  │ !! config-editor.php          507L  0C    4m  CC=4      ←0
+  │ projects.php               479L  0C    0m  CC=0.0    ←0
+  │ contracts.php              460L  0C    0m  CC=0.0    ←0
+  │ clients.php                417L  0C    0m  CC=0.0    ←0
+  │ tickets.php                397L  0C    0m  CC=0.0    ←0
+  │ propozycje.php             383L  0C    2m  CC=3      ←0
+  │ invoices.php               359L  0C    0m  CC=0.0    ←0
+  │ scans.php                  263L  0C    0m  CC=0.0    ←0
+  │ index.php                  227L  0C    1m  CC=1      ←0
+  │ !! config-api.php             223L  0C    3m  CC=17     ←0
+  │ smoke-test.sh              175L  0C    8m  CC=0.0    ←0
+  │ index.php                  175L  0C    0m  CC=0.0    ←0
+  │ authorize.php              156L  0C    0m  CC=0.0    ←0
+  │ scan-worker.php            138L  0C    0m  CC=0.0    ←0
+  │ !! app.js                     127L  0C   14m  CC=17     ←0
+  │ email-notifications.php    125L  0C    4m  CC=6      ←0
+  │ invoice-generator.php      115L  0C    0m  CC=0.0    ←0
+  │ access_token.php            82L  0C    0m  CC=0.0    ←0
+  │ auth.php                    73L  0C    1m  CC=5      ←0
+  │ user.php                    68L  0C    0m  CC=0.0    ←0
+  │ polityka-prywatnosci.php    46L  0C    0m  CC=0.0    ←0
+  │ regulamin.php               46L  0C    0m  CC=0.0    ←0
+  │ project.sh                  36L  0C    0m  CC=0.0    ←0
+  │ index.php                   29L  0C    0m  CC=0.0    ←0
+  │ nda-wzor.php                 6L  0C    0m  CC=0.0    ←0
+  │
+  .goal/                          CC̄=2.0    ←in:0  →out:0
+  │ pre-commit-hook             23L  0C    1m  CC=2      ←0
+  │ vallm-pre-commit.sh         17L  0C    0m  CC=0.0    ←0
+  │
+  examples/                       CC̄=1.9    ←in:0  →out:0
   │ main                       168L  0C    5m  CC=5      ←0
-  │ 00_orders__service          88L  0C    6m  CC=6      ←0
   │ main                        32L  0C    1m  CC=1      ←0
   │ main                        30L  0C    1m  CC=1      ←0
   │ main                        29L  0C    1m  CC=1      ←0
@@ -371,59 +303,52 @@ LAYERS:
   │ main                        25L  0C    1m  CC=1      ←0
   │ main                        25L  0C    1m  CC=1      ←0
   │
-  test_sample_project/            CC̄=2.3    ←in:0  →out:0
-  │ sample                      32L  0C    3m  CC=4      ←0
-  │
-  .goal/                          CC̄=2.0    ←in:0  →out:0
-  │ pre-commit-hook             23L  0C    1m  CC=2      ←0
-  │ vallm-pre-commit.sh         17L  0C    0m  CC=0.0    ←0
-  │
   app/                            CC̄=0.0    ←in:0  →out:0
   │ models                      48L  3C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
   │ project.sh                  36L  0C    0m  CC=0.0    ←0
   │
+  ── zero ──
+     redsl/defaults/__init__.py                0L
 
 COUPLING:
-                                         redsl         redsl.commands         redsl.autonomy              redsl.cli             www.vendor        redsl.execution              redsl.api       redsl.validation         redsl.examples        redsl.analyzers              redsl.llm       redsl.formatters        redsl.refactors  redsl.config_standard      redsl.diagnostics
-                  redsl                     ──                     ←2                     ←6                      9                      2                      4                      6                     ←1                     ←1                                             2                                                                    1                      2  hub
-         redsl.commands                      2                     ──                     13                      4                      6                      3                                             7                                             2                                             2                      1                                                hub
-         redsl.autonomy                      6                      7                     ──                     ←1                      7                      3                                                                                           1                                                                                                                     hub
-              redsl.cli                      8                      2                      1                     ──                                             2                                                                    1                                             1                      4                                             4                      1  hub
-             www.vendor                     ←2                     ←6                     ←7                                            ──                     ←1                                            ←1                     ←1                     ←6                     ←3                                            ←5                     ←1                         hub
-        redsl.execution                      2                     ←3                     ←3                     ←2                      1                     ──                     ←3                      3                     ←1                      3                      4                                             1                                                hub
-              redsl.api                      3                                                                                                                  3                     ──                                             2                                                                    6                                             1                         hub
-       redsl.validation                      1                     ←7                                                                    1                     ←3                                            ──                                                                                                                 ←3                                                hub
+                                         redsl         redsl.commands         redsl.autonomy              redsl.cli        redsl.analyzers        redsl.execution              redsl.api       redsl.validation         redsl.examples              redsl.llm       redsl.formatters        redsl.refactors  redsl.config_standard      redsl.diagnostics            redsl.utils
+                  redsl                     ──                     ←2                     ←6                      9                      2                      4                      6                     ←1                     ←1                      2                                                                    1                      2                         hub
+         redsl.commands                      2                     ──                     13                      4                      8                      3                                             7                                                                    2                      1                                                                       hub
+         redsl.autonomy                      6                      7                     ──                     ←1                      8                      3                                                                                                                                                                                                                 hub
+              redsl.cli                      8                      2                      1                     ──                                             3                                                                    1                      1                      4                                             4                      1                         hub
+        redsl.analyzers                     ←2                     ←8                     ←8                                            ──                     ←4                                            ←1                     ←1                     ←3                                            ←5                     ←1                                                hub
+        redsl.execution                      2                     ←3                     ←3                     ←3                      4                     ──                     ←3                      3                     ←1                      4                                             1                                                                       hub
+              redsl.api                      3                                                                                                                  3                     ──                                             2                                             6                                             1                                                hub
+       redsl.validation                      1                     ←7                                                                    1                     ←3                                            ──                                                                                          ←3                                                                    2  hub
          redsl.examples                      1                                                                   ←1                      1                      1                     ←2                                            ──                                                                                                                                            hub
-        redsl.analyzers                                            ←2                     ←1                                             6                     ←3                                                                                          ──                                                                                                                     hub
-              redsl.llm                      2                                                                   ←1                      3                     ←4                                                                                                                 ──                                                                                              hub
-       redsl.formatters                                            ←2                                            ←4                                                                   ←6                                                                                                                 ──                                                                       hub
-        redsl.refactors                                            ←1                                                                    5                     ←1                                             3                                                                                                                 ──                                                !! fan-out
-  redsl.config_standard                      1                                                                   ←4                      1                                            ←1                                                                                                                                                               ──                         hub
-      redsl.diagnostics                     ←2                                                                   ←1                                                                                                                                                                                                                                                           ──
+              redsl.llm                      2                                                                   ←1                      3                     ←4                                                                                          ──                                                                                                                  1  hub
+       redsl.formatters                                            ←2                                            ←4                                                                   ←6                                                                                          ──                                                                                              hub
+        redsl.refactors                                            ←1                                                                    5                     ←1                                             3                                                                                          ──                                                                       !! fan-out
+  redsl.config_standard                      1                                                                   ←4                      1                                            ←1                                                                                                                                        ──                                                hub
+      redsl.diagnostics                     ←2                                                                   ←1                                                                                                                                                                                                                                    ──                      1
+            redsl.utils                                                                                                                                                                                      ←2                                            ←1                                                                                          ←1                     ──
   CYCLES: none
-  HUB: redsl.formatters/ (fan-in=12)
-  HUB: redsl.analyzers/ (fan-in=6)
-  HUB: www.vendor/ (fan-in=35)
-  HUB: redsl.config_standard/ (fan-in=6)
-  HUB: redsl.llm/ (fan-in=7)
-  HUB: redsl.autonomy/ (fan-in=14)
-  HUB: redsl.validation/ (fan-in=13)
-  HUB: redsl/ (fan-in=30)
   HUB: redsl.api/ (fan-in=6)
-  HUB: redsl.commands/ (fan-in=9)
-  HUB: redsl.examples/ (fan-in=13)
-  HUB: redsl.execution/ (fan-in=16)
+  HUB: redsl.autonomy/ (fan-in=14)
+  HUB: redsl.execution/ (fan-in=17)
   HUB: redsl.cli/ (fan-in=13)
-  SMELL: redsl.analyzers/ fan-out=8 → split needed
-  SMELL: redsl.autonomy/ fan-out=24 → split needed
-  SMELL: redsl/ fan-out=26 → split needed
+  HUB: redsl.analyzers/ (fan-in=35)
+  HUB: redsl.commands/ (fan-in=9)
+  HUB: redsl.validation/ (fan-in=13)
+  HUB: redsl.llm/ (fan-in=7)
+  HUB: redsl.config_standard/ (fan-in=6)
+  HUB: redsl.formatters/ (fan-in=12)
+  HUB: redsl.examples/ (fan-in=13)
+  HUB: redsl/ (fan-in=30)
   SMELL: redsl.api/ fan-out=16 → split needed
-  SMELL: redsl.commands/ fan-out=40 → split needed
+  SMELL: redsl.autonomy/ fan-out=24 → split needed
   SMELL: redsl.execution/ fan-out=14 → split needed
-  SMELL: redsl.cli/ fan-out=24 → split needed
+  SMELL: redsl.cli/ fan-out=25 → split needed
+  SMELL: redsl.commands/ fan-out=40 → split needed
   SMELL: redsl.refactors/ fan-out=8 → split needed
+  SMELL: redsl/ fan-out=26 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

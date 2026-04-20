@@ -21,155 +21,115 @@ $recentClients = $clientsRepo->list(limit: 5);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REDSL Panel — Dashboard</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0; 
-            padding: 20px; 
-            background: #f5f5f5;
-        }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header { 
-            background: #1a1a2e; 
-            color: white; 
-            padding: 20px; 
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .header h1 { margin: 0; font-size: 24px; }
-        .header .nav { margin-top: 10px; }
-        .header .nav a { 
-            color: #64b5f6; 
-            text-decoration: none; 
-            margin-right: 20px;
-        }
-        .header .nav a:hover { text-decoration: underline; }
-        
-        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .card { 
-            background: white; 
-            padding: 20px; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .card .number { font-size: 36px; font-weight: bold; color: #1a1a2e; }
-        .card .label { color: #666; font-size: 14px; margin-top: 5px; }
-        .card.active .number { color: #4caf50; }
-        .card.pending .number { color: #ff9800; }
-        .card.lead .number { color: #2196f3; }
-        
-        .section { 
-            background: white; 
-            padding: 20px; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .section h2 { margin-top: 0; font-size: 18px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { font-weight: 600; color: #666; font-size: 12px; text-transform: uppercase; }
-        tr:hover { background: #f9f9f9; }
-        .badge { 
-            padding: 4px 12px; 
-            border-radius: 12px; 
-            font-size: 12px; 
-            font-weight: 500;
-        }
-        .badge.active { background: #e8f5e9; color: #2e7d32; }
-        .badge.lead { background: #e3f2fd; color: #1565c0; }
-        .badge.suspended { background: #ffebee; color: #c62828; }
-        
-        .btn { 
-            display: inline-block; 
-            padding: 10px 20px; 
-            background: #1a1a2e; 
-            color: white; 
-            text-decoration: none; 
-            border-radius: 4px; 
-            font-size: 14px;
-        }
-        .btn:hover { background: #2a2a4e; }
-        
-        .empty-state { text-align: center; padding: 40px; color: #666; }
-    </style>
+    <title>Dashboard — REDSL Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,900;1,9..144,400;1,9..144,500&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/panel.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23c8442d'/%3E%3Ctext x='50%25' y='58%25' font-family='serif' font-size='22' fill='%23f4efe6' text-anchor='middle' font-weight='900'%3ER%3C/text%3E%3C/svg%3E">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>REDSL Panel</h1>
-            <div class="nav">
-                <a href="index.php">Dashboard</a>
-                <a href="clients.php">Klienci</a>
-                <a href="contracts.php">Umowy</a>
-                <a href="projects.php">Projekty</a>
-                <a href="scans.php">Skany</a>
-                <a href="invoices.php">Faktury</a>
+
+<header class="topbar">
+    <a href="/admin/" class="topbar-brand">
+        <span class="topbar-logo"><span class="logo-r">R</span>edsl</span>
+        <span class="topbar-label">Admin</span>
+    </a>
+    <div class="topbar-right">
+        <a href="/">Strona główna</a>
+        <a href="logs.php">Logi</a>
+    </div>
+</header>
+
+<div class="panel-layout">
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <span class="sidebar-section-label">Panel</span>
+            <ul class="sidebar-nav">
+                <li><a href="index.php" class="active"><span class="nav-icon">◈</span> Dashboard</a></li>
+                <li><a href="clients.php"><span class="nav-icon">◉</span> Klienci</a></li>
+                <li><a href="contracts.php"><span class="nav-icon">◎</span> Umowy</a></li>
+                <li><a href="projects.php"><span class="nav-icon">⬡</span> Projekty</a></li>
+                <li><a href="scans.php"><span class="nav-icon">⟳</span> Skany</a></li>
+                <li><a href="tickets.php"><span class="nav-icon">✦</span> Tickety</a></li>
+                <li><a href="invoices.php"><span class="nav-icon">◈</span> Faktury</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <span class="sidebar-section-label">System</span>
+            <ul class="sidebar-nav">
+                <li><a href="logs.php"><span class="nav-icon">⌘</span> Logi</a></li>
+                <li><a href="../lib/Migration/run.php"><span class="nav-icon">↻</span> Migracje</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="panel-main">
+        <div class="page-header">
+            <h1 class="page-title">Dashboard</h1>
+            <div class="page-header-actions">
+                <a href="clients.php?action=new" class="btn btn-sm">+ Nowy klient</a>
+                <a href="projects.php?action=new" class="btn btn-sm btn-ghost">+ Nowy projekt</a>
             </div>
         </div>
-        
-        <div class="cards">
-            <div class="card">
-                <div class="number"><?= htmlspecialchars((string)$totalClients) ?></div>
-                <div class="label">Wszystkich klientów</div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-num"><?= htmlspecialchars((string)$totalClients) ?></div>
+                <div class="stat-label">Klientów</div>
             </div>
-            <div class="card active">
-                <div class="number"><?= htmlspecialchars((string)($clientCounts['active'] ?? 0)) ?></div>
-                <div class="label">Aktywnych</div>
+            <div class="stat-card green">
+                <div class="stat-num"><?= htmlspecialchars((string)($clientCounts['active'] ?? 0)) ?></div>
+                <div class="stat-label">Aktywnych</div>
             </div>
-            <div class="card lead">
-                <div class="number"><?= htmlspecialchars((string)($clientCounts['lead'] ?? 0)) ?></div>
-                <div class="label">Leadów</div>
+            <div class="stat-card accent">
+                <div class="stat-num"><?= htmlspecialchars((string)($clientCounts['lead'] ?? 0)) ?></div>
+                <div class="stat-label">Leadów</div>
             </div>
-            <div class="card pending">
-                <div class="number">0</div>
-                <div class="label">Oczekujących skanów</div>
+            <div class="stat-card yellow">
+                <div class="stat-num">0</div>
+                <div class="stat-label">Oczekujących skanów</div>
             </div>
         </div>
-        
-        <div class="section">
-            <h2>Ostatni klienci</h2>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Ostatni klienci</h2>
+                <a href="clients.php" class="btn btn-sm btn-ghost">Zobacz wszystkich →</a>
+            </div>
             <?php if (empty($recentClients)): ?>
                 <div class="empty-state">
+                    <div class="empty-state-icon">◎</div>
                     <p>Brak klientów w systemie.</p>
-                    <a href="clients.php?action=new" class="btn">Dodaj pierwszego klienta</a>
+                    <a href="clients.php?action=new" class="btn">+ Dodaj pierwszego klienta</a>
                 </div>
             <?php else: ?>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Firma</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th>Data dodania</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($recentClients as $client): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($client['company_name']) ?></td>
-                            <td><?= htmlspecialchars($client['contact_email']) ?></td>
-                            <td><span class="badge <?= htmlspecialchars($client['status']) ?>"><?= htmlspecialchars($client['status']) ?></span></td>
-                            <td><?= htmlspecialchars($client['created_at']) ?></td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-                <p style="margin-top: 15px;"><a href="clients.php" class="btn">Zobacz wszystkich</a></p>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Firma</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Data dodania</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($recentClients as $client): ?>
+                            <tr>
+                                <td><a href="clients.php?action=edit&id=<?= (int)$client['id'] ?>"><?= htmlspecialchars($client['company_name']) ?></a></td>
+                                <td><?= htmlspecialchars($client['contact_email']) ?></td>
+                                <td><span class="badge badge-<?= htmlspecialchars($client['status']) ?>"><?= htmlspecialchars($client['status']) ?></span></td>
+                                <td><?= htmlspecialchars($client['created_at']) ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             <?php endif; ?>
         </div>
-        
-        <div class="section">
-            <h2>Szybkie akcje</h2>
-            <p>
-                <a href="clients.php?action=new" class="btn">+ Nowy klient</a>
-                <a href="projects.php?action=new" class="btn">+ Nowy projekt</a>
-                <a href="../lib/Migration/run.php" class="btn" style="background: #4caf50;">Uruchom migracje</a>
-            </p>
-        </div>
-    </div>
+    </main>
+</div>
+
 </body>
 </html>

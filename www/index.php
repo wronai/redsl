@@ -25,6 +25,13 @@ function env(string $key, string $default = ''): string {
     return (string)($_ENV[$key] ?? getenv($key) ?: $default);
 }
 
+// ---- Logger ----
+if (is_readable(__DIR__ . '/lib/Logger.php')) {
+    require_once __DIR__ . '/lib/Logger.php';
+    Logger::setLogDir(__DIR__ . '/var/logs');
+    Logger::enableDebug(env('APP_DEBUG') === '1' || env('APP_ENV') === 'dev');
+}
+
 function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES | ENT_HTML5, 'UTF-8'); }
 
 function csrf_token(): string {
@@ -110,6 +117,12 @@ if ($action === 'github-login') {
     $clientId = env('GITHUB_CLIENT_ID');
     $redirect = env('GITHUB_REDIRECT_URI');
     if ($clientId === '' || $redirect === '') {
+        if (class_exists('Logger')) {
+            Logger::warning('oauth', 'OAuth not configured (missing CLIENT_ID or REDIRECT_URI)', [
+                'has_client_id' => $clientId !== '',
+                'has_redirect' => $redirect !== '',
+            ]);
+        }
         header('Location: /?err=oauth_not_configured');
         exit;
     }
@@ -121,6 +134,14 @@ if ($action === 'github-login') {
         'state'        => $state,
         'allow_signup' => 'true',
     ]);
+    if (class_exists('Logger')) {
+        Logger::info('oauth', 'Login initiated', [
+            'oauth_base' => $oauthBase,
+            'redirect_uri' => $redirect,
+            'state' => substr($state, 0, 8) . '...',
+            'is_mock' => str_contains($oauthBase, 'localhost'),
+        ]);
+    }
     header('Location: ' . $oauthBase . '/login/oauth/authorize?' . $params);
     exit;
 }
@@ -132,6 +153,12 @@ if (isset($_GET['code'], $_GET['state'])) {
     unset($_SESSION['oauth_state']);
 
     if (!hash_equals($expected, $state)) {
+        if (class_exists('Logger')) {
+            Logger::warning('oauth', 'State mismatch (possible CSRF)', [
+                'expected_prefix' => substr($expected, 0, 8),
+                'got_prefix' => substr($state, 0, 8),
+            ]);
+        }
         $feedback = 'Nieprawidłowy state — spróbuj ponownie.';
         $feedbackType = 'error';
     } else {
@@ -139,11 +166,20 @@ if (isset($_GET['code'], $_GET['state'])) {
         // Use API base for server-side calls (internal URL in Docker/mock mode),
         // fall back to OAUTH_BASE (which defaults to github.com for real GitHub)
         $tokenBase = env('GITHUB_API_BASE') ?: env('GITHUB_OAUTH_BASE') ?: 'https://github.com';
-        $ch = curl_init($tokenBase . '/login/oauth/access_token');
+        $tokenUrl = $tokenBase . '/login/oauth/access_token';
+        
+        if (class_exists('Logger')) {
+            Logger::info('oauth', 'Exchanging code for token', [
+                'token_url' => $tokenUrl,
+                'code_prefix' => substr($code, 0, 10),
+            ]);
+        }
+        
+        $ch = curl_init($tokenUrl);
         curl_setopt_array($ch, [
             CURLOPT_POST           => true,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER     => ['Accept: application/json'],
+            CURLOPT_HTTPHEADER     => ['Accept: application/json', 'User-Agent: redsl-landing'],
             CURLOPT_POSTFIELDS     => http_build_query([
                 'client_id'     => env('GITHUB_CLIENT_ID'),
                 'client_secret' => env('GITHUB_CLIENT_SECRET'),
@@ -153,16 +189,31 @@ if (isset($_GET['code'], $_GET['state'])) {
             CURLOPT_TIMEOUT        => 10,
         ]);
         $resp = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
         curl_close($ch);
         $data = json_decode($resp ?: '', true);
         $token = $data['access_token'] ?? null;
 
         if (!$token) {
+            if (class_exists('Logger')) {
+                Logger::error('oauth', 'Token exchange failed', [
+                    'token_url' => $tokenUrl,
+                    'http_code' => $httpCode,
+                    'curl_error' => $curlError ?: null,
+                    'response_preview' => substr((string)$resp, 0, 300),
+                    'response_error' => $data['error'] ?? null,
+                    'response_desc' => $data['error_description'] ?? null,
+                    'hint' => 'Sprawdź GITHUB_CLIENT_SECRET i czy redirect_uri zgadza się z tym w GitHub OAuth App',
+                ]);
+            }
             $feedback = 'Nie udało się uzyskać tokenu z GitHub.';
             $feedbackType = 'error';
         } else {
             $apiBase = env('GITHUB_API_BASE') ?: 'https://api.github.com';
-            $ch = curl_init($apiBase . '/user');
+            $userUrl = $apiBase . '/user';
+            
+            $ch = curl_init($userUrl);
             curl_setopt_array($ch, [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HTTPHEADER     => [
@@ -173,9 +224,18 @@ if (isset($_GET['code'], $_GET['state'])) {
                 CURLOPT_TIMEOUT => 10,
             ]);
             $userJson = curl_exec($ch);
+            $userHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
             $user = json_decode($userJson ?: '', true);
             $githubUser = $user['login'] ?? null;
+            
+            if (class_exists('Logger')) {
+                Logger::info('oauth', 'User profile fetched', [
+                    'user_url' => $userUrl,
+                    'http_code' => $userHttpCode,
+                    'login' => $githubUser ?: 'NONE',
+                ]);
+            }
 
             if ($githubUser) {
                 // Store user in session for dashboard access
@@ -189,6 +249,13 @@ if (isset($_GET['code'], $_GET['state'])) {
                     'public_repos' => $user['public_repos'] ?? 0,
                     'logged_at'    => time(),
                 ];
+                
+                if (class_exists('Logger')) {
+                    Logger::info('oauth', 'Login successful', [
+                        'login' => $githubUser,
+                        'email' => $user['email'] ?? null,
+                    ]);
+                }
                 
                 // Send notification (non-blocking - don't fail login if it errors)
                 @send_notification(
@@ -206,6 +273,12 @@ if (isset($_GET['code'], $_GET['state'])) {
                 header('Location: /klient/');
                 exit;
             } else {
+                if (class_exists('Logger')) {
+                    Logger::error('oauth', 'Profile fetch returned no login', [
+                        'http_code' => $userHttpCode,
+                        'response_preview' => substr((string)$userJson, 0, 300),
+                    ]);
+                }
                 $feedback = 'Nie udało się odczytać profilu z GitHub.';
                 $feedbackType = 'error';
             }
@@ -304,7 +377,7 @@ $issue = date('Y.m');
             <a href="#jak">Jak działa</a>
             <a href="#cennik">Cennik</a>
             <a href="/config-editor.php">Config</a>
-            <a href="/propozycje">Demo propozycji</a>
+            <a href="/proposals">Proposals demo</a>
             <a href="#kontakt">Kontakt</a>
         </nav>
     </div>
@@ -314,32 +387,38 @@ $issue = date('Y.m');
 <!-- ============ HERO ============ -->
 <section class="hero">
     <div class="container">
-        <div class="kicker">Oferta dla zespołów 1–15 developerów · Polska</div>
+        <div class="kicker">Refaktoryzacja SaaS dla zespołów 1–15 devów · Polska</div>
+
         <h1 class="headline">
-            Refaktoryzacja&nbsp;kodu<br>
-            <em>za dziesięć</em>&nbsp;złotych.
+            Twój zespół robi features.<br>
+            <em>ReDSL pilnuje, żeby kod się nie rozpadał.</em>
         </h1>
+
         <p class="lede">
-            Programiści chcą tworzyć — nie sprzątać.
-            ReDSL sprawia, że kod się sprząta, <em>kiedy oni tworzą</em>.
-            Dostajesz gotowe pull requesty. Płacisz tylko za te, które zmergowałeś.
-            <strong>Bez subskrypcji, bez kontraktu, bez minimalnego zamówienia.</strong>
+            Pracując z LLM-ami pewnie zauważyłeś coś znajomego — kod powstaje szybciej, ale zaczyna rosnąć regresja.
+            To nie błąd narzędzi. To efekt tego, że zmiany są lokalne, a system globalny.
+            ReDSL działa tam, gdzie LLM nie ma pełnego kontekstu — i stabilizuje kod równolegle do developmentu.
         </p>
+
+        <ul class="hero-bullets">
+            <li>🧠 LLM przyspiesza pisanie kodu, ale nie kontroluje jego jakości w czasie</li>
+            <li>⚙️ ReDSL analizuje całe repo i redukuje dług techniczny poprzez małe, mierzalne PR-y</li>
+            <li>📉 Zespół robi features, a system sam staje się prostszy — bez tygodni „cleanup sprintów”</li>
+        </ul>
 
         <div class="hero-cta">
             <a href="?action=github-login" class="btn btn-primary">
-                <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-                Zaloguj przez GitHub
+                Zrób darmowy skan repo w 24h
             </a>
-            <a href="#kontakt" class="btn btn-ghost">Albo napisz bezpośrednio →</a>
+            <a href="#jak" class="btn btn-ghost">Zobacz jak to działa →</a>
         </div>
 
         <div class="hero-meta">
             <span>Pierwszy skan — <strong>gratis</strong>.</span>
             <span class="sep">/</span>
-            <span>Odpowiadamy w 24h.</span>
+            <span>Bez subskrypcji</span>
             <span class="sep">/</span>
-            <span>NDA przed jakimkolwiek skanem.</span>
+            <span>Płacisz tylko za zmergowane PR-y</span>
         </div>
     </div>
 </section>
@@ -353,26 +432,26 @@ $issue = date('Y.m');
 <!-- ============ BÓL ============ -->
 <section class="section pain">
     <div class="container">
-        <div class="section-label">01 · Jak to wygląda w praktyce</div>
-        <h2 class="section-title">Tydzień sprzątania.<br><em>Albo nie.</em></h2>
+        <div class="section-label">01 · Problem</div>
+        <h2 class="section-title">LLM generuje kod szybciej,<br>ale <em>system</em> staje się bardziej złożony.</h2>
 
         <div class="pain-grid">
             <div class="pain-col pain-before">
-                <div class="pain-label">Bez ReDSL</div>
+                <div class="pain-label"><span class="pain-icon">✗</span> Bez ReDSL</div>
                 <ul>
-                    <li>„musimy zrobić refactor"</li>
-                    <li>cisza na callu</li>
-                    <li>ktoś mówi „może później"</li>
-                    <li>dług rośnie. deploy stresuje. kod walczy z tobą.</li>
+                    <li>duplikaty powstają w różnych plikach (LLM nie widzi całości)</li>
+                    <li>funkcje rosną, bo „działa, nie tykaj"</li>
+                    <li>zależności sie komplikują — efekt <em>lokalnych</em> zmian</li>
+                    <li>regresja rośnie. deploy stresuje. kod walczy z tobą.</li>
                 </ul>
             </div>
             <div class="pain-col pain-after">
-                <div class="pain-label">Z ReDSL</div>
+                <div class="pain-label"><span class="pain-icon">✓</span> Z ReDSL</div>
                 <ul>
-                    <li>refactor dzieje się <strong>obok</strong></li>
-                    <li>w PR-ach pojawiają się małe poprawki</li>
-                    <li>kod nagle jest prostszy</li>
-                    <li>nikt nie musiał siadać do „tygodnia sprzątania"</li>
+                    <li>analiza <strong>całego repo</strong> — nie tylko nowego kodu</li>
+                    <li>małe, mierzalne PR-y naprawiają dług techniczny</li>
+                    <li>system sam się stabilizuje równolegle do developmentu</li>
+                    <li>nikt nie traci tygodnia na cleanup — zespół robi features</li>
                 </ul>
             </div>
         </div>
@@ -386,19 +465,19 @@ $issue = date('Y.m');
 <!-- ============ DLACZEGO ============ -->
 <section class="section why">
     <div class="container">
-        <div class="section-label">02 · Co dokładnie robi ReDSL</div>
+        <div class="section-label">02 · Dlaczego LLM + ReDSL</div>
         <div class="why-grid">
             <div>
-                <h3>Redukuje dług techniczny</h3>
-                <p>Każdy ticket usuwa konkretny problem: duplikat kodu, złożoną funkcję, złe zależności. Nie raport — <strong>zmergeowany pull request</strong> z metrykami przed/po.</p>
+                <h3>LLM widzi lokalnie, ReDSL globalnie</h3>
+                <p>AI generuje kod na podstawie promptu — nie zna całego systemu. ReDSL analizuje całe repo i wykrywa duplikaty, złe zależności, rosnącą złożoność.</p>
             </div>
             <div>
-                <h3>Stabilizuje system</h3>
-                <p>Mniej regresji, bo kod jest prostszy. Zmiany stają się przewidywalne — każdy PR ma zielone CI i instrukcję rollbacku. Twój zespół nie traci czasu na gaszenie pożarów.</p>
+                <h3>Stabilizuje rozwój</h3>
+                <p>Małe, mierzalne PR-y naprawiają dług techniczny zanim stanie się krytyczny. Deploy przestaje stresować. Zmiany są przewidywalne.</p>
             </div>
             <div>
-                <h3>Skraca czas feature'ów</h3>
-                <p>Prostszy kod to szybsze nowe funkcje. Nie mergujesz — nie płacisz. Jakość rośnie <em>równolegle</em> z produktem, nie kosztem harmonogramu.</p>
+                <h3>Bez przerw na cleanup</h3>
+                <p>Jakość rośnie <em>równolegle</em> z produktem — zespół robi features, a system sam się upraszcza. Bez „sprintów refaktoryzacji".</p>
             </div>
         </div>
     </div>
@@ -407,43 +486,43 @@ $issue = date('Y.m');
 <!-- ============ JAK DZIAŁA ============ -->
 <section class="section process" id="jak">
     <div class="container">
-        <div class="section-label">03 · Jak wygląda współpraca</div>
-        <h2 class="section-title">Pięć kroków. Jedna decyzja na miesiąc.</h2>
+        <div class="section-label">03 · Jak to działa</div>
+        <h2 class="section-title">Pięć kroków. Jeden mail na miesiąc.</h2>
 
         <ol class="steps">
             <li>
                 <div class="step-num">I</div>
                 <div class="step-body">
                     <h4>Setup <span class="step-meta">30 min, jednorazowo</span> <span class="step-saas">SaaS · PHP · redsl</span></h4>
-                    <p>Dajesz dostęp read + create-PR do repo. Podpisujemy NDA (jedna strona A4). Mówisz nam jaki masz CI, główny branch, linter. To jedyny Zoom, którego będziemy wymagać.</p>
+                    <p>Dostęp read + create-PR, NDA, CI i branch. Jeden krótki call.</p>
                 </div>
             </li>
             <li>
                 <div class="step-num">II</div>
                 <div class="step-body">
-                    <h4>Skan <span class="step-meta">do 24h, za 0 zł</span> <span class="step-saas">SaaS · PHP · redsl</span></h4>
-                    <p>Dostajesz email z listą ToDo. Każdy wiersz to konkretny ticket z ceną 10&nbsp;zł. Wyglądem przypomina cennik drukarni, nie SaaS dashboard.</p>
+                    <h4>Analiza repo <span class="step-meta">do 24h, za 0 zł</span> <span class="step-saas">SaaS · PHP · redsl</span></h4>
+                    <p>Skan całego kodu — duplikaty, złożoność, zależności. Lista ticketów z metrykami przed/po i ceną.</p>
                 </div>
             </li>
             <li>
                 <div class="step-num">III</div>
                 <div class="step-body">
                     <h4>Wybór <span class="step-meta">tyle, ile chcesz</span></h4>
-                    <p>Odpowiadasz jednym mailem: „zrób 1, 3, 7, 12–15, 24". Albo „wszystkie". Albo „wszystko pod 15 zł".</p>
+                    <p>Jeden mail: „zrób 1, 3, 7" albo „wszystko pod 50 zł". Decyzja należy do ciebie.</p>
                 </div>
             </li>
             <li>
                 <div class="step-num">IV</div>
                 <div class="step-body">
                     <h4>Pull Requesty <span class="step-meta">w 24–48h</span> <span class="step-saas">SaaS · PHP · redsl</span></h4>
-                    <p>Każdy ticket to osobny PR: opis zmian, metryki przed/po, jak zrollbackować. CI musi być zielone — jeśli nie, to nasz problem, nie twój.</p>
+                    <p>Osobny PR na każdy ticket. Metryki przed/po, zielone CI. Jeśli CI nie przejdzie — nasz problem.</p>
                 </div>
             </li>
             <li>
                 <div class="step-num">V</div>
                 <div class="step-body">
                     <h4>Faktura <span class="step-meta">raz w miesiącu</span> <span class="step-saas">SaaS · PHP · redsl</span></h4>
-                    <p>Za zmergeowane PR-y z poprzedniego miesiąca. Termin 14 dni. PR odrzucony z feedbackiem = zero opłaty. PR zignorowany 14 dni = auto-close.</p>
+                    <p>Tylko za zmergowane PR-y. Odrzucony z feedbackiem = 0 zł. Bez reakcji 14 dni = auto-close.</p>
                 </div>
             </li>
         </ol>
@@ -529,14 +608,10 @@ $issue = date('Y.m');
             <div class="scope-col">
                 <h3 class="scope-title scope-yes">Robimy</h3>
                 <ul>
-                    <li>Fix-ów bugów produkcyjnych pod presją</li>
-                    <li>Code review nie-naszego kodu</li>
-                    <li>Nowych feature'ów (nowe endpointy, pola, widoki)</li>
-                    <li>Refactoring w istniejącym kodzie</li>
+                    <li>Refactoring istniejącego kodu</li>
                     <li>Zmniejszanie złożoności (CC, fan-out)</li>
                     <li>Usuwanie duplikacji kodu</li>
-                    <li>Dodawanie testów dla odkrytych funkcji</li>
-                    <li>Dokumentacja publicznego API</li>
+                    <li>Testy dla niepokrytych funkcji</li>
                     <li>Typing (mypy / TS strict)</li>
                     <li>Python, JavaScript, TypeScript, Go, Rust</li>
                 </ul>
@@ -576,32 +651,27 @@ $issue = date('Y.m');
 
         <details class="q">
             <summary>A jeśli PR jest źle zrobiony?</summary>
-            <p>Odrzucasz z feedbackiem. Zero opłaty. My się uczymy z odrzuceń — każdy feedback trafia do pamięci ReDSL i nie powtórzymy tego samego błędu u innego klienta.</p>
+            <p>Odrzucasz z feedbackiem — zero opłaty. Każde odrzucenie trafia do pamięci systemu i nie powtórzymy błędu.</p>
         </details>
 
         <details class="q">
-            <summary>Co jeśli nie zmergejemy w ciągu 14 dni?</summary>
-            <p>Auto-close z komentarzem „unmerged – expired". Ticket może wrócić jako nowy w kolejnym cyklu, jeśli chcesz. Nie spamujemy przypomnieniami.</p>
+            <summary>Co jeśli nie zmergujemy w 14 dni?</summary>
+            <p>Auto-close bez opłaty. Ticket może wrócić w kolejnym cyklu. Nie przypominamy.</p>
         </details>
 
         <details class="q">
-            <summary>A jeśli ticket okaże się większy niż 10 zł pracy?</summary>
-            <p>Informujemy <em>przed</em> rozpoczęciem. Masz wybór: zgoda na wyższą cenę (np. 30 zł), pominięcie, albo zamiana na ticket klienta. Nigdy nie fakturujemy powyżej zatwierdzonej kwoty.</p>
-        </details>
-
-        <details class="q">
-            <summary>Limit ticketów miesięcznie?</summary>
-            <p>Górny limit około 50 / klient / miesiąc. Powyżej — porozmawiajmy o retainerze (inna oferta, od 2500 zł/mc).</p>
-        </details>
-
-        <details class="q">
-            <summary>Jak rozpoznajecie „CC &gt; 15"?</summary>
-            <p>Własne narzędzie <code>code2llm</code> + <code>ReDSL</code>. Wyniki identyczne z Radonem dla Pythona i porównywalne z eslint-plugin-complexity dla JS/TS. Metodologię pokażemy jeśli chcesz.</p>
+            <summary>Co jeśli ticket okaże się droższy niż 10 zł?</summary>
+            <p>Pytamy <em>przed</em> rozpoczęciem. Nigdy nie fakturujemy powyżej zatwierdzonej kwoty.</p>
         </details>
 
         <details class="q">
             <summary>Co z naszym stylem kodu?</summary>
-            <p>Respektujemy twoje Black / Prettier / ESLint config. Niepisane konwencje — pokaż 3–5 przykładów w kroku setup, zapamiętamy.</p>
+            <p>Respektujemy Black / Prettier / ESLint. Niepisane konwencje — pokaż 3–5 przykładów przy setupie.</p>
+        </details>
+
+        <details class="q">
+            <summary>Czy to działa z kodem generowanym przez LLM?</summary>
+            <p>Tak — szczególnie z nim. LLM-y tworzą kod lokalnie, my analizujemy globalnie. Wykrywamy duplikaty między plikami, rosnącą złożoność i złe zależności, których AI nie widzi.</p>
         </details>
     </div>
 </section>
@@ -622,8 +692,7 @@ $issue = date('Y.m');
                     Zaloguj przez GitHub — automatyczny skan
                 </a>
                 <p class="contact-micro">
-                    Logujesz się przez GitHub OAuth. Dostajemy tylko twój login i listę publicznych repo.
-                    Skanujemy top 3 repo (największe lub najbardziej aktywne), raport idzie na maila w 24h.
+                    Tylko login i lista publicznych repo. Raport na maila w 24h.
                 </p>
             </div>
 
@@ -648,21 +717,21 @@ $issue = date('Y.m');
                 </label>
                 <label>
                     <span>Wiadomość <em>(opcjonalnie)</em></span>
-                    <textarea name="message" rows="3" maxlength="4000" placeholder="Co cię boli w kodzie? Jaki stack? Ile osób w zespole?"></textarea>
+                    <textarea name="message" rows="3" maxlength="4000" placeholder="Używacie LLM-ów? Co cię boli w kodzie? Jaki stack? Ile osób w zespole?"></textarea>
                 </label>
                 <button type="submit" class="btn btn-primary btn-block">Wyślij</button>
-                <p class="contact-micro">Odpowiadamy w ciągu jednego dnia roboczego. Bez auto-respondera, bez sekwencji maili.</p>
+                <p class="contact-micro">Odpowiadamy w jeden dzień roboczy. Bez auto-respondera.</p>
             </form>
         </div>
 
         <aside class="contact-right">
             <div class="sidebar-block">
                 <h4>Dla kogo</h4>
-                <p>Polskie firmy z własnym SaaS, zespół <strong>1–15 developerów</strong>, stack głównie Python, JS/TS, Go lub Rust. Kod żyje 2+ lata, są wyraźne hotspoty, brak czasu na systematyczny cleanup.</p>
+                <p>Polskie firmy, zespół <strong>1–15 devów</strong>, kod żyje 2+ lata, używacie (lub planujecie) LLM-ów, Python / JS / TS / Go / Rust.</p>
             </div>
             <div class="sidebar-block">
-                <h4>Nie jesteśmy dla</h4>
-                <p>Zespołów 50+, wymagań ISO&nbsp;27001 / SOC&nbsp;2, projektów krytycznych dla życia (medical, aerospace)</p>
+                <h4>Nie dla</h4>
+                <p>Zespołów 50+, enterprise, ISO 27001 / SOC 2, projektów ML.</p>
             </div>
             <div class="sidebar-block sidebar-quote">
                 <p>„Mniejszy dług. Mniej regresji. Szybsze feature’y.<br>W praktyce: 20 PR-ów miesięcznie, każdy z metrykami przed/po. Za 200 PLN."</p>

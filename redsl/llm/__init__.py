@@ -44,6 +44,37 @@ class LLMLayer:
     def __init__(self, config: LLMConfig) -> None:
         self.config = config
         self._call_count = 0
+        self._chat_log_path: "Path | None" = None   # set by cycle via set_chat_log()
+
+    def set_chat_log(self, path: "Path") -> None:
+        """Configure where LLM conversations are persisted (call once per cycle)."""
+        from pathlib import Path as _Path
+        self._chat_log_path = _Path(path)
+        self._chat_log_path.parent.mkdir(parents=True, exist_ok=True)
+
+    def _record_chat(
+        self,
+        messages: list[dict[str, str]],
+        response: "LLMResponse",
+    ) -> None:
+        """Append a chat exchange to .redsl/chat.jsonl."""
+        if not self._chat_log_path:
+            return
+        import json as _json
+        from datetime import datetime, timezone
+        record = {
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "call": self._call_count,
+            "model": response.model,
+            "tokens": response.tokens_used,
+            "messages": messages,
+            "response": response.content,
+        }
+        try:
+            with self._chat_log_path.open("a", encoding="utf-8") as fh:
+                fh.write(_json.dumps(record, ensure_ascii=False) + "\n")
+        except Exception as exc:
+            logger.debug("chat_log write failed: %s", exc)
 
     def _load_provider_key(self, env_name: str, model: str, provider_name: str) -> str:
         from dotenv import load_dotenv
@@ -129,12 +160,14 @@ class LLMLayer:
                 self._call_count, model, tokens,
             )
 
-            return LLMResponse(
+            result = LLMResponse(
                 content=content,
                 model=model,
                 tokens_used=tokens,
                 raw=dict(response),
             )
+            self._record_chat(messages, result)
+            return result
         except ModelRejectedError as e:
             logger.error("LLM call rejected by model policy: %s", e)
             raise

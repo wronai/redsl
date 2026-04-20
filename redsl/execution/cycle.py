@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from redsl.analyzers import AnalysisResult
 from redsl.analyzers import code2llm_bridge
+from redsl.execution.backup_manager import cleanup_backups, rollback_from_backups
 
 if TYPE_CHECKING:
     from redsl.orchestrator import CycleReport, RefactorOrchestrator
@@ -149,153 +150,11 @@ def _run_update_planfile_phase(
             logger.info("planfile: marked %d task(s) done", updated)
 
 
-def _find_project_pyqual(project_dir: Path) -> str | None:
-    """Find pyqual executable in project venv or PATH."""
-    import shutil
-    candidates = [
-        project_dir / ".venv" / "bin" / "pyqual",
-        project_dir / "venv" / "bin" / "pyqual",
-    ]
-    for c in candidates:
-        if c.exists():
-            return str(c)
-    return shutil.which("pyqual")
-
-
-def _pyqual_tune_conservative(exe: str, project_dir: Path) -> bool:
-    """Run `pyqual tune --conservative` to relax thresholds. Returns True on success."""
-    import subprocess
-    try:
-        proc = subprocess.run(
-            [exe, "tune", "--conservative", "--config", "pyqual.yaml"],
-            capture_output=True,
-            text=True,
-            timeout=60,
-            cwd=str(project_dir),
-        )
-        if proc.returncode == 0:
-            logger.info(
-                "pyqual tune --conservative: thresholds relaxed in %s", project_dir.name
-            )
-            return True
-        logger.warning(
-            "pyqual tune failed in %s (rc=%d): %s",
-            project_dir.name,
-            proc.returncode,
-            (proc.stdout + proc.stderr)[-500:],
-        )
-        return False
-    except Exception as exc:
-        logger.warning("pyqual tune error in %s: %s", project_dir.name, exc)
-        return False
-
-
-def _run_project_validators_phase(
-    project_dir: Path,
-    report: "CycleReport",
-    workflow: "WorkflowConfig | None" = None,
-) -> None:
-    """Run project's own validators (pyqual) guided by WorkflowConfig.
-
-    Behaviour is driven by the ``pyqual_gates`` step in ``workflow.validate.steps``:
-    - ``enabled: auto``  — run only if ``pyqual.yaml`` exists in project
-    - ``on_failure: tune`` — run ``pyqual tune`` (strategy from ``tune.strategy``) then retry
-    - ``on_failure: warn`` — log warning, continue
-    - ``on_failure: stop`` — log error, continue (non-fatal for now)
-    """
-    if report.proposals_applied == 0:
-        return
-
-    from redsl.execution.workflow import WorkflowConfig, load_workflow
-
-    wf: WorkflowConfig = workflow or load_workflow(project_dir)
-    step = wf.validate.get_step("pyqual_gates")
-    if step is None:
-        return
-
-    # Resolve "auto": run only if pyqual.yaml present
-    if step.enabled == "auto":
-        enabled = (project_dir / "pyqual.yaml").exists()
-    else:
-        enabled = bool(step.enabled)
-
-    if not enabled:
-        return
-
-    if not (project_dir / "pyqual.yaml").exists():
-        logger.debug("pyqual.yaml not found in %s — skipping pyqual_gates", project_dir.name)
-        return
-
-    exe = _find_project_pyqual(project_dir)
-    if not exe:
-        logger.debug("pyqual.yaml found in %s but pyqual not installed", project_dir.name)
-        return
-
-    import subprocess
-
-    logger.info("=== PROJECT VALIDATORS: pyqual gates (%s) ===", project_dir.name)
-    try:
-        proc = subprocess.run(
-            [exe, "gates", "--config", "pyqual.yaml"],
-            capture_output=True,
-            text=True,
-            timeout=120,
-            cwd=str(project_dir),
-        )
-        if proc.returncode == 0:
-            logger.info("pyqual gates: PASSED in %s", project_dir.name)
-            return
-
-        # Gates failed — apply on_failure strategy
-        on_failure = step.on_failure
-        logger.warning(
-            "pyqual gates: FAILED in %s (rc=%d) — on_failure=%s",
-            project_dir.name, proc.returncode, on_failure,
-        )
-
-        if on_failure == "tune":
-            strategy = step.tune.strategy  # conservative | aggressive
-            tune_flag = f"--{strategy}"
-            try:
-                tune_proc = subprocess.run(
-                    [exe, "tune", tune_flag, "--config", "pyqual.yaml"],
-                    capture_output=True, text=True, timeout=60, cwd=str(project_dir),
-                )
-                if tune_proc.returncode != 0:
-                    logger.warning(
-                        "pyqual tune: failed in %s: %s",
-                        project_dir.name, (tune_proc.stdout + tune_proc.stderr)[-500:],
-                    )
-                    return
-                logger.info("pyqual tune %s: thresholds relaxed in %s", tune_flag, project_dir.name)
-            except Exception as exc:
-                logger.warning("pyqual tune error in %s: %s", project_dir.name, exc)
-                return
-
-            if step.tune.retry:
-                proc2 = subprocess.run(
-                    [exe, "gates", "--config", "pyqual.yaml"],
-                    capture_output=True, text=True, timeout=120, cwd=str(project_dir),
-                )
-                if proc2.returncode == 0:
-                    logger.info("pyqual gates: PASSED after tune in %s", project_dir.name)
-                else:
-                    logger.warning(
-                        "pyqual gates: still FAILING after tune in %s — "
-                        "quality thresholds need manual review\n%s",
-                        project_dir.name, (proc2.stdout + proc2.stderr)[-1000:],
-                    )
-        elif on_failure in ("warn", "stop"):
-            logger.warning(
-                "pyqual gates: FAILED in %s (on_failure=%s) — continuing",
-                project_dir.name, on_failure,
-            )
-        # rollback not implemented for pyqual gates (no direct file to revert)
-
-    except subprocess.TimeoutExpired:
-        logger.warning("pyqual gates: timed out in %s", project_dir.name)
-    except Exception as exc:
-        logger.warning("pyqual gates: error in %s: %s", project_dir.name, exc)
+from redsl.execution.pyqual_validators import (  # noqa: E402
+    _find_project_pyqual,
+    _pyqual_tune_conservative,
+    _run_project_validators_phase,
+)
 
 
 def _run_test_validation_phase(
@@ -323,6 +182,65 @@ def _run_reflect_phase(
     _reflect_on_cycle(orchestrator, report)
 
 
+def _run_deploy_phase(
+    project_dir: Path,
+    report: "CycleReport",
+    workflow: "WorkflowConfig",
+    dry_run: bool = False,
+) -> None:
+    """DEPLOY phase: push to git and/or publish to registry if configured.
+
+    Respects ``workflow.deploy`` settings:
+    - ``enabled: auto/true/false`` — master switch
+    - ``push: auto/true/false`` — git push
+    - ``publish: auto/true/false`` — registry/PyPI publish
+    - ``on_success_only: true`` — skip if cycle applied 0 actions
+    """
+    from redsl.execution.deploy_detector import detect_deploy_config, run_deploy_action
+
+    deploy_cfg = workflow.deploy
+    logger.info("=== CYCLE %d: DEPLOY ===", report.cycle_number)
+
+    # Master switch
+    if deploy_cfg.enabled is False:
+        logger.debug("deploy: disabled in workflow config")
+        return
+
+    # on_success_only: skip if nothing was applied
+    if deploy_cfg.on_success_only and report.proposals_applied == 0:
+        logger.debug("deploy: skipping — no actions applied (on_success_only=True)")
+        return
+
+    # Auto-detect available deploy mechanisms
+    detected = detect_deploy_config(project_dir)
+
+    if detected.ci_handles_deploy:
+        logger.info(
+            "deploy: CI workflows detected (%s) — git push will trigger CI",
+            ", ".join(detected.ci_workflow_files),
+        )
+
+    # Resolve push
+    should_push = (
+        deploy_cfg.push is True or
+        (deploy_cfg.push == "auto" and detected.push.method != "none")
+    )
+    if should_push and detected.push.method != "none":
+        run_deploy_action(detected.push, project_dir, dry_run=dry_run)
+    elif should_push:
+        logger.debug("deploy: push requested but no mechanism detected in %s", project_dir.name)
+
+    # Resolve publish
+    should_publish = (
+        deploy_cfg.publish is True or
+        (deploy_cfg.publish == "auto" and detected.publish.method != "none")
+    )
+    if should_publish and detected.publish.method != "none":
+        run_deploy_action(detected.publish, project_dir, dry_run=dry_run)
+    elif should_publish:
+        logger.debug("deploy: publish requested but no mechanism detected in %s", project_dir.name)
+
+
 def run_cycle(
     orchestrator: "RefactorOrchestrator",
     project_dir: Path,
@@ -346,6 +264,12 @@ def run_cycle(
     wf: WorkflowConfig = workflow or load_workflow(project_dir)
     logger.debug("workflow: using '%s' (source: %s)", wf.name, wf.source)
 
+    # Configure LLM chat log path if storage is enabled
+    if wf.storage.chat_log_enabled and hasattr(orchestrator, "llm"):
+        chat_log = project_dir / wf.storage.base_dir / wf.storage.chat_log_filename
+        orchestrator.llm.set_chat_log(chat_log)
+        logger.debug("chat_log: %s", chat_log)
+
     # CLI flags override workflow defaults when explicitly passed
     _max_actions = max_actions if max_actions != 5 else wf.decide.max_actions
     _use_code2llm = use_code2llm or wf.perceive.use_code2llm
@@ -356,6 +280,28 @@ def run_cycle(
 
     orchestrator._cycle_count += 1
     report = _new_cycle_report(orchestrator)
+
+    # Record cycle start — snapshot of key config for post-mortem
+    _llm_model = getattr(getattr(orchestrator, "config", None), "llm", None)
+    _llm_model_name = _llm_model.model if _llm_model else "unknown"
+    if wf.decide.llm_model != "auto":
+        _llm_model_name = wf.decide.llm_model
+    orchestrator.history.record_event(
+        "cycle_started",
+        cycle_number=orchestrator._cycle_count,
+        thought=f"project={project_dir.name} max_actions={_max_actions} model={_llm_model_name}",
+        details={
+            "project_dir": str(project_dir),
+            "max_actions": _max_actions,
+            "llm_model": _llm_model_name,
+            "llm_temperature": wf.decide.llm_temperature,
+            "workflow_source": wf.source,
+            "workflow_name": wf.name,
+            "use_code2llm": _use_code2llm,
+            "rollback_on_failure": _rollback,
+            "use_sandbox": _use_sandbox,
+        },
+    )
 
     try:
         analysis = _run_perceive_phase(orchestrator, project_dir, _use_code2llm, report)
@@ -376,10 +322,37 @@ def run_cycle(
         _run_test_validation_phase(orchestrator, project_dir, tests_baseline, _run_tests, report)
         if wf.reflect.enabled:
             _run_reflect_phase(orchestrator, report)
+        _run_deploy_phase(project_dir, report, wf)
+        # Successful cycle — remove backups
+        cleanup_backups(project_dir)
 
     except Exception as e:
         logger.error("Cycle %d failed: %s", orchestrator._cycle_count, e)
         report.errors.append(str(e))
+        # Failed cycle — restore backed-up files
+        rolled_back = rollback_from_backups(project_dir)
+        if rolled_back:
+            logger.info("Rolled back %d file(s) from backups", rolled_back)
+
+    # Record cycle outcome regardless of success/failure
+    orchestrator.history.record_event(
+        "cycle_completed",
+        cycle_number=orchestrator._cycle_count,
+        status="ok" if not report.errors else "error",
+        thought=(
+            f"applied={report.proposals_applied}/{report.proposals_generated} "
+            f"decisions={report.decisions_count} errors={len(report.errors)}"
+        ),
+        details={
+            "project_dir": str(project_dir),
+            "proposals_generated": report.proposals_generated,
+            "proposals_applied": report.proposals_applied,
+            "proposals_rejected": report.proposals_rejected,
+            "decisions_count": report.decisions_count,
+            "errors": report.errors[:5],
+            "analysis_summary": report.analysis_summary,
+        },
+    )
 
     return report
 

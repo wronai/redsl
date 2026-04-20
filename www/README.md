@@ -1,11 +1,11 @@
 # REDSL Landing Page — Deployment
 
-Landing page z paneliem SaaS: `index.php` + `style.css` + `app.js` + panel konfiguracji + NDA + wybór propozycji. Działa na każdym shared hostingu z PHP 8.1+.
+Landing page z panelem SaaS: `index.php` + `style.css` + `app.js` + panel konfiguracji + NDA + wybór propozycji + panel admina + baza MySQL. Działa na shared hostingu (PHP 8.1+) i przez Docker.
 
-## Szybki start (lokalnie)
+## Szybki start (lokalnie bez DB)
 
 ```bash
-cd landing
+cd www
 cp .env.example .env
 # Edytuj .env — na razie wystarczy CONTACT_EMAIL
 php -S localhost:8000
@@ -13,16 +13,61 @@ php -S localhost:8000
 
 Otwórz `http://localhost:8000`. Formularz kontaktowy użyje lokalnego `mail()` — na komputerze prawdopodobnie nie wyśle nic, ale strona się wyrenderuje.
 
+## Docker (zalecany)
+
+### Produkcja
+
+```bash
+cd www
+cp .env.example .env
+# Uzupełnij .env — szczególnie DB_PASS, ENCRYPTION_KEY, CONTACT_EMAIL, GITHUB_*
+docker compose up -d
+```
+
+Serwisy:
+- **`app`** — PHP 8.3 / Apache na `http://localhost:8080`
+- **`db`** — MySQL 8.0 (dane w named volume `db_data`, init z `./migrations/`)
+
+### Dev z mock-GitHub OAuth
+
+```bash
+docker compose --profile dev up -d
+```
+
+Dodaje serwis **`mock-github`** na `http://localhost:8181` — symuluje GitHub OAuth bez prawdziwych credentiali. W `.env` ustaw:
+
+```env
+GITHUB_OAUTH_BASE=http://mock-github
+GITHUB_API_BASE=http://mock-github
+```
+
+### Przebudowanie po zmianach kodu
+
+```bash
+docker compose build app && docker compose up -d app
+```
+
+### Logi
+
+```bash
+docker compose logs -f app
+docker compose logs -f db
+```
+
 ## Produkcja — shared hosting (np. polskie home.pl, cyberfolks, hekko)
 
-1. **Wrzuć pliki przez FTP/SFTP** do katalogu public (zwykle `public_html/`, `domains/twojadomena.pl/public_html/`, etc.). Lista plików:
+1. **Wrzuć pliki przez FTP/SFTP** do katalogu public. Lista plików:
    - `index.php` — landing page
    - `style.css`, `app.js` — assets
-   - `config-editor.php` — edytor konfiguracji
-   - `config-api.php` — API konfiguracji
+   - `config-editor.php`, `config-api.php` — edytor + API konfiguracji
    - `propozycje.php` — wybór ticketów
    - `nda-form.php` — automatyczne NDA
+   - `email-notifications.php` — wysyłka powiadomień
    - `polityka-prywatnosci.php`, `regulamin.php` — strony prawne
+   - `admin/` — panel admina (chroniony Basic Auth)
+   - `klient/` — panel klienta
+   - `migrations/` — schemat bazy MySQL
+   - `cron/` — zadania cykliczne
    - `.htaccess` — rewrite rules
    - `.env` *(stworzony z `.env.example`)*
 2. **Uprawnienia na `.env`**: `chmod 600 .env` (tylko właściciel czyta).
@@ -109,9 +154,12 @@ Wysyłane na `CONTACT_EMAIL` jako notyfikacja. To jest lead — teraz twoja kole
 
 ## Bezpieczeństwo — checklist przed publikacją
 
-- [ ] `.env` ma `chmod 600`
+- [ ] `.env` ma `chmod 600` (shared hosting) lub montowany `:ro` (Docker)
 - [ ] `.env` NIE jest w repo (`.gitignore` zawiera `.env`)
 - [ ] Odwiedzenie `/.env` zwraca 403 lub 404
+- [ ] `ENCRYPTION_KEY` wygenerowany: `php -r "echo bin2hex(random_bytes(32));"` i zapisany w menedżerze haseł
+- [ ] `ADMIN_PASS_HASH` ustawiony: `php -r "echo password_hash('haslo', PASSWORD_BCRYPT);"`
+- [ ] `DB_PASS` zmienione z domyślnego
 - [ ] HTTPS włączone, redirect 80→443 działa
 - [ ] `CONTACT_EMAIL` ustawiony i otrzymuje testowe maile z formularza
 - [ ] GitHub OAuth app ma dokładnie ten sam `Authorization callback URL` co `.env`
@@ -177,6 +225,8 @@ Szczegóły w [`tests/README_TESTS.md`](tests/README_TESTS.md).
 | **Config API** | `/config-api.php` | REST API do walidacji, historii, diff |
 | **Wybór propozycji** | `/propozycje.php` | Panel wyboru ticketów refaktoryzacji |
 | **NDA** | `/nda-form.php` | Automatyczne generowanie umowy NDA (NIP → dane firmy) |
+| **Panel admina** | `/admin/` | Zarządzanie klientami, kontraktami, rozliczeniami (Basic Auth) |
+| **Panel klienta** | `/klient/` | Podgląd i akcje dla klienta |
 | **Polityka prywatności** | `/polityka-prywatnosci` | Strona prawna |
 | **Regulamin** | `/regulamin` | Strona prawna |
 

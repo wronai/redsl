@@ -1,17 +1,16 @@
-# redsl | 327f 47890L | shell:2,python:239,php:85,javascript:1 | 2026-04-20
-# stats: 1721 func | 0 cls | 327 mod | CC̄=3.9 | critical:21 | cycles:0
-# alerts[5]: CC PHPMailer.preSend=40; CC PHPMailer.createBody=38; fan-out PHPMailer.preSend=38; CC PHPMailer.validateAddress=37; CC PHPMailer.smtpConnect=35
-# hotspots[5]: PHPMailer.preSend fan=38; PHPMailer.smtpConnect fan=29; PHPMailer.createBody fan=28; PHPMailer.msgHTML fan=28; PHPMailer.DKIM_Add fan=23
-# evolution: CC̄ 3.9→3.9 (flat 0.0)
+# redsl | 269f 41234L | shell:4,php:24,javascript:1,python:240 | 2026-04-20
+# stats: 1504 func | 0 cls | 269 mod | CC̄=3.7 | critical:5 | cycles:0
+# alerts[5]: CC process_data=25; CC process_data_copy=25; fan-out ConfigApplier.apply=22; fan-out _handle_propose_changes=22; fan-out source_add=22
+# hotspots[5]: _handle_propose_changes fan=22; ConfigApplier.apply fan=22; source_add fan=22; RegistryAggregator._load_stale_cache fan=21; _parse_workflow fan=21
+# evolution: CC̄ 3.9→3.7 (improved -0.2)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[327]:
+M[269]:
   .goal/pre-commit-hook.py,23
   .goal/vallm-pre-commit.sh,17
   app/models.py,48
   examples/01-basic-analysis/main.py,26
   examples/02-custom-rules/main.py,27
   examples/03-full-pipeline/main.py,30
-  examples/03-full-pipeline/refactor_output/refactor_extract_functions_20260407_145021/00_orders__service.py,88
   examples/04-memory-learning/main.py,29
   examples/05-api-integration/main.py,32
   examples/06-awareness/main.py,27
@@ -75,7 +74,7 @@ M[327]:
   redsl/bridges/base.py,89
   redsl/ci/__init__.py,15
   redsl/ci/github_actions.py,260
-  redsl/cli/__init__.py,95
+  redsl/cli/__init__.py,97
   redsl/cli/__main__.py,1
   redsl/cli/batch.py,121
   redsl/cli/config.py,410
@@ -90,6 +89,7 @@ M[327]:
   redsl/cli/refactor.py,363
   redsl/cli/scan.py,41
   redsl/cli/utils.py,47
+  redsl/cli/workflow.py,85
   redsl/commands/_fixer_utils.py,13
   redsl/commands/_guard_fixers.py,179
   redsl/commands/_indent_fixers.py,188
@@ -166,6 +166,7 @@ M[327]:
   redsl/consciousness_loop.py,204
   redsl/core/__init__.py,1
   redsl/core/pipeline.py,71
+  redsl/defaults/__init__.py,0
   redsl/diagnostics/__init__.py,17
   redsl/diagnostics/perf_bridge.py,289
   redsl/dsl/__init__.py,22
@@ -184,15 +185,16 @@ M[327]:
   redsl/examples/pr_bot.py,136
   redsl/examples/pyqual_example.py,74
   redsl/execution/__init__.py,87
-  redsl/execution/cycle.py,277
+  redsl/execution/cycle.py,467
   redsl/execution/decision.py,405
   redsl/execution/executor.py,85
-  redsl/execution/planfile_updater.py,329
+  redsl/execution/planfile_updater.py,331
   redsl/execution/reflector.py,106
   redsl/execution/reporter.py,86
   redsl/execution/resolution.py,154
   redsl/execution/sandbox_execution.py,69
   redsl/execution/validation.py,57
+  redsl/execution/workflow.py,292
   redsl/formatters/__init__.py,67
   redsl/formatters/batch.py,212
   redsl/formatters/core.py,14
@@ -206,8 +208,8 @@ M[327]:
   redsl/llm/gate.py,184
   redsl/llm/llx_router.py,312
   redsl/llm/registry/__init__.py,23
-  redsl/llm/registry/aggregator.py,318
-  redsl/llm/registry/models.py,110
+  redsl/llm/registry/aggregator.py,324
+  redsl/llm/registry/models.py,113
   redsl/llm/registry/sources/__init__.py,19
   redsl/llm/registry/sources/base.py,336
   redsl/llm/selection/__init__.py,39
@@ -238,116 +240,46 @@ M[327]:
   redsl/utils/json_helpers.py,17
   redsl/utils/tool_check.py,21
   redsl/validation/__init__.py,30
-  redsl/validation/pyqual_bridge.py,249
+  redsl/validation/pyqual_bridge.py,286
   redsl/validation/regix_bridge.py,313
   redsl/validation/sandbox.py,210
   redsl/validation/testql_bridge.py,299
   redsl/validation/vallm_bridge.py,306
   test_refactor_bad/complex_code.py,137
   test_refactor_project/bad_code.py,24
-  test_sample_project/sample.py,32
+  www/admin/auth.php,73
+  www/admin/clients.php,417
+  www/admin/contracts.php,460
+  www/admin/index.php,175
+  www/admin/invoices.php,359
+  www/admin/projects.php,479
+  www/admin/scans.php,263
+  www/admin/tickets.php,397
   www/app.js,127
   www/blog/index.php,29
   www/config-api.php,223
   www/config-editor.php,507
+  www/cron/invoice-generator.php,115
+  www/cron/scan-worker.php,138
   www/email-notifications.php,125
-  www/index.php,665
-  www/nda-form.php,544
+  www/index.php,719
+  www/klient/index.php,227
+  www/mock-github/access_token.php,82
+  www/mock-github/authorize.php,156
+  www/mock-github/user.php,68
+  www/nda-form.php,614
   www/nda-wzor.php,6
   www/polityka-prywatnosci.php,46
+  www/project.sh,36
   www/propozycje.php,383
   www/regulamin.php,46
-  www/vendor/autoload.php,22
-  www/vendor/composer/ClassLoader.php,579
-  www/vendor/composer/InstalledVersions.php,380
-  www/vendor/composer/autoload_classmap.php,17
-  www/vendor/composer/autoload_namespaces.php,9
-  www/vendor/composer/autoload_psr4.php,10
-  www/vendor/composer/autoload_real.php,38
-  www/vendor/composer/autoload_static.php,43
-  www/vendor/composer/installed.php,32
-  www/vendor/composer/platform_check.php,26
-  www/vendor/phpmailer/phpmailer/get_oauth_token.php,182
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-af.php,26
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ar.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-as.php,35
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-az.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ba.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-be.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-bg.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-bn.php,35
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ca.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-cs.php,28
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-da.php,36
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-de.php,28
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-el.php,33
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-eo.php,26
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-es.php,36
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-et.php,28
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-fa.php,28
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-fi.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-fo.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-fr.php,36
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-gl.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-he.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-hi.php,35
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-hr.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-hu.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-hy.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-id.php,31
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-it.php,28
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ja.php,37
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ka.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ko.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ku.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-lt.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-lv.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-mg.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-mn.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ms.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-nb.php,33
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-nl.php,34
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-pl.php,33
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-pt.php,34
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-pt_br.php,38
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ro.php,33
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ru.php,36
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-si.php,34
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-sk.php,30
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-sl.php,36
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-sr.php,28
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-sr_latn.php,28
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-sv.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-tl.php,28
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-tr.php,38
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-uk.php,28
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ur.php,30
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-vi.php,27
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-zh.php,29
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-zh_cn.php,36
-  www/vendor/phpmailer/phpmailer/src/DSNConfigurator.php,245
-  www/vendor/phpmailer/phpmailer/src/Exception.php,40
-  www/vendor/phpmailer/phpmailer/src/OAuth.php,139
-  www/vendor/phpmailer/phpmailer/src/OAuthTokenProvider.php,44
-  www/vendor/phpmailer/phpmailer/src/PHPMailer.php,5362
-  www/vendor/phpmailer/phpmailer/src/POP3.php,469
-  www/vendor/phpmailer/phpmailer/src/SMTP.php,1547
+  www/smoke-test.sh,175
 D:
-  www/vendor/phpmailer/phpmailer/src/PHPMailer.php:
-    e: PHPMailer
-    PHPMailer:
-  www/vendor/composer/InstalledVersions.php:
-    i: Composer\Autoload\ClassLoader,Composer\Semver\VersionParser
-    e: InstalledVersions
-    InstalledVersions:
   test_refactor_bad/complex_code.py:
     e: GodClass,process_data,process_data_copy
     GodClass: method1(0),method2(0),method3(0),method4(0),method5(0),method6(0),method7(0),method8(0),method9(0),method10(0),method11(0),method12(0),method13(0),method14(0),method15(0)  # A god class with too many responsibilities...
     process_data(data;mode;threshold;callback;flag1;flag2;flag3;flag4;flag5)
     process_data_copy(data;mode;threshold;callback;flag1;flag2;flag3;flag4;flag5)
-  www/vendor/phpmailer/phpmailer/src/SMTP.php:
-    e: SMTP
-    SMTP:
   www/config-api.php:
     e: validateConfig,getHistory,redactSecrets
     validateConfig()
@@ -369,6 +301,24 @@ D:
     flash()
     headline()
     y()
+  redsl/execution/cycle.py:
+    e: _new_cycle_report,_analyze_project,_summarize_analysis,_run_perceive_phase,_run_decide_phase,_run_execute_phase,_run_validate_phase,_get_applied_files,_run_update_planfile_phase,_find_project_pyqual,_pyqual_tune_conservative,_run_project_validators_phase,_run_test_validation_phase,_run_reflect_phase,run_cycle,run_from_toon_content
+    _new_cycle_report(orchestrator)
+    _analyze_project(orchestrator;project_dir;use_code2llm)
+    _summarize_analysis(analysis)
+    _run_perceive_phase(orchestrator;project_dir;use_code2llm;report)
+    _run_decide_phase(orchestrator;analysis;max_actions;target_file;validate_regix;run_tests;project_dir)
+    _run_execute_phase(orchestrator;decisions;project_dir;use_sandbox;report)
+    _run_validate_phase(orchestrator;project_dir;regix_before;rollback_on_failure;validate_regix;report)
+    _get_applied_files(report)
+    _run_update_planfile_phase(orchestrator;project_dir;report)
+    _find_project_pyqual(project_dir)
+    _pyqual_tune_conservative(exe;project_dir)
+    _run_project_validators_phase(project_dir;report;workflow)
+    _run_test_validation_phase(orchestrator;project_dir;tests_baseline;run_tests;report)
+    _run_reflect_phase(orchestrator;report)
+    run_cycle(orchestrator;project_dir;max_actions;use_code2llm;validate_regix;rollback_on_failure;use_sandbox;target_file;run_tests;workflow)
+    run_from_toon_content(orchestrator;project_toon;duplication_toon;validation_toon;source_files;max_actions)
   redsl/llm/registry/sources/base.py:
     e: ModelRegistrySource,OpenRouterSource,ModelsDevSource,OpenAIProviderSource,AnthropicProviderSource,AiderLeaderboardSource
     ModelRegistrySource(ABC): fetch(0),_http_get(3)  # Abstract base class for model registry sources...
@@ -381,19 +331,6 @@ Wzbo...
   redsl/analyzers/toon_analyzer.py:
     e: ToonAnalyzer
     ToonAnalyzer: __init__(2),analyze_project(1),analyze_from_toon_content(3),_find_toon_files(1),_select_project_key(1),_process_project_ton(2),_convert_modules_to_metrics(2),_process_hotspots(2),_process_alerts(2),_process_duplicates(2),_process_validation(2),_resolve_and_filter_metrics(2),_calculate_statistics(1)  # Analizator plików toon — przetwarza dane z code2llm...
-  www/vendor/phpmailer/phpmailer/src/DSNConfigurator.php:
-    e: DSNConfigurator
-    DSNConfigurator:
-  www/vendor/composer/ClassLoader.php:
-    e: ClassLoader
-    ClassLoader:
-  redsl/commands/autofix/reporting.py:
-    e: _aggregate_totals,_project_details,_build_summary,_print_summary,_save_reports
-    _aggregate_totals(results)
-    _project_details(results)
-    _build_summary(results)
-    _print_summary(summary;results)
-    _save_reports(results;summary;semcod_root)
   redsl/commands/batch_pyqual/reporting.py:
     e: _count_by_status,_count_passed,_count_failed,_count_ready,_count_skipped,_aggregate_metrics,_aggregate_verdicts,_aggregate_timing,_compute_batch_verdict,_build_totals,_build_gate_pipeline_totals,_build_git_totals,_build_pipeline_totals,_build_project_detail,_build_summary,_format_summary_verdicts,_format_summary_config_and_gates,_format_summary_pipeline_and_totals,_print_summary,_build_report_header,_format_project_row,_build_project_table,_build_project_notes,_build_report_footer,_save_report
     _count_by_status(results;verdict)
@@ -421,6 +358,13 @@ Wzbo...
     _build_project_notes(results)
     _build_report_footer()
     _save_report(results;summary;workspace_root)
+  redsl/commands/autofix/reporting.py:
+    e: _aggregate_totals,_project_details,_build_summary,_print_summary,_save_reports
+    _aggregate_totals(results)
+    _project_details(results)
+    _build_summary(results)
+    _print_summary(summary;results)
+    _save_reports(results;summary;semcod_root)
   redsl/commands/autonomy_pr/validator.py:
     e: _step_validate,_run_testql_validation,_run_quality_gate,_run_project_tests,_check_testql_available,_detect_api_base_url,_detect_test_command
     _step_validate(clone_path)
@@ -523,6 +467,13 @@ Runs tes...
     _collect_guard_body(lines;start)
     _next_non_blank_index(lines;start)
     _is_guard_followed_by_except(lines;start)
+  redsl/commands/sumr_planfile/core.py:
+    e: _collect_from_sumr_source,_tasks_from_refactor_plan,_collect_from_generated_files,_collect_from_standalone_toons,generate_planfile
+    _collect_from_sumr_source(sumr_file;project_path)
+    _tasks_from_refactor_plan(plan_path;source)
+    _collect_from_generated_files(project_path)
+    _collect_from_standalone_toons(project_path;_next_id)
+    generate_planfile(project_path)
   redsl/commands/sumr_planfile/extractors.py:
     e: extract_refactor_decisions,_build_dir_entries,_build_file_path,_verify_file_path,_create_complexity_task,extract_complexity_layers,extract_duplications,_map_status,_extract_target,_parse_priority,_compute_effort,_build_labels,_create_task_from_raw,refactor_plan_to_tasks,toon_to_tasks
     extract_refactor_decisions(toon_content;source;_next_id)
@@ -540,13 +491,6 @@ Runs tes...
     _create_task_from_raw(raw;phase_name;source;task_index)
     refactor_plan_to_tasks(yaml_content;source)
     toon_to_tasks(toon_content;source;project_path)
-  redsl/commands/sumr_planfile/core.py:
-    e: _collect_from_sumr_source,_tasks_from_refactor_plan,_collect_from_generated_files,_collect_from_standalone_toons,generate_planfile
-    _collect_from_sumr_source(sumr_file;project_path)
-    _tasks_from_refactor_plan(plan_path;source)
-    _collect_from_generated_files(project_path)
-    _collect_from_standalone_toons(project_path;_next_id)
-    generate_planfile(project_path)
   redsl/autonomy/quality_gate.py:
     e: GateVerdict,_collect_python_files,_file_cc_functions,_measure_metrics,_git_diff_names,_git_file_at_ref,_get_metrics_at_ref,_get_metrics_current,run_quality_gate,install_pre_commit_hook,_cli_main
     GateVerdict:  # Result of a quality gate check...
@@ -560,14 +504,6 @@ Runs tes...
     run_quality_gate(project_dir)
     install_pre_commit_hook(project_dir)
     _cli_main()
-  redsl/cli/model_policy.py:
-    e: register_model_policy,model_policy,check_model,list_models,refresh_registry,show_config
-    register_model_policy(cli)
-    model_policy()
-    check_model(model;json_output)
-    list_models(max_age;provider;json_output;limit)
-    refresh_registry()
-    show_config()
   redsl/autonomy/growth_control.py:
     e: GrowthBudget,GrowthController,ModuleBudget,_should_skip,_python_files,_infer_module_type,check_module_budget
     GrowthBudget:  # LOC growth budget per iteration...
@@ -577,6 +513,14 @@ Runs tes...
     _python_files(root)
     _infer_module_type(file_path)
     check_module_budget(file_path;module_type)
+  redsl/cli/model_policy.py:
+    e: register_model_policy,model_policy,check_model,list_models,refresh_registry,show_config
+    register_model_policy(cli)
+    model_policy()
+    check_model(model;json_output)
+    list_models(max_age;provider;json_output;limit)
+    refresh_registry()
+    show_config()
   redsl/refactors/body_restorer.py:
     e: _find_preceding_def,_body_after_def,_collect_guard_body,_unindent_4,_is_docstring_only,repair_file,repair_directory
     _find_preceding_def(lines;guard_idx)
@@ -601,7 +545,7 @@ Runs tes...
     _pactfix_available()
     sandbox_available()
   redsl/validation/pyqual_bridge.py:
-    e: is_available,_run_pyqual,doctor,_parse_gate_lines,_stage_passed,check_gates,get_status,validate_config,init_config,run_pipeline,git_commit,git_push
+    e: is_available,_run_pyqual,doctor,_parse_gate_lines,_stage_passed,check_gates,get_status,validate_config,init_config,run_pipeline,git_commit,git_push,tune
     is_available()
     _run_pyqual(project_dir;args;timeout)
     doctor(project_dir)
@@ -614,6 +558,7 @@ Runs tes...
     run_pipeline(project_dir;fix_config;dry_run)
     git_commit(project_dir;message;add_all;if_changed)
     git_push(project_dir;detect_protection;dry_run)
+    tune(project_dir;aggressive;conservative;dry_run)
   redsl/analyzers/sumd_bridge.py:
     e: SumdMetrics,SumdAnalyzer,analyze_with_sumd,_parse_map_metrics
     SumdMetrics:  # Metrics extracted from sumd analysis...
@@ -657,17 +602,6 @@ Pure...
     list_tickets(project_dir;status)
     report_refactor_results(project_dir;decisions_applied;files_modified;avg_cc_before;avg_cc_after)
     _safe_json(text)
-  redsl/commands/github_source.py:
-    e: resolve_auth_ref,fingerprint_issue,fetch_issues,_build_headers,_build_url,_fetch_all_pages,_parse_next_link,_normalise_issue,_priority_from_labels
-    resolve_auth_ref(auth_ref)
-    fingerprint_issue(issue)
-    fetch_issues(source_config)
-    _build_headers(token)
-    _build_url(repo;filters)
-    _fetch_all_pages(start_url;headers;source_id;urllib)
-    _parse_next_link(link_header)
-    _normalise_issue(issue;source_id)
-    _priority_from_labels(labels)
   redsl/commands/doctor_fixers.py:
     e: _apply_fixer_to_issues,fix_broken_guards,fix_stolen_indent,fix_broken_fstrings,fix_stale_pycache,fix_missing_install,fix_module_level_exit,fix_version_mismatch,fix_pytest_collision
     _apply_fixer_to_issues(root;report;category;fixer_fn;success_msg;fail_msg;error_prefix)
@@ -679,6 +613,17 @@ Pure...
     fix_module_level_exit(root;report)
     fix_version_mismatch(root;report)
     fix_pytest_collision(root;report)
+  redsl/commands/github_source.py:
+    e: resolve_auth_ref,fingerprint_issue,fetch_issues,_build_headers,_build_url,_fetch_all_pages,_parse_next_link,_normalise_issue,_priority_from_labels
+    resolve_auth_ref(auth_ref)
+    fingerprint_issue(issue)
+    fetch_issues(source_config)
+    _build_headers(token)
+    _build_url(repo;filters)
+    _fetch_all_pages(start_url;headers;source_id;urllib)
+    _parse_next_link(link_header)
+    _normalise_issue(issue;source_id)
+    _priority_from_labels(labels)
   redsl/commands/batch_pyqual/verdict.py:
     e: _check_analysis_passed,_check_gates_passed,_check_pipeline_requirement,_check_push_requirement,_check_publish_requirement,_combine_verdicts,compute_verdict
     _check_analysis_passed(result)
@@ -714,10 +659,6 @@ Pure...
     _run_git_stage(ctx;git_push;dry_run)
     _finalize_result(ctx;require_pipeline;require_push;require_publish)
     process_project(project;max_fixes;run_pipeline;git_push;profile;publish;fix_config;dry_run;skip_dirty;pyqual_available)
-  redsl/llm/gate.py:
-    e: ModelRejectedError,ModelAgeGate
-    ModelRejectedError(Exception):  # Raised when model is rejected by policy...
-    ModelAgeGate: __init__(9),check(1),_check_age(2),_handle_unknown(2),_reject(4),_normalize(1),list_allowed(0)  # Enforces model age and lifecycle policy before LLM calls...
   redsl/llm/llx_router.py:
     e: ModelSelection,_get_refactor_action_enum,_build_action_model_mapping,_build_model_matrix,_normalize_model_name,_model_family,_classify_complexity,_estimate_tokens,_estimate_cost,_ollama_available,_llx_available,select_model,select_reflection_model,estimate_cycle_cost,apply_provider_prefix,call_via_llx
     ModelSelection:
@@ -736,14 +677,18 @@ Pure...
     estimate_cycle_cost(decisions;contexts)
     apply_provider_prefix(model;configured_model)
     call_via_llx(messages;task_type)
-  redsl/awareness/ecosystem.py:
-    e: ProjectNode,EcosystemGraph
-    ProjectNode: to_dict(0)  # Single project node in the ecosystem graph...
-    EcosystemGraph: build(0),summarize(0),project(1),impacted_projects(1),_build_node(1),_link_dependencies(0),_read_dependencies(1),_extract_dependency_tokens(0),_is_project_dir(0)  # Basic ecosystem graph for semcod-style project collections...
+  redsl/llm/gate.py:
+    e: ModelRejectedError,ModelAgeGate
+    ModelRejectedError(Exception):  # Raised when model is rejected by policy...
+    ModelAgeGate: __init__(9),check(1),_check_age(2),_handle_unknown(2),_reject(4),_normalize(1),list_allowed(0)  # Enforces model age and lifecycle policy before LLM calls...
   redsl/awareness/__init__.py:
     e: AwarenessSnapshot,AwarenessManager
     AwarenessSnapshot: to_dict(0),to_context(0),to_prompt_context(0)  # Compact overview of the current awareness state for a projec...
     AwarenessManager: __init__(4),_memory_fingerprint(0),_git_head(1),_build_cache_key(3),build_snapshot(3),build_context(3),build_prompt_context(3),history(2),ecosystem(1),health(2),predict(3),self_assess(1),_summarize_snapshot(4)  # Facade that combines all awareness layers into one snapshot...
+  redsl/awareness/ecosystem.py:
+    e: ProjectNode,EcosystemGraph
+    ProjectNode: to_dict(0)  # Single project node in the ecosystem graph...
+    EcosystemGraph: build(0),summarize(0),project(1),impacted_projects(1),_build_node(1),_link_dependencies(0),_read_dependencies(1),_extract_dependency_tokens(0),_is_project_dir(0)  # Basic ecosystem graph for semcod-style project collections...
   redsl/validation/vallm_bridge.py:
     e: _VallmBridge,_validation_target_path,_stage_validation_context,_run_vallm_validation,is_available,validate_patch,validate_proposal,blend_confidence
     _VallmBridge(CliBridge):
@@ -790,17 +735,6 @@ Pure...
     DSLEngine: __init__(0),_load_default_rules(0),add_rule(1),add_rules_from_yaml(1),evaluate(1),top_decisions(2),explain(1)  # Silnik ewaluacji reguł DSL.
 
 Przyjmuje zbiór reguł i konteks...
-  redsl/commands/_indent_fixers.py:
-    e: _scan_next_nonblank,_process_def_block,_fix_stolen_indent,_handle_function_indent,_fix_body_indent,_detect_excess_indent,_strip_excess_indent,_check_excess_indent,_iterative_fix
-    _scan_next_nonblank(lines;start)
-    _process_def_block(lines;i;new_lines;changed)
-    _fix_stolen_indent(path)
-    _handle_function_indent(lines;i;new_lines;changed)
-    _fix_body_indent(lines;i;new_lines;def_indent;expected;changed)
-    _detect_excess_indent(lines;i;expected;def_indent)
-    _strip_excess_indent(lines;i;new_lines;def_indent;expected;scan;changed)
-    _check_excess_indent(lines;i;new_lines;def_indent;expected;changed)
-    _iterative_fix(path;original_src)
   redsl/commands/hybrid.py:
     e: _count_todo_issues,_regenerate_todo,_calculate_summary_stats,_print_summary,_writable_path,_save_results,_save_markdown_report,_apply_quality_decisions,_setup_hybrid_orchestrator,_get_quality_decisions,run_hybrid_quality_refactor,_find_projects,_process_single_project,run_hybrid_batch
     _count_todo_issues(todo_file)
@@ -817,6 +751,17 @@ Przyjmuje zbiór reguł i konteks...
     _find_projects(semcod_root)
     _process_single_project(project;max_changes)
     run_hybrid_batch(semcod_root;max_changes)
+  redsl/commands/_indent_fixers.py:
+    e: _scan_next_nonblank,_process_def_block,_fix_stolen_indent,_handle_function_indent,_fix_body_indent,_detect_excess_indent,_strip_excess_indent,_check_excess_indent,_iterative_fix
+    _scan_next_nonblank(lines;start)
+    _process_def_block(lines;i;new_lines;changed)
+    _fix_stolen_indent(path)
+    _handle_function_indent(lines;i;new_lines;changed)
+    _fix_body_indent(lines;i;new_lines;def_indent;expected;changed)
+    _detect_excess_indent(lines;i;expected;def_indent)
+    _strip_excess_indent(lines;i;new_lines;def_indent;expected;scan;changed)
+    _check_excess_indent(lines;i;new_lines;def_indent;expected;changed)
+    _iterative_fix(path;original_src)
   redsl/commands/pyqual/bandit_analyzer.py:
     e: BanditAnalyzer
     BanditAnalyzer: analyze(3)  # Uruchamia bandit i zbiera wyniki bezpieczeństwa...
@@ -866,11 +811,6 @@ Przyjmuje zbiór reguł i konteks...
     e: AutonomyMode,Scheduler
     AutonomyMode(str,Enum):
     Scheduler: __init__(4),run(0),stop(0),run_once(0),_has_changes_since_last_check(0),_git_head(0),_analyze(0),_check_trends(0),_check_proactive(0),_generate_proposals(1),_save_proposals(1),_apply_safe(1),_create_pr(1),_report_findings(3),_summary(1),_self_assess(0)  # Periodic quality-improvement loop...
-  redsl/refactors/prompts.py:
-    e: _format_trends,_format_alerts,build_ecosystem_context
-    _format_trends(trends)
-    _format_alerts(alerts)
-    build_ecosystem_context(context)
   redsl/refactors/diff_manager.py:
     e: generate_diff,preview_proposal,create_checkpoint,rollback_to_checkpoint,rollback_single_file,_is_git_repo,_rollback_git_stash,_rollback_files,_git_checkout_file
     generate_diff(original;refactored;file_path)
@@ -882,15 +822,20 @@ Przyjmuje zbiór reguł i konteks...
     _rollback_git_stash(stash_name;project_dir)
     _rollback_files(cp_name;project_dir)
     _git_checkout_file(rel_path;project_dir)
-  redsl/refactors/direct_constants.py:
-    e: DirectConstantsRefactorer
-    DirectConstantsRefactorer(DirectRefactorBase): __init__(0),_build_value_to_names_map(2),_find_import_end_line(0),_replace_magic_numbers(4),extract_constants(2),_generate_constant_name(2)  # Handles magic number to constant extraction...
+  redsl/refactors/prompts.py:
+    e: _format_trends,_format_alerts,build_ecosystem_context
+    _format_trends(trends)
+    _format_alerts(alerts)
+    build_ecosystem_context(context)
   redsl/llm/selection/strategy.py:
     e: SelectionStrategy,apply_strategy,_pareto_front,_round_robin_pick
     SelectionStrategy(str,Enum):  # Strategia wyboru modelu...
     apply_strategy(candidates;strategy)
     _pareto_front(candidates)
     _round_robin_pick(candidates)
+  redsl/refactors/direct_constants.py:
+    e: DirectConstantsRefactorer
+    DirectConstantsRefactorer(DirectRefactorBase): __init__(0),_build_value_to_names_map(2),_find_import_end_line(0),_replace_magic_numbers(4),extract_constants(2),_generate_constant_name(2)  # Handles magic number to constant extraction...
   redsl/awareness/health_model.py:
     e: HealthDimension,UnifiedHealth,HealthModel
     HealthDimension: to_dict(0)  # Single health dimension with score and rationale...
@@ -935,16 +880,6 @@ Przyjmuje zbiór reguł i konteks...
     _register_doctor_heal(doctor_grp)
     _register_doctor_batch(doctor_grp)
     register(cli)
-  redsl/commands/batch_pyqual/runner.py:
-    e: _PyqualBridge,_pyqual_cli_available,_print_batch_header,_status_config_parts,_status_gates_parts,_status_git_parts,_format_project_status,run_pyqual_batch
-    _PyqualBridge(CliBridge):
-    _pyqual_cli_available()
-    _print_batch_header(workspace_root;project_count;pyqual_ok;pipeline_mode;git_push;publish;fix_config;dry_run;skip_dirty;profile)
-    _status_config_parts(result)
-    _status_gates_parts(result)
-    _status_git_parts(result)
-    _format_project_status(result)
-    run_pyqual_batch(workspace_root;max_fixes;run_pipeline;git_push;limit;profile;publish;fix_config;include;exclude;dry_run;skip_dirty;fail_fast)
   redsl/commands/doctor_detectors.py:
     e: _should_skip,_python_files,_read_python_source,_has_main_guard,_next_non_blank_index,_stolen_indent_issue_for_header,detect_broken_guards,detect_stolen_indent,detect_broken_fstrings,detect_stale_pycache,detect_missing_install,detect_module_level_exit,_detect_mismatches,detect_version_mismatch,detect_pytest_cli_collision,_guess_package_name,_is_sys_exit_call
     _should_skip(path)
@@ -964,40 +899,6 @@ Przyjmuje zbiór reguł i konteks...
     detect_pytest_cli_collision(root)
     _guess_package_name(root)
     _is_sys_exit_call(func)
-  redsl/commands/autofix/todo_gen.py:
-    e: _count_todo_issues,_append_gate_violations_to_todo,_generate_todo_md
-    _count_todo_issues(todo_file)
-    _append_gate_violations_to_todo(todo_file;violations)
-    _generate_todo_md(project;metrics;gate_violations)
-  redsl/commands/sumr_planfile/parsers.py:
-    e: parse_sumr,parse_refactor_plan_yaml,get_toon_patterns
-    parse_sumr(path)
-    parse_refactor_plan_yaml(yaml_content;source)
-    get_toon_patterns()
-  redsl/commands/pyqual/reporter.py:
-    e: Reporter
-    Reporter: calculate_metrics(3),_store_metrics_results(5),_collect_file_metrics(5),generate_recommendations(1),save_report(2)  # Generuje rekomendacje i zapisuje raporty analizy jakości...
-  redsl/commands/autonomy_pr/analyzer.py:
-    e: _parse_worktree_changes,_split_generated_and_real_changes,_refactor_cmd,_step_analyze,_run_auto_apply,_step_apply
-    _parse_worktree_changes(status_output)
-    _split_generated_and_real_changes(paths)
-    _refactor_cmd(clone_path;max_actions;target_file;dry_run)
-    _step_analyze(clone_path;max_actions;target_file)
-    _run_auto_apply(clone_path;max_actions;target_file)
-    _step_apply(clone_path;max_actions;target_file;auto_apply)
-  redsl/commands/autonomy_pr/__init__.py:
-    e: _step_finalize,_setup_workflow,_run_clone_step,_output_dry_run_json,_output_dry_run_text,_run_dry_run,_run_analyze_step,_run_apply_step,_run_validate_step,_output_success_json,run_autonomous_pr
-    _step_finalize(clone_path;branch_name;real_changes;max_actions;use_gh;git_url;clone_url)
-    _setup_workflow(git_url)
-    _run_clone_step(git_url;clone_url;work_dir;fmt)
-    _output_dry_run_json(analyze_result)
-    _output_dry_run_text(analyze_result)
-    _run_dry_run(clone_path;max_actions;target_file;fmt)
-    _run_analyze_step(clone_path;max_actions;target_file;auto_apply)
-    _run_apply_step(clone_path;max_actions;target_file;auto_apply)
-    _run_validate_step(clone_path)
-    _output_success_json(real_changes;branch_name)
-    run_autonomous_pr(git_url;max_actions;dry_run;auto_apply;target_file;work_dir;branch_name;fmt)
   redsl/commands/scan.py:
     e: ProjectScanResult,_CollectMetricsStep,_RunAnalyzersStep,_BuildReportStep,_count_python_files,_detect_languages,_git_activity,_extract_hotspots,_compute_priority,_analyze_single_project,_is_project_dir,scan_folder
     ProjectScanResult: is_ok(0)  # Scan result for a single project...
@@ -1012,12 +913,56 @@ Przyjmuje zbiór reguł i konteks...
     _analyze_single_project(project_path;analyzer)
     _is_project_dir(path)
     scan_folder(folder;progress)
+  redsl/commands/autofix/todo_gen.py:
+    e: _count_todo_issues,_append_gate_violations_to_todo,_generate_todo_md
+    _count_todo_issues(todo_file)
+    _append_gate_violations_to_todo(todo_file;violations)
+    _generate_todo_md(project;metrics;gate_violations)
+  redsl/commands/batch_pyqual/runner.py:
+    e: _PyqualBridge,_pyqual_cli_available,_print_batch_header,_status_config_parts,_status_gates_parts,_status_git_parts,_format_project_status,run_pyqual_batch
+    _PyqualBridge(CliBridge):
+    _pyqual_cli_available()
+    _print_batch_header(workspace_root;project_count;pyqual_ok;pipeline_mode;git_push;publish;fix_config;dry_run;skip_dirty;profile)
+    _status_config_parts(result)
+    _status_gates_parts(result)
+    _status_git_parts(result)
+    _format_project_status(result)
+    run_pyqual_batch(workspace_root;max_fixes;run_pipeline;git_push;limit;profile;publish;fix_config;include;exclude;dry_run;skip_dirty;fail_fast)
+  redsl/commands/sumr_planfile/parsers.py:
+    e: parse_sumr,parse_refactor_plan_yaml,get_toon_patterns
+    parse_sumr(path)
+    parse_refactor_plan_yaml(yaml_content;source)
+    get_toon_patterns()
+  redsl/commands/pyqual/reporter.py:
+    e: Reporter
+    Reporter: calculate_metrics(3),_store_metrics_results(5),_collect_file_metrics(5),generate_recommendations(1),save_report(2)  # Generuje rekomendacje i zapisuje raporty analizy jakości...
+  redsl/commands/autonomy_pr/__init__.py:
+    e: _step_finalize,_setup_workflow,_run_clone_step,_output_dry_run_json,_output_dry_run_text,_run_dry_run,_run_analyze_step,_run_apply_step,_run_validate_step,_output_success_json,run_autonomous_pr
+    _step_finalize(clone_path;branch_name;real_changes;max_actions;use_gh;git_url;clone_url)
+    _setup_workflow(git_url)
+    _run_clone_step(git_url;clone_url;work_dir;fmt)
+    _output_dry_run_json(analyze_result)
+    _output_dry_run_text(analyze_result)
+    _run_dry_run(clone_path;max_actions;target_file;fmt)
+    _run_analyze_step(clone_path;max_actions;target_file;auto_apply)
+    _run_apply_step(clone_path;max_actions;target_file;auto_apply)
+    _run_validate_step(clone_path)
+    _output_success_json(real_changes;branch_name)
+    run_autonomous_pr(git_url;max_actions;dry_run;auto_apply;target_file;work_dir;branch_name;fmt)
+  redsl/commands/autonomy_pr/analyzer.py:
+    e: _parse_worktree_changes,_split_generated_and_real_changes,_refactor_cmd,_step_analyze,_run_auto_apply,_step_apply
+    _parse_worktree_changes(status_output)
+    _split_generated_and_real_changes(paths)
+    _refactor_cmd(clone_path;max_actions;target_file;dry_run)
+    _step_analyze(clone_path;max_actions;target_file)
+    _run_auto_apply(clone_path;max_actions;target_file)
+    _step_apply(clone_path;max_actions;target_file;auto_apply)
   redsl/config_standard/store.py:
     e: ConfigStoreError,ConfigVersionMismatch,ConfigValidationError,ConfigHistoryRecord,ConfigStore
     ConfigStoreError(RuntimeError):
     ConfigVersionMismatch(ConfigStoreError):
     ConfigValidationError(ConfigStoreError):
-    ConfigHistoryRecord(<ast.Subscript object at 0x7f3928e3ef90>):
+    ConfigHistoryRecord(<ast.Subscript object at 0x7376618c7250>):
     ConfigStore: __init__(1),resolve(1),ensure_layout(0),create_default(0),apply_profile(2),load_document(1),load(0),load_any(1),save(1),write_schema_files(0),save_profile(2),load_profile(1),history(1),append_history(1),inspect(2),diff_documents(2),diff_manifest(1),clone_from(1),validate(1),read_secret_placeholders(1),_atomic_write_text(2),lock(0)  # Manage a redsl-config directory with manifest, profiles and ...
   redsl/config_standard/security.py:
     e: SecretMatch,SecretInterceptor,is_sensitive_key,mask_sensitive_mapping
@@ -1025,10 +970,6 @@ Przyjmuje zbiór reguł i konteks...
     SecretInterceptor: __init__(0),redact(1),resolve(1),clear(0)  # Redact secret-looking substrings before data is shown to an ...
     is_sensitive_key(key)
     mask_sensitive_mapping(data)
-  redsl/config_standard/applier.py:
-    e: ApplyResult,ConfigApplier
-    ApplyResult:
-    ConfigApplier: __init__(1),apply(1),rollback(1),_check_preconditions(2),_backup(1),_dump_yaml(1),_apply_change(2)  # Apply config proposals atomically with locking and audit log...
   redsl/commands/plan_sync.py:
     e: MergeResult,SyncResult,merge_tasks,_partition_tasks,_detect_archived,_classify_incoming,_apply_external_update,_issue_to_task,_generate_task_id,apply_planfile_sources,_sync_all_sources,_update_planfile_metadata,_build_history_entry,_load_tasks,_merge_archived,_planfile_fingerprint,_atomic_write,_append_history
     MergeResult:
@@ -1062,6 +1003,10 @@ Przyjmuje zbiór reguł i konteks...
     e: run_pyqual_example,main
     run_pyqual_example(scenario;source)
     main(argv)
+  redsl/config_standard/applier.py:
+    e: ApplyResult,ConfigApplier
+    ApplyResult:
+    ConfigApplier: __init__(1),apply(1),rollback(1),_check_preconditions(2),_backup(1),_dump_yaml(1),_apply_change(2)  # Apply config proposals atomically with locking and audit log...
   redsl/cli/llm_banner.py:
     e: _provider_for_model,_find_dotenv,_key_status,_dotenv_label,print_llm_banner
     _provider_for_model(model)
@@ -1069,14 +1014,6 @@ Przyjmuje zbiór reguł i konteks...
     _key_status(env_name)
     _dotenv_label(dotenv_path)
     print_llm_banner()
-  redsl/memory/__init__.py:
-    e: MemoryEntry,MemoryLayer,InMemoryCollection,AgentMemory
-    MemoryEntry:  # Pojedynczy wpis w pamięci...
-    MemoryLayer: __init__(2),_get_collection(0),store(1),recall(2),count(0),clear(0)  # Warstwa pamięci oparta na ChromaDB...
-    InMemoryCollection: __init__(1),add(3),query(2),count(0)  # Fallback gdy ChromaDB nie jest dostępne...
-    AgentMemory: __init__(1),remember_action(5),recall_similar_actions(2),learn_pattern(3),recall_patterns(2),store_strategy(3),recall_strategies(2),stats(0)  # Kompletny system pamięci z trzema warstwami.
-
-- episodic: „c...
   redsl/cli/planfile.py:
     e: _dump_json,_output_json,_output_yaml,_format_task_line,_print_summary,_print_task_list,_print_result_message,_output_text,planfile_group,planfile_sync,planfile_show,_read_tasks_from_planfile,_print_tasks_text,auth_group,auth_github,auth_github_login,_load_planfile_data,_new_planfile_skeleton,source_group,source_list,source_remove,source_add,_output_json_sync,_print_sync_errors,_print_sync_results,planfile_gh_sync,register
     _dump_json(data)
@@ -1106,6 +1043,24 @@ Przyjmuje zbiór reguł i konteks...
     _print_sync_results(result)
     planfile_gh_sync(project_path;dry_run;output_format)
     register(cli_group)
+  redsl/execution/decision.py:
+    e: _select_decisions,_decision_matches_target,_execute_direct_refactor,_check_time_window_duplicate,_check_signature_duplicate,_generate_proposal_with_reflection,_apply_and_record_result,_execute_decision,_execute_decisions
+    _select_decisions(orchestrator;analysis;max_actions;target_file)
+    _decision_matches_target(decision;target_norm)
+    _execute_direct_refactor(orchestrator;decision;project_dir)
+    _check_time_window_duplicate(orchestrator;decision;project_dir)
+    _check_signature_duplicate(orchestrator;decision)
+    _generate_proposal_with_reflection(orchestrator;decision;source_code;signature)
+    _apply_and_record_result(orchestrator;decision;proposal;project_dir)
+    _execute_decision(orchestrator;decision;project_dir)
+    _execute_decisions(orchestrator;decisions;project_dir;use_sandbox;report)
+  redsl/orchestrator.py:
+    e: CycleReport,RefactorOrchestrator
+    CycleReport:  # Raport z jednego cyklu refaktoryzacji...
+    RefactorOrchestrator: __init__(1),run_cycle(8),run_from_toon_content(5),add_custom_rules(1),_resolve_limits(1)  # Główny orkiestrator — „mózg" systemu.
+
+Łączy:
+- CodeAnalyzer...
   redsl/autonomy/auto_fix.py:
     e: AutoFixResult,auto_fix_violations,_extract_file_path,_extract_function_name,_attempt_fix,_match_violation_handler,_handle_oversized_file,_handle_high_cc_function,_auto_split_module,_auto_extract_functions,_auto_reduce_cc_mean,_auto_fix_criticals,_create_fix_ticket,_suggest_manual_action
     AutoFixResult:  # Outcome of the auto-fix pipeline...
@@ -1122,30 +1077,6 @@ Przyjmuje zbiór reguł i konteks...
     _auto_fix_criticals(project_dir)
     _create_fix_ticket(project_dir;violation;reason)
     _suggest_manual_action(violation)
-  redsl/execution/decision.py:
-    e: _select_decisions,_decision_matches_target,_execute_direct_refactor,_check_time_window_duplicate,_check_signature_duplicate,_generate_proposal_with_reflection,_apply_and_record_result,_execute_decision,_execute_decisions
-    _select_decisions(orchestrator;analysis;max_actions;target_file)
-    _decision_matches_target(decision;target_norm)
-    _execute_direct_refactor(orchestrator;decision;project_dir)
-    _check_time_window_duplicate(orchestrator;decision;project_dir)
-    _check_signature_duplicate(orchestrator;decision)
-    _generate_proposal_with_reflection(orchestrator;decision;source_code;signature)
-    _apply_and_record_result(orchestrator;decision;proposal;project_dir)
-    _execute_decision(orchestrator;decision;project_dir)
-    _execute_decisions(orchestrator;decisions;project_dir;use_sandbox;report)
-  redsl/llm/registry/aggregator.py:
-    e: RegistryAggregator,_parse_aware_dt
-    RegistryAggregator: __init__(6),get_all(0),get(1),_fetch_and_merge(0),_merge_model(2),_collect_source_info(1),_merge_context_length(1),_merge_pricing(1),_merge_capabilities(1),_merge_quality(1),_compute_release_date(2),_cache_is_fresh(0),_save_cache(1),_load_stale_cache(0),refresh(0)  # Aggregates model info from multiple sources with caching...
-    _parse_aware_dt(value)
-  redsl/llm/selection/selector.py:
-    e: ModelSelector
-    ModelSelector: __init__(8),candidates(0),_apply_known_good_override(2),_check_gate(2),pick(1),_get_passing_candidates(0),_filter_by_tier(2),_get_passing_candidates_for_tier(1),_next_tier(1)  # Wybiera najtańszy model spełniający wymagania...
-  redsl/refactors/direct_types.py:
-    e: DirectTypesRefactorer
-    DirectTypesRefactorer(DirectRefactorBase): __init__(0),_collect_return_type_replacements(3),_find_signature_colon(2),add_return_types(2),_find_def_colon(1)  # Handles return type annotation addition...
-  redsl/refactors/direct_guard.py:
-    e: DirectGuardRefactorer
-    DirectGuardRefactorer(DirectRefactorBase): __init__(0),_is_main_guard_node(0),_collect_guarded_lines(1),_collect_module_execution_lines(2),_insert_main_guard(2),fix_module_execution_block(1)  # Handles main guard wrapping for module-level execution code...
   redsl/llm/__init__.py:
     e: LLMResponse,LLMLayer,_build_gate,get_gate,safe_completion,check_model_policy,list_allowed_models
     LLMResponse:  # Odpowiedź z modelu LLM...
@@ -1157,6 +1088,27 @@ Przyjmuje zbiór reguł i konteks...
     safe_completion(model)
     check_model_policy(model)
     list_allowed_models()
+  redsl/llm/selection/selector.py:
+    e: ModelSelector
+    ModelSelector: __init__(8),candidates(0),_apply_known_good_override(2),_check_gate(2),pick(1),_get_passing_candidates(0),_filter_by_tier(2),_get_passing_candidates_for_tier(1),_next_tier(1)  # Wybiera najtańszy model spełniający wymagania...
+  redsl/refactors/direct_types.py:
+    e: DirectTypesRefactorer
+    DirectTypesRefactorer(DirectRefactorBase): __init__(0),_collect_return_type_replacements(3),_find_signature_colon(2),add_return_types(2),_find_def_colon(1)  # Handles return type annotation addition...
+  redsl/llm/registry/aggregator.py:
+    e: RegistryAggregator,_parse_aware_dt
+    RegistryAggregator: __init__(6),get_all(0),get(1),_fetch_and_merge(0),_merge_model(2),_collect_source_info(1),_merge_context_length(1),_merge_pricing(1),_merge_capabilities(1),_merge_quality(1),_compute_release_date(2),_cache_is_fresh(0),_save_cache(1),_load_stale_cache(0),refresh(0)  # Aggregates model info from multiple sources with caching...
+    _parse_aware_dt(value)
+  redsl/refactors/direct_guard.py:
+    e: DirectGuardRefactorer
+    DirectGuardRefactorer(DirectRefactorBase): __init__(0),_is_main_guard_node(0),_collect_guarded_lines(1),_collect_module_execution_lines(2),_insert_main_guard(2),fix_module_execution_block(1)  # Handles main guard wrapping for module-level execution code...
+  redsl/memory/__init__.py:
+    e: MemoryEntry,MemoryLayer,InMemoryCollection,AgentMemory
+    MemoryEntry:  # Pojedynczy wpis w pamięci...
+    MemoryLayer: __init__(2),_get_collection(0),store(1),recall(2),count(0),clear(0)  # Warstwa pamięci oparta na ChromaDB...
+    InMemoryCollection: __init__(1),add(3),query(2),count(0)  # Fallback gdy ChromaDB nie jest dostępne...
+    AgentMemory: __init__(1),remember_action(5),recall_similar_actions(2),learn_pattern(3),recall_patterns(2),store_strategy(3),recall_strategies(2),stats(0)  # Kompletny system pamięci z trzema warstwami.
+
+- episodic: „c...
   redsl/awareness/timeline_git.py:
     e: GitTimelineProvider
     GitTimelineProvider: __init__(2),_resolve_repo_root(0),_project_rel_path(0),_git_log(1),_git_show(2),_is_duplication_file(0),_is_validation_file(0)  # Provides git-based timeline data...
@@ -1181,13 +1133,12 @@ Pozwala...
   redsl/analyzers/quality_visitor.py:
     e: CodeQualityVisitor
     CodeQualityVisitor(ast.NodeVisitor): __init__(0),visit_Import(1),visit_ImportFrom(1),visit_Name(1),visit_Assign(1),visit_Attribute(1),_get_root_name(1),visit_Constant(1),_count_untyped_params(1),visit_FunctionDef(1),visit_AsyncFunctionDef(1),visit_If(1),_is_main_guard(1),generic_visit(1),_is_import_used(1),get_unused_imports(0),has_module_execution_block(0),get_metrics(0)  # Detects common code quality issues in Python AST...
-  redsl/orchestrator.py:
-    e: CycleReport,RefactorOrchestrator
-    CycleReport:  # Raport z jednego cyklu refaktoryzacji...
-    RefactorOrchestrator: __init__(1),run_cycle(8),run_from_toon_content(5),add_custom_rules(1),_resolve_limits(1)  # Główny orkiestrator — „mózg" systemu.
-
-Łączy:
-- CodeAnalyzer...
+  redsl/history.py:
+    e: HistoryEvent,HistoryWriter,HistoryReader,_default_history_dir
+    HistoryEvent:  # A single persisted event in the refactor history...
+    HistoryWriter: __init__(1),record(1),record_event(1),decision_signature(0),has_recent_signature(2)  # Append-only history logger backed by .redsl/history.jsonl...
+    HistoryReader: __init__(1),load_events(0),filter_by_file(1),filter_by_type(1),has_recent_proposal(2),has_recent_ticket(1),_format_event_header(1),_format_event_details(1),_maybe_add_cycle_header(2),generate_decision_report(0)  # Read-only access to .redsl/history.jsonl for querying and de...
+    _default_history_dir(project_dir)
   redsl/commands/sumr_planfile/__init__.py:
     e: _raw_task_status,_raw_task_target,_raw_task_effort,_raw_task_to_plan_task,refactor_plan_to_tasks
     _raw_task_status(raw)
@@ -1208,9 +1159,6 @@ Pozwala...
   redsl/commands/pyqual/mypy_analyzer.py:
     e: MypyAnalyzer
     MypyAnalyzer: analyze(3),_parse_mypy_line(0)  # Uruchamia mypy i zbiera wyniki...
-  redsl/commands/pyqual/ast_analyzer.py:
-    e: AstAnalyzer
-    AstAnalyzer: analyze(3),_analyze_file(6)  # Analizuje pliki Python przez AST w poszukiwaniu typowych pro...
   redsl/commands/pyqual/__init__.py:
     e: PyQualAnalyzer,_format_pyqual_issues,_format_pyqual_metrics,_format_pyqual_recommendations,_print_pyqual_report,_get_output_dir,run_pyqual_analysis,run_pyqual_fix
     PyQualAnalyzer: __init__(1),_load_config(0),analyze_project(1),_find_python_files(1),_is_excluded(2),save_report(2)  # Python code quality analyzer — fasada nad wyspecjalizowanymi...
@@ -1221,15 +1169,9 @@ Pozwala...
     _get_output_dir(project_path)
     run_pyqual_analysis(project_path;config_path;output_format)
     run_pyqual_fix(project_path;config_path)
-  redsl/history.py:
-    e: HistoryEvent,HistoryWriter,HistoryReader,_default_history_dir
-    HistoryEvent:  # A single persisted event in the refactor history...
-    HistoryWriter: __init__(1),record(1),record_event(1),decision_signature(0),has_recent_signature(2)  # Append-only history logger backed by .redsl/history.jsonl...
-    HistoryReader: __init__(1),load_events(0),filter_by_file(1),filter_by_type(1),has_recent_proposal(2),has_recent_ticket(1),_format_event_header(1),_format_event_details(1),_maybe_add_cycle_header(2),generate_decision_report(0)  # Read-only access to .redsl/history.jsonl for querying and de...
-    _default_history_dir(project_dir)
-  redsl/autonomy/adaptive_executor.py:
-    e: AdaptiveExecutor
-    AdaptiveExecutor: __init__(1),execute_adaptive(3),_adapt_strategy(2)  # Execute decisions while adapting strategy on repeated failur...
+  redsl/commands/pyqual/ast_analyzer.py:
+    e: AstAnalyzer
+    AstAnalyzer: analyze(3),_analyze_file(6)  # Analizuje pliki Python przez AST w poszukiwaniu typowych pro...
   redsl/examples/pr_bot.py:
     e: _delta,_print_risk_flags,_print_suggestions,_print_status_check,run_pr_bot_example,main
     _delta(before;after;lower_is_better)
@@ -1238,6 +1180,16 @@ Pozwala...
     _print_status_check(status)
     run_pr_bot_example(scenario;source)
     main(argv)
+  redsl/autonomy/adaptive_executor.py:
+    e: AdaptiveExecutor
+    AdaptiveExecutor: __init__(1),execute_adaptive(3),_adapt_strategy(2)  # Execute decisions while adapting strategy on repeated failur...
+  redsl/autonomy/smart_scorer.py:
+    e: smart_score,_trend_multiplier,_ecosystem_multiplier,_coupling_multiplier,_confidence_multiplier
+    smart_score(rule;context)
+    _trend_multiplier(context;timeline)
+    _ecosystem_multiplier(context;ecosystem)
+    _coupling_multiplier(context;coupling)
+    _confidence_multiplier(context;rule;self_model)
   redsl/autonomy/metrics.py:
     e: AutonomyMetrics,_check_gate_installed,_count_gate_blocks_last_week,_get_last_autonomous_pr,_count_self_refactors_last_month,_check_scheduler_running,_get_growth_last_week,collect_autonomy_metrics,save_metrics,load_metrics
     AutonomyMetrics: to_dict(0),to_json(0)  # Metrics for the autonomy subsystem...
@@ -1250,13 +1202,17 @@ Pozwala...
     collect_autonomy_metrics(project_dir)
     save_metrics(metrics;path)
     load_metrics(path)
-  redsl/autonomy/smart_scorer.py:
-    e: smart_score,_trend_multiplier,_ecosystem_multiplier,_coupling_multiplier,_confidence_multiplier
-    smart_score(rule;context)
-    _trend_multiplier(context;timeline)
-    _ecosystem_multiplier(context;ecosystem)
-    _coupling_multiplier(context;coupling)
-    _confidence_multiplier(context;rule;self_model)
+  redsl/formatters/refactor.py:
+    e: format_refactor_plan,_format_yaml,_format_json,_build_decisions_table,_format_decision_details,_format_text,_serialize_analysis,_serialize_decision,_count_decision_types
+    format_refactor_plan(decisions;format;analysis)
+    _format_yaml(decisions;analysis)
+    _format_json(decisions;analysis)
+    _build_decisions_table(decisions)
+    _format_decision_details(decisions)
+    _format_text(decisions;analysis)
+    _serialize_analysis(analysis)
+    _serialize_decision(decision)
+    _count_decision_types(decisions)
   redsl/formatters/batch.py:
     e: format_batch_results,_as_int,_batch_detail_name,_sum_metric,_batch_report_totals,_batch_header_lines,_batch_summary_lines,_batch_project_lines,_improvement_score,_batch_top_improvement_lines,_batch_error_lines,format_batch_report_markdown
     format_batch_results(results;format)
@@ -1271,17 +1227,6 @@ Pozwala...
     _batch_top_improvement_lines(details)
     _batch_error_lines(details)
     format_batch_report_markdown(report;root;title)
-  redsl/formatters/refactor.py:
-    e: format_refactor_plan,_format_yaml,_format_json,_build_decisions_table,_format_decision_details,_format_text,_serialize_analysis,_serialize_decision,_count_decision_types
-    format_refactor_plan(decisions;format;analysis)
-    _format_yaml(decisions;analysis)
-    _format_json(decisions;analysis)
-    _build_decisions_table(decisions)
-    _format_decision_details(decisions)
-    _format_text(decisions;analysis)
-    _serialize_analysis(analysis)
-    _serialize_decision(decision)
-    _count_decision_types(decisions)
   redsl/cli/config.py:
     e: config,_resolve_store,_load_document_from_path,_dump_json,config_init,config_validate,config_diff,config_history,config_apply,config_clone,config_show,config_rollback,register_config
     config()
@@ -1315,6 +1260,28 @@ Pozwala...
     _matches_gitignore_literal_pattern(pattern;rel_str)
     _matches_gitignore_patterns(file_path;project_dir;gitignore_patterns)
     _try_number(val)
+  redsl/api/example_routes.py:
+    e: _get_runner_map,_get_runner,_serialize_example_result,_register_example_routes
+    _get_runner_map()
+    _get_runner(name)
+    _serialize_example_result(result)
+    _register_example_routes(app)
+  redsl/execution/workflow.py:
+    e: PerceiveConfig,DecideConfig,ExecuteConfig,TuneConfig,ValidateStepConfig,ValidateConfig,PlanfileConfig,ReflectConfig,WorkflowConfig,default_workflow,_parse_tune,_parse_validate_step,_parse_workflow,load_workflow
+    PerceiveConfig:
+    DecideConfig:
+    ExecuteConfig:
+    TuneConfig:
+    ValidateStepConfig:
+    ValidateConfig: get_step(1)
+    PlanfileConfig:
+    ReflectConfig:
+    WorkflowConfig:
+    default_workflow()
+    _parse_tune(raw)
+    _parse_validate_step(raw)
+    _parse_workflow(data;source)
+    load_workflow(project_dir)
   redsl/execution/planfile_updater.py:
     e: _load_yaml_module,_load_planfile_data,_normalize_applied_files,_match_and_update_task,_save_planfile_changes,mark_applied_tasks_done,_get_tasks,_update_stats,get_todo_tasks,_planfile_action_to_refactor_action,_run_direct_refactor_for_task,run_tasks_from_planfile,_atomic_write_yaml
     _load_yaml_module()
@@ -1330,29 +1297,12 @@ Pozwala...
     _run_direct_refactor_for_task(orchestrator;project_dir;task_file;task_action;validate_regix;rollback_on_failure;use_sandbox;run_tests)
     run_tasks_from_planfile(orchestrator;project_dir;max_actions;use_code2llm;validate_regix;rollback_on_failure;use_sandbox;run_tests)
     _atomic_write_yaml(path;data;yaml_mod)
-  redsl/api/example_routes.py:
-    e: _get_runner_map,_get_runner,_serialize_example_result,_register_example_routes
-    _get_runner_map()
-    _get_runner(name)
-    _serialize_example_result(result)
-    _register_example_routes(app)
-  examples/03-full-pipeline/refactor_output/refactor_extract_functions_20260407_145021/00_orders__service.py:
-    e: process_order,_validate_order_and_user,_is_order_terminal,_calculate_order_total,_process_physical_item,_finalize_order
-    process_order(order;user;db;mailer;logger;inventory;pricing;tax;discount;shipping)
-    _validate_order_and_user(order;user;logger)
-    _is_order_terminal(order;logger)
-    _calculate_order_total(items;user;inventory;pricing;tax;discount;logger)
-    _process_physical_item(item;inventory;pricing;tax;discount;user;logger)
-    _finalize_order(order;total;db;mailer;logger)
   www/email-notifications.php:
     e: generateProposalEmail,sendProposalEmail,generateAccessToken,verifyAccessToken
     generateProposalEmail()
     sendProposalEmail()
     generateAccessToken()
     verifyAccessToken()
-  www/vendor/phpmailer/phpmailer/src/POP3.php:
-    e: POP3
-    POP3:
   redsl/commands/cli_autonomy.py:
     e: _echo_json,_format_gate_details,_format_gate_fix_result,_register_gate_check,_register_gate_details,_register_gate_install_hook,_register_gate_fix,_register_gate_commands,_register_review_commands,_register_watch_cmd,_format_improve_result,_register_improve_cmd,_register_watch_commands,_format_autonomy_status,_format_growth_report,_register_growth_cmd,_register_autonomy_status_cmd,_register_growth_and_status_commands,_register_pr_commands,register
     _echo_json(payload)
@@ -1401,6 +1351,16 @@ Pozwala...
     _build_python_rule(rule_data)
     run_custom_rules_example(scenario;source)
     main(argv)
+  redsl/examples/badge.py:
+    e: _compute_project_score,_grade_for_score,_dimension_color,_format_dimension_badges,_print_badge_code,_print_summary,run_badge_example,main
+    _compute_project_score(metrics;scoring)
+    _grade_for_score(score;scale)
+    _dimension_color(val;db)
+    _format_dimension_badges(metrics;dim_badges)
+    _print_badge_code(grade;color;styles)
+    _print_summary(results;scale)
+    run_badge_example(scenario;source)
+    main(argv)
   redsl/examples/awareness.py:
     e: _build_timeline,_print_patterns,_print_signals,_print_summary_section,run_awareness_example,main
     _build_timeline(raw_points)
@@ -1418,16 +1378,6 @@ Pozwala...
     AgentConfig: from_env(0)  # Główna konfiguracja agenta...
     _default_llm_model()
     _resolve_provider_key(model)
-  redsl/examples/badge.py:
-    e: _compute_project_score,_grade_for_score,_dimension_color,_format_dimension_badges,_print_badge_code,_print_summary,run_badge_example,main
-    _compute_project_score(metrics;scoring)
-    _grade_for_score(score;scale)
-    _dimension_color(val;db)
-    _format_dimension_badges(metrics;dim_badges)
-    _print_badge_code(grade;color;styles)
-    _print_summary(results;scale)
-    run_badge_example(scenario;source)
-    main(argv)
   redsl/diagnostics/perf_bridge.py:
     e: Bottleneck,CriticalStep,PerformanceReport,_metrun_available,_parse_metrun_output,_render_profile_stats,_profile_fallback_target,_parse_profile_bottlenecks,_build_fallback_suggestions,_fallback_profile,profile_refactor_cycle,profile_llm_latency,profile_memory_operations,generate_optimization_report
     Bottleneck:
@@ -1475,15 +1425,6 @@ Pozwala...
     _save_refactor_reports(project_path;report;decisions;analysis;log_file;dry_run)
     _prepare_refactor_application(format;sandbox;decisions;analysis)
     register_refactor(cli)
-  redsl/execution/validation.py:
-    e: _snapshot_regix_before,_validate_with_regix
-    _snapshot_regix_before(project_dir;validate_regix)
-    _validate_with_regix(project_dir;before_snapshot;rollback_on_failure;report)
-  redsl/bridges/base.py:
-    e: CliBridge
-    CliBridge(ABC): is_available(0),_extract_json(0)  # Base class for bridges wrapping external CLI tools.
-
-Subclas...
   redsl/main.py:
     e: _get_orchestrator,_analysis_source_method,_analysis_function_metrics,_print_analysis_summary,_print_top_functions,_print_alerts,_print_duplicates,_print_analysis_plan,cmd_analyze,cmd_explain,_print_refactor_report,cmd_refactor,cmd_memory_stats,cmd_serve,_print_usage,_get_arg,_has_flag,_dispatch_analyze,_dispatch_explain,_dispatch_refactor,_dispatch_memory_stats,_dispatch_serve,main
     _get_orchestrator(model)
@@ -1509,6 +1450,15 @@ Subclas...
     _dispatch_memory_stats(args)
     _dispatch_serve(args)
     main()
+  redsl/execution/validation.py:
+    e: _snapshot_regix_before,_validate_with_regix
+    _snapshot_regix_before(project_dir;validate_regix)
+    _validate_with_regix(project_dir;before_snapshot;rollback_on_failure;report)
+  redsl/bridges/base.py:
+    e: CliBridge
+    CliBridge(ABC): is_available(0),_extract_json(0)  # Base class for bridges wrapping external CLI tools.
+
+Subclas...
   redsl/ci/github_actions.py:
     e: WorkflowConfig,generate_github_workflow,install_github_workflow,_build_workflow,_build_steps,_build_gate_script,_pr_comment_script
     WorkflowConfig:  # Konfiguracja generowanego workflow...
@@ -1526,6 +1476,12 @@ Subclas...
   redsl/analyzers/parsers/duplication_parser.py:
     e: DuplicationParser
     DuplicationParser: _is_group_header(1),_parse_group_header(1),_parse_file_entry(1),_append_current(2),parse_duplication_toon(1)  # Parser sekcji duplication_toon...
+  redsl/dsl/rule_generator.py:
+    e: LearnedRule,RuleGenerator,_derive_conditions,_find_nearest_threshold
+    LearnedRule: to_yaml_dict(0)  # Reguła DSL wygenerowana z wzorców w pamięci...
+    RuleGenerator: __init__(1),generate(2),generate_from_history(3),save(2),load_and_register(2),_extract_patterns(0),_history_to_patterns(0),_patterns_to_rules(2)  # Generuje nowe reguły DSL z historii refaktoryzacji w pamięci...
+    _derive_conditions(action;observations)
+    _find_nearest_threshold(value;thresholds)
   redsl/api/refactor_routes.py:
     e: _run_refactor_analysis,_format_refactor_result,_register_analysis_endpoints,_collect_modified_files,_clear_project_history,_register_refactor_endpoints,_register_batch_routes,_register_refactor_routes
     _run_refactor_analysis(req)
@@ -1536,27 +1492,6 @@ Subclas...
     _register_refactor_endpoints(app;orchestrator)
     _register_batch_routes(app)
     _register_refactor_routes(app;orchestrator)
-  redsl/dsl/rule_generator.py:
-    e: LearnedRule,RuleGenerator,_derive_conditions,_find_nearest_threshold
-    LearnedRule: to_yaml_dict(0)  # Reguła DSL wygenerowana z wzorców w pamięci...
-    RuleGenerator: __init__(1),generate(2),generate_from_history(3),save(2),load_and_register(2),_extract_patterns(0),_history_to_patterns(0),_patterns_to_rules(2)  # Generuje nowe reguły DSL z historii refaktoryzacji w pamięci...
-    _derive_conditions(action;observations)
-    _find_nearest_threshold(value;thresholds)
-  redsl/execution/cycle.py:
-    e: _new_cycle_report,_analyze_project,_summarize_analysis,_run_perceive_phase,_run_decide_phase,_run_execute_phase,_run_validate_phase,_get_applied_files,_run_update_planfile_phase,_run_test_validation_phase,_run_reflect_phase,run_cycle,run_from_toon_content
-    _new_cycle_report(orchestrator)
-    _analyze_project(orchestrator;project_dir;use_code2llm)
-    _summarize_analysis(analysis)
-    _run_perceive_phase(orchestrator;project_dir;use_code2llm;report)
-    _run_decide_phase(orchestrator;analysis;max_actions;target_file;validate_regix;run_tests;project_dir)
-    _run_execute_phase(orchestrator;decisions;project_dir;use_sandbox;report)
-    _run_validate_phase(orchestrator;project_dir;regix_before;rollback_on_failure;validate_regix;report)
-    _get_applied_files(report)
-    _run_update_planfile_phase(orchestrator;project_dir;report)
-    _run_test_validation_phase(orchestrator;project_dir;tests_baseline;run_tests;report)
-    _run_reflect_phase(orchestrator;report)
-    run_cycle(orchestrator;project_dir;max_actions;use_code2llm;validate_regix;rollback_on_failure;use_sandbox;target_file;run_tests)
-    run_from_toon_content(orchestrator;project_toon;duplication_toon;validation_toon;source_files;max_actions)
   redsl/cli/logging.py:
     e: setup_logging
     setup_logging(project_path;verbose)
@@ -1569,6 +1504,9 @@ Subclas...
     check_rate_limit()
     send_notification()
     send_notification_smtp()
+  www/admin/auth.php:
+    e: validateCsrfToken
+    validateCsrfToken()
   redsl/consciousness_loop.py:
     e: ConsciousnessLoop,main_loop
     ConsciousnessLoop: __init__(3),run(0),_inner_thought(1),_self_assessment(1),_profile_performance(1),stop(0)  # Ciągła pętla „świadomości" agenta.
@@ -1633,19 +1571,15 @@ Agent nie czeka na polec...
     saveConfig()
     getNestedValue()
     getRiskLevel()
-  www/vendor/phpmailer/phpmailer/src/OAuth.php:
-    i: League\OAuth2\Client\Grant\RefreshToken,League\OAuth2\Client\Provider\AbstractProvider,League\OAuth2\Client\Token\AccessToken
-    e: OAuth
-    OAuth(OAuthTokenProvider):
-  test_sample_project/sample.py:
-    e: calculate_area,process_items,format_data
-    calculate_area(radius)
-    process_items(items)
-    format_data(data)
   test_refactor_project/bad_code.py:
     e: BadClass,calculate
     BadClass: method1(6)
     calculate(x;y;z)
+  redsl/commands/batch_pyqual/utils.py:
+    e: run_cmd,git_status_lines,resolve_profile
+    run_cmd(cmd;cwd;timeout)
+    git_status_lines(project)
+    resolve_profile(requested_profile;run_pipeline;publish)
   redsl/commands/batch.py:
     e: _find_todo_projects,_print_project_results,_process_batch_project,run_semcod_batch,apply_refactor,measure_todo_reduction,_save_markdown_report
     _find_todo_projects(semcod_root)
@@ -1655,11 +1589,6 @@ Agent nie czeka na polec...
     apply_refactor(project_path;max_actions)
     measure_todo_reduction(project_path)
     _save_markdown_report(all_results;semcod_root)
-  redsl/commands/batch_pyqual/utils.py:
-    e: run_cmd,git_status_lines,resolve_profile
-    run_cmd(cmd;cwd;timeout)
-    git_status_lines(project)
-    resolve_profile(requested_profile;run_pipeline;publish)
   redsl/commands/batch_pyqual/config_gen.py:
     e: _PyqualBridgeCfg,_pyqual_cli_available,_generate_pyqual_yaml,_detect_publish_configured
     _PyqualBridgeCfg(CliBridge):
@@ -1698,10 +1627,6 @@ Agent nie czeka na polec...
     _print_badge(grade;badge_conf)
     run_audit_example(scenario;source)
     main(argv)
-  redsl/examples/full_pipeline.py:
-    e: run_full_pipeline_example,main
-    run_full_pipeline_example(scenario;source;model)
-    main(argv)
   redsl/core/pipeline.py:
     e: StepResult,PipelineStep,PipelineResult,Pipeline
     StepResult:
@@ -1736,9 +1661,19 @@ Agent nie czeka na polec...
     build_selector(aggregator;gate)
     get_selector()
     invalidate_selector()
+  redsl/examples/full_pipeline.py:
+    e: run_full_pipeline_example,main
+    run_full_pipeline_example(scenario;source;model)
+    main(argv)
   redsl/utils/json_helpers.py:
     e: extract_json_block
     extract_json_block(text)
+  redsl/cli/workflow.py:
+    e: workflow_group,workflow_init,workflow_show,register
+    workflow_group()
+    workflow_init(project_dir;name;force)
+    workflow_show(project_dir)
+    register(cli_group)
   redsl/integrations/webhook.py:
     e: handle_push_webhook,_analyze_repo,_create_github_issue
     handle_push_webhook(payload)
@@ -1793,15 +1728,12 @@ Agent nie czeka na polec...
     _utcnow()
     export_proposal_schema()
     proposal_to_yaml(proposal)
-  www/vendor/composer/autoload_real.php:
-    e: ComposerAutoloaderInit964162aa4983905a869605055cd77da7
-    ComposerAutoloaderInit964162aa4983905a869605055cd77da7: loadClassLoader(-1),getLoader(-1)
-  .goal/pre-commit-hook.py:
-    e: main
-    main()
   redsl/commands/_fixer_utils.py:
     e: _read_source
     _read_source(path)
+  .goal/pre-commit-hook.py:
+    e: main
+    main()
   redsl/commands/doctor_data.py:
     e: Issue,DoctorReport
     Issue:  # A single detected issue...
@@ -1814,15 +1746,15 @@ Agent nie czeka na polec...
     e: track_model_selection,check_cost_per_call
     track_model_selection(model;tier;operation)
     check_cost_per_call(estimated_cost_usd)
+  redsl/utils/tool_check.py:
+    e: is_tool_available
+    is_tool_available(cmd;timeout)
   redsl/llm/selection/models.py:
     e: CostProfile,CodingRequirements,ModelCandidate,ModelSelectionError
     CostProfile: weighted_per_1m(1)  # Jak liczymy koszt per model...
     CodingRequirements:  # Wymagania techniczne dla modelu do kodowania...
     ModelCandidate:  # Kandydat na model z metrykami...
     ModelSelectionError(Exception):  # Raised when no model can be selected...
-  redsl/utils/tool_check.py:
-    e: is_tool_available
-    is_tool_available(cmd;timeout)
   redsl/analyzers/metrics.py:
     e: CodeMetrics,AnalysisResult
     CodeMetrics: to_dsl_context(0)  # Metryki pojedynczej funkcji/modułu...
@@ -1834,38 +1766,19 @@ Agent nie czeka na polec...
     CodingTiers(BaseModel):
     DefaultOperationTiers(BaseModel):
     CodingConfig(BaseModel):
-  examples/05-api-integration/main.py:
-    e: main
-    main()
-  examples/02-custom-rules/main.py:
-    e: main
-    main()
-  www/vendor/phpmailer/phpmailer/src/OAuthTokenProvider.php:
-    e: OAuthTokenProvider,getOauth64
-    OAuthTokenProvider:
-    getOauth64()
-  www/vendor/phpmailer/phpmailer/src/Exception.php:
-    e: Exception
-    Exception:
-  examples/08-audit/main.py:
-    e: main
-    main()
-  www/vendor/composer/autoload_static.php:
-    e: ComposerStaticInit964162aa4983905a869605055cd77da7
-    ComposerStaticInit964162aa4983905a869605055cd77da7:
-  examples/06-awareness/main.py:
-    e: main
-    main()
-  examples/10-badge/main.py:
-    e: main
-    main()
-  examples/04-memory-learning/main.py:
-    e: main
-    main()
+  www/klient/index.php:
+    e: h
+    h()
   examples/03-full-pipeline/main.py:
     e: main
     main()
   examples/07-pyqual/main.py:
+    e: main
+    main()
+  examples/08-audit/main.py:
+    e: main
+    main()
+  examples/01-basic-analysis/main.py:
     e: main
     main()
   redsl/commands/cli_awareness.py:
@@ -1878,16 +1791,28 @@ Agent nie czeka na polec...
     _register_predict_command(cli;host_module)
     _register_self_assess_command(cli;host_module)
     register(cli;host_module)
-  examples/01-basic-analysis/main.py:
+  examples/09-pr-bot/main.py:
     e: main
     main()
-  examples/09-pr-bot/main.py:
+  examples/05-api-integration/main.py:
+    e: main
+    main()
+  examples/04-memory-learning/main.py:
+    e: main
+    main()
+  examples/10-badge/main.py:
     e: main
     main()
   redsl/commands/autofix/helpers.py:
     e: _collect_python_files,_measure_metrics
     _collect_python_files(project)
     _measure_metrics(project;py_files)
+  examples/02-custom-rules/main.py:
+    e: main
+    main()
+  examples/06-awareness/main.py:
+    e: main
+    main()
   redsl/config_standard/profiles.py:
     e: build_default_config,config_doc_to_yaml,export_config_schema
     build_default_config()
@@ -1926,12 +1851,12 @@ Agent nie czeka na polec...
     CodeAnalyzer: __init__(0),analyze_project(1),analyze_from_toon_content(3),resolve_file_path(2),extract_function_source(1),find_worst_function(1),resolve_metrics_paths(2),_ast_cyclomatic_complexity(0)  # Główny analizator kodu — fasada.
 
 Deleguje do ToonAnalyzer (...
-  redsl/api/health_routes.py:
-    e: _register_health_route
-    _register_health_route(app;orchestrator)
   redsl/api/pyqual_routes.py:
     e: _register_pyqual_routes
     _register_pyqual_routes(app)
+  redsl/api/health_routes.py:
+    e: _register_health_route
+    _register_health_route(app;orchestrator)
   redsl/api/__init__.py:
     e: _build_api_orchestrator,create_app
     _build_api_orchestrator()
@@ -1953,89 +1878,52 @@ Deleguje do ToonAnalyzer (...
     _utcnow()
   project.sh:
   www/nda-wzor.php:
+  www/smoke-test.sh:
+    e: check_http,check_content,check_php_syntax,check_env_exists,check_encryption_key,check_directories,check_admin_auth,check_cron_scripts
+    check_http()
+    check_content()
+    check_php_syntax()
+    check_env_exists()
+    check_encryption_key()
+    check_directories()
+    check_admin_auth()
+    check_cron_scripts()
   www/polityka-prywatnosci.php:
+  www/project.sh:
   www/regulamin.php:
+  www/mock-github/authorize.php:
+  www/mock-github/access_token.php:
+  www/mock-github/user.php:
+  www/admin/tickets.php:
+  www/admin/index.php:
+  www/admin/invoices.php:
+  www/admin/contracts.php:
+  www/admin/scans.php:
+  www/admin/clients.php:
   www/blog/index.php:
-  www/vendor/autoload.php:
-  www/vendor/phpmailer/phpmailer/get_oauth_token.php:
-    i: Greew\OAuth2\Client\Provider\Azure,Hayageek\OAuth2\Client\Provider\Yahoo,League\OAuth2\Client\Provider\Google,Stevenmaguire\OAuth2\Client\Provider\Microsoft,vendor/autoload.php
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-tl.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-lt.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-hy.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-mn.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-sr_latn.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ru.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-fo.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-af.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-bn.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-eo.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-nl.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-tr.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-el.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ka.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-zh_cn.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-uk.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-sr.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-be.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ar.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ms.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ur.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-fa.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-sl.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-vi.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-es.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-it.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-as.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-pt.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-mg.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-lv.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-de.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-et.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-pl.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-gl.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-si.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-pt_br.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-bg.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-zh.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-az.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-id.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ko.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-hu.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ba.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-nb.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ca.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-hr.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-sk.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-hi.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-fi.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-cs.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ku.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-da.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ro.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-sv.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-ja.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-he.php:
-  www/vendor/composer/autoload_classmap.php:
-  www/vendor/composer/autoload_namespaces.php:
-  www/vendor/composer/installed.php:
-  www/vendor/phpmailer/phpmailer/language/phpmailer.lang-fr.php:
-  www/vendor/composer/platform_check.php:
-  www/vendor/composer/autoload_psr4.php:
+  www/cron/invoice-generator.php:
+  www/cron/scan-worker.php:
+  www/admin/projects.php:
   .goal/vallm-pre-commit.sh:
   redsl/__init__.py:
   redsl/__main__.py:
   redsl/commands/doctor_indent_fixers.py:
   redsl/commands/batch_pyqual/__init__.py:
-  redsl/commands/autofix/__init__.py:
   redsl/commands/batch_pyqual/models.py:
     e: PyqualProjectResult
     PyqualProjectResult:  # Result of pyqual pipeline for a single project...
+  redsl/commands/autofix/__init__.py:
   redsl/commands/autofix/models.py:
     e: ProjectFixResult
     ProjectFixResult:  # Result of autofix processing for a single project...
   redsl/config_standard/__init__.py:
   redsl/config_standard/models.py:
+  redsl/defaults/__init__.py:
   redsl/examples/__init__.py:
+  redsl/diagnostics/__init__.py:
+  redsl/core/__init__.py:
+  redsl/autonomy/__init__.py:
+  redsl/formatters/__init__.py:
   redsl/commands/autonomy_pr/models.py:
     e: _CloneResult,_AnalysisResult,_ApplyResult,_CommitResult,_PushResult,_ValidationResult
     _CloneResult:
@@ -2044,11 +1932,12 @@ Deleguje do ToonAnalyzer (...
     _CommitResult:
     _PushResult:
     _ValidationResult:
-  redsl/diagnostics/__init__.py:
-  redsl/core/__init__.py:
-  redsl/autonomy/__init__.py:
-  redsl/formatters/__init__.py:
   redsl/cli/__main__.py:
+  app/models.py:
+    e: FileChange,RefactorProposal,RefactorResult
+    FileChange:  # Zmiana w pojedynczym pliku...
+    RefactorProposal:  # Propozycja refaktoryzacji wygenerowana przez LLM...
+    RefactorResult:  # Wynik zastosowania refaktoryzacji...
   redsl/execution/__init__.py:
   redsl/execution/executor.py:
   redsl/bridges/__init__.py:
@@ -2057,6 +1946,11 @@ Deleguje do ToonAnalyzer (...
   redsl/llm/registry/sources/__init__.py:
   redsl/refactors/__init__.py:
   redsl/ci/__init__.py:
+  redsl/refactors/models.py:
+    e: FileChange,RefactorProposal,RefactorResult
+    FileChange:  # Zmiana w pojedynczym pliku...
+    RefactorProposal:  # Propozycja refaktoryzacji wygenerowana przez LLM...
+    RefactorResult:  # Wynik zastosowania refaktoryzacji...
   redsl/validation/__init__.py:
   redsl/utils/__init__.py:
   redsl/analyzers/__init__.py:
@@ -2065,11 +1959,6 @@ Deleguje do ToonAnalyzer (...
     ToonParser(ProjectParser,DuplicationParser,ValidationParser,FunctionsParser):  # Parser plików toon — fasada nad wyspecjalizowanymi parserami...
   redsl/integrations/__init__.py:
   redsl/dsl/__init__.py:
-  app/models.py:
-    e: FileChange,RefactorProposal,RefactorResult
-    FileChange:  # Zmiana w pojedynczym pliku...
-    RefactorProposal:  # Propozycja refaktoryzacji wygenerowana przez LLM...
-    RefactorResult:  # Wynik zastosowania refaktoryzacji...
   redsl/llm/registry/models.py:
     e: PolicyMode,UnknownReleaseAction,Pricing,Capabilities,QualitySignals,ModelInfo,PolicyDecision
     PolicyMode(str,Enum):  # Policy mode for model age checking...
@@ -2079,11 +1968,6 @@ Deleguje do ToonAnalyzer (...
     QualitySignals:  # Sygnały jakości z różnych benchmarków...
     ModelInfo:  # Information about an LLM model...
     PolicyDecision:  # Result of policy check for a model...
-  redsl/refactors/models.py:
-    e: FileChange,RefactorProposal,RefactorResult
-    FileChange:  # Zmiana w pojedynczym pliku...
-    RefactorProposal:  # Propozycja refaktoryzacji wygenerowana przez LLM...
-    RefactorResult:  # Wynik zastosowania refaktoryzacji...
   redsl/api/models.py:
     e: AnalyzeRequest,RefactorRequest,BatchSemcodRequest,BatchHybridRequest,DebugConfigRequest,DebugDecisionsRequest,PyQualAnalyzeRequest,PyQualFixRequest,RulesRequest,ExampleRunRequest,DecisionResponse,CycleRequest,CycleResponse
     AnalyzeRequest(BaseModel):

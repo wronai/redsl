@@ -329,3 +329,177 @@ def _atomic_write_yaml(path: Path, data: dict, yaml_mod) -> None:
         except OSError:
             pass
         raise
+
+
+def add_quality_task(
+    project_dir: Path,
+    title: str,
+    description: str = "",
+    priority: int = 2,
+) -> bool:
+    """Append a new todo task to planfile.yaml for quality improvement.
+
+    Used when pyqual gates fail even after ``pyqual tune`` — records the
+    quality issue so it can be addressed in a future redsl cycle.
+
+    Returns True if the task was added successfully, False otherwise.
+    """
+    planfile_path = project_dir / _PLANFILE_NAME
+    yaml_mod = _load_yaml_module()
+    if yaml_mod is None:
+        return False
+
+    data = _load_planfile_data(planfile_path, yaml_mod)
+    if data is None:
+        # planfile.yaml does not exist — create a minimal one
+        data = {"tasks": []}
+
+    tasks = _get_tasks(data)
+
+    # Avoid duplicate tasks with the same title
+    for t in tasks:
+        if t.get("title") == title and t.get("status") == "todo":
+            logger.debug(
+                "planfile_updater: duplicate quality task skipped in %s: %s",
+                project_dir.name, title,
+            )
+            return False
+
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    # Build new task — compatible with both schema versions
+    new_task: dict = {
+        "id": f"quality-{now_iso[:10]}-{len(tasks) + 1:03d}",
+        "title": title,
+        "status": "todo",
+        "priority": priority,
+        "created_at": now_iso,
+        "source": "redsl:pyqual_gates",
+    }
+    if description:
+        new_task["description"] = description
+
+    tasks.append(new_task)
+
+    # Keep list reference correct for new-schema planfiles
+    api = data.get("apiVersion", "")
+    if "redsl.plan" in api:
+        data.setdefault("spec", {})["tasks"] = tasks
+    else:
+        data["tasks"] = tasks
+        _update_stats(data)
+
+    try:
+        _atomic_write_yaml(planfile_path, data, yaml_mod)
+        logger.info(
+            "planfile_updater: added quality task '%s' to %s/planfile.yaml",
+            title, project_dir.name,
+        )
+        return True
+    except Exception as exc:
+        logger.warning(
+            "planfile_updater: failed to add quality task in %s: %s",
+            project_dir.name, exc,
+        )
+        return False
+
+
+def add_decision_tasks(
+    project_dir: Path,
+    decisions: list[Any],
+    source: str = "redsl:dry_run",
+    priority: int = 3,
+) -> int:
+    """Convert refactor decisions into todo tasks in planfile.yaml.
+
+    Used with ``--to-planfile`` flag — instead of (or in addition to) generating
+    a markdown report, each decision becomes a planfile task that can be executed
+    in a future ``redsl refactor --from-planfile`` run.
+
+    Skips decisions whose (file, action) pair already has a ``todo`` task.
+    Returns the number of tasks added.
+    """
+    if not decisions:
+        return 0
+
+    yaml_mod = _load_yaml_module()
+    if yaml_mod is None:
+        return 0
+
+    planfile_path = project_dir / _PLANFILE_NAME
+    data = _load_planfile_data(planfile_path, yaml_mod)
+    if data is None:
+        # planfile.yaml does not exist — create a minimal one
+        data = {"tasks": []}
+
+    tasks = _get_tasks(data)
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    # Build set of existing (file, action) to avoid duplicates
+    existing = {
+        (str(t.get("file", "")), str(t.get("action", "")))
+        for t in tasks
+        if t.get("status") == "todo"
+    }
+
+    added = 0
+    for decision in decisions:
+        target_file = str(getattr(decision, "target_file", ""))
+        action = str(getattr(getattr(decision, "action", None), "value", "") or getattr(decision, "action", ""))
+        score = float(getattr(decision, "score", 0))
+        rationale = str(getattr(decision, "rationale", "") or "")
+        rule_name = str(getattr(decision, "rule_name", "") or "")
+
+        if (target_file, action) in existing:
+            logger.debug(
+                "planfile_updater: skip duplicate decision task file=%s action=%s",
+                target_file, action,
+            )
+            continue
+
+        task_id = f"refactor-{now_iso[:10]}-{len(tasks) + added + 1:03d}"
+        new_task: dict = {
+            "id": task_id,
+            "title": f"{action}: {Path(target_file).name}",
+            "status": "todo",
+            "action": action,
+            "file": target_file,
+            "priority": priority,
+            "score": round(score, 2),
+            "created_at": now_iso,
+            "source": source,
+        }
+        if rationale:
+            new_task["description"] = rationale[:200]
+        if rule_name:
+            new_task["rule"] = rule_name
+
+        tasks.append(new_task)
+        existing.add((target_file, action))
+        added += 1
+        logger.info(
+            "planfile_updater: added decision task [%s] %s → %s",
+            task_id, action, target_file,
+        )
+
+    if added:
+        api = data.get("apiVersion", "")
+        if "redsl.plan" in api:
+            data.setdefault("spec", {})["tasks"] = tasks
+        else:
+            data["tasks"] = tasks
+            _update_stats(data)
+        try:
+            _atomic_write_yaml(planfile_path, data, yaml_mod)
+            logger.info(
+                "planfile_updater: added %d decision task(s) to %s/planfile.yaml",
+                added, project_dir.name,
+            )
+        except Exception as exc:
+            logger.warning(
+                "planfile_updater: failed to write decision tasks in %s: %s",
+                project_dir.name, exc,
+            )
+            return 0
+
+    return added

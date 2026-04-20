@@ -6,6 +6,14 @@
 (function () {
     'use strict';
 
+    // ---------- Sticky masthead shadow on scroll ----------
+    var masthead = document.querySelector('.masthead');
+    if (masthead) {
+        window.addEventListener('scroll', function () {
+            masthead.classList.toggle('scrolled', window.scrollY > 8);
+        }, { passive: true });
+    }
+
     // ---------- Smooth scroll for in-page anchors ----------
     document.querySelectorAll('a[href^="#"]').forEach(function (a) {
         a.addEventListener('click', function (e) {
@@ -70,22 +78,19 @@
         });
     }
 
-    // ---------- Observer: reveal sections on scroll ----------
+    // ---------- Observer: reveal sections on scroll (CSS class-driven) ----------
     if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         var io = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
                 if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.classList.add('revealed');
                     io.unobserve(entry.target);
                 }
             });
-        }, { rootMargin: '0px 0px -80px 0px', threshold: 0.05 });
+        }, { rootMargin: '0px 0px -60px 0px', threshold: 0.04 });
 
         document.querySelectorAll('.section').forEach(function (el) {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(12px)';
-            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            el.classList.add('section-reveal');
             io.observe(el);
         });
     }

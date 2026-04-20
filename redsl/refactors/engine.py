@@ -289,7 +289,13 @@ class RefactorEngine:
             target = project_dir / change.file_path
 
             if self.config.backup_enabled and target.exists():
-                backup = target.with_suffix(target.suffix + ".bak")
+                # Store backup in .redsl/backups/ — not next to the source file
+                backup_dir = project_dir / ".redsl" / "backups"
+                backup_dir.mkdir(parents=True, exist_ok=True)
+                # Preserve relative path structure inside backups/
+                rel = Path(change.file_path)
+                backup = backup_dir / rel.with_suffix(rel.suffix + ".bak")
+                backup.parent.mkdir(parents=True, exist_ok=True)
                 backup.write_text(target.read_text(encoding="utf-8"), encoding="utf-8")
 
             target.parent.mkdir(parents=True, exist_ok=True)
