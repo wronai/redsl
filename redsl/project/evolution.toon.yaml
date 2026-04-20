@@ -1,6 +1,6 @@
-# code2llm/evolution | 1408 func | 185f | 2026-04-20
+# code2llm/evolution | 1414 func | 186f | 2026-04-20
 
-NEXT[4] (ranked by impact):
+NEXT[7] (ranked by impact):
   [1] !! SPLIT           cli/planfile.py
       WHY: 533L, 0 classes, max CC=8
       EFFORT: ~4h  IMPACT: 4264
@@ -9,11 +9,23 @@ NEXT[4] (ranked by impact):
       WHY: CC=18 exceeds 15
       EFFORT: ~1h  IMPACT: 450
 
-  [3] !  SPLIT-FUNC      add_decision_tasks  CC=16  fan=21
+  [3] !  SPLIT-FUNC      events_cycles  CC=20  fan=18
+      WHY: CC=20 exceeds 15
+      EFFORT: ~1h  IMPACT: 360
+
+  [4] !  SPLIT-FUNC      add_decision_tasks  CC=16  fan=21
       WHY: CC=16 exceeds 15
       EFFORT: ~1h  IMPACT: 336
 
-  [4] !  SPLIT-FUNC      _detect_from_scripts  CC=16  fan=13
+  [5] !! SPLIT-FUNC      events_show  CC=25  fan=11
+      WHY: CC=25 exceeds 15
+      EFFORT: ~1h  IMPACT: 275
+
+  [6] !  SPLIT-FUNC      events_summary  CC=21  fan=12
+      WHY: CC=21 exceeds 15
+      EFFORT: ~1h  IMPACT: 252
+
+  [7] !  SPLIT-FUNC      _detect_from_scripts  CC=16  fan=13
       WHY: CC=16 exceeds 15
       EFFORT: ~1h  IMPACT: 208
 
@@ -23,9 +35,9 @@ RISKS[1]:
 
 METRICS-TARGET:
   CC̄:          3.9 → ≤2.7
-  max-CC:      18 → ≤9
+  max-CC:      25 → ≤12
   god-modules: 1 → 0
-  high-CC(≥15): 4 → ≤2
+  high-CC(≥15): 7 → ≤3
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):

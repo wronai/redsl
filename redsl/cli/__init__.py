@@ -89,6 +89,8 @@ def _register_all(cli_group: click.Group) -> None:
     _register_awareness(cli_group, sys.modules[__name__])
     from redsl.cli.workflow import register as _register_workflow
     _register_workflow(cli_group)
+    from redsl.cli.events import register as _register_events
+    _register_events(cli_group)
 
 
 _register_all(cli)

@@ -13,6 +13,23 @@
 - [x] **Bugfix: FastAPI Guard Skip**: Fixed `fix_module_execution_block` wrapping config calls like `app.add_middleware()`
 - [x] **Regression Tests**: 7 new tests covering both bug fixes
 
+## ✅ Completed (2026-04-20)
+
+- [x] **Backup lifecycle**: `.bak` files → `.redsl/backups/` + `cleanup_backups()` on success, `rollback_from_backups()` on exception
+- [x] **pyqual gates auto-run**: `run_on_missing_metrics: true` → `pyqual run` before tune gdy brak metryk
+- [x] **Planfile task on failure**: `create_planfile_task_on_failure: true` → ticket w planfile gdy tune nieudany
+- [x] **TuneConfig fields**: `run_on_missing_metrics` + `create_planfile_task_on_failure` konfigurowane w `redsl.yaml`
+- [x] **DecideConfig LLM fields**: `llm_model: auto` + `llm_temperature: null` w workflow + schema template
+- [x] **History events — cycle lifecycle**: `cycle_started`, `cycle_completed` z modelem, flagami, wynikami
+- [x] **History events — validator pipeline**: `validator_gates_passed/failed`, `validator_tune_applied/failed/no_metrics`
+- [x] **History events — rollback**: `cycle_rollback` z liczbą przywróconych plików i błędem
+- [x] **History events — deploy**: `deploy_push`, `deploy_publish` z wynikiem ok/error per akcja
+- [x] **`--to-planfile` flag**: `redsl refactor --dry-run --to-planfile` — decyzje jako zadania planfile zamiast markdown
+- [x] **`add_decision_tasks()`**: nowa funkcja w `planfile_updater.py` z deduplikacją `(file, action)`
+- [x] **`redsl events` CLI**: nowe subkomendy `show`, `summary`, `cycles` do przeglądania `history.jsonl`
+- [x] **README.md update**: sekcje `--to-planfile`/`--from-planfile` workflow, `redsl events`, `history.jsonl`, `redsl.yaml` config
+- [x] **Tests**: 690 passed, 12 skipped (baseline: 679 → +11 planfile tests)
+
 ## High Complexity Functions
 
 - [ ] Refactor `_process_project` in `redsl/commands/batch_pyqual.py` — CC=28 (line 170)

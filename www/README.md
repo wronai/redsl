@@ -190,7 +190,12 @@ Formularz ma ukryte pole `website`. Boty które scrape'ują HTML często je wype
 
 **Zmiana fontów** — `index.php` sekcja `<link>` (Google Fonts) + `style.css` zmienne `--font-*`.
 
-**Zmiana copy** — wszystko po polsku w `index.php`. Nie ma i18n, bo to mała strona. Dla EN wersji po prostu sklonuj `index.php` jako `index-en.php`.
+**Zmiana copy / tłumaczenia** — system i18n z 3 językami (PL, EN, DE):
+   - Pliki tłumaczeń w `i18n/` (`pl.json`, `en.json`, `de.json`)
+   - Helper w `lib/i18n.php` - automatyczne wykrywanie języka (URL param > cookie > browser > default)
+   - Użycie: `<?=h($t('key.subkey'))?>` w PHP templates
+   - Przełącznik języków w prawym górnym rogu nawigacji
+   - URL params: `?lang=pl`, `?lang=en`, `?lang=de`
 
 **Zmiana cennika** — sekcja `.pricing` w `index.php`. Jeśli zmienisz liczby, pamiętaj zmienić też w sekcji FAQ i kontakt.
 

@@ -12,6 +12,7 @@ from redsl.execution.backup_manager import cleanup_backups, rollback_from_backup
 
 if TYPE_CHECKING:
     from redsl.orchestrator import CycleReport, RefactorOrchestrator
+    from redsl.history import HistoryWriter
 
 logger = logging.getLogger(__name__)
 
@@ -187,6 +188,7 @@ def _run_deploy_phase(
     report: "CycleReport",
     workflow: "WorkflowConfig",
     dry_run: bool = False,
+    history: "HistoryWriter | None" = None,
 ) -> None:
     """DEPLOY phase: push to git and/or publish to registry if configured.
 
@@ -226,7 +228,15 @@ def _run_deploy_phase(
         (deploy_cfg.push == "auto" and detected.push.method != "none")
     )
     if should_push and detected.push.method != "none":
-        run_deploy_action(detected.push, project_dir, dry_run=dry_run)
+        push_ok = run_deploy_action(detected.push, project_dir, dry_run=dry_run)
+        if history:
+            history.record_event(
+                "deploy_push",
+                cycle_number=report.cycle_number,
+                status="ok" if push_ok else "error",
+                thought=f"git push {'succeeded' if push_ok else 'failed'}: {detected.push.label}",
+                details={"method": detected.push.method, "label": detected.push.label, "dry_run": dry_run},
+            )
     elif should_push:
         logger.debug("deploy: push requested but no mechanism detected in %s", project_dir.name)
 
@@ -236,7 +246,15 @@ def _run_deploy_phase(
         (deploy_cfg.publish == "auto" and detected.publish.method != "none")
     )
     if should_publish and detected.publish.method != "none":
-        run_deploy_action(detected.publish, project_dir, dry_run=dry_run)
+        publish_ok = run_deploy_action(detected.publish, project_dir, dry_run=dry_run)
+        if history:
+            history.record_event(
+                "deploy_publish",
+                cycle_number=report.cycle_number,
+                status="ok" if publish_ok else "error",
+                thought=f"publish {'succeeded' if publish_ok else 'failed'}: {detected.publish.label}",
+                details={"method": detected.publish.method, "label": detected.publish.label, "dry_run": dry_run},
+            )
     elif should_publish:
         logger.debug("deploy: publish requested but no mechanism detected in %s", project_dir.name)
 
@@ -322,7 +340,7 @@ def run_cycle(
         _run_test_validation_phase(orchestrator, project_dir, tests_baseline, _run_tests, report)
         if wf.reflect.enabled:
             _run_reflect_phase(orchestrator, report)
-        _run_deploy_phase(project_dir, report, wf)
+        _run_deploy_phase(project_dir, report, wf, history=orchestrator.history)
         # Successful cycle — remove backups
         cleanup_backups(project_dir)
 
@@ -333,6 +351,12 @@ def run_cycle(
         rolled_back = rollback_from_backups(project_dir)
         if rolled_back:
             logger.info("Rolled back %d file(s) from backups", rolled_back)
+            orchestrator.history.record_event(
+                "cycle_rollback",
+                cycle_number=orchestrator._cycle_count,
+                thought=f"Rolled back {rolled_back} file(s) after error: {e}",
+                details={"files_rolled_back": rolled_back, "error": str(e)},
+            )
 
     # Record cycle outcome regardless of success/failure
     orchestrator.history.record_event(

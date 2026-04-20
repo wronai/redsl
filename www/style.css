@@ -1031,3 +1031,42 @@ a:hover { color: var(--red); }
     background: var(--red);
     color: var(--paper);
 }
+
+/* =============================================================
+   Language Switcher
+   ============================================================= */
+.lang-switcher {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: 16px;
+    padding-left: 16px;
+    border-left: 1px solid var(--rule);
+}
+
+.lang-link, .lang-current {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 4px 8px;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.lang-link {
+    color: var(--ink-soft);
+    background: transparent;
+}
+
+.lang-link:hover {
+    color: var(--red);
+    background: rgba(200, 68, 45, 0.08);
+}
+
+.lang-current {
+    color: var(--paper);
+    background: var(--red);
+    cursor: default;
+}

@@ -30,6 +30,13 @@ function env(string $key, string $default = ''): string {
     return (string)($_ENV[$key] ?? getenv($key) ?: $default);
 }
 
+// ---- i18n ----
+$i18n = require __DIR__ . '/lib/i18n.php';
+$t = $i18n['t'];
+$lang = $i18n['lang'];
+$getLangUrls = $i18n['getLangUrls'];
+$getLangName = $i18n['getLangName'];
+
 // Demo data — in production loaded from database/API
 $proposals = [
     ['id' => 1, 'title' => 'UserService class refactoring', 'file' => 'src/services/UserService.php', 'effort' => 'M', 'lines' => 150, 'price' => 10, 'priority' => 1, 'redsl_min' => 8],
@@ -105,7 +112,7 @@ $year = date('Y');
 $issue = date('Y.m');
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?=h($lang)?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

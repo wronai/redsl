@@ -342,7 +342,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['form'] ?? '') === 'contact
 }
 
 if (isset($_GET['err']) && $_GET['err'] === 'oauth_not_configured') {
-    $feedback = 'GitHub OAuth jeszcze nie skonfigurowany. Skorzystaj z formularza obok.';
+    $feedback = $t('errors.oauth_not_configured');
     $feedbackType = 'error';
 }
 
@@ -417,7 +417,7 @@ $issue = date('Y.m');
         <ul class="hero-bullets">
             <li>🧠 <?=h($t('hero.bullet1'))?></li>
             <li>⚙️ <?=h($t('hero.bullet2'))?></li>
-            <li>📉 Zespół robi features, a system sam staje się prostszy — bez tygodni „cleanup sprintów”</li>
+            <li>📉 <?=h($t('hero.bullet3'))?></li>
         </ul>
 
         <div class="hero-cta">
@@ -446,51 +446,49 @@ $issue = date('Y.m');
 <!-- ============ BÓL ============ -->
 <section class="section pain">
     <div class="container">
-        <div class="section-label">01 · Problem</div>
-        <h2 class="section-title">LLM generuje kod szybciej,<br>ale <em>system</em> staje się bardziej złożony.</h2>
+        <div class="section-label"><?=h($t('pain.label'))?></div>
+        <h2 class="section-title"><?=h($t('pain.title'))?></h2>
 
         <div class="pain-grid">
             <div class="pain-col pain-before">
-                <div class="pain-label"><span class="pain-icon">✗</span> Bez ReDSL</div>
+                <div class="pain-label"><span class="pain-icon">✗</span> <?=h($t('pain.without'))?></div>
                 <ul>
-                    <li>duplikaty powstają w różnych plikach (LLM nie widzi całości)</li>
+                    <li><?=h($t('pain.without_1'))?></li>
                     <li>funkcje rosną, bo „działa, nie tykaj"</li>
-                    <li>zależności sie komplikują — efekt <em>lokalnych</em> zmian</li>
-                    <li>regresja rośnie. deploy stresuje. kod walczy z tobą.</li>
+                    <li><?=h($t('pain.without_3'))?></li>
+                    <li><?=h($t('pain.without_4'))?></li>
                 </ul>
             </div>
             <div class="pain-col pain-after">
-                <div class="pain-label"><span class="pain-icon">✓</span> Z ReDSL</div>
+                <div class="pain-label"><span class="pain-icon">✓</span> <?=h($t('pain.with'))?></div>
                 <ul>
-                    <li>analiza <strong>całego repo</strong> — nie tylko nowego kodu</li>
-                    <li>małe, mierzalne PR-y naprawiają dług techniczny</li>
-                    <li>system sam się stabilizuje równolegle do developmentu</li>
-                    <li>nikt nie traci tygodnia na cleanup — zespół robi features</li>
+                    <li><?=h($t('pain.with_1'))?></li>
+                    <li><?=h($t('pain.with_2'))?></li>
+                    <li><?=h($t('pain.with_3'))?></li>
+                    <li><?=h($t('pain.with_4'))?></li>
                 </ul>
             </div>
         </div>
 
-        <p class="pain-punchline">
-            Zespół może w końcu <em>budować</em> — zamiast bać się, co się stanie jak coś ruszy.
-        </p>
+        <p class="pain-punchline"><?=h($t('pain.punchline'))?></p>
     </div>
 </section>
 
 <!-- ============ DLACZEGO ============ -->
 <section class="section why">
     <div class="container">
-        <div class="section-label">02 · Dlaczego LLM + ReDSL</div>
+        <div class="section-label"><?=h($t('why.label'))?></div>
         <div class="why-grid">
             <div>
-                <h3>LLM widzi lokalnie, ReDSL globalnie</h3>
-                <p>AI generuje kod na podstawie promptu — nie zna całego systemu. ReDSL analizuje całe repo i wykrywa duplikaty, złe zależności, rosnącą złożoność.</p>
+                <h3><?=h($t('why.title_1'))?></h3>
+                <p><?=h($t('why.desc_1'))?></p>
             </div>
             <div>
-                <h3>Stabilizuje rozwój</h3>
-                <p>Małe, mierzalne PR-y naprawiają dług techniczny zanim stanie się krytyczny. Deploy przestaje stresować. Zmiany są przewidywalne.</p>
+                <h3><?=h($t('why.title_2'))?></h3>
+                <p><?=h($t('why.desc_2'))?></p>
             </div>
             <div>
-                <h3>Bez przerw na cleanup</h3>
+                <h3><?=h($t('why.title_3'))?></h3>
                 <p>Jakość rośnie <em>równolegle</em> z produktem — zespół robi features, a system sam się upraszcza. Bez „sprintów refaktoryzacji".</p>
             </div>
         </div>
@@ -500,43 +498,43 @@ $issue = date('Y.m');
 <!-- ============ JAK DZIAŁA ============ -->
 <section class="section process" id="jak">
     <div class="container">
-        <div class="section-label">03 · Jak to działa</div>
-        <h2 class="section-title">Pięć kroków. Jeden mail na miesiąc.</h2>
+        <div class="section-label"><?=h($t('process.label'))?></div>
+        <h2 class="section-title"><?=h($t('process.title'))?></h2>
 
         <ol class="steps">
             <li>
                 <div class="step-num">I</div>
                 <div class="step-body">
-                    <h4>Setup <span class="step-meta">30 min, jednorazowo</span> <span class="step-saas">SaaS · PHP · redsl</span></h4>
-                    <p>Dostęp read + create-PR, NDA, CI i branch. Jeden krótki call.</p>
+                    <h4><?=h($t('process.step1_title'))?></h4>
+                    <p><?=h($t('process.step1_desc'))?></p>
                 </div>
             </li>
             <li>
                 <div class="step-num">II</div>
                 <div class="step-body">
-                    <h4>Analiza repo <span class="step-meta">do 24h, za 0 zł</span> <span class="step-saas">SaaS · PHP · redsl</span></h4>
-                    <p>Skan całego kodu — duplikaty, złożoność, zależności. Lista ticketów z metrykami przed/po i ceną.</p>
+                    <h4><?=h($t('process.step2_title'))?></h4>
+                    <p><?=h($t('process.step2_desc'))?></p>
                 </div>
             </li>
             <li>
                 <div class="step-num">III</div>
                 <div class="step-body">
-                    <h4>Wybór <span class="step-meta">tyle, ile chcesz</span></h4>
+                    <h4><?=h($t('process.step3_title'))?></h4>
                     <p>Jeden mail: „zrób 1, 3, 7" albo „wszystko pod 50 zł". Decyzja należy do ciebie.</p>
                 </div>
             </li>
             <li>
                 <div class="step-num">IV</div>
                 <div class="step-body">
-                    <h4>Pull Requesty <span class="step-meta">w 24–48h</span> <span class="step-saas">SaaS · PHP · redsl</span></h4>
-                    <p>Osobny PR na każdy ticket. Metryki przed/po, zielone CI. Jeśli CI nie przejdzie — nasz problem.</p>
+                    <h4><?=h($t('process.step4_title'))?></h4>
+                    <p><?=h($t('process.step4_desc'))?></p>
                 </div>
             </li>
             <li>
                 <div class="step-num">V</div>
                 <div class="step-body">
-                    <h4>Faktura <span class="step-meta">raz w miesiącu</span> <span class="step-saas">SaaS · PHP · redsl</span></h4>
-                    <p>Tylko za zmergowane PR-y. Odrzucony z feedbackiem = 0 zł. Bez reakcji 14 dni = auto-close.</p>
+                    <h4><?=h($t('process.step5_title'))?></h4>
+                    <p><?=h($t('process.step5_desc'))?></p>
                 </div>
             </li>
         </ol>

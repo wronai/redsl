@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### Features
+- **`redsl events` CLI** — nowe subkomendy do przeglądania `.redsl/history.jsonl`:
+  - `redsl events show <project>` — kolorowy widok ostatnich N zdarzeń; filtry `--type`, `--file`, `--cycle`, `--json`
+  - `redsl events summary <project>` — statystyki: apply rate, rozkład typów, rollback count
+  - `redsl events cycles <project>` — per-cykl tabela: model LLM, status, applied/generated, rollback
+- **`--to-planfile` flag** — `redsl refactor --dry-run --to-planfile` tworzy zadania w `planfile.yaml` zamiast raportu markdown
+- **`add_decision_tasks()`** — `planfile_updater.py`: konwersja decyzji refactoring na planfile todo z deduplikacją `(file, action)`
+- **History events kompletne**: `cycle_started`, `cycle_completed`, `cycle_rollback`, `deploy_push`, `deploy_publish`, `validator_gates_*`, `validator_tune_*`
+- **TuneConfig**: `run_on_missing_metrics` + `create_planfile_task_on_failure` konfigurowane per-projekt w `redsl.yaml`
+- **DecideConfig**: `llm_model` + `llm_temperature` — override modelu LLM per-projekt
+
+### Fixes
+- `cycle_rollback` event zapisywany do history gdy cykl kończy się wyjątkiem i pliki są przywracane
+- `deploy_push`/`deploy_publish` — wynik (ok/error) zapisywany do history zamiast tylko do logów
+
+### Docs
+- **README.md** — dodano: workflow `--to-planfile`/`--from-planfile`, sekcja "Obserwowalność i historia decyzji", tabela typów zdarzeń, sekcja konfiguracji `redsl.yaml` z wszystkimi nowymi polami
+
 ### Docs — Fundamentalna zmiana opisu projektu
 
 - **README.md, README_EN.md, SUMR.md** — Kompletna rewizja dokumentacji:
@@ -12,6 +30,29 @@
   - Dodano porównanie "Markdown + AI" vs "ReDSL" z tabelą kryteriów
   - Realna ocena projektu: Innowacyjność 9/10, Techniczna spójność 8.5/10, Adopcja 6/10, Ryzyko wysokie
   - Finalna konkluzja: eksperymentalny system operacyjny dla AI-driven software engineering
+
+## [1.2.51] - 2026-04-20
+
+### Docs
+- Update README.md
+- Update TODO.md
+- Update redsl/project/README.md
+- Update redsl/project/context.md
+- Update www/README.md
+- Update www/docs/README.md
+
+### Other
+- Update redsl/cli/__init__.py
+- Update redsl/cli/events.py
+- Update redsl/execution/cycle.py
+- Update redsl/project/analysis.toon.yaml
+- Update redsl/project/batch_1/analysis.toon.yaml
+- Update redsl/project/batch_2/analysis.toon.yaml
+- Update redsl/project/evolution.toon.yaml
+- Update redsl/project/root/analysis.toon.yaml
+- Update www/composer.lock
+- Update www/config-api.php
+- ... and 6 more files
 
 ## [1.2.50] - 2026-04-20
 

@@ -19,65 +19,66 @@ $method = $_SERVER['REQUEST_METHOD'];
 $path = $_GET['path'] ?? '';
 
 // Validate config
-function validateConfig(array $config): array {
+function _validateConfigHeader(array $config): array {
     $errors = [];
-    
-    // Required fields
     if (!isset($config['apiVersion'])) {
         $errors[] = 'Missing apiVersion';
     } elseif ($config['apiVersion'] !== 'redsl.config/v1') {
         $errors[] = 'Invalid apiVersion (must be redsl.config/v1)';
     }
-    
     if (!isset($config['kind']) || $config['kind'] !== 'RedslConfig') {
         $errors[] = 'Invalid or missing kind (must be RedslConfig)';
     }
-    
     if (!isset($config['metadata']['name'])) {
         $errors[] = 'Missing metadata.name';
     }
-    
-    // Validate secrets
-    if (isset($config['secrets']) && is_array($config['secrets'])) {
-        foreach ($config['secrets'] as $name => $spec) {
-            if (!isset($spec['ref'])) {
-                $errors[] = "Secret '$name' missing ref";
-                continue;
-            }
-            $ref = $spec['ref'];
-            $validPrefixes = ['env:', 'file:', 'vault:', 'doppler:'];
-            $hasValidPrefix = false;
-            foreach ($validPrefixes as $prefix) {
-                if (str_starts_with($ref, $prefix)) {
-                    $hasValidPrefix = true;
-                    break;
-                }
-            }
-            if (!$hasValidPrefix) {
-                $errors[] = "Secret '$name' has invalid ref format (must start with env:/file:/vault:/doppler:)";
-            }
+    return $errors;
+}
+
+function _validateConfigSecrets(array $config): array {
+    $errors = [];
+    if (!isset($config['secrets']) || !is_array($config['secrets'])) {
+        return $errors;
+    }
+    $validPrefixes = ['env:', 'file:', 'vault:', 'doppler:'];
+    foreach ($config['secrets'] as $name => $spec) {
+        if (!isset($spec['ref'])) {
+            $errors[] = "Secret '$name' missing ref";
+            continue;
+        }
+        $hasValidPrefix = array_reduce($validPrefixes, fn($carry, $p) => $carry || str_starts_with($spec['ref'], $p), false);
+        if (!$hasValidPrefix) {
+            $errors[] = "Secret '$name' has invalid ref format (must start with env:/file:/vault:/doppler:)";
         }
     }
-    
-    // Validate llm_policy
+    return $errors;
+}
+
+function _validateConfigSpec(array $config): array {
+    $errors = [];
     if (isset($config['spec']['llm_policy']['mode'])) {
         $validModes = ['frontier_lag', 'frontier_only', 'bounded'];
         if (!in_array($config['spec']['llm_policy']['mode'], $validModes, true)) {
             $errors[] = 'Invalid llm_policy.mode (must be frontier_lag, frontier_only, or bounded)';
         }
     }
-    
-    // Validate tiers
     if (isset($config['spec']['coding']['tiers'])) {
-        $tiers = $config['spec']['coding']['tiers'];
         foreach (['cheap', 'balanced', 'premium'] as $tier) {
-            if (isset($tiers[$tier]) && (!is_numeric($tiers[$tier]) || $tiers[$tier] < 0)) {
+            $val = $config['spec']['coding']['tiers'][$tier] ?? null;
+            if ($val !== null && (!is_numeric($val) || $val < 0)) {
                 $errors[] = "Invalid tier value for '$tier' (must be non-negative number)";
             }
         }
     }
-    
     return $errors;
+}
+
+function validateConfig(array $config): array {
+    return array_merge(
+        _validateConfigHeader($config),
+        _validateConfigSecrets($config),
+        _validateConfigSpec($config)
+    );
 }
 
 // Get history

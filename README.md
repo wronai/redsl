@@ -2,7 +2,7 @@
 
 ![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-yellow) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fopenai%2Fgpt-5-mini-lightgrey)
 
-This project uses AI-generated code. Total cost: **$7.5000** with **95** AI commits.
+This project uses AI-generated code. Total cost: **$7.5000** with **96** AI commits.
 
 Generated on 2026-04-20 using [openrouter/openai/gpt-5-mini](https://openrouter.ai/models/openrouter/openai/gpt-5-mini)
 
@@ -14,7 +14,7 @@ Generated on 2026-04-20 using [openrouter/openai/gpt-5-mini](https://openrouter.
 
 ReDSL to eksperymentalny framework łączący LLM, formalny runtime DSL, CI/CD i pętlę samorefaktoryzacji w jeden autonomiczny cykl życia kodu.
 
-![Version](https://img.shields.io/badge/version-1.2.50-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-571%20passing-green) ![E2E](https://img.shields.io/badge/e2e-18%20tests-green) [![Docs](https://img.shields.io/badge/docs-29%20projektów-green)](./docs/)
+![Version](https://img.shields.io/badge/version-1.2.51-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-571%20passing-green) ![E2E](https://img.shields.io/badge/e2e-18%20tests-green) [![Docs](https://img.shields.io/badge/docs-29%20projektów-green)](./docs/)
 
 ---
 
@@ -139,8 +139,14 @@ pip install -e .
 - Opcjonalnie: Docker (dla sandbox testing)
 - Opcjonalnie: Narzędzia semcod ecosystem (code2llm, regix, pyqual, planfile)
 
-# Refaktoryzacja pojedynczego projektu (dry-run)
+# Refaktoryzacja pojedynczego projektu (dry-run → markdown)
 redsl refactor ./my-project --max-actions 5 --dry-run
+
+# Dry-run → bezpośrednio jako zadania w planfile.yaml
+redsl refactor ./my-project --max-actions 5 --dry-run --to-planfile
+
+# Wykonaj decyzje zapisane w planfile.yaml
+redsl refactor ./my-project --from-planfile --from-planfile-path ./planfile.yaml
 
 # Refaktoryzacja z walidacją regresji
 redsl refactor ./my-project --max-actions 10 --validate-regix --rollback
@@ -167,10 +173,24 @@ redsl batch semcod /path/to/semcod --max-actions 5 --validate-regix
 
 Każde uruchomienie `refactor` oraz `batch` zapisuje też raport Markdown obok projektu lub katalogu root:
 
-- `redsl_refactor_plan.md` — wynik `--dry-run`
+- `redsl_refactor_plan.md` — wynik `--dry-run` (domyślnie markdown)
 - `redsl_refactor_report.md` — wykonany cykl refaktoryzacji
 - `redsl_batch_semcod_report.md` — raport zbiorczy dla `batch semcod`
 - `redsl_batch_hybrid_report.md` — raport zbiorczy dla `batch hybrid`
+
+### Workflow planfile (rekomendowany)
+
+Zamiast natychmiastowego wykonania, możesz przeglądnąć i zatwierdzić decyzje w planfile:
+
+```bash
+# 1. Generuj decyzje jako zadania planfile
+redsl refactor ./my-project --dry-run --to-planfile -n 10
+
+# 2. Przejrzyj i edytuj ./my-project/planfile.yaml (odznacz lub usuń niechciane zadania)
+
+# 3. Wykonaj tylko zatwierdzone zadania
+redsl refactor ./my-project --from-planfile
+```
 
 # Sprawdź konfigurację i zmienne środowiskowe
 redsl debug config --show-env
@@ -392,6 +412,50 @@ pytest tests/test_e2e.py -v
 - CLI: `refactor`, `history`, `ecosystem`, `scan`, `batch pyqual-run`
 - API: `/health`, `/refactor`, `/analyze`, `/decide`, `/rules`, `/memory/stats`, `/debug/config`, `/debug/decisions`, `/examples`
 - Autonomy: quality gate workflow
+
+## Obserwowalność i historia decyzji
+
+Każdy cykl refaktoryzacji zapisuje zdarzenia do pliku `.redsl/history.jsonl` w katalogu projektu. Jest to append-only log JSON Lines.
+
+### Typy zdarzeń
+
+| Zdarzenie | Kiedy | Kluczowe pola |
+|-----------|-------|---------------|
+| `cycle_started` | Start cyklu | `llm_model`, `workflow_source`, `max_actions`, `flags` |
+| `cycle_completed` | Koniec cyklu | `status`, `proposals_applied`, `proposals_generated`, `proposals_rejected`, `errors` |
+| `validator_gates_passed` | Wszystkie quality gates OK | `metrics` |
+| `validator_gates_failed` | Przynajmniej jedna brama nie przeszła | `failed_gates` |
+| `validator_tune_applied` | Tune auto-fix zastosowany | `retries_used` |
+| `validator_tune_failed` | Tune nieudany po max retries | `retries_used`, `reason` |
+| `validator_tune_no_metrics` | Brak metryk, uruchomiono `pyqual run` | — |
+| `cycle_rollback` | Wyjątek w cyklu → rollback plików | `files_rolled_back` |
+
+```bash
+# Przeglądaj historię projektu
+redsl history show ./my-project
+
+# Tylko cykl_completed zdarzenia
+cat ./my-project/.redsl/history.jsonl | grep '"cycle_completed"' | jq .
+```
+
+## Konfiguracja workflow (`redsl.yaml`)
+
+Plik `redsl.yaml` w katalogu projektu steruje pełnym pipeline'em. Kluczowe sekcje:
+
+```yaml
+decide:
+  max_actions: 10
+  llm_model: auto          # lub np. "openrouter/anthropic/claude-3.5-sonnet"
+  llm_temperature: null    # null = domyślny model default
+
+tune:
+  strategy: auto           # auto | aggressive
+  retry: 2                 # liczba prób auto-fix
+  run_on_missing_metrics: true      # uruchom pyqual run gdy brak metryk
+  create_planfile_task_on_failure: true  # utwórz task w planfile po nieudanym tune
+```
+
+Pole `llm_model: auto` oznacza, że redsl korzysta z ustawień środowiskowych (`LLM_MODEL` lub domyślnego routera llx). Można nadpisać per-projekt.
 
 ## Ekosystem Semcod (opcjonalne narzędzia)
 
