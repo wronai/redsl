@@ -66,7 +66,7 @@
     "step2_title": "Repo analysis <span class='step-meta'>up to 24h, $0</span> <span class='step-saas'>SaaS · PHP · redsl</span>",
     "step2_desc": "Full code scan — duplicates, complexity, dependencies. List of tickets with before/after metrics and price.",
     "step3_title": "Selection <span class='step-meta'>as much as you want</span>",
-    "step3_desc": "One email: 'do 1, 3, 7' or 'everything under $50'. Decision is yours.",
+    "step3_desc": "One email: 'do 1, 3, 7' or 'everything under %s'. Decision is yours.",
     "step4_title": "Pull Requests <span class='step-meta'>in 24–48h</span> <span class='step-saas'>SaaS · PHP · redsl</span>",
     "step4_desc": "Separate PR per ticket. Before/after metrics, green CI. If CI fails — our problem.",
     "step5_title": "Invoice <span class='step-meta'>once per month</span> <span class='step-saas'>SaaS · PHP · redsl</span>",

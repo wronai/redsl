@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!empty($selectedIds)) {
-        $totalPriceFormatted = $formatPrice($totalPriceUsd);
+        $totalPriceFormatted = $i18n->formatPrice($totalPriceUsd);
         $message = sprintf(
             $t('proposals.success'),
             count($selectedIds),
@@ -112,7 +112,7 @@ function h(string $s): string {
 
 $priorityEmoji = [1 => '🔴', 2 => '🟠', 3 => '🟡'];
 $humanHours = ['S' => '~2h', 'M' => '~4h', 'L' => '~8h'];
-$ticketPrice = $formatPrice(10.0);
+$ticketPrice = $i18n->formatPrice(10.0);
 
 $year = date('Y');
 $issue = date('Y.m');
@@ -408,13 +408,13 @@ $issue = date('Y.m');
             <label class="option-row">
                 <input type="radio" name="selection" value="all" checked>
                 <span class="option-label">All proposals</span>
-                <span class="option-price"><?=h($formatPrice(count($proposals) * 10.0))?></span>
+                <span class="option-price"><?=h($i18n->formatPrice(count($proposals) * 10.0))?></span>
             </label>
 
             <label class="option-row">
                 <input type="radio" name="selection" value="under_15">
-                <span class="option-label">Everything under <?=h($formatPrice(15.0))?> (all tickets)</span>
-                <span class="option-price"><?=h($formatPrice(count($proposals) * 10.0))?></span>
+                <span class="option-label">Everything under <?=h($i18n->formatPrice(15.0))?> (all tickets)</span>
+                <span class="option-price"><?=h($i18n->formatPrice(count($proposals) * 10.0))?></span>
             </label>
 
             <label class="option-row" style="flex-wrap: wrap;">
@@ -444,7 +444,7 @@ $issue = date('Y.m');
                 <div class="prop-effort" style="text-align:center" title="ReDSL execution time"><?= $p['redsl_min'] ?> min</div>
                 <div class="prop-effort" style="text-align:center; color:#888" title="Estimated manual effort"><?= $humanHours[$p['effort']] ?></div>
                 <div class="prop-lines">~<?= $p['lines'] ?></div>
-                <div class="prop-price"><?=h($formatPrice($p['price']))?></div>
+                <div class="prop-price"><?=h($i18n->formatPrice($p['price']))?></div>
             </div>
             <?php endforeach; ?>
         </div>

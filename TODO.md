@@ -27,7 +27,8 @@
 - [x] **`--to-planfile` flag**: `redsl refactor --dry-run --to-planfile` — decyzje jako zadania planfile zamiast markdown
 - [x] **`add_decision_tasks()`**: nowa funkcja w `planfile_updater.py` z deduplikacją `(file, action)`
 - [x] **`redsl events` CLI**: nowe subkomendy `show`, `summary`, `cycles` do przeglądania `history.jsonl`
-- [x] **README.md update**: sekcje `--to-planfile`/`--from-planfile` workflow, `redsl events`, `history.jsonl`, `redsl.yaml` config
+- [x] **`redsl planfile validate` CLI**: sprawdza aktualność ticketów (STALE_FILE_MISSING, STALE_FIXED, STALE_APPLIED); `--fix` auto-oznacza jako 'stale'; wynik na `goal`: 22/53 stale
+- [x] **README.md update**: sekcje `--to-planfile`/`--from-planfile` workflow, `redsl events`, `history.jsonl`, `redsl.yaml` config, tabela walidacji ticketów
 - [x] **Tests**: 690 passed, 12 skipped (baseline: 679 → +11 planfile tests)
 
 ## High Complexity Functions

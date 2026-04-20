@@ -6,7 +6,7 @@
 - **Primary Language**: python
 - **Languages**: python: 287
 - **Analysis Mode**: static
-- **Total Functions**: 1467
+- **Total Functions**: 1470
 - **Total Classes**: 216
 - **Modules**: 287
 - **Entry Points**: 0
@@ -14,7 +14,7 @@
 ## Architecture by Module
 
 ### cli.planfile
-- **Functions**: 27
+- **Functions**: 30
 - **File**: `planfile.py`
 
 ### commands.batch_pyqual.reporting
@@ -90,20 +90,20 @@
 - **Classes**: 2
 - **File**: `incremental.py`
 
-### root.history
-- **Functions**: 16
-- **Classes**: 3
-- **File**: `history.py`
-
 ### commands.plan_sync
 - **Functions**: 16
 - **Classes**: 2
 - **File**: `plan_sync.py`
 
-### autonomy.scheduler
+### root.history
 - **Functions**: 16
-- **Classes**: 2
-- **File**: `scheduler.py`
+- **Classes**: 3
+- **File**: `history.py`
+
+### llm.registry.aggregator
+- **Functions**: 16
+- **Classes**: 1
+- **File**: `aggregator.py`
 
 ## Key Entry Points
 
@@ -240,16 +240,25 @@ Key functions that process and transform data:
 > Process lines to remove guard blocks and fix excess indentation.
 - **Output to**: len, None.rstrip, _GUARD_RE.match, new_lines.append, commands._guard_fixers._handle_guard
 
-### commands.doctor_fstring_fixers._write_if_parses
-- **Output to**: path.write_text, ast.parse
+### commands.github_source._parse_next_link
+> Parse GitHub Link header to find next page URL.
+- **Output to**: link_header.split, part.strip, None.strip, url_part.startswith, url_part.endswith
 
-### history.HistoryReader._format_event_header
-> Format event header line with timestamp, type, target and action.
-- **Output to**: ev.get, ev.get, ev.get, ev.get
+### commands.cli_doctor._format_check_report
+> Format doctor check report as text.
+- **Output to**: None.join, lines.append, lines.append, lines.append
 
-### history.HistoryReader._format_event_details
-> Format event details (thought, reflection, outcome, reason).
-- **Output to**: ev.get, ev.get, ev.get, ev.get, details.append
+### commands.cli_doctor._format_heal_report
+> Format doctor heal report as text.
+- **Output to**: lines.append, None.join, lines.append, lines.append, lines.append
+
+### commands.cli_doctor._format_batch_report
+> Format doctor batch report as text.
+- **Output to**: lines.append, None.join, len, len, len
+
+### commands._indent_fixers._process_def_block
+> Handle a def/class/try block: fix body indent or strip excess indent.
+- **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
 
 ### commands.cli_autonomy._format_gate_details
 > Format quality gate details as text.
@@ -271,37 +280,17 @@ Key functions that process and transform data:
 > Format growth check result as text.
 - **Output to**: None.join, lines.append, lines.append, lines.append, lines.append
 
-### commands.cli_doctor._format_check_report
-> Format doctor check report as text.
-- **Output to**: None.join, lines.append, lines.append, lines.append
-
-### commands.cli_doctor._format_heal_report
-> Format doctor heal report as text.
-- **Output to**: lines.append, None.join, lines.append, lines.append, lines.append
-
-### commands.cli_doctor._format_batch_report
-> Format doctor batch report as text.
-- **Output to**: lines.append, None.join, len, len, len
-
 ### commands.hybrid._process_single_project
 > Process a single project and return results.
 - **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
 
-### commands.github_source._parse_next_link
-> Parse GitHub Link header to find next page URL.
-- **Output to**: link_header.split, part.strip, None.strip, url_part.startswith, url_part.endswith
-
-### commands._indent_fixers._process_def_block
-> Handle a def/class/try block: fix body indent or strip excess indent.
-- **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
+### commands.batch._process_batch_project
+> Process a single project in the batch.
+- **Output to**: print, print, print, commands.batch.measure_todo_reduction, print
 
 ### commands.batch_pyqual.runner._format_project_status
 > Format project result status into readable parts.
 - **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
-
-### commands.batch._process_batch_project
-> Process a single project in the batch.
-- **Output to**: print, print, print, commands.batch.measure_todo_reduction, print
 
 ### commands.batch_pyqual.reporting._format_summary_verdicts
 > Format verdict and project count lines.
@@ -326,6 +315,9 @@ Key functions that process and transform data:
 > Full autofix pipeline for a single project.
 - **Output to**: ProjectFixResult, commands.autofix.pipeline._stage_collect_metrics, commands.autofix.pipeline._stage_ensure_todo, commands.autofix.pipeline._stage_apply_fixes, commands.autofix.pipeline._stage_quality_gate_check
 
+### commands.doctor_fstring_fixers._write_if_parses
+- **Output to**: path.write_text, ast.parse
+
 ### commands.sumr_planfile.parsers.parse_sumr
 > Parse a SUMR.md file and extract refactoring-relevant data.
 - **Output to**: path.read_text, _METADATA_NAME_RE.search, _METADATA_VERSION_RE.search, _REFACTOR_SECTION_RE.search, sorted
@@ -336,10 +328,19 @@ Key functions that process and transform data:
 The format is a multi-document YAML (``---`` 
 - **Output to**: list, yaml.safe_load_all, doc.get, doc.get, isinstance
 
+### commands.pyqual.mypy_analyzer.MypyAnalyzer._parse_mypy_line
+> Parsuj jedną linię wyjścia mypy.
+- **Output to**: line.split, line.strip, len, int, None.strip
+
+### commands.batch_pyqual.pipeline._validate_config
+> Validate pyqual config.
+- **Output to**: pyqual_bridge.validate_config, print, ctx.result.errors.append, print, print
+
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
 
+- `cli.planfile.planfile_validate` - 66 calls
 - `cli.models.estimate_cost` - 44 calls
 - `cli.workflow.workflow_show` - 44 calls
 - `cli.events.events_cycles` - 42 calls
@@ -372,13 +373,12 @@ Functions exposed as public API (no underscore prefix):
 - `commands.sumr_planfile.parsers.parse_sumr` - 20 calls
 - `cli.config.config_rollback` - 20 calls
 - `cli.model_policy.check_model` - 20 calls
-- `awareness.AwarenessManager.build_snapshot` - 20 calls
-- `validation.vallm_bridge.validate_proposal` - 20 calls
 - `awareness.health_model.HealthModel.assess` - 20 calls
+- `validation.vallm_bridge.validate_proposal` - 20 calls
+- `awareness.AwarenessManager.build_snapshot` - 20 calls
 - `commands.github_source.resolve_auth_ref` - 19 calls
 - `config_standard.store.ConfigStore.clone_from` - 19 calls
 - `autonomy.metrics.collect_autonomy_metrics` - 19 calls
-- `cli.config.config_validate` - 19 calls
 - `formatters.batch.format_batch_results` - 19 calls
 
 ## System Interactions

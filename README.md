@@ -2,7 +2,7 @@
 
 ![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-yellow) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fopenai%2Fgpt-5-mini-lightgrey)
 
-This project uses AI-generated code. Total cost: **$7.5000** with **96** AI commits.
+This project uses AI-generated code. Total cost: **$7.5000** with **98** AI commits.
 
 Generated on 2026-04-20 using [openrouter/openai/gpt-5-mini](https://openrouter.ai/models/openrouter/openai/gpt-5-mini)
 
@@ -14,7 +14,7 @@ Generated on 2026-04-20 using [openrouter/openai/gpt-5-mini](https://openrouter.
 
 ReDSL to eksperymentalny framework łączący LLM, formalny runtime DSL, CI/CD i pętlę samorefaktoryzacji w jeden autonomiczny cykl życia kodu.
 
-![Version](https://img.shields.io/badge/version-1.2.51-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-571%20passing-green) ![E2E](https://img.shields.io/badge/e2e-18%20tests-green) [![Docs](https://img.shields.io/badge/docs-29%20projektów-green)](./docs/)
+![Version](https://img.shields.io/badge/version-1.2.52-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-571%20passing-green) ![E2E](https://img.shields.io/badge/e2e-18%20tests-green) [![Docs](https://img.shields.io/badge/docs-29%20projektów-green)](./docs/)
 
 ---
 
@@ -186,10 +186,33 @@ Zamiast natychmiastowego wykonania, możesz przeglądnąć i zatwierdzić decyzj
 # 1. Generuj decyzje jako zadania planfile
 redsl refactor ./my-project --dry-run --to-planfile -n 10
 
-# 2. Przejrzyj i edytuj ./my-project/planfile.yaml (odznacz lub usuń niechciane zadania)
+# 2. Sprawdź aktualność ticketów (czy plik istnieje, CC nadal przekroczony, czy nie wykonano już)
+redsl planfile validate ./my-project
 
-# 3. Wykonaj tylko zatwierdzone zadania
+# 3. Opcjonalnie: usuń tickety już nieaktualne
+redsl planfile validate ./my-project --fix
+
+# 4. Przejrzyj i edytuj ./my-project/planfile.yaml (odznacz lub usuń niechciane zadania)
+
+# 5. Wykonaj tylko zatwierdzone zadania
 redsl refactor ./my-project --from-planfile
+```
+
+### Walidacja ticketów (`redsl planfile validate`)
+
+Sprawdza czy każde otwarte zadanie w `planfile.yaml` jest nadal aktualne:
+
+| Werdykt | Znaczenie |
+|---|---|
+| `OK` | Plik istnieje, metryka wciąż przekroczona |
+| `STALE_FILE_MISSING` | Plik wskazany w tickecie nie istnieje |
+| `STALE_FIXED` | CC pliku jest teraz poniżej progu (problem sam się rozwiązał) |
+| `STALE_APPLIED` | Akcja już wykonana i zapisana w `history.jsonl` |
+
+```bash
+redsl planfile validate ./my-project           # raport
+redsl planfile validate ./my-project --fix     # oznacza stale jako 'stale' w planfile.yaml
+redsl planfile validate ./my-project --json    # output JSON do pipe/jq
 ```
 
 # Sprawdź konfigurację i zmienne środowiskowe

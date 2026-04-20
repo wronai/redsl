@@ -528,6 +528,203 @@ def planfile_gh_sync(
     _print_sync_results(result)
 
 
+# ---------------------------------------------------------------------------
+# redsl planfile validate — check ticket freshness
+# ---------------------------------------------------------------------------
+
+def _get_current_cc(file_path: Path) -> int | None:
+    """Return max cyclomatic complexity found in a Python file, or None."""
+    if not file_path.exists() or not file_path.suffix == ".py":
+        return None
+    try:
+        from radon.complexity import cc_visit
+        results = cc_visit(file_path.read_text(encoding="utf-8", errors="replace"))
+        if not results:
+            return None
+        return max(r.complexity for r in results)
+    except Exception:
+        return None
+
+
+def _extract_cc_threshold(title: str, labels: list) -> int | None:
+    """Parse expected CC from ticket title (e.g. 'CC=14') or labels (e.g. 'cc-14')."""
+    import re
+    m = re.search(r"CC=(\d+)", title)
+    if m:
+        return int(m.group(1))
+    for lbl in labels:
+        m = re.match(r"cc-(\d+)$", str(lbl))
+        if m:
+            return int(m.group(1))
+    return None
+
+
+@planfile_group.command("validate")
+@click.argument(
+    "project_path",
+    type=click.Path(path_type=Path, exists=True, file_okay=False),
+    default=".",
+)
+@click.option(
+    "--fix",
+    is_flag=True,
+    default=False,
+    help="Auto-mark stale tickets as 'stale' in planfile.yaml",
+)
+@click.option(
+    "--json",
+    "as_json",
+    is_flag=True,
+    help="Output result as JSON",
+)
+def planfile_validate(project_path: Path, fix: bool, as_json: bool) -> None:
+    """Check whether planfile.yaml tickets are still current.
+
+    For each open task, validates:
+    - File still exists (otherwise: STALE_FILE_MISSING)
+    - For reduce_complexity/extract_functions: current CC re-checked via radon
+      If CC is now below threshold → STALE_FIXED
+    - Whether the action was already applied via history.jsonl → STALE_APPLIED
+
+    \b
+    Examples:
+      redsl planfile validate .
+      redsl planfile validate . --fix
+      redsl planfile validate /path/to/goal --json
+    """
+    import json as _json
+    import re
+
+    planfile = Path(project_path) / "planfile.yaml"
+    if not planfile.exists():
+        raise click.ClickException(
+            f"planfile.yaml not found at {planfile}. Run: redsl planfile sync ."
+        )
+
+    data = yaml.safe_load(planfile.read_text(encoding="utf-8")) or {}
+
+    # Support both planfile schema versions
+    tasks = data.get("tasks") or (data.get("spec") or {}).get("tasks") or []
+    if not tasks:
+        click.echo("No tasks in planfile.yaml.")
+        return
+
+    # Load history for applied files
+    applied_pairs: set[tuple[str, str]] = set()
+    history_file = Path(project_path) / ".redsl" / "history.jsonl"
+    if history_file.exists():
+        for line in history_file.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                ev = _json.loads(line)
+            except _json.JSONDecodeError:
+                continue
+            if ev.get("event_type") == "proposal_applied":
+                tf = ev.get("target_file") or ""
+                action = ev.get("action") or ""
+                if tf and action:
+                    applied_pairs.add((tf, action))
+
+    results = []
+    stale_ids: list[str] = []
+
+    for task in tasks:
+        if not isinstance(task, dict):
+            continue
+        status = task.get("status", "todo")
+        if status in ("done", "closed"):
+            continue
+
+        tid = task.get("id", "?")
+        title = task.get("title", "")
+        file_rel = task.get("file", "")
+        action = task.get("action", "")
+        labels = task.get("labels") or []
+
+        verdict = "ok"
+        reason = ""
+
+        if file_rel:
+            abs_file = Path(project_path) / file_rel
+            if not abs_file.exists():
+                verdict = "stale_file_missing"
+                reason = f"File not found: {file_rel}"
+            elif (file_rel, action) in applied_pairs:
+                verdict = "stale_applied"
+                reason = f"action={action} already applied to {file_rel} (found in history.jsonl)"
+            elif action in ("reduce_complexity", "extract_functions", "split_module"):
+                threshold = _extract_cc_threshold(title, labels)
+                if threshold is not None:
+                    current_cc = _get_current_cc(abs_file)
+                    if current_cc is not None and current_cc < threshold:
+                        verdict = "stale_fixed"
+                        reason = f"CC now {current_cc} (was ~{threshold} when ticket created)"
+                    elif current_cc is not None:
+                        reason = f"CC still {current_cc} (threshold {threshold})"
+        else:
+            reason = "no file reference"
+
+        results.append({
+            "id": tid,
+            "title": title,
+            "file": file_rel,
+            "action": action,
+            "verdict": verdict,
+            "reason": reason,
+        })
+        if verdict.startswith("stale"):
+            stale_ids.append(tid)
+
+    if as_json:
+        click.echo(_json.dumps({"project": str(project_path), "tasks_checked": len(results), "results": results}, indent=2, ensure_ascii=False))
+        return
+
+    ok_count = sum(1 for r in results if r["verdict"] == "ok")
+    stale_count = len(results) - ok_count
+
+    click.echo(f"Project:  {project_path}")
+    click.echo(f"Checked:  {len(results)} open tasks  |  OK: {ok_count}  |  Stale: {stale_count}")
+    click.echo()
+
+    verdict_color = {
+        "ok": "green",
+        "stale_file_missing": "red",
+        "stale_applied": "cyan",
+        "stale_fixed": "yellow",
+    }
+    for r in results:
+        color = verdict_color.get(r["verdict"], "white")
+        verdict_label = r["verdict"].upper()
+        click.echo(
+            click.style(f"[{verdict_label:20}]", fg=color, bold=True) +
+            f" [{r['id']:6}] {r['title'][:60]}"
+        )
+        if r["reason"]:
+            click.echo(f"               → {r['reason']}")
+
+    if stale_count and fix:
+        click.echo()
+        # Patch the planfile data
+        task_list = data.get("tasks") or (data.get("spec") or {}).get("tasks") or []
+        patched = 0
+        for task in task_list:
+            if not isinstance(task, dict):
+                continue
+            if task.get("id") in stale_ids:
+                task["status"] = "stale"
+                patched += 1
+        planfile.write_text(
+            yaml.safe_dump(data, sort_keys=False, allow_unicode=True, default_flow_style=False),
+            encoding="utf-8",
+        )
+        click.echo(click.style(f"✓ Marked {patched} ticket(s) as 'stale' in planfile.yaml", fg="yellow"))
+    elif stale_count and not fix:
+        click.echo()
+        click.echo(f"Tip: run with --fix to auto-mark {stale_count} stale ticket(s).")
+
+
 def register(cli_group: "click.Group") -> None:
     cli_group.add_command(planfile_group)
     cli_group.add_command(auth_group)

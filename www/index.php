@@ -28,7 +28,7 @@ function env(string $key, string $default = ''): string {
 // ---- i18n ----
 $i18n = require __DIR__ . '/lib/i18n.php';
 $t = $i18n['t'];
-$lang = $i18n['lang'];
+$lang = $i18n['lang']();
 $getLangUrls = $i18n['getLangUrls'];
 $getLangName = $i18n['getLangName'];
 $formatPrice = $i18n['formatPrice'];
@@ -523,7 +523,7 @@ $issue = date('Y.m');
                 <div class="step-num">III</div>
                 <div class="step-body">
                     <h4><?=h($t('process.step3_title'))?></h4>
-                    <p>Jeden mail: „zrób 1, 3, 7" albo „wszystko pod 50 zł". Decyzja należy do ciebie.</p>
+                    <p><?=h(sprintf($t('process.step3_desc'), $formatPrice(50.0)))?></p>
                 </div>
             </li>
             <li>
@@ -561,7 +561,7 @@ $issue = date('Y.m');
                     <div class="price-label"><?=h($t('pricing.ticket_found'))?></div>
                     <div class="price-value">
                         <span class="amount"><?=h($getPricing('ticket_found', false))?></span>
-                        <span class="currency"><?=h($getCurrencyConfig()['symbol'])?></span>
+                        <span class="currency"><?=h($i18n->getCurrencyConfig()['symbol'])?></span>
                     </div>
                     <div class="price-unit"><?=h($t('pricing.ticket_found_unit'))?></div>
                 </div>
@@ -589,7 +589,7 @@ $issue = date('Y.m');
                     <div class="price-label"><?=h($t('pricing.ticket_yours'))?></div>
                     <div class="price-value">
                         <span class="amount"><?=h($getPricing('ticket_yours', false))?></span>
-                        <span class="currency"><?=h($getCurrencyConfig()['symbol'])?></span>
+                        <span class="currency"><?=h($i18n->getCurrencyConfig()['symbol'])?></span>
                     </div>
                     <div class="price-unit"><?=h($t('pricing.ticket_yours_unit'))?></div>
                 </div>

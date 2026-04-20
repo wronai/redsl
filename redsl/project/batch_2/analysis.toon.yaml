@@ -1,28 +1,29 @@
-# code2llm | 231f 35806L | python:231 | 2026-04-20
-# CC̄=3.9 | critical:7/1467 | dups:0 | cycles:0
+# code2llm | 231f 36003L | python:231 | 2026-04-20
+# CC̄=3.9 | critical:8/1470 | dups:0 | cycles:0
 
-HEALTH[7]:
+HEALTH[8]:
   🟡 CC    events_show CC=25 (limit:15)
   🟡 CC    events_summary CC=21 (limit:15)
   🟡 CC    events_cycles CC=20 (limit:15)
+  🟡 CC    planfile_validate CC=44 (limit:15)
   🟡 CC    add_decision_tasks CC=16 (limit:15)
   🟡 CC    _detect_from_scripts CC=16 (limit:15)
   🟡 CC    _run_deploy_phase CC=21 (limit:15)
   🟡 CC    run_cycle CC=18 (limit:15)
 
 REFACTOR[1]:
-  1. split 7 high-CC methods  (CC>15)
+  1. split 8 high-CC methods  (CC>15)
 
-PIPELINES[673]:
-  [1] Src [render_markdown]: render_markdown → _group_results_by_tier
+PIPELINES[674]:
+  [1] Src [__init__]: __init__
       PURITY: 100% pure
-  [2] Src [__init__]: __init__
+  [2] Src [run]: run
       PURITY: 100% pure
-  [3] Src [run]: run
+  [3] Src [_inner_thought]: _inner_thought → get_memory_stats
       PURITY: 100% pure
-  [4] Src [_inner_thought]: _inner_thought → get_memory_stats
+  [4] Src [_self_assessment]: _self_assessment
       PURITY: 100% pure
-  [5] Src [_self_assessment]: _self_assessment
+  [5] Src [_profile_performance]: _profile_performance → profile_refactor_cycle → _parse_metrun_output
       PURITY: 100% pure
 
 LAYERS:
@@ -48,12 +49,12 @@ LAYERS:
   │ base                        89L  1C    2m  CC=6      ←2
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │
-  analyzers/                      CC̄=4.4    ←in:40  →out:2
+  analyzers/                      CC̄=4.4    ←in:41  →out:2
   │ sumd_bridge                417L  2C   13m  CC=11     ←0
   │ radon_analyzer             394L  1C   23m  CC=10     ←1
   │ project_parser             300L  1C   18m  CC=12     ←0
   │ toon_analyzer              296L  1C   13m  CC=14     ←0
-  │ incremental                291L  2C   17m  CC=8      ←28
+  │ incremental                291L  2C   17m  CC=8      ←29
   │ python_analyzer            273L  1C    8m  CC=12     ←3
   │ semantic_chunker           270L  2C   11m  CC=11     ←0
   │ redup_bridge               246L  1C    7m  CC=9      ←1
@@ -85,10 +86,10 @@ LAYERS:
   │ _base                       15L  1C    1m  CC=1      ←0
   │
   validation/                     CC̄=4.2    ←in:13  →out:5
-  │ regix_bridge               313L  1C    8m  CC=9      ←2
+  │ regix_bridge               313L  1C    8m  CC=9      ←1
   │ vallm_bridge               306L  1C    7m  CC=10     ←1
   │ testql_bridge              299L  2C   10m  CC=12     ←0
-  │ pyqual_bridge              286L  0C   13m  CC=11     ←1
+  │ pyqual_bridge              286L  0C   13m  CC=11     ←2
   │ sandbox                    210L  3C    9m  CC=11     ←0
   │ __init__                    30L  0C    0m  CC=0.0    ←0
   │
@@ -188,6 +189,25 @@ LAYERS:
   │ proposals                  103L  5C    4m  CC=3      ←1
   │ secrets                     53L  2C    2m  CC=4      ←0
   │
+  cli/                            CC̄=3.9    ←in:4  →out:32  !! split
+  │ !! planfile                   730L  0C   30m  CC=44     ←0
+  │ models                     435L  0C   14m  CC=12     ←1
+  │ config                     410L  0C   13m  CC=7      ←1
+  │ refactor                   377L  0C   14m  CC=6      ←1
+  │ !! events                     195L  0C    6m  CC=25     ←0
+  │ model_policy               190L  0C    6m  CC=11     ←1
+  │ workflow                   165L  0C    5m  CC=9      ←0
+  │ llm_banner                 140L  0C    5m  CC=8      ←5
+  │ batch                      121L  0C    6m  CC=3      ←1
+  │ examples                   118L  0C   14m  CC=4      ←1
+  │ __init__                    99L  0C    4m  CC=1      ←0
+  │ debug                       60L  0C    5m  CC=3      ←1
+  │ logging                     48L  0C    1m  CC=6      ←3
+  │ utils                       47L  0C    2m  CC=3      ←0
+  │ scan                        41L  0C    2m  CC=6      ←0
+  │ pyqual                      38L  0C    4m  CC=1      ←1
+  │ __main__                     1L  0C    0m  CC=0.0    ←0
+  │
   llm/                            CC̄=3.7    ←in:13  →out:3
   │ __init__                   382L  2C   14m  CC=8      ←5
   │ base                       336L  6C   13m  CC=14     ←0
@@ -205,25 +225,6 @@ LAYERS:
   │ __init__                    39L  0C    0m  CC=0.0    ←0
   │ __init__                    23L  0C    0m  CC=0.0    ←0
   │ __init__                    19L  0C    0m  CC=0.0    ←0
-  │
-  cli/                            CC̄=3.6    ←in:4  →out:31  !! split
-  │ !! planfile                   533L  0C   27m  CC=8      ←0
-  │ models                     435L  0C   14m  CC=12     ←1
-  │ config                     410L  0C   13m  CC=7      ←1
-  │ refactor                   377L  0C   14m  CC=6      ←1
-  │ !! events                     195L  0C    6m  CC=25     ←0
-  │ model_policy               190L  0C    6m  CC=11     ←1
-  │ workflow                   165L  0C    5m  CC=9      ←0
-  │ llm_banner                 140L  0C    5m  CC=8      ←5
-  │ batch                      121L  0C    6m  CC=3      ←1
-  │ examples                   118L  0C   14m  CC=4      ←1
-  │ __init__                    99L  0C    4m  CC=1      ←0
-  │ debug                       60L  0C    5m  CC=3      ←1
-  │ logging                     48L  0C    1m  CC=6      ←3
-  │ utils                       47L  0C    2m  CC=3      ←0
-  │ scan                        41L  0C    2m  CC=6      ←0
-  │ pyqual                      38L  0C    4m  CC=1      ←1
-  │ __main__                     1L  0C    0m  CC=0.0    ←0
   │
   awareness/                      CC̄=3.4    ←in:0  →out:1
   │ __init__                   325L  2C   16m  CC=10     ←0
@@ -309,10 +310,10 @@ LAYERS:
 COUPLING:
                                       commands              analyzers               autonomy              execution                    cli                 config             validation                    api       commands.autofix                    llm  commands.batch_pyqual   commands.autonomy_pr             formatters              refactors        config_standard
                commands                     ──                      4                      8                      2                      4                      2                                                                   ←4                                            ←1                     11                      2                      1                         hub
-              analyzers                     ←4                     ──                     ←8                     ←6                     ←2                                            ←1                                                                   ←2                                                                                          ←5                     ←1  hub
+              analyzers                     ←4                     ──                     ←8                     ←6                     ←3                                            ←1                                                                   ←2                                                                                          ←5                     ←1  hub
                autonomy                      3                      8                     ──                      3                     ←1                      6                                                                    4                                            ←2                     ←1                                                                       hub
               execution                     ←2                      6                     ←3                     ──                     ←7                                             3                     ←3                     ←1                      6                                                                                           1                         hub
-                    cli                      1                      2                      1                      7                     ──                      3                                                                                           5                                                                    4                                             4  !! fan-out
+                    cli                      1                      3                      1                      7                     ──                      3                                                                                           5                                                                    4                                             4  !! fan-out
                  config                     ←2                                            ←6                                            ←3                     ──                     ←1                     ←4                                                                                                                                                                1  hub
              validation                                             1                                            ←3                                             1                     ──                                            ←1                                            ←6                                                                   ←3                         hub
                     api                                                                                           3                                             4                                            ──                                                                                                                  6                                             1  !! fan-out
@@ -324,25 +325,25 @@ COUPLING:
               refactors                     ←1                      5                                            ←1                                                                    3                                                                                                                                                               ──                         !! fan-out
         config_standard                                             1                                                                   ←4                      1                                            ←1                                                                                                                                                               ──  hub
   CYCLES: none
-  HUB: autonomy/ (fan-in=14)
   HUB: execution/ (fan-in=21)
-  HUB: commands.autofix/ (fan-in=7)
-  HUB: config/ (fan-in=21)
-  HUB: commands.autonomy_pr/ (fan-in=11)
-  HUB: config_standard/ (fan-in=6)
-  HUB: commands/ (fan-in=9)
   HUB: validation/ (fan-in=13)
-  HUB: llm/ (fan-in=13)
-  HUB: analyzers/ (fan-in=40)
+  HUB: commands.autofix/ (fan-in=7)
+  HUB: commands.autonomy_pr/ (fan-in=11)
   HUB: formatters/ (fan-in=12)
-  SMELL: autonomy/ fan-out=24 → split needed
+  HUB: llm/ (fan-in=13)
+  HUB: autonomy/ (fan-in=14)
+  HUB: config_standard/ (fan-in=6)
+  HUB: analyzers/ (fan-in=41)
+  HUB: commands/ (fan-in=9)
+  HUB: config/ (fan-in=21)
   SMELL: execution/ fan-out=16 → split needed
-  SMELL: api/ fan-out=17 → split needed
   SMELL: commands.autofix/ fan-out=10 → split needed
+  SMELL: autonomy/ fan-out=24 → split needed
   SMELL: refactors/ fan-out=8 → split needed
+  SMELL: api/ fan-out=17 → split needed
   SMELL: commands/ fan-out=36 → split needed
+  SMELL: cli/ fan-out=32 → split needed
   SMELL: commands.batch_pyqual/ fan-out=12 → split needed
-  SMELL: cli/ fan-out=31 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon
