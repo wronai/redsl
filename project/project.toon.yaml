@@ -1,58 +1,51 @@
-# redsl | 1329 func | 192f | 42049L | python | 2026-04-19
+# redsl | 1721 func | 223f | 60657L | python | 2026-04-20
 
 HEALTH:
-  CC̄=3.8  critical=69 (limit:10)  dup=3  cycles=0
+  CC̄=3.9  critical=97 (limit:10)  dup=3  cycles=0
 
 ALERTS[20]:
-  !!! high_fan_out     generate_planfile = 35 (limit:10)
-  !!! cc_exceeded      generate_planfile = 32 (limit:15)
+  !!! cc_exceeded      PHPMailer.preSend = 40 (limit:15)
+  !!! cc_exceeded      PHPMailer.createBody = 38 (limit:15)
+  !!! high_fan_out     PHPMailer.preSend = 38 (limit:10)
+  !!! cc_exceeded      PHPMailer.validateAddress = 37 (limit:15)
+  !!! cc_exceeded      PHPMailer.smtpConnect = 35 (limit:15)
+  !!! high_fan_out     PHPMailer.smtpConnect = 29 (limit:10)
+  !!! high_fan_out     PHPMailer.createBody = 28 (limit:10)
+  !!! high_fan_out     PHPMailer.msgHTML = 28 (limit:10)
+  !!! cc_exceeded      InstalledVersions.getInstalled = 26 (limit:15)
   !!! cc_exceeded      process_data = 25 (limit:15)
-  !!! cc_exceeded      process_data_copy = 25 (limit:15)
-  !!! high_fan_out     _handle_propose_changes = 22 (limit:10)
-  !!! high_fan_out     ConfigApplier.apply = 22 (limit:10)
-  !!! high_fan_out     _register_refactor_endpoints = 21 (limit:10)
-  !!! high_fan_out     refactor_plan_to_tasks = 20 (limit:10)
-  !!! high_fan_out     planfile_show = 20 (limit:10)
-  !!! high_fan_out     RegistryAggregator._load_stale_cache = 20 (limit:10)
 
-MODULES[227] (top by size):
-  M[redsl/commands/sumr_planfile.py] 510L C:3 F:6 CC↑32 D:1 (python)
-  M[redsl/llm/selection.py] 508L C:6 F:27 CC↑9 D:1 (python)
-  M[redsl/cli/models.py] 422L C:0 F:11 CC↑16 D:1 (python)
-  M[redsl/analyzers/sumd_bridge.py] 412L C:2 F:13 CC↑11 D:0 (python)
+MODULES[327] (top by size):
+  M[www/vendor/phpmailer/phpmailer/src/PHPMailer.php] 5362L C:1 F:124 CC↑40 D:0 (php)
+  M[www/vendor/phpmailer/phpmailer/src/SMTP.php] 1547L C:1 F:42 CC↑24 D:0 (php)
+  M[www/index.php] 665L C:0 F:7 CC↑5 D:0 (php)
+  M[www/vendor/composer/ClassLoader.php] 579L C:1 F:24 CC↑13 D:25 (php)
+  M[www/nda-form.php] 544L C:0 F:3 CC↑11 D:0 (php)
+  M[redsl/cli/planfile.py] 533L C:0 F:27 CC↑8 D:0 (python)
+  M[www/config-editor.php] 507L C:0 F:4 CC↑4 D:0 (php)
+  M[www/vendor/phpmailer/phpmailer/src/POP3.php] 469L C:1 F:11 CC↑6 D:0 (php)
+  M[redsl/cli/models.py] 435L C:0 F:14 CC↑12 D:1 (python)
+  M[redsl/analyzers/sumd_bridge.py] 417L C:2 F:13 CC↑11 D:0 (python)
   M[redsl/cli/config.py] 410L C:0 F:13 CC↑7 D:1 (python)
+  M[redsl/execution/decision.py] 405L C:0 F:9 CC↑8 D:6 (python)
   M[redsl/analyzers/radon_analyzer.py] 394L C:1 F:23 CC↑10 D:1 (python)
   M[redsl/commands/batch_pyqual/pipeline.py] 390L C:1 F:14 CC↑10 D:1 (python)
-  M[redsl/execution/decision.py] 389L C:0 F:9 CC↑8 D:6 (python)
-  M[redsl/config_standard/nlp_handlers.py] 358L C:1 F:10 CC↑12 D:0 (python)
-  M[redsl/commands/cli_autonomy.py] 356L C:0 F:20 CC↑6 D:0 (python)
-  M[redsl/llm/__init__.py] 349L C:2 F:12 CC↑8 D:5 (python)
-  M[redsl/refactors/engine.py] 336L C:1 F:9 CC↑12 D:0 (python)
-  M[redsl/llm/registry/sources/base.py] 335L C:6 F:13 CC↑14 D:0 (python)
-  M[redsl/commands/batch_pyqual/reporting.py] 332L C:0 F:25 CC↑12 D:1 (python)
-  M[redsl/formatters/cycle.py] 328L C:0 F:12 CC↑23 D:1 (python)
-  LANGS: python:225/shell:2
+  M[www/propozycje.php] 383L C:0 F:2 CC↑3 D:0 (php)
+  LANGS: python:239/php:85/shell:2/javascript:1
 
 HOTSPOTS[10]:
-  ★ generate_planfile fan=35  // Generate or update planfile.yaml for *project_path* from SUMR.md.
+  ★ PHPMailer.preSend fan=38  // Orchestrates 38 calls
+  ★ PHPMailer.smtpConnect fan=29  // Orchestrates 29 calls
+  ★ PHPMailer.createBody fan=28  // Orchestrates 28 calls
+  ★ PHPMailer.msgHTML fan=28  // Orchestrates 28 calls
+  ★ PHPMailer.DKIM_Add fan=23  // Orchestrates 23 calls
 
-Parameters
---
-  ★ _handle_propose_changes fan=22  // Validate and package a ConfigChangeProposal.
-
-The proposal is *not* applied here
-  ★ ConfigApplier.apply fan=22  // Orchestrates 22 calls
-  ★ _register_refactor_endpoints fan=21  // Register /refactor, /cycle, /rules, /memory/stats, /history/clear, /ws/refactor.
-  ★ refactor_plan_to_tasks fan=20  // Convert a redsl ``refactor_plan.yaml`` to PlanTask list.
-
-The format is a multi-
-
-REFACTOR[12]:
-  [1] H/L Split process_data (CC=25)
-  [2] H/L Split process_data_copy (CC=25)
-  [3] H/L Split generate_planfile (CC=32)
-  [4] H/H Split god module redsl/commands/sumr_planfile.py (510L, 3 classes)
-  [5] H/H Split god module redsl/llm/selection.py (508L, 6 classes)
+REFACTOR[15]:
+  [1] H/L Split InstalledVersions.getInstalled (CC=26)
+  [2] H/L Split process_data (CC=25)
+  [3] H/L Split process_data_copy (CC=25)
+  [4] H/L Split PHPMailer.validateAddress (CC=37)
+  [5] H/L Split PHPMailer.preSend (CC=40)
 
 EVOLUTION:
-  2026-04-19 CC̄=3.8 crit=69 42049L // Automated analysis
+  2026-04-20 CC̄=3.9 crit=97 60657L // Automated analysis

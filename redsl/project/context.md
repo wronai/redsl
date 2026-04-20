@@ -6,7 +6,7 @@
 - **Primary Language**: python
 - **Languages**: python: 276
 - **Analysis Mode**: static
-- **Total Functions**: 1407
+- **Total Functions**: 1408
 - **Total Classes**: 201
 - **Modules**: 276
 - **Entry Points**: 0
@@ -26,14 +26,14 @@
 - **Classes**: 1
 - **File**: `git_timeline.py`
 
-### root.main
-- **Functions**: 23
-- **File**: `main.py`
-
 ### analyzers.radon_analyzer
 - **Functions**: 23
 - **Classes**: 1
 - **File**: `radon_analyzer.py`
+
+### root.main
+- **Functions**: 23
+- **File**: `main.py`
 
 ### batch_1.main
 - **Functions**: 23
@@ -90,15 +90,15 @@
 - **Classes**: 2
 - **File**: `incremental.py`
 
-### commands.plan_sync
-- **Functions**: 16
-- **Classes**: 2
-- **File**: `plan_sync.py`
-
 ### root.history
 - **Functions**: 16
 - **Classes**: 3
 - **File**: `history.py`
+
+### commands.plan_sync
+- **Functions**: 16
+- **Classes**: 2
+- **File**: `plan_sync.py`
 
 ### autonomy.scheduler
 - **Functions**: 16
@@ -240,9 +240,32 @@ Key functions that process and transform data:
 > Process lines to remove guard blocks and fix excess indentation.
 - **Output to**: len, None.rstrip, _GUARD_RE.match, new_lines.append, commands._guard_fixers._handle_guard
 
-### commands.hybrid._process_single_project
-> Process a single project and return results.
-- **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
+### commands.doctor_fstring_fixers._write_if_parses
+- **Output to**: path.write_text, ast.parse
+
+### history.HistoryReader._format_event_header
+> Format event header line with timestamp, type, target and action.
+- **Output to**: ev.get, ev.get, ev.get, ev.get
+
+### history.HistoryReader._format_event_details
+> Format event details (thought, reflection, outcome, reason).
+- **Output to**: ev.get, ev.get, ev.get, ev.get, details.append
+
+### commands.github_source._parse_next_link
+> Parse GitHub Link header to find next page URL.
+- **Output to**: link_header.split, part.strip, None.strip, url_part.startswith, url_part.endswith
+
+### commands.cli_doctor._format_check_report
+> Format doctor check report as text.
+- **Output to**: None.join, lines.append, lines.append, lines.append
+
+### commands.cli_doctor._format_heal_report
+> Format doctor heal report as text.
+- **Output to**: lines.append, None.join, lines.append, lines.append, lines.append
+
+### commands.cli_doctor._format_batch_report
+> Format doctor batch report as text.
+- **Output to**: lines.append, None.join, len, len, len
 
 ### commands.cli_autonomy._format_gate_details
 > Format quality gate details as text.
@@ -264,22 +287,6 @@ Key functions that process and transform data:
 > Format growth check result as text.
 - **Output to**: None.join, lines.append, lines.append, lines.append, lines.append
 
-### commands.github_source._parse_next_link
-> Parse GitHub Link header to find next page URL.
-- **Output to**: link_header.split, part.strip, None.strip, url_part.startswith, url_part.endswith
-
-### commands.cli_doctor._format_check_report
-> Format doctor check report as text.
-- **Output to**: None.join, lines.append, lines.append, lines.append
-
-### commands.cli_doctor._format_heal_report
-> Format doctor heal report as text.
-- **Output to**: lines.append, None.join, lines.append, lines.append, lines.append
-
-### commands.cli_doctor._format_batch_report
-> Format doctor batch report as text.
-- **Output to**: lines.append, None.join, len, len, len
-
 ### commands._indent_fixers._process_def_block
 > Handle a def/class/try block: fix body indent or strip excess indent.
 - **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
@@ -288,9 +295,17 @@ Key functions that process and transform data:
 > Process a single project in the batch.
 - **Output to**: print, print, print, commands.batch.measure_todo_reduction, print
 
+### commands.batch_pyqual.runner._format_project_status
+> Format project result status into readable parts.
+- **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
+
 ### commands.autofix.runner._format_project_status
 > Format brief status line for a project result.
 - **Output to**: None.join, status_parts.append, status_parts.append, status_parts.append, status_parts.append
+
+### commands.hybrid._process_single_project
+> Process a single project and return results.
+- **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
 
 ### commands.batch_pyqual.reporting._format_summary_verdicts
 > Format verdict and project count lines.
@@ -307,10 +322,6 @@ Key functions that process and transform data:
 ### commands.batch_pyqual.reporting._format_project_row
 > Format a single project row for the details table.
 
-### commands.batch_pyqual.runner._format_project_status
-> Format project result status into readable parts.
-- **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
-
 ### commands.sumr_planfile.parsers.parse_sumr
 > Parse a SUMR.md file and extract refactoring-relevant data.
 - **Output to**: path.read_text, _METADATA_NAME_RE.search, _METADATA_VERSION_RE.search, _REFACTOR_SECTION_RE.search, sorted
@@ -321,21 +332,9 @@ Key functions that process and transform data:
 The format is a multi-document YAML (``---`` 
 - **Output to**: list, yaml.safe_load_all, doc.get, doc.get, isinstance
 
-### commands.sumr_planfile.extractors._parse_priority
-> Parse priority from raw task data.
-- **Output to**: raw.get, int
-
 ### commands.autofix.pipeline._process_project
 > Full autofix pipeline for a single project.
 - **Output to**: ProjectFixResult, commands.autofix.pipeline._stage_collect_metrics, commands.autofix.pipeline._stage_ensure_todo, commands.autofix.pipeline._stage_apply_fixes, commands.autofix.pipeline._stage_quality_gate_check
-
-### commands.pyqual.mypy_analyzer.MypyAnalyzer._parse_mypy_line
-> Parsuj jedną linię wyjścia mypy.
-- **Output to**: line.split, line.strip, len, int, None.strip
-
-### commands.pyqual._format_pyqual_issues
-> Format pyqual issues section.
-- **Output to**: summary.get, summary.get, summary.get, summary.get, summary.get
 
 ## Public API Surface
 
@@ -354,8 +353,8 @@ Functions exposed as public API (no underscore prefix):
 - `cli.planfile.source_add` - 28 calls
 - `refactors.engine.RefactorEngine.generate_proposal` - 28 calls
 - `examples.full_pipeline.run_full_pipeline_example` - 27 calls
-- `examples.api_integration.run_api_integration_example` - 26 calls
 - `config_standard.applier.ConfigApplier.apply` - 26 calls
+- `examples.api_integration.run_api_integration_example` - 26 calls
 - `commands.pyqual.run_pyqual_fix` - 24 calls
 - `cli.config.config_diff` - 24 calls
 - `cli.llm_banner.print_llm_banner` - 23 calls
@@ -366,17 +365,17 @@ Functions exposed as public API (no underscore prefix):
 - `commands.sumr_planfile.parsers.parse_sumr` - 20 calls
 - `cli.config.config_rollback` - 20 calls
 - `cli.model_policy.check_model` - 20 calls
-- `awareness.AwarenessManager.build_snapshot` - 20 calls
 - `awareness.health_model.HealthModel.assess` - 20 calls
+- `awareness.AwarenessManager.build_snapshot` - 20 calls
 - `validation.vallm_bridge.validate_proposal` - 20 calls
 - `commands.github_source.resolve_auth_ref` - 19 calls
 - `config_standard.store.ConfigStore.clone_from` - 19 calls
 - `autonomy.metrics.collect_autonomy_metrics` - 19 calls
+- `formatters.batch.format_batch_results` - 19 calls
+- `formatters.batch.format_batch_report_markdown` - 19 calls
 - `cli.config.config_validate` - 19 calls
 - `cli.batch.batch_pyqual_run` - 19 calls
 - `cli.models.show_coding_config` - 19 calls
-- `formatters.batch.format_batch_results` - 19 calls
-- `formatters.batch.format_batch_report_markdown` - 19 calls
 - `refactors.body_restorer.repair_file` - 19 calls
 - `analyzers.redup_bridge.scan_duplicates` - 19 calls
 - `analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content` - 19 calls

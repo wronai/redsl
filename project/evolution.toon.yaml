@@ -1,44 +1,55 @@
-# code2llm/evolution | 1255 func | 169f | 2026-04-19
+# code2llm/evolution | 1647 func | 200f | 2026-04-20
 
-NEXT[7] (ranked by impact):
-  [1] !! SPLIT           redsl/commands/sumr_planfile.py
-      WHY: 510L, 3 classes, max CC=32
-      EFFORT: ~4h  IMPACT: 16320
+NEXT[10] (ranked by impact):
+  [1] !! SPLIT           redsl/cli/planfile.py
+      WHY: 533L, 0 classes, max CC=8
+      EFFORT: ~4h  IMPACT: 4264
 
-  [2] !! SPLIT           redsl/llm/selection.py
-      WHY: 508L, 6 classes, max CC=9
-      EFFORT: ~4h  IMPACT: 4572
+  [2] !! SPLIT-FUNC      PHPMailer.preSend  CC=40  fan=38
+      WHY: CC=40 exceeds 15
+      EFFORT: ~1h  IMPACT: 1520
 
-  [3] !! SPLIT-FUNC      generate_planfile  CC=32  fan=35
-      WHY: CC=32 exceeds 15
-      EFFORT: ~1h  IMPACT: 1120
+  [3] !! SPLIT-FUNC      PHPMailer.createBody  CC=38  fan=28
+      WHY: CC=38 exceeds 15
+      EFFORT: ~1h  IMPACT: 1064
 
-  [4] !  SPLIT-FUNC      format_cycle_report_toon  CC=23  fan=15
-      WHY: CC=23 exceeds 15
-      EFFORT: ~1h  IMPACT: 345
+  [4] !! SPLIT-FUNC      PHPMailer.smtpConnect  CC=35  fan=29
+      WHY: CC=35 exceeds 15
+      EFFORT: ~1h  IMPACT: 1015
 
-  [5] !  SPLIT-FUNC      refactor_plan_to_tasks  CC=17  fan=20
-      WHY: CC=17 exceeds 15
-      EFFORT: ~1h  IMPACT: 340
-
-  [6] !  SPLIT-FUNC      planfile_sync  CC=20  fan=16
+  [5] !  SPLIT-FUNC      PHPMailer.msgHTML  CC=20  fan=28
       WHY: CC=20 exceeds 15
-      EFFORT: ~1h  IMPACT: 320
+      EFFORT: ~1h  IMPACT: 560
 
-  [7] !  SPLIT-FUNC      pick_coding  CC=16  fan=15
+  [6] !  SPLIT-FUNC      SMTP.get_lines  CC=17  fan=22
+      WHY: CC=17 exceeds 15
+      EFFORT: ~1h  IMPACT: 374
+
+  [7] !  SPLIT-FUNC      PHPMailer.DKIM_Add  CC=16  fan=23
       WHY: CC=16 exceeds 15
-      EFFORT: ~1h  IMPACT: 240
+      EFFORT: ~1h  IMPACT: 368
+
+  [8] !  SPLIT-FUNC      SMTP.authenticate  CC=24  fan=15
+      WHY: CC=24 exceeds 15
+      EFFORT: ~1h  IMPACT: 360
+
+  [9] !  SPLIT-FUNC      PHPMailer.encodeHeader  CC=18  fan=18
+      WHY: CC=18 exceeds 15
+      EFFORT: ~1h  IMPACT: 324
+
+  [10] !! SPLIT-FUNC      PHPMailer.validateAddress  CC=37  fan=8
+      WHY: CC=37 exceeds 15
+      EFFORT: ~1h  IMPACT: 296
 
 
-RISKS[2]:
-  ⚠ Splitting redsl/commands/sumr_planfile.py may break 6 import paths
-  ⚠ Splitting redsl/llm/selection.py may break 27 import paths
+RISKS[1]:
+  ⚠ Splitting redsl/cli/planfile.py may break 27 import paths
 
 METRICS-TARGET:
   CC̄:          3.9 → ≤2.7
-  max-CC:      32 → ≤16
-  god-modules: 2 → 0
-  high-CC(≥15): 7 → ≤3
+  max-CC:      40 → ≤20
+  god-modules: 1 → 0
+  high-CC(≥15): 21 → ≤10
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -66,4 +77,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  (first run — no previous data)
+  prev CC̄=3.9 → now CC̄=3.9

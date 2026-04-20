@@ -1,0 +1,1657 @@
+flowchart TD
+    subgraph M___goal
+        N___goal__pre_commit_hook__main["main"]
+    end
+    subgraph examples__01_basic_analysis
+        examples__01_basic_analysis__main__main["main"]
+    end
+    subgraph examples__02_custom_rules
+        examples__02_custom_rules__main__main["main"]
+    end
+    subgraph examples__03_full_pipeline
+        examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service__process_order["process_order"]
+        examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service___validate_order_and_user["_validate_order_and_user"]
+        examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service___is_order_terminal["_is_order_terminal"]
+        examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service___calculate_order_total["_calculate_order_total"]
+        examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service___process_physical_item["_process_physical_item"]
+        examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service___finalize_order["_finalize_order"]
+        examples__03_full_pipeline__main__main["main"]
+    end
+    subgraph examples__04_memory_learning
+        examples__04_memory_learning__main__main["main"]
+    end
+    subgraph examples__05_api_integration
+        examples__05_api_integration__main__main["main"]
+    end
+    subgraph examples__06_awareness
+        examples__06_awareness__main__main["main"]
+    end
+    subgraph examples__07_pyqual
+        examples__07_pyqual__main__main["main"]
+    end
+    subgraph examples__08_audit
+        examples__08_audit__main__main["main"]
+    end
+    subgraph examples__09_pr_bot
+        examples__09_pr_bot__main__main["main"]
+    end
+    subgraph examples__10_badge
+        examples__10_badge__main__main["main"]
+    end
+    subgraph examples__11_model_policy
+        examples__11_model_policy__main__demo_policy_check["demo_policy_check"]
+        examples__11_model_policy__main__demo_list_allowed["demo_list_allowed"]
+        examples__11_model_policy__main__demo_safe_completion["demo_safe_completion"]
+        examples__11_model_policy__main__demo_strict_mode["demo_strict_mode"]
+        examples__11_model_policy__main__main["main"]
+    end
+    subgraph redsl__analyzers
+        redsl__analyzers__incremental__get_changed_files["get_changed_files"]
+        redsl__analyzers__incremental__get_staged_files["get_staged_files"]
+        redsl__analyzers__incremental___file_hash["_file_hash"]
+        redsl__analyzers__incremental__EvolutionaryCache____init__["__init__"]
+        redsl__analyzers__incremental__EvolutionaryCache___load["_load"]
+        redsl__analyzers__incremental__EvolutionaryCache__save["save"]
+        redsl__analyzers__incremental__EvolutionaryCache__get["get"]
+        redsl__analyzers__incremental__EvolutionaryCache__set["set"]
+        redsl__analyzers__incremental__EvolutionaryCache__invalidate["invalidate"]
+        redsl__analyzers__incremental__EvolutionaryCache__clear["clear"]
+        redsl__analyzers__incremental__IncrementalAnalyzer____init__["__init__"]
+        redsl__analyzers__incremental__IncrementalAnalyzer__analyze_changed["analyze_changed"]
+        redsl__analyzers__incremental__IncrementalAnalyzer___analyze_subset("_analyze_subset CC=8")
+        redsl__analyzers__incremental__IncrementalAnalyzer___collect_cached_metrics["_collect_cached_metrics"]
+        redsl__analyzers__incremental__IncrementalAnalyzer___calculate_result_stats("_calculate_result_stats CC=8")
+        redsl__analyzers__incremental__IncrementalAnalyzer___merge_with_cache["_merge_with_cache"]
+        redsl__analyzers__incremental__IncrementalAnalyzer___populate_cache["_populate_cache"]
+        redsl__analyzers__analyzer__CodeAnalyzer____init__["__init__"]
+        redsl__analyzers__analyzer__CodeAnalyzer__analyze_project["analyze_project"]
+        redsl__analyzers__analyzer__CodeAnalyzer__analyze_from_toon_content["analyze_from_toon_content"]
+        redsl__analyzers__analyzer__CodeAnalyzer__resolve_file_path["resolve_file_path"]
+        redsl__analyzers__analyzer__CodeAnalyzer__extract_function_source["extract_function_source"]
+        redsl__analyzers__analyzer__CodeAnalyzer__find_worst_function["find_worst_function"]
+        redsl__analyzers__analyzer__CodeAnalyzer__resolve_metrics_paths["resolve_metrics_paths"]
+        redsl__analyzers__analyzer__CodeAnalyzer___ast_cyclomatic_complexity["_ast_cyclomatic_complexity"]
+        redsl__analyzers__python_analyzer__ast_max_nesting_depth["ast_max_nesting_depth"]
+        redsl__analyzers__python_analyzer__ast_cyclomatic_complexity["ast_cyclomatic_complexity"]
+        redsl__analyzers__python_analyzer__PythonAnalyzer__analyze_python_files("analyze_python_files CC=10")
+        redsl__analyzers__python_analyzer__PythonAnalyzer___discover_python_files["_discover_python_files"]
+        redsl__analyzers__python_analyzer__PythonAnalyzer___parse_single_file["_parse_single_file"]
+        redsl__analyzers__python_analyzer__PythonAnalyzer___scan_top_nodes("_scan_top_nodes CC=12")
+        redsl__analyzers__python_analyzer__PythonAnalyzer___accumulate_file_metrics["_accumulate_file_metrics"]
+        redsl__analyzers__python_analyzer__PythonAnalyzer__add_quality_metrics("add_quality_metrics CC=9")
+        redsl__analyzers__sumd_bridge__SumdAnalyzer____init__["__init__"]
+        redsl__analyzers__sumd_bridge__SumdAnalyzer__analyze("analyze CC=8")
+        redsl__analyzers__sumd_bridge__SumdAnalyzer__generate_map_toon("generate_map_toon CC=11")
+        redsl__analyzers__sumd_bridge__SumdAnalyzer___collect_modules("_collect_modules CC=9")
+        redsl__analyzers__sumd_bridge__SumdAnalyzer___detect_language["_detect_language"]
+        redsl__analyzers__sumd_bridge__SumdAnalyzer___analyze_py_file["_analyze_py_file"]
+        redsl__analyzers__sumd_bridge__SumdAnalyzer___extract_function_info["_extract_function_info"]
+        redsl__analyzers__sumd_bridge__SumdAnalyzer___extract_class_info["_extract_class_info"]
+        redsl__analyzers__sumd_bridge__SumdAnalyzer___calculate_cc["_calculate_cc"]
+        redsl__analyzers__sumd_bridge__SumdAnalyzer___identify_hotspots["_identify_hotspots"]
+        redsl__analyzers__sumd_bridge__SumdAnalyzer___generate_alerts["_generate_alerts"]
+        redsl__analyzers__sumd_bridge__analyze_with_sumd["analyze_with_sumd"]
+        redsl__analyzers__sumd_bridge___parse_map_metrics("_parse_map_metrics CC=8")
+        redsl__analyzers__redup_bridge__is_available["is_available"]
+        redsl__analyzers__redup_bridge__scan_duplicates["scan_duplicates"]
+        redsl__analyzers__redup_bridge__scan_as_toon["scan_as_toon"]
+        redsl__analyzers__redup_bridge___build_dup_index("_build_dup_index CC=9")
+        redsl__analyzers__redup_bridge__enrich_analysis["enrich_analysis"]
+        redsl__analyzers__redup_bridge__get_refactor_suggestions["get_refactor_suggestions"]
+        redsl__analyzers__redup_bridge___strip_progress_output["_strip_progress_output"]
+        redsl__analyzers__metrics__CodeMetrics__to_dsl_context["to_dsl_context"]
+        redsl__analyzers__metrics__AnalysisResult__to_dsl_contexts["to_dsl_contexts"]
+        redsl__analyzers__semantic_chunker__SemanticChunk__to_llm_prompt["to_llm_prompt"]
+        redsl__analyzers__semantic_chunker__SemanticChunker___locate_function_data["_locate_function_data"]
+        redsl__analyzers__semantic_chunker__SemanticChunker___gather_chunk_contexts["_gather_chunk_contexts"]
+        redsl__analyzers__semantic_chunker__SemanticChunker__chunk_function["chunk_function"]
+        redsl__analyzers__semantic_chunker__SemanticChunker___parse_source["_parse_source"]
+    end
+    subgraph redsl__api
+        redsl__api__health_routes___register_health_route["_register_health_route"]
+        redsl__api__pyqual_routes___register_pyqual_routes["_register_pyqual_routes"]
+        redsl__api___build_api_orchestrator["_build_api_orchestrator"]
+        redsl__api__create_app["create_app"]
+        redsl__api__webhook_routes___register_webhook_routes["_register_webhook_routes"]
+        redsl__api__refactor_routes___run_refactor_analysis["_run_refactor_analysis"]
+        redsl__api__refactor_routes___format_refactor_result["_format_refactor_result"]
+        redsl__api__refactor_routes___register_analysis_endpoints["_register_analysis_endpoints"]
+        redsl__api__refactor_routes___collect_modified_files["_collect_modified_files"]
+        redsl__api__refactor_routes___clear_project_history["_clear_project_history"]
+        redsl__api__refactor_routes___register_refactor_endpoints["_register_refactor_endpoints"]
+        redsl__api__refactor_routes___register_batch_routes["_register_batch_routes"]
+        redsl__api__refactor_routes___register_refactor_routes["_register_refactor_routes"]
+        redsl__api__example_routes___get_runner_map["_get_runner_map"]
+        redsl__api__example_routes___get_runner["_get_runner"]
+        redsl__api__example_routes___serialize_example_result["_serialize_example_result"]
+        redsl__api__example_routes___register_example_routes["_register_example_routes"]
+        redsl__api__debug_routes___register_debug_routes["_register_debug_routes"]
+    end
+    subgraph redsl__autonomy
+        redsl__autonomy__adaptive_executor__AdaptiveExecutor____init__["__init__"]
+        redsl__autonomy__adaptive_executor__AdaptiveExecutor__execute_adaptive["execute_adaptive"]
+        redsl__autonomy__adaptive_executor__AdaptiveExecutor___adapt_strategy["_adapt_strategy"]
+        redsl__autonomy__review__review_staged_changes["review_staged_changes"]
+        redsl__autonomy__review___get_diff["_get_diff"]
+        redsl__autonomy__review___llm_review["_llm_review"]
+        redsl__autonomy__review___static_review("_static_review CC=9")
+        redsl__autonomy__review___parse_changed_files_from_diff["_parse_changed_files_from_diff"]
+        redsl__autonomy__review___simple_cc["_simple_cc"]
+        redsl__autonomy__metrics__AutonomyMetrics__to_dict["to_dict"]
+        redsl__autonomy__metrics__AutonomyMetrics__to_json["to_json"]
+        redsl__autonomy__metrics___check_gate_installed["_check_gate_installed"]
+        redsl__autonomy__metrics___count_gate_blocks_last_week["_count_gate_blocks_last_week"]
+        redsl__autonomy__metrics___get_last_autonomous_pr["_get_last_autonomous_pr"]
+        redsl__autonomy__metrics___count_self_refactors_last_month["_count_self_refactors_last_month"]
+        redsl__autonomy__metrics___check_scheduler_running["_check_scheduler_running"]
+        redsl__autonomy__metrics___get_growth_last_week["_get_growth_last_week"]
+        redsl__autonomy__metrics__collect_autonomy_metrics["collect_autonomy_metrics"]
+        redsl__autonomy__metrics__save_metrics["save_metrics"]
+        redsl__autonomy__metrics__load_metrics["load_metrics"]
+        redsl__autonomy__smart_scorer__smart_score["smart_score"]
+        redsl__autonomy__smart_scorer___trend_multiplier["_trend_multiplier"]
+        redsl__autonomy__smart_scorer___ecosystem_multiplier["_ecosystem_multiplier"]
+        redsl__autonomy__smart_scorer___coupling_multiplier["_coupling_multiplier"]
+        redsl__autonomy__smart_scorer___confidence_multiplier["_confidence_multiplier"]
+        redsl__autonomy__intent__analyze_commit_intent["analyze_commit_intent"]
+        redsl__autonomy__intent___score_from_messages["_score_from_messages"]
+        redsl__autonomy__intent___score_from_files["_score_from_files"]
+        redsl__autonomy__intent___select_primary_and_active["_select_primary_and_active"]
+        redsl__autonomy__intent___recent_commit_messages["_recent_commit_messages"]
+        redsl__autonomy__intent___changed_python_files["_changed_python_files"]
+        redsl__autonomy__intent___assess_risk("_assess_risk CC=8")
+        redsl__autonomy__quality_gate___collect_python_files["_collect_python_files"]
+        redsl__autonomy__quality_gate___file_cc_functions["_file_cc_functions"]
+        redsl__autonomy__quality_gate___measure_metrics["_measure_metrics"]
+        redsl__autonomy__quality_gate___git_diff_names["_git_diff_names"]
+        redsl__autonomy__quality_gate___git_file_at_ref["_git_file_at_ref"]
+        redsl__autonomy__quality_gate___get_metrics_at_ref["_get_metrics_at_ref"]
+        redsl__autonomy__quality_gate___get_metrics_current("_get_metrics_current CC=9")
+        redsl__autonomy__quality_gate__run_quality_gate("run_quality_gate CC=11")
+        redsl__autonomy__quality_gate__install_pre_commit_hook["install_pre_commit_hook"]
+        redsl__autonomy__quality_gate___cli_main["_cli_main"]
+        redsl__autonomy__growth_control___should_skip["_should_skip"]
+        redsl__autonomy__growth_control___python_files["_python_files"]
+        redsl__autonomy__growth_control__GrowthController____init__["__init__"]
+        redsl__autonomy__growth_control__GrowthController__check_growth["check_growth"]
+        redsl__autonomy__growth_control__GrowthController__suggest_consolidation["suggest_consolidation"]
+        redsl__autonomy__growth_control__GrowthController___measure_weekly_growth["_measure_weekly_growth"]
+        redsl__autonomy__growth_control__GrowthController___find_untested_new_modules("_find_untested_new_modules CC=10")
+        redsl__autonomy__growth_control__GrowthController___find_oversized_files["_find_oversized_files"]
+        redsl__autonomy__growth_control__GrowthController___find_tiny_modules["_find_tiny_modules"]
+        redsl__autonomy__growth_control__GrowthController___group_by_prefix["_group_by_prefix"]
+        redsl__autonomy__growth_control___infer_module_type["_infer_module_type"]
+        redsl__autonomy__growth_control__check_module_budget("check_module_budget CC=11")
+        redsl__autonomy__auto_fix__auto_fix_violations["auto_fix_violations"]
+        redsl__autonomy__auto_fix___extract_file_path["_extract_file_path"]
+        redsl__autonomy__auto_fix___extract_function_name["_extract_function_name"]
+        redsl__autonomy__auto_fix___attempt_fix["_attempt_fix"]
+        redsl__autonomy__auto_fix___match_violation_handler("_match_violation_handler CC=8")
+        redsl__autonomy__auto_fix___handle_oversized_file["_handle_oversized_file"]
+    end
+    subgraph redsl__awareness
+        redsl__awareness__timeline_git__GitTimelineProvider____init__["__init__"]
+        redsl__awareness__timeline_git__GitTimelineProvider___resolve_repo_root["_resolve_repo_root"]
+        redsl__awareness__timeline_git__GitTimelineProvider___project_rel_path["_project_rel_path"]
+        redsl__awareness__timeline_git__GitTimelineProvider___git_log("_git_log CC=8")
+        redsl__awareness__timeline_git__GitTimelineProvider___git_show["_git_show"]
+        redsl__awareness__timeline_git__GitTimelineProvider___is_duplication_file["_is_duplication_file"]
+        redsl__awareness__timeline_git__GitTimelineProvider___is_validation_file["_is_validation_file"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer____init__["__init__"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer__build_timeline["build_timeline"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer__analyze_trends["analyze_trends"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer__predict_future_state["predict_future_state"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer__find_degradation_sources["find_degradation_sources"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer__summarize["summarize"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___resolve_repo_root["_resolve_repo_root"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___project_rel_path["_project_rel_path"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___git_log["_git_log"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___snapshot_for_commit["_snapshot_for_commit"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___collect_toon_contents["_collect_toon_contents"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___empty_toon_contents["_empty_toon_contents"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___store_toon_content["_store_toon_content"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___toon_bucket["_toon_bucket"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___sorted_toon_candidates["_sorted_toon_candidates"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___toon_candidate_priority["_toon_candidate_priority"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___git_show["_git_show"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___is_duplication_file["_is_duplication_file"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___is_validation_file["_is_validation_file"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___build_series_map["_build_series_map"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___apply_trend_aliases["_apply_trend_aliases"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___linear_regression["_linear_regression"]
+        redsl__awareness__git_timeline__GitTimelineAnalyzer___analyze_series["_analyze_series"]
+        redsl__awareness__timeline_toon__ToonCollector____init__["__init__"]
+        redsl__awareness__timeline_toon__ToonCollector__snapshot_for_commit("snapshot_for_commit CC=9")
+        redsl__awareness__timeline_toon__ToonCollector___collect_toon_contents("_collect_toon_contents CC=10")
+        redsl__awareness__timeline_toon__ToonCollector___empty_toon_contents["_empty_toon_contents"]
+        redsl__awareness__timeline_toon__ToonCollector___store_toon_content["_store_toon_content"]
+        redsl__awareness__timeline_toon__ToonCollector___toon_bucket["_toon_bucket"]
+        redsl__awareness__timeline_toon__ToonCollector___sorted_toon_candidates["_sorted_toon_candidates"]
+        redsl__awareness__timeline_toon__ToonCollector___toon_candidate_priority("_toon_candidate_priority CC=11")
+        redsl__awareness__timeline_toon__ToonCollector___is_duplication_file["_is_duplication_file"]
+        redsl__awareness__timeline_toon__ToonCollector___is_validation_file["_is_validation_file"]
+        redsl__awareness__ecosystem__ProjectNode__to_dict["to_dict"]
+        redsl__awareness__ecosystem__EcosystemGraph__build["build"]
+        redsl__awareness__ecosystem__EcosystemGraph__summarize["summarize"]
+        redsl__awareness__ecosystem__EcosystemGraph__project["project"]
+        redsl__awareness__ecosystem__EcosystemGraph__impacted_projects["impacted_projects"]
+        redsl__awareness__ecosystem__EcosystemGraph___build_node["_build_node"]
+        redsl__awareness__ecosystem__EcosystemGraph___link_dependencies["_link_dependencies"]
+        redsl__awareness__ecosystem__EcosystemGraph___read_dependencies["_read_dependencies"]
+        redsl__awareness__ecosystem__EcosystemGraph___extract_dependency_tokens("_extract_dependency_tokens CC=10")
+        redsl__awareness__ecosystem__EcosystemGraph___is_project_dir["_is_project_dir"]
+        redsl__awareness__AwarenessSnapshot__to_dict("to_dict CC=8")
+        redsl__awareness__AwarenessSnapshot__to_context("to_context CC=10")
+        redsl__awareness__AwarenessSnapshot__to_prompt_context("to_prompt_context CC=8")
+        redsl__awareness__AwarenessManager____init__["__init__"]
+        redsl__awareness__AwarenessManager___memory_fingerprint["_memory_fingerprint"]
+        redsl__awareness__AwarenessManager___git_head["_git_head"]
+        redsl__awareness__AwarenessManager___build_cache_key["_build_cache_key"]
+        redsl__awareness__AwarenessManager__build_snapshot("build_snapshot CC=10")
+        redsl__awareness__AwarenessManager__build_context["build_context"]
+        redsl__awareness__AwarenessManager__build_prompt_context["build_prompt_context"]
+    end
+    subgraph redsl__bridges
+        redsl__bridges__base__CliBridge__is_available["is_available"]
+        redsl__bridges__base__CliBridge___extract_json["_extract_json"]
+    end
+    subgraph redsl__ci
+        redsl__ci__github_actions__generate_github_workflow["generate_github_workflow"]
+        redsl__ci__github_actions__install_github_workflow["install_github_workflow"]
+        redsl__ci__github_actions___build_workflow["_build_workflow"]
+        redsl__ci__github_actions___build_steps["_build_steps"]
+        redsl__ci__github_actions___build_gate_script["_build_gate_script"]
+        redsl__ci__github_actions___pr_comment_script["_pr_comment_script"]
+    end
+    subgraph redsl__cli
+        redsl__cli__llm_banner___provider_for_model("_provider_for_model CC=8")
+        redsl__cli__llm_banner___find_dotenv["_find_dotenv"]
+        redsl__cli__llm_banner___key_status["_key_status"]
+        redsl__cli__llm_banner___dotenv_label["_dotenv_label"]
+        redsl__cli__llm_banner__print_llm_banner["print_llm_banner"]
+        redsl__cli__config__config["config"]
+        redsl__cli__config___resolve_store["_resolve_store"]
+        redsl__cli__config___load_document_from_path["_load_document_from_path"]
+        redsl__cli__config___dump_json["_dump_json"]
+        redsl__cli__config__config_init["config_init"]
+        redsl__cli__config__config_validate["config_validate"]
+        redsl__cli__config__config_diff["config_diff"]
+        redsl__cli__config__config_history["config_history"]
+        redsl__cli__config__config_apply["config_apply"]
+        redsl__cli__config__config_clone["config_clone"]
+        redsl__cli__config__config_show["config_show"]
+        redsl__cli__config__config_rollback["config_rollback"]
+        redsl__cli__config__register_config["register_config"]
+        redsl__cli__pyqual__pyqual["pyqual"]
+        redsl__cli__pyqual__pyqual_analyze["pyqual_analyze"]
+        redsl__cli__pyqual__pyqual_fix["pyqual_fix"]
+        redsl__cli__pyqual__register_pyqual["register_pyqual"]
+        redsl__cli__examples___run_example["_run_example"]
+        redsl__cli__examples__example["example"]
+        redsl__cli__examples__example_basic_analysis["example_basic_analysis"]
+        redsl__cli__examples__example_custom_rules["example_custom_rules"]
+        redsl__cli__examples__example_full_pipeline["example_full_pipeline"]
+        redsl__cli__examples__example_memory_learning["example_memory_learning"]
+        redsl__cli__examples__example_api_integration["example_api_integration"]
+        redsl__cli__examples__example_awareness["example_awareness"]
+        redsl__cli__examples__example_pyqual["example_pyqual"]
+        redsl__cli__examples__example_audit["example_audit"]
+        redsl__cli__examples__example_pr_bot["example_pr_bot"]
+        redsl__cli__examples__example_badge["example_badge"]
+        redsl__cli__examples__example_list["example_list"]
+        redsl__cli__examples__register_examples["register_examples"]
+        redsl__cli__scan___print_scan_summary["_print_scan_summary"]
+        redsl__cli__scan__scan["scan"]
+        redsl__cli___save_refactor_markdown_report["_save_refactor_markdown_report"]
+        redsl__cli__cli["cli"]
+        redsl__cli___build_awareness_manager["_build_awareness_manager"]
+        redsl__cli___register_all["_register_all"]
+        redsl__cli__utils__perf_command["perf_command"]
+        redsl__cli__utils__cost_command["cost_command"]
+        redsl__cli__model_policy__register_model_policy["register_model_policy"]
+        redsl__cli__model_policy__model_policy["model_policy"]
+        redsl__cli__model_policy__check_model("check_model CC=8")
+        redsl__cli__model_policy__list_models("list_models CC=11")
+        redsl__cli__model_policy__refresh_registry["refresh_registry"]
+        redsl__cli__model_policy__show_config["show_config"]
+        redsl__cli__refactor___resolve_cli_export["_resolve_cli_export"]
+        redsl__cli__refactor__refactor["refactor"]
+        redsl__cli__refactor___handle_dry_run["_handle_dry_run"]
+        redsl__cli__refactor___execute_from_planfile["_execute_from_planfile"]
+        redsl__cli__refactor___execute_refactor_cycle["_execute_refactor_cycle"]
+        redsl__cli__refactor___build_refactor_config["_build_refactor_config"]
+        redsl__cli__refactor___collect_refactor_analysis_and_decisions["_collect_refactor_analysis_and_deci"]
+        redsl__cli__refactor___decision_matches_target["_decision_matches_target"]
+        redsl__cli__refactor___emit_refactor_dry_run["_emit_refactor_dry_run"]
+        redsl__cli__refactor___build_json_report_payload["_build_json_report_payload"]
+    end
+    subgraph redsl__commands
+        redsl__commands___fixer_utils___read_source["_read_source"]
+        redsl__commands___scan_report___group_results_by_tier["_group_results_by_tier"]
+        redsl__commands___scan_report___render_executive_summary["_render_executive_summary"]
+        redsl__commands___scan_report___render_priority_tiers("_render_priority_tiers CC=10")
+        redsl__commands___scan_report___render_analysis_errors["_render_analysis_errors"]
+        redsl__commands___scan_report___render_report_header["_render_report_header"]
+        redsl__commands___scan_report___tier_names["_tier_names"]
+        redsl__commands___scan_report___build_recommendations("_build_recommendations CC=10")
+        redsl__commands___scan_report__render_markdown["render_markdown"]
+        redsl__commands__cli_awareness___echo_json["_echo_json"]
+        redsl__commands__cli_awareness___init_manager["_init_manager"]
+        redsl__commands__cli_awareness___register_history_command["_register_history_command"]
+        redsl__commands__cli_awareness___register_ecosystem_command["_register_ecosystem_command"]
+        redsl__commands__cli_awareness___register_health_command["_register_health_command"]
+        redsl__commands__cli_awareness___register_predict_command["_register_predict_command"]
+        redsl__commands__cli_awareness___register_self_assess_command["_register_self_assess_command"]
+        redsl__commands__cli_awareness__register["register"]
+        redsl__commands__doctor__diagnose["diagnose"]
+        redsl__commands__doctor__heal("heal CC=8")
+        redsl__commands__doctor__heal_batch["heal_batch"]
+        redsl__commands__doctor_fstring_fixers___write_if_parses["_write_if_parses"]
+        redsl__commands__doctor_fstring_fixers___fix_single_line_fstring_line["_fix_single_line_fstring_line"]
+        redsl__commands__doctor_fstring_fixers___apply_single_line_fstring_fixes["_apply_single_line_fstring_fixes"]
+        redsl__commands__doctor_fstring_fixers___fix_multiline_fstring_chunk["_fix_multiline_fstring_chunk"]
+        redsl__commands__doctor_fstring_fixers___consume_open_fstring_brace("_consume_open_fstring_brace CC=10")
+        redsl__commands__doctor_fstring_fixers___consume_close_fstring_brace["_consume_close_fstring_brace"]
+        redsl__commands__doctor_fstring_fixers___fix_broken_fstring["_fix_broken_fstring"]
+        redsl__commands__doctor_fstring_fixers___fix_multiline_fstring_braces["_fix_multiline_fstring_braces"]
+        redsl__commands__doctor_fstring_fixers___escape_fstring_body_braces["_escape_fstring_body_braces"]
+        redsl__commands__doctor_fstring_fixers___is_fstring_expr["_is_fstring_expr"]
+        redsl__commands__doctor_helpers___find_pip["_find_pip"]
+        redsl__commands__doctor_helpers___fix_via_git_revert["_fix_via_git_revert"]
+        redsl__commands__planfile_bridge__is_available["is_available"]
+        redsl__commands__planfile_bridge___build_ticket_cmd["_build_ticket_cmd"]
+        redsl__commands__planfile_bridge___extract_ticket_id("_extract_ticket_id CC=10")
+        redsl__commands__planfile_bridge__create_ticket("create_ticket CC=8")
+        redsl__commands__planfile_bridge__list_tickets("list_tickets CC=8")
+        redsl__commands__planfile_bridge__report_refactor_results["report_refactor_results"]
+        redsl__commands__planfile_bridge___safe_json["_safe_json"]
+        redsl__commands___guard_fixers___fix_guard_in_try_block("_fix_guard_in_try_block CC=8")
+        redsl__commands___guard_fixers___fix_guard_with_excess_indent["_fix_guard_with_excess_indent"]
+        redsl__commands___guard_fixers___process_guard_and_indent["_process_guard_and_indent"]
+        redsl__commands___guard_fixers___handle_guard("_handle_guard CC=11")
+        redsl__commands___guard_fixers___collect_guard_body["_collect_guard_body"]
+        redsl__commands___guard_fixers___next_non_blank_index["_next_non_blank_index"]
+        redsl__commands___guard_fixers___is_guard_followed_by_except["_is_guard_followed_by_except"]
+        redsl__commands__github_source__resolve_auth_ref("resolve_auth_ref CC=10")
+        redsl__commands__github_source__fingerprint_issue["fingerprint_issue"]
+        redsl__commands__github_source__fetch_issues["fetch_issues"]
+        redsl__commands__github_source___build_headers["_build_headers"]
+        redsl__commands__github_source___build_url["_build_url"]
+        redsl__commands__github_source___fetch_all_pages["_fetch_all_pages"]
+        redsl__commands__github_source___parse_next_link["_parse_next_link"]
+        redsl__commands__github_source___normalise_issue["_normalise_issue"]
+        redsl__commands__github_source___priority_from_labels["_priority_from_labels"]
+        redsl__commands__cli_autonomy___echo_json["_echo_json"]
+        redsl__commands__cli_autonomy___format_gate_details["_format_gate_details"]
+        redsl__commands__cli_autonomy___format_gate_fix_result["_format_gate_fix_result"]
+        redsl__commands__cli_autonomy___register_gate_check["_register_gate_check"]
+        redsl__commands__cli_autonomy___register_gate_details["_register_gate_details"]
+    end
+    subgraph redsl__config
+        redsl__config___default_llm_model["_default_llm_model"]
+        redsl__config___resolve_provider_key["_resolve_provider_key"]
+        redsl__config__LLMConfig__api_key["api_key"]
+        redsl__config__AgentConfig__from_env["from_env"]
+    end
+    subgraph redsl__config_standard
+        redsl__config_standard__catalog__PathCatalogEntry__as_dict["as_dict"]
+        redsl__config_standard__catalog__get_risk_level["get_risk_level"]
+        redsl__config_standard__catalog__search_schema_matches["search_schema_matches"]
+        redsl__config_standard__store__ConfigStore____init__["__init__"]
+        redsl__config_standard__store__ConfigStore__resolve["resolve"]
+        redsl__config_standard__store__ConfigStore__ensure_layout["ensure_layout"]
+        redsl__config_standard__store__ConfigStore__create_default["create_default"]
+        redsl__config_standard__store__ConfigStore__apply_profile["apply_profile"]
+        redsl__config_standard__store__ConfigStore__load_document["load_document"]
+        redsl__config_standard__store__ConfigStore__load["load"]
+        redsl__config_standard__store__ConfigStore__load_any["load_any"]
+        redsl__config_standard__store__ConfigStore__save["save"]
+        redsl__config_standard__store__ConfigStore__write_schema_files["write_schema_files"]
+        redsl__config_standard__store__ConfigStore__save_profile["save_profile"]
+        redsl__config_standard__store__ConfigStore__load_profile["load_profile"]
+        redsl__config_standard__store__ConfigStore__history("history CC=8")
+        redsl__config_standard__store__ConfigStore__append_history["append_history"]
+        redsl__config_standard__store__ConfigStore__inspect["inspect"]
+        redsl__config_standard__store__ConfigStore__diff_documents["diff_documents"]
+        redsl__config_standard__store__ConfigStore__diff_manifest["diff_manifest"]
+        redsl__config_standard__store__ConfigStore__clone_from["clone_from"]
+        redsl__config_standard__store__ConfigStore__validate["validate"]
+        redsl__config_standard__store__ConfigStore__read_secret_placeholders["read_secret_placeholders"]
+        redsl__config_standard__store__ConfigStore___atomic_write_text["_atomic_write_text"]
+        redsl__config_standard__store__ConfigStore__lock["lock"]
+        redsl__config_standard__nlp_handlers__dispatch_tool["dispatch_tool"]
+        redsl__config_standard__nlp_handlers___handle_inspect_config["_handle_inspect_config"]
+        redsl__config_standard__nlp_handlers___handle_search_config_schema["_handle_search_config_schema"]
+        redsl__config_standard__nlp_handlers___handle_propose_changes("_handle_propose_changes CC=12")
+        redsl__config_standard__nlp_handlers___handle_test_api_key["_handle_test_api_key"]
+        redsl__config_standard__nlp_handlers___highest_risk["_highest_risk"]
+        redsl__config_standard__nlp_handlers___is_secret_value_path["_is_secret_value_path"]
+        redsl__config_standard__nlp_handlers___assert_not_secret_value_path["_assert_not_secret_value_path"]
+        redsl__config_standard__nlp_handlers___assert_no_plaintext_secret["_assert_no_plaintext_secret"]
+        redsl__config_standard__nlp_handlers___smoke_test_provider["_smoke_test_provider"]
+        redsl__config_standard__security__SecretInterceptor____init__["__init__"]
+        redsl__config_standard__security__SecretInterceptor__redact("redact CC=8")
+        redsl__config_standard__security__SecretInterceptor__resolve["resolve"]
+        redsl__config_standard__security__SecretInterceptor__clear["clear"]
+        redsl__config_standard__security__is_sensitive_key["is_sensitive_key"]
+        redsl__config_standard__security__mask_sensitive_mapping["mask_sensitive_mapping"]
+        redsl__config_standard__agent_bridge__resolve_secret_ref("resolve_secret_ref CC=11")
+        redsl__config_standard__agent_bridge___resolve_vault_ref("_resolve_vault_ref CC=12")
+        redsl__config_standard__agent_bridge___resolve_doppler_ref("_resolve_doppler_ref CC=12")
+        redsl__config_standard__agent_bridge__find_config_root["find_config_root"]
+        redsl__config_standard__agent_bridge__load_agent_config_from_substrate("load_agent_config_from_substrate CC=8")
+        redsl__config_standard__agent_bridge___document_to_agent_config["_document_to_agent_config"]
+        redsl__config_standard__agent_bridge___select_model_from_policy["_select_model_from_policy"]
+        redsl__config_standard__agent_bridge__agent_config_from_substrate_or_env["agent_config_from_substrate_or_env"]
+        redsl__config_standard__profiles__build_default_config["build_default_config"]
+        redsl__config_standard__profiles__config_doc_to_yaml["config_doc_to_yaml"]
+        redsl__config_standard__profiles__export_config_schema["export_config_schema"]
+        redsl__config_standard__paths__parse_config_path("parse_config_path CC=8")
+        redsl__config_standard__paths___navigate("_navigate CC=12")
+        redsl__config_standard__paths__get_nested_value["get_nested_value"]
+        redsl__config_standard__paths__set_nested_value("set_nested_value CC=12")
+        redsl__config_standard__paths__remove_nested_value["remove_nested_value"]
+        redsl__config_standard__paths__deep_merge["deep_merge"]
+        redsl__config_standard__paths__deep_diff("deep_diff CC=11")
+        redsl__config_standard__paths__materialize_diff["materialize_diff"]
+    end
+    subgraph redsl__consciousness_loop
+        redsl__consciousness_loop__ConsciousnessLoop____init__["__init__"]
+        redsl__consciousness_loop__ConsciousnessLoop__run["run"]
+        redsl__consciousness_loop__ConsciousnessLoop___inner_thought["_inner_thought"]
+        redsl__consciousness_loop__ConsciousnessLoop___self_assessment["_self_assessment"]
+        redsl__consciousness_loop__ConsciousnessLoop___profile_performance["_profile_performance"]
+        redsl__consciousness_loop__ConsciousnessLoop__stop["stop"]
+        redsl__consciousness_loop__main_loop["main_loop"]
+    end
+    subgraph redsl__core
+        redsl__core__pipeline__PipelineStep__can_run["can_run"]
+        redsl__core__pipeline__PipelineStep__execute["execute"]
+        redsl__core__pipeline__Pipeline____init__["__init__"]
+        redsl__core__pipeline__Pipeline__run["run"]
+    end
+    subgraph redsl__diagnostics
+        redsl__diagnostics__perf_bridge___metrun_available["_metrun_available"]
+        redsl__diagnostics__perf_bridge___parse_metrun_output["_parse_metrun_output"]
+        redsl__diagnostics__perf_bridge___render_profile_stats["_render_profile_stats"]
+        redsl__diagnostics__perf_bridge___profile_fallback_target["_profile_fallback_target"]
+        redsl__diagnostics__perf_bridge___parse_profile_bottlenecks["_parse_profile_bottlenecks"]
+        redsl__diagnostics__perf_bridge___build_fallback_suggestions["_build_fallback_suggestions"]
+        redsl__diagnostics__perf_bridge___fallback_profile["_fallback_profile"]
+        redsl__diagnostics__perf_bridge__profile_refactor_cycle["profile_refactor_cycle"]
+        redsl__diagnostics__perf_bridge__profile_llm_latency["profile_llm_latency"]
+        redsl__diagnostics__perf_bridge__profile_memory_operations["profile_memory_operations"]
+        redsl__diagnostics__perf_bridge__generate_optimization_report["generate_optimization_report"]
+    end
+    subgraph redsl__dsl
+        redsl__dsl__rule_generator__LearnedRule__to_yaml_dict["to_yaml_dict"]
+        redsl__dsl__rule_generator__RuleGenerator____init__["__init__"]
+        redsl__dsl__rule_generator__RuleGenerator__generate["generate"]
+        redsl__dsl__rule_generator__RuleGenerator__generate_from_history["generate_from_history"]
+        redsl__dsl__rule_generator__RuleGenerator__save["save"]
+        redsl__dsl__rule_generator__RuleGenerator__load_and_register["load_and_register"]
+        redsl__dsl__rule_generator__RuleGenerator___extract_patterns["_extract_patterns"]
+        redsl__dsl__rule_generator__RuleGenerator___history_to_patterns["_history_to_patterns"]
+        redsl__dsl__rule_generator__RuleGenerator___patterns_to_rules["_patterns_to_rules"]
+        redsl__dsl__rule_generator___derive_conditions["_derive_conditions"]
+        redsl__dsl__rule_generator___find_nearest_threshold["_find_nearest_threshold"]
+        redsl__dsl__engine__Condition__evaluate("evaluate CC=10")
+        redsl__dsl__engine__Condition____repr__["__repr__"]
+        redsl__dsl__engine__Rule__evaluate["evaluate"]
+        redsl__dsl__engine__Rule__score["score"]
+        redsl__dsl__engine__Rule___calculate_impact["_calculate_impact"]
+        redsl__dsl__engine__DSLEngine____init__["__init__"]
+        redsl__dsl__engine__DSLEngine___load_default_rules["_load_default_rules"]
+        redsl__dsl__engine__DSLEngine__add_rule["add_rule"]
+        redsl__dsl__engine__DSLEngine__add_rules_from_yaml["add_rules_from_yaml"]
+        redsl__dsl__engine__DSLEngine__evaluate["evaluate"]
+        redsl__dsl__engine__DSLEngine__top_decisions["top_decisions"]
+        redsl__dsl__engine__DSLEngine__explain["explain"]
+    end
+    subgraph redsl__examples
+        redsl__examples__basic_analysis__run_basic_analysis_example["run_basic_analysis_example"]
+        redsl__examples__basic_analysis__main["main"]
+        redsl__examples___common___examples_root["_examples_root"]
+        redsl__examples___common___resolve_yaml_path["_resolve_yaml_path"]
+        redsl__examples___common__load_example_yaml["load_example_yaml"]
+        redsl__examples___common__list_available_examples["list_available_examples"]
+        redsl__examples___common__print_banner["print_banner"]
+        redsl__examples___common__parse_scenario["parse_scenario"]
+        redsl__examples__custom_rules___build_python_rule["_build_python_rule"]
+        redsl__examples__custom_rules__run_custom_rules_example["run_custom_rules_example"]
+        redsl__examples__custom_rules__main["main"]
+        redsl__examples__awareness___build_timeline["_build_timeline"]
+        redsl__examples__awareness___print_patterns["_print_patterns"]
+        redsl__examples__awareness___print_signals["_print_signals"]
+        redsl__examples__awareness___print_summary_section["_print_summary_section"]
+        redsl__examples__awareness__run_awareness_example["run_awareness_example"]
+        redsl__examples__awareness__main["main"]
+        redsl__examples__api_integration__run_api_integration_example["run_api_integration_example"]
+        redsl__examples__api_integration__main["main"]
+        redsl__examples__badge___compute_project_score["_compute_project_score"]
+        redsl__examples__badge___grade_for_score["_grade_for_score"]
+        redsl__examples__badge___dimension_color["_dimension_color"]
+        redsl__examples__badge___format_dimension_badges["_format_dimension_badges"]
+        redsl__examples__badge___print_badge_code["_print_badge_code"]
+        redsl__examples__badge___print_summary["_print_summary"]
+        redsl__examples__badge__run_badge_example["run_badge_example"]
+        redsl__examples__badge__main["main"]
+        redsl__examples__audit___compute_score["_compute_score"]
+        redsl__examples__audit___grade_for_score["_grade_for_score"]
+        redsl__examples__audit___print_connect_section["_print_connect_section"]
+        redsl__examples__audit___print_scan_phases["_print_scan_phases"]
+        redsl__examples__audit___print_grade_box["_print_grade_box"]
+        redsl__examples__audit___print_metrics_table["_print_metrics_table"]
+        redsl__examples__audit___print_recommendations["_print_recommendations"]
+        redsl__examples__audit___print_badge["_print_badge"]
+        redsl__examples__audit__run_audit_example["run_audit_example"]
+        redsl__examples__audit__main["main"]
+        redsl__examples__full_pipeline__run_full_pipeline_example["run_full_pipeline_example"]
+        redsl__examples__full_pipeline__main["main"]
+        redsl__examples__pr_bot___delta["_delta"]
+        redsl__examples__pr_bot___print_risk_flags["_print_risk_flags"]
+        redsl__examples__pr_bot___print_suggestions["_print_suggestions"]
+        redsl__examples__pr_bot___print_status_check["_print_status_check"]
+        redsl__examples__pr_bot__run_pr_bot_example["run_pr_bot_example"]
+        redsl__examples__pr_bot__main["main"]
+        redsl__examples__pyqual_example__run_pyqual_example("run_pyqual_example CC=8")
+        redsl__examples__pyqual_example__main["main"]
+        redsl__examples__memory_learning___build_in_memory_agent_memory["_build_in_memory_agent_memory"]
+        redsl__examples__memory_learning___store_memories["_store_memories"]
+        redsl__examples__memory_learning___recall_memories["_recall_memories"]
+        redsl__examples__memory_learning___print_stats["_print_stats"]
+        redsl__examples__memory_learning__run_memory_learning_example["run_memory_learning_example"]
+        redsl__examples__memory_learning__main["main"]
+    end
+    subgraph redsl__execution
+        redsl__execution__resolution___resolve_source_path("_resolve_source_path CC=9")
+        redsl__execution__resolution___resolve_target_function["_resolve_target_function"]
+        redsl__execution__resolution___load_source_code["_load_source_code"]
+        redsl__execution__resolution___consult_memory["_consult_memory"]
+        redsl__execution__resolution___consult_memory_for_decisions["_consult_memory_for_decisions"]
+        redsl__execution__resolution___remember_decision_result["_remember_decision_result"]
+        redsl__execution__reporter___resolve_source_preview("_resolve_source_preview CC=9")
+        redsl__execution__reporter__explain_decisions["explain_decisions"]
+        redsl__execution__reporter__get_memory_stats["get_memory_stats"]
+        redsl__execution__reporter__estimate_cycle_cost["estimate_cycle_cost"]
+        redsl__execution__sandbox_execution__execute_sandboxed["execute_sandboxed"]
+        redsl__execution__validation___snapshot_regix_before["_snapshot_regix_before"]
+        redsl__execution__validation___validate_with_regix["_validate_with_regix"]
+        redsl__execution__reflector___reflect_on_cycle["_reflect_on_cycle"]
+        redsl__execution__reflector___auto_learn_rules["_auto_learn_rules"]
+        redsl__execution__decision___select_decisions["_select_decisions"]
+        redsl__execution__decision___decision_matches_target["_decision_matches_target"]
+        redsl__execution__decision___execute_direct_refactor("_execute_direct_refactor CC=8")
+        redsl__execution__decision___check_time_window_duplicate["_check_time_window_duplicate"]
+        redsl__execution__decision___check_signature_duplicate["_check_signature_duplicate"]
+        redsl__execution__decision___generate_proposal_with_reflection["_generate_proposal_with_reflection"]
+        redsl__execution__decision___apply_and_record_result["_apply_and_record_result"]
+        redsl__execution__decision___execute_decision["_execute_decision"]
+        redsl__execution__decision___execute_decisions("_execute_decisions CC=8")
+        redsl__execution__planfile_updater___load_yaml_module["_load_yaml_module"]
+        redsl__execution__planfile_updater___load_planfile_data["_load_planfile_data"]
+        redsl__execution__planfile_updater___normalize_applied_files["_normalize_applied_files"]
+        redsl__execution__planfile_updater___match_and_update_task["_match_and_update_task"]
+        redsl__execution__planfile_updater___save_planfile_changes["_save_planfile_changes"]
+        redsl__execution__planfile_updater__mark_applied_tasks_done["mark_applied_tasks_done"]
+        redsl__execution__planfile_updater___get_tasks["_get_tasks"]
+        redsl__execution__planfile_updater___update_stats["_update_stats"]
+        redsl__execution__planfile_updater__get_todo_tasks["get_todo_tasks"]
+        redsl__execution__planfile_updater___planfile_action_to_refactor_action["_planfile_action_to_refactor_action"]
+        redsl__execution__planfile_updater___run_direct_refactor_for_task["_run_direct_refactor_for_task"]
+        redsl__execution__planfile_updater__run_tasks_from_planfile["run_tasks_from_planfile"]
+        redsl__execution__planfile_updater___atomic_write_yaml["_atomic_write_yaml"]
+        redsl__execution__cycle___new_cycle_report["_new_cycle_report"]
+        redsl__execution__cycle___analyze_project["_analyze_project"]
+        redsl__execution__cycle___summarize_analysis["_summarize_analysis"]
+        redsl__execution__cycle___run_perceive_phase["_run_perceive_phase"]
+        redsl__execution__cycle___run_decide_phase["_run_decide_phase"]
+        redsl__execution__cycle___run_execute_phase["_run_execute_phase"]
+        redsl__execution__cycle___run_validate_phase["_run_validate_phase"]
+        redsl__execution__cycle___get_applied_files["_get_applied_files"]
+        redsl__execution__cycle___run_update_planfile_phase["_run_update_planfile_phase"]
+        redsl__execution__cycle___run_test_validation_phase["_run_test_validation_phase"]
+        redsl__execution__cycle___run_reflect_phase["_run_reflect_phase"]
+        redsl__execution__cycle__run_cycle["run_cycle"]
+        redsl__execution__cycle__run_from_toon_content["run_from_toon_content"]
+    end
+    subgraph redsl__formatters
+        redsl__formatters__core___get_timestamp["_get_timestamp"]
+        redsl__formatters__debug__format_debug_info["format_debug_info"]
+        redsl__formatters__batch__format_batch_results["format_batch_results"]
+        redsl__formatters__batch___as_int["_as_int"]
+        redsl__formatters__batch___batch_detail_name["_batch_detail_name"]
+        redsl__formatters__batch___sum_metric["_sum_metric"]
+        redsl__formatters__batch___batch_report_totals["_batch_report_totals"]
+        redsl__formatters__batch___batch_header_lines["_batch_header_lines"]
+        redsl__formatters__batch___batch_summary_lines["_batch_summary_lines"]
+        redsl__formatters__batch___batch_project_lines["_batch_project_lines"]
+        redsl__formatters__batch___improvement_score["_improvement_score"]
+        redsl__formatters__batch___batch_top_improvement_lines["_batch_top_improvement_lines"]
+        redsl__formatters__batch___batch_error_lines["_batch_error_lines"]
+        redsl__formatters__batch__format_batch_report_markdown["format_batch_report_markdown"]
+        redsl__formatters__refactor__format_refactor_plan["format_refactor_plan"]
+        redsl__formatters__refactor___format_yaml["_format_yaml"]
+        redsl__formatters__refactor___format_json["_format_json"]
+        redsl__formatters__refactor___build_decisions_table["_build_decisions_table"]
+        redsl__formatters__refactor___format_decision_details["_format_decision_details"]
+        redsl__formatters__refactor___format_text["_format_text"]
+        redsl__formatters__refactor___serialize_analysis["_serialize_analysis"]
+        redsl__formatters__refactor___serialize_decision["_serialize_decision"]
+        redsl__formatters__refactor___count_decision_types["_count_decision_types"]
+        redsl__formatters__cycle__format_cycle_report_yaml("format_cycle_report_yaml CC=8")
+        redsl__formatters__cycle___cycle_report_header_lines["_cycle_report_header_lines"]
+        redsl__formatters__cycle___analysis_summary_lines["_analysis_summary_lines"]
+        redsl__formatters__cycle___execution_summary_lines["_execution_summary_lines"]
+        redsl__formatters__cycle___cycle_summary_lines["_cycle_summary_lines"]
+        redsl__formatters__cycle___cycle_top_decisions_lines("_cycle_top_decisions_lines CC=9")
+        redsl__formatters__cycle___cycle_execution_results_lines["_cycle_execution_results_lines"]
+        redsl__formatters__cycle___cycle_error_lines["_cycle_error_lines"]
+        redsl__formatters__cycle__format_cycle_report_markdown["format_cycle_report_markdown"]
+        redsl__formatters__cycle__format_plan_yaml["format_plan_yaml"]
+        redsl__formatters__cycle___serialize_result["_serialize_result"]
+        redsl__formatters__cycle___toon_header_lines["_toon_header_lines"]
+        redsl__formatters__cycle___toon_status_line["_toon_status_line"]
+        redsl__formatters__cycle___toon_decisions_lines["_toon_decisions_lines"]
+        redsl__formatters__cycle___toon_execution_lines["_toon_execution_lines"]
+        redsl__formatters__cycle___toon_errors_lines["_toon_errors_lines"]
+        redsl__formatters__cycle___toon_metrics_lines["_toon_metrics_lines"]
+        redsl__formatters__cycle__format_cycle_report_toon["format_cycle_report_toon"]
+    end
+    subgraph redsl__history
+        redsl__history___default_history_dir["_default_history_dir"]
+        redsl__history__HistoryWriter____init__["__init__"]
+        redsl__history__HistoryWriter__record["record"]
+        redsl__history__HistoryWriter__record_event["record_event"]
+        redsl__history__HistoryWriter__decision_signature["decision_signature"]
+        redsl__history__HistoryWriter__has_recent_signature["has_recent_signature"]
+        redsl__history__HistoryReader____init__["__init__"]
+        redsl__history__HistoryReader__load_events["load_events"]
+        redsl__history__HistoryReader__filter_by_file["filter_by_file"]
+        redsl__history__HistoryReader__filter_by_type["filter_by_type"]
+        redsl__history__HistoryReader__has_recent_proposal["has_recent_proposal"]
+        redsl__history__HistoryReader__has_recent_ticket["has_recent_ticket"]
+        redsl__history__HistoryReader___format_event_header["_format_event_header"]
+        redsl__history__HistoryReader___format_event_details["_format_event_details"]
+        redsl__history__HistoryReader___maybe_add_cycle_header["_maybe_add_cycle_header"]
+        redsl__history__HistoryReader__generate_decision_report["generate_decision_report"]
+    end
+    subgraph redsl__integrations
+        redsl__integrations__webhook__handle_push_webhook["handle_push_webhook"]
+        redsl__integrations__webhook___analyze_repo["_analyze_repo"]
+        redsl__integrations__webhook___create_github_issue["_create_github_issue"]
+    end
+    subgraph redsl__llm
+        redsl__llm__gate__ModelAgeGate____init__["__init__"]
+        redsl__llm__gate__ModelAgeGate__check("check CC=10")
+        redsl__llm__gate__ModelAgeGate___check_age("_check_age CC=9")
+        redsl__llm__gate__ModelAgeGate___handle_unknown["_handle_unknown"]
+        redsl__llm__gate__ModelAgeGate___reject["_reject"]
+        redsl__llm__gate__ModelAgeGate___normalize["_normalize"]
+        redsl__llm__gate__ModelAgeGate__list_allowed["list_allowed"]
+        redsl__llm__llx_router___get_refactor_action_enum["_get_refactor_action_enum"]
+        redsl__llm__llx_router___build_action_model_mapping["_build_action_model_mapping"]
+        redsl__llm__llx_router___build_model_matrix["_build_model_matrix"]
+        redsl__llm__llx_router___normalize_model_name["_normalize_model_name"]
+        redsl__llm__llx_router___model_family["_model_family"]
+        redsl__llm__llx_router___classify_complexity["_classify_complexity"]
+        redsl__llm__llx_router___estimate_tokens["_estimate_tokens"]
+        redsl__llm__llx_router___estimate_cost["_estimate_cost"]
+        redsl__llm__llx_router___ollama_available["_ollama_available"]
+        redsl__llm__llx_router___llx_available["_llx_available"]
+        redsl__llm__llx_router__select_model["select_model"]
+        redsl__llm__llx_router__select_reflection_model["select_reflection_model"]
+        redsl__llm__llx_router__estimate_cycle_cost["estimate_cycle_cost"]
+        redsl__llm__llx_router__apply_provider_prefix("apply_provider_prefix CC=10")
+        redsl__llm__llx_router__call_via_llx["call_via_llx"]
+        redsl__llm__selection__ops__select_model_for_operation["select_model_for_operation"]
+        redsl__llm__selection__metrics__track_model_selection["track_model_selection"]
+        redsl__llm__selection__metrics__check_cost_per_call["check_cost_per_call"]
+        redsl__llm__selection__config___parse_known_good["_parse_known_good"]
+        redsl__llm__selection__config___parse_tiers["_parse_tiers"]
+        redsl__llm__selection__config___build_cost_profile["_build_cost_profile"]
+        redsl__llm__selection__config___build_requirements["_build_requirements"]
+        redsl__llm__selection__config__build_selector["build_selector"]
+        redsl__llm__selection__config__get_selector["get_selector"]
+        redsl__llm__selection__config__invalidate_selector["invalidate_selector"]
+        redsl__llm__registry__sources__base__ModelRegistrySource__fetch["fetch"]
+        redsl__llm__registry__sources__base__ModelRegistrySource___http_get["_http_get"]
+        redsl__llm__registry__sources__base__OpenRouterSource__fetch["fetch"]
+        redsl__llm__registry__sources__base__OpenRouterSource___fetch_programming_category["_fetch_programming_category"]
+        redsl__llm__registry__sources__base__OpenRouterSource___to_decimal["_to_decimal"]
+        redsl__llm__registry__sources__base__ModelsDevSource__fetch["fetch"]
+        redsl__llm__registry__sources__base__OpenAIProviderSource____init__["__init__"]
+        redsl__llm__registry__sources__base__OpenAIProviderSource__fetch["fetch"]
+        redsl__llm__registry__sources__base__AnthropicProviderSource____init__["__init__"]
+        redsl__llm__registry__sources__base__AnthropicProviderSource__fetch["fetch"]
+        redsl__llm__registry__sources__base__AiderLeaderboardSource__enrich("enrich CC=13")
+        redsl__llm__registry__sources__base__AiderLeaderboardSource___http_get["_http_get"]
+        redsl__llm__registry__sources__base__AiderLeaderboardSource___match_score("_match_score CC=14")
+        redsl__llm__registry__aggregator___parse_aware_dt["_parse_aware_dt"]
+        redsl__llm__registry__aggregator__RegistryAggregator____init__["__init__"]
+        redsl__llm__registry__aggregator__RegistryAggregator__get_all["get_all"]
+        redsl__llm__registry__aggregator__RegistryAggregator__get["get"]
+        redsl__llm__registry__aggregator__RegistryAggregator___fetch_and_merge("_fetch_and_merge CC=8")
+        redsl__llm__registry__aggregator__RegistryAggregator___merge_model["_merge_model"]
+        redsl__llm__registry__aggregator__RegistryAggregator___collect_source_info["_collect_source_info"]
+        redsl__llm__registry__aggregator__RegistryAggregator___merge_context_length["_merge_context_length"]
+        redsl__llm__registry__aggregator__RegistryAggregator___merge_pricing["_merge_pricing"]
+        redsl__llm__registry__aggregator__RegistryAggregator___merge_capabilities["_merge_capabilities"]
+        redsl__llm__registry__aggregator__RegistryAggregator___merge_quality["_merge_quality"]
+        redsl__llm__registry__aggregator__RegistryAggregator___compute_release_date("_compute_release_date CC=8")
+        redsl__llm__registry__aggregator__RegistryAggregator___cache_is_fresh["_cache_is_fresh"]
+        redsl__llm__registry__aggregator__RegistryAggregator___save_cache["_save_cache"]
+        redsl__llm__registry__aggregator__RegistryAggregator___load_stale_cache["_load_stale_cache"]
+    end
+    subgraph redsl__main
+        redsl__main___get_orchestrator["_get_orchestrator"]
+        redsl__main___analysis_source_method["_analysis_source_method"]
+        redsl__main___analysis_function_metrics["_analysis_function_metrics"]
+        redsl__main___print_analysis_summary["_print_analysis_summary"]
+        redsl__main___print_top_functions["_print_top_functions"]
+        redsl__main___print_alerts["_print_alerts"]
+        redsl__main___print_duplicates["_print_duplicates"]
+        redsl__main___print_analysis_plan["_print_analysis_plan"]
+        redsl__main__cmd_analyze["cmd_analyze"]
+        redsl__main__cmd_explain["cmd_explain"]
+        redsl__main___print_refactor_report["_print_refactor_report"]
+        redsl__main__cmd_refactor["cmd_refactor"]
+        redsl__main__cmd_memory_stats["cmd_memory_stats"]
+        redsl__main__cmd_serve["cmd_serve"]
+        redsl__main___print_usage["_print_usage"]
+        redsl__main___get_arg["_get_arg"]
+        redsl__main___has_flag["_has_flag"]
+        redsl__main___dispatch_analyze["_dispatch_analyze"]
+        redsl__main___dispatch_explain["_dispatch_explain"]
+        redsl__main___dispatch_refactor["_dispatch_refactor"]
+        redsl__main___dispatch_memory_stats["_dispatch_memory_stats"]
+        redsl__main___dispatch_serve["_dispatch_serve"]
+        redsl__main__main["main"]
+    end
+    subgraph redsl__memory
+        redsl__memory__MemoryLayer____init__["__init__"]
+        redsl__memory__MemoryLayer___get_collection["_get_collection"]
+        redsl__memory__MemoryLayer__store["store"]
+        redsl__memory__MemoryLayer__recall("recall CC=8")
+        redsl__memory__MemoryLayer__count["count"]
+        redsl__memory__MemoryLayer__clear["clear"]
+        redsl__memory__InMemoryCollection____init__["__init__"]
+        redsl__memory__InMemoryCollection__add["add"]
+        redsl__memory__InMemoryCollection__query["query"]
+        redsl__memory__InMemoryCollection__count["count"]
+        redsl__memory__AgentMemory____init__["__init__"]
+        redsl__memory__AgentMemory__remember_action["remember_action"]
+        redsl__memory__AgentMemory__recall_similar_actions["recall_similar_actions"]
+        redsl__memory__AgentMemory__learn_pattern["learn_pattern"]
+        redsl__memory__AgentMemory__recall_patterns["recall_patterns"]
+        redsl__memory__AgentMemory__store_strategy["store_strategy"]
+        redsl__memory__AgentMemory__recall_strategies["recall_strategies"]
+        redsl__memory__AgentMemory__stats["stats"]
+    end
+    subgraph redsl__orchestrator
+        redsl__orchestrator__RefactorOrchestrator____init__["__init__"]
+        redsl__orchestrator__RefactorOrchestrator__run_cycle["run_cycle"]
+        redsl__orchestrator__RefactorOrchestrator__run_from_toon_content["run_from_toon_content"]
+        redsl__orchestrator__RefactorOrchestrator__add_custom_rules["add_custom_rules"]
+        redsl__orchestrator__RefactorOrchestrator___resolve_limits("_resolve_limits CC=8")
+    end
+    subgraph redsl__refactors
+        redsl__refactors__direct_types__DirectTypesRefactorer____init__["__init__"]
+        redsl__refactors__direct_types__DirectTypesRefactorer___collect_return_type_replacements("_collect_return_type_replacements CC=8")
+        redsl__refactors__direct_types__DirectTypesRefactorer___find_signature_colon["_find_signature_colon"]
+        redsl__refactors__direct_types__DirectTypesRefactorer__add_return_types["add_return_types"]
+        redsl__refactors__direct_types__DirectTypesRefactorer___find_def_colon["_find_def_colon"]
+        redsl__refactors__direct_guard__DirectGuardRefactorer____init__["__init__"]
+        redsl__refactors__direct_guard__DirectGuardRefactorer___is_main_guard_node("_is_main_guard_node CC=8")
+        redsl__refactors__direct_guard__DirectGuardRefactorer___collect_guarded_lines["_collect_guarded_lines"]
+        redsl__refactors__direct_guard__DirectGuardRefactorer___collect_module_execution_lines["_collect_module_execution_lines"]
+        redsl__refactors__direct_guard__DirectGuardRefactorer___insert_main_guard["_insert_main_guard"]
+        redsl__refactors__direct_guard__DirectGuardRefactorer__fix_module_execution_block["fix_module_execution_block"]
+        redsl__refactors__direct__DirectRefactorEngine____init__["__init__"]
+        redsl__refactors__direct__DirectRefactorEngine__remove_unused_imports["remove_unused_imports"]
+        redsl__refactors__direct__DirectRefactorEngine__fix_module_execution_block["fix_module_execution_block"]
+        redsl__refactors__direct__DirectRefactorEngine__extract_constants["extract_constants"]
+        redsl__refactors__direct__DirectRefactorEngine__add_return_types["add_return_types"]
+        redsl__refactors__direct__DirectRefactorEngine__get_applied_changes["get_applied_changes"]
+        redsl__refactors__engine__RefactorEngine____init__["__init__"]
+        redsl__refactors__engine__RefactorEngine__estimate_confidence["estimate_confidence"]
+        redsl__refactors__engine__RefactorEngine___parse_confidence["_parse_confidence"]
+        redsl__refactors__engine__RefactorEngine___resolve_confidence["_resolve_confidence"]
+        redsl__refactors__engine__RefactorEngine__generate_proposal["generate_proposal"]
+        redsl__refactors__engine__RefactorEngine__reflect_on_proposal["reflect_on_proposal"]
+        redsl__refactors__engine__RefactorEngine__validate_proposal("validate_proposal CC=12")
+        redsl__refactors__engine__RefactorEngine__apply_proposal["apply_proposal"]
+        redsl__refactors__engine__RefactorEngine___save_proposal["_save_proposal"]
+        redsl__refactors__prompts___format_trends["_format_trends"]
+        redsl__refactors__prompts___format_alerts["_format_alerts"]
+        redsl__refactors__prompts__build_ecosystem_context("build_ecosystem_context CC=9")
+        redsl__refactors__diff_manager__generate_diff["generate_diff"]
+        redsl__refactors__diff_manager__preview_proposal("preview_proposal CC=9")
+        redsl__refactors__diff_manager__create_checkpoint["create_checkpoint"]
+        redsl__refactors__diff_manager__rollback_to_checkpoint["rollback_to_checkpoint"]
+        redsl__refactors__diff_manager__rollback_single_file["rollback_single_file"]
+        redsl__refactors__diff_manager___is_git_repo["_is_git_repo"]
+        redsl__refactors__diff_manager___rollback_git_stash["_rollback_git_stash"]
+        redsl__refactors__diff_manager___rollback_files["_rollback_files"]
+        redsl__refactors__diff_manager___git_checkout_file["_git_checkout_file"]
+        redsl__refactors__body_restorer___find_preceding_def["_find_preceding_def"]
+        redsl__refactors__body_restorer___body_after_def["_body_after_def"]
+        redsl__refactors__body_restorer___collect_guard_body["_collect_guard_body"]
+        redsl__refactors__body_restorer___unindent_4["_unindent_4"]
+        redsl__refactors__body_restorer___is_docstring_only("_is_docstring_only CC=9")
+        redsl__refactors__body_restorer__repair_file("repair_file CC=11")
+        redsl__refactors__body_restorer__repair_directory["repair_directory"]
+        redsl__refactors__direct_imports__DirectImportRefactorer____init__["__init__"]
+        redsl__refactors__direct_imports__DirectImportRefactorer__remove_unused_imports["remove_unused_imports"]
+        redsl__refactors__direct_imports__DirectImportRefactorer___collect_unused_import_edits["_collect_unused_import_edits"]
+        redsl__refactors__direct_imports__DirectImportRefactorer___collect_import_edits["_collect_import_edits"]
+        redsl__refactors__direct_imports__DirectImportRefactorer___collect_import_from_edits["_collect_import_from_edits"]
+        redsl__refactors__direct_imports__DirectImportRefactorer___is_star_import["_is_star_import"]
+        redsl__refactors__direct_imports__DirectImportRefactorer___build_import_from_replacement["_build_import_from_replacement"]
+        redsl__refactors__direct_imports__DirectImportRefactorer___alias_name["_alias_name"]
+        redsl__refactors__direct_imports__DirectImportRefactorer___format_alias["_format_alias"]
+        redsl__refactors__direct_imports__DirectImportRefactorer___remove_statement_lines["_remove_statement_lines"]
+        redsl__refactors__direct_imports__DirectImportRefactorer___remove_replaced_statement_lines["_remove_replaced_statement_lines"]
+        redsl__refactors__direct_imports__DirectImportRefactorer___apply_line_edits["_apply_line_edits"]
+        redsl__refactors__direct_imports__DirectImportRefactorer___get_indent["_get_indent"]
+        redsl__refactors__direct_imports__DirectImportRefactorer___clean_blank_lines["_clean_blank_lines"]
+        redsl__refactors__direct_constants__DirectConstantsRefactorer____init__["__init__"]
+    end
+    subgraph redsl__utils
+        redsl__utils__tool_check__is_tool_available["is_tool_available"]
+        redsl__utils__json_helpers__extract_json_block["extract_json_block"]
+    end
+    subgraph redsl__validation
+        redsl__validation__sandbox___docker_available["_docker_available"]
+        redsl__validation__sandbox___pactfix_available["_pactfix_available"]
+        redsl__validation__sandbox__RefactorSandbox____init__["__init__"]
+        redsl__validation__sandbox__RefactorSandbox__start["start"]
+        redsl__validation__sandbox__RefactorSandbox__apply_and_test("apply_and_test CC=11")
+        redsl__validation__sandbox__RefactorSandbox__stop["stop"]
+        redsl__validation__sandbox__RefactorSandbox____enter__["__enter__"]
+        redsl__validation__sandbox__RefactorSandbox____exit__["__exit__"]
+        redsl__validation__sandbox__sandbox_available["sandbox_available"]
+        redsl__validation__vallm_bridge___validation_target_path["_validation_target_path"]
+        redsl__validation__vallm_bridge___stage_validation_context("_stage_validation_context CC=10")
+        redsl__validation__vallm_bridge___run_vallm_validation["_run_vallm_validation"]
+        redsl__validation__vallm_bridge__is_available["is_available"]
+        redsl__validation__vallm_bridge__validate_patch["validate_patch"]
+        redsl__validation__vallm_bridge__validate_proposal("validate_proposal CC=10")
+        redsl__validation__vallm_bridge__blend_confidence["blend_confidence"]
+        redsl__validation__pyqual_bridge__is_available["is_available"]
+        redsl__validation__pyqual_bridge___run_pyqual["_run_pyqual"]
+        redsl__validation__pyqual_bridge__doctor["doctor"]
+        redsl__validation__pyqual_bridge___parse_gate_lines("_parse_gate_lines CC=11")
+        redsl__validation__pyqual_bridge___stage_passed["_stage_passed"]
+        redsl__validation__pyqual_bridge__check_gates["check_gates"]
+        redsl__validation__pyqual_bridge__get_status["get_status"]
+        redsl__validation__pyqual_bridge__validate_config["validate_config"]
+        redsl__validation__pyqual_bridge__init_config["init_config"]
+        redsl__validation__pyqual_bridge__run_pipeline["run_pipeline"]
+        redsl__validation__pyqual_bridge__git_commit["git_commit"]
+        redsl__validation__pyqual_bridge__git_push["git_push"]
+        redsl__validation__testql_bridge__TestqlVerdict__skipped_result["skipped_result"]
+        redsl__validation__testql_bridge__TestqlValidator____init__["__init__"]
+        redsl__validation__testql_bridge__TestqlValidator___check_testql["_check_testql"]
+        redsl__validation__testql_bridge__TestqlValidator__validate("validate CC=8")
+        redsl__validation__testql_bridge__TestqlValidator___run_scenario["_run_scenario"]
+        redsl__validation__testql_bridge__TestqlValidator___detect_base_url("_detect_base_url CC=12")
+        redsl__validation__testql_bridge__TestqlValidator__generate_smoke_scenarios["generate_smoke_scenarios"]
+        redsl__validation__testql_bridge__TestqlValidator___write_smoke_scenarios["_write_smoke_scenarios"]
+        redsl__validation__testql_bridge__validate_with_testql["validate_with_testql"]
+        redsl__validation__testql_bridge__check_testql_available["check_testql_available"]
+        redsl__validation__regix_bridge__is_available["is_available"]
+        redsl__validation__regix_bridge__snapshot["snapshot"]
+        redsl__validation__regix_bridge__compare["compare"]
+        redsl__validation__regix_bridge__compare_snapshots["compare_snapshots"]
+        redsl__validation__regix_bridge__check_gates["check_gates"]
+        redsl__validation__regix_bridge__rollback_working_tree["rollback_working_tree"]
+        redsl__validation__regix_bridge__validate_no_regression["validate_no_regression"]
+        redsl__validation__regix_bridge__validate_working_tree("validate_working_tree CC=9")
+    end
+    subgraph test_refactor_bad__complex_code
+        test_refactor_bad__complex_code__process_data{{process_data CC=25}}
+        test_refactor_bad__complex_code__process_data_copy{{process_data_copy CC=25}}
+        test_refactor_bad__complex_code__GodClass__method1["method1"]
+        test_refactor_bad__complex_code__GodClass__method2["method2"]
+        test_refactor_bad__complex_code__GodClass__method3["method3"]
+        test_refactor_bad__complex_code__GodClass__method4["method4"]
+        test_refactor_bad__complex_code__GodClass__method5["method5"]
+        test_refactor_bad__complex_code__GodClass__method6["method6"]
+        test_refactor_bad__complex_code__GodClass__method7["method7"]
+        test_refactor_bad__complex_code__GodClass__method8["method8"]
+        test_refactor_bad__complex_code__GodClass__method9["method9"]
+        test_refactor_bad__complex_code__GodClass__method10["method10"]
+        test_refactor_bad__complex_code__GodClass__method11["method11"]
+        test_refactor_bad__complex_code__GodClass__method12["method12"]
+        test_refactor_bad__complex_code__GodClass__method13["method13"]
+        test_refactor_bad__complex_code__GodClass__method14["method14"]
+        test_refactor_bad__complex_code__GodClass__method15["method15"]
+    end
+    subgraph test_refactor_project__bad_code
+        test_refactor_project__bad_code__calculate["calculate"]
+        test_refactor_project__bad_code__BadClass__method1["method1"]
+    end
+    subgraph test_sample_project__sample
+        test_sample_project__sample__calculate_area["calculate_area"]
+        test_sample_project__sample__process_items["process_items"]
+        test_sample_project__sample__format_data["format_data"]
+    end
+    subgraph www__app
+        www__app__target["target"]
+        www__app__form{{form CC=17}}
+        www__app__emailField["emailField"]
+        www__app__nameField["nameField"]
+        www__app__repoField["repoField"]
+        www__app__submitBtn["submitBtn"]
+        www__app__setInvalid["setInvalid"]
+        www__app__validEmail["validEmail"]
+        www__app__validRepo["validRepo"]
+        www__app__io["io"]
+        www__app__details["details"]
+        www__app__flash["flash"]
+        www__app__headline["headline"]
+        www__app__y["y"]
+    end
+    subgraph www__config_api
+        www__config_api__validateConfig{{validateConfig CC=17}}
+        www__config_api__getHistory["getHistory"]
+        www__config_api__redactSecrets["redactSecrets"]
+    end
+    subgraph www__config_editor
+        www__config_editor__loadConfig["loadConfig"]
+        www__config_editor__saveConfig["saveConfig"]
+        www__config_editor__getNestedValue["getNestedValue"]
+        www__config_editor__getRiskLevel["getRiskLevel"]
+    end
+    subgraph www__email_notifications
+        www__email_notifications__generateProposalEmail["generateProposalEmail"]
+        www__email_notifications__sendProposalEmail["sendProposalEmail"]
+        www__email_notifications__generateAccessToken["generateAccessToken"]
+        www__email_notifications__verifyAccessToken["verifyAccessToken"]
+    end
+    subgraph www__index
+        www__index__load_env["load_env"]
+        www__index__env["env"]
+        www__index__h["h"]
+        www__index__csrf_token["csrf_token"]
+        www__index__check_rate_limit["check_rate_limit"]
+        www__index__send_notification["send_notification"]
+        www__index__send_notification_smtp["send_notification_smtp"]
+    end
+    subgraph www__nda_form
+        www__nda_form__fetchCompanyData["fetchCompanyData"]
+        www__nda_form__h["h"]
+        www__nda_form__generateNDAText("generateNDAText CC=11")
+    end
+    subgraph www__propozycje
+        www__propozycje__parseSelection["parseSelection"]
+        www__propozycje__h["h"]
+    end
+    subgraph www__vendor
+        www__vendor__phpmailer__phpmailer__src__OAuthTokenProvider__PHPMailer_PHPMailer__getOauth64["getOauth64"]
+        www__vendor__phpmailer__phpmailer__src__OAuth__PHPMailer_PHPMailer__OAuth____construct["__construct"]
+        www__vendor__phpmailer__phpmailer__src__OAuth__PHPMailer_PHPMailer__OAuth__getGrant["getGrant"]
+        www__vendor__phpmailer__phpmailer__src__OAuth__PHPMailer_PHPMailer__OAuth__getToken["getToken"]
+        www__vendor__phpmailer__phpmailer__src__OAuth__PHPMailer_PHPMailer__OAuth__getOauth64["getOauth64"]
+        www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__mailer["mailer"]
+        www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__configure["configure"]
+        www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__parseDSN["parseDSN"]
+        www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__applyConfig("applyConfig CC=8")
+        www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__configureSMTP["configureSMTP"]
+        www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__configureOptions("configureOptions CC=13")
+        www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__parseUrl["parseUrl"]
+        www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__popBeforeSmtp["popBeforeSmtp"]
+        www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__authorise["authorise"]
+        www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__connect["connect"]
+        www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__login["login"]
+        www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__disconnect["disconnect"]
+        www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__getResponse["getResponse"]
+        www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__sendString["sendString"]
+        www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__checkResponse["checkResponse"]
+        www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__setError["setError"]
+        www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__getErrors["getErrors"]
+        www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__catchWarning["catchWarning"]
+        www__vendor__phpmailer__phpmailer__src__Exception__PHPMailer_PHPMailer__Exception__errorMessage["errorMessage"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__edebug("edebug CC=12")
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connect("connect CC=10")
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getSMTPConnection("getSMTPConnection CC=12")
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__startTLS["startTLS"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__authenticate{{authenticate CC=24}}
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__hmac["hmac"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connected["connected"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__close["close"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__data{{data CC=16}}
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__hello["hello"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendHello["sendHello"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__parseHelloFields("parseHelloFields CC=9")
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__mail["mail"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__quit["quit"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__recipient["recipient"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__xclient["xclient"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__reset["reset"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand("sendCommand CC=11")
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendAndMail["sendAndMail"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__verify["verify"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__noop["noop"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__turn["turn"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__client_send["client_send"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getError["getError"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getServerExtList["getServerExtList"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getServerExt["getServerExt"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getLastReply["getLastReply"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__get_lines{{get_lines CC=17}}
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__setVerp["setVerp"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getVerp["getVerp"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__setSMTPUTF8["setSMTPUTF8"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getSMTPUTF8["getSMTPUTF8"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__setError["setError"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__setDebugOutput["setDebugOutput"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getDebugOutput["getDebugOutput"]
+        www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__setDebugLevel["setDebugLevel"]
+    end
+    examples__05_api_integration__main__main --> redsl__examples__api_integration__run_api_integration_example
+    examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service__process_order --> examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service___is_order_terminal
+    examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service__process_order --> examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service___calculate_order_total
+    examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service__process_order --> examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service___finalize_order
+    examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service__process_order --> examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service___validate_order_and_user
+    examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service___calculate_order_total --> examples__03_full_pipeline__refactor_output__refactor_extract_functions_20260407_145021__00_orders__service___process_physical_item
+    examples__02_custom_rules__main__main --> redsl__examples__custom_rules__run_custom_rules_example
+    www__index__send_notification --> www__index__env
+    www__index__send_notification --> www__index__send_notification_smtp
+    www__index__send_notification_smtp --> www__index__env
+    www__app__form --> www__app__setInvalid
+    www__app__form --> www__app__validEmail
+    www__app__form --> www__app__validRepo
+    www__vendor__phpmailer__phpmailer__src__OAuth__PHPMailer_PHPMailer__OAuth__getToken --> www__vendor__phpmailer__phpmailer__src__OAuth__PHPMailer_PHPMailer__OAuth__getGrant
+    www__vendor__phpmailer__phpmailer__src__OAuth__PHPMailer_PHPMailer__OAuth__getOauth64 --> www__vendor__phpmailer__phpmailer__src__OAuth__PHPMailer_PHPMailer__OAuth__getToken
+    www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__mailer --> www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__configure
+    www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__configure --> www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__parseDSN
+    www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__configure --> www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__applyConfig
+    www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__parseDSN --> www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__parseUrl
+    www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__applyConfig --> www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__configureSMTP
+    www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__applyConfig --> www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__configureOptions
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__popBeforeSmtp --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__authorise
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__authorise --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__connect
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__authorise --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__login
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__authorise --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__disconnect
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__connect --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__setError
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__connect --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__getResponse
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__connect --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__checkResponse
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__login --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__setError
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__login --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__sendString
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__login --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__getResponse
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__login --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__checkResponse
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__disconnect --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__sendString
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__disconnect --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__getResponse
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__checkResponse --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__setError
+    www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__catchWarning --> www__vendor__phpmailer__phpmailer__src__POP3__PHPMailer_PHPMailer__POP3__setError
+    examples__08_audit__main__main --> redsl__examples__audit__run_audit_example
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__edebug --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__client_send
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connect --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__setError
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connect --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connected
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connect --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__edebug
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connect --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getSMTPConnection
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connect --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__get_lines
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connect --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__quit
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connect --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__close
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getSMTPConnection --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__edebug
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getSMTPConnection --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__setError
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__startTLS --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__authenticate --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__setError
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__authenticate --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__edebug
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__authenticate --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__authenticate --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__hmac
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connected --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__edebug
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connected --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__close
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__close --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__edebug
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__data --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__data --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__client_send
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__data --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__recordLastTransactionID
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__hello --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendHello
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendHello --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendHello --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__parseHelloFields
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__mail --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__quit --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__quit --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__close
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__recipient --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__xclient --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__reset --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connected
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__setError
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__client_send
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__get_lines
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__edebug
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendAndMail --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__verify --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__noop --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__turn --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__setError
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__turn --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__edebug
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__client_send --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__edebug
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getServerExt --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__setError
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__get_lines --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getError
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__get_lines --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__edebug
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__get_lines --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__setError
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__errorHandler --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__setError
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__errorHandler --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__edebug
+    www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__recordLastTransactionID --> www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getLastReply
+    examples__06_awareness__main__main --> redsl__examples__awareness__run_awareness_example
+    www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstalledPackages --> www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstalled
+    www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstalledPackagesByType --> www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstalled
+    www__vendor__composer__InstalledVersions__Composer__InstalledVersions__isInstalled --> www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstalled
+    www__vendor__composer__InstalledVersions__Composer__InstalledVersions__satisfies --> www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getVersionRanges
+    www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getVersionRanges --> www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstalled
+    www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getVersion --> www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstalled
+    www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getPrettyVersion --> www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstalled
+    www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getReference --> www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstalled
+    www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstallPath --> www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstalled
+    www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getRootPackage --> www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstalled
+    www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getRawData --> www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getAllRawData
+    www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getAllRawData --> www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstalled
+    examples__10_badge__main__main --> redsl__examples__badge__run_badge_example
+    www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader____construct --> www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__initializeIncludeClosure
+    www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__loadClass --> www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__findFile
+    www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__findFile --> www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__findFileWithExtension
+    examples__04_memory_learning__main__main --> redsl__examples__memory_learning__run_memory_learning_example
+    examples__03_full_pipeline__main__main --> redsl__examples__full_pipeline__run_full_pipeline_example
+    redsl__commands___scan_report___build_recommendations --> redsl__commands___scan_report___tier_names
+    redsl__commands___scan_report__render_markdown --> redsl__commands___scan_report___group_results_by_tier
+    redsl__commands___scan_report__render_markdown --> redsl__commands___scan_report___render_report_header
+    redsl__commands___scan_report__render_markdown --> redsl__commands___scan_report___render_executive_summary
+    redsl__commands___scan_report__render_markdown --> redsl__commands___scan_report___render_priority_tiers
+    redsl__commands___scan_report__render_markdown --> redsl__commands___scan_report___render_analysis_errors
+    redsl__commands___scan_report__render_markdown --> redsl__commands___scan_report___build_recommendations
+    examples__07_pyqual__main__main --> redsl__examples__pyqual_example__run_pyqual_example
+    redsl__commands__cli_awareness___register_history_command --> redsl__commands__cli_awareness___init_manager
+    redsl__commands__cli_awareness___register_history_command --> redsl__commands__cli_awareness___echo_json
+    redsl__commands__cli_awareness___register_ecosystem_command --> redsl__commands__cli_awareness___init_manager
+    redsl__commands__cli_awareness___register_ecosystem_command --> redsl__commands__cli_awareness___echo_json
+    redsl__commands__cli_awareness___register_health_command --> redsl__commands__cli_awareness___init_manager
+    redsl__commands__cli_awareness___register_health_command --> redsl__commands__cli_awareness___echo_json
+    redsl__commands__cli_awareness___register_predict_command --> redsl__commands__cli_awareness___init_manager
+    redsl__commands__cli_awareness___register_predict_command --> redsl__commands__cli_awareness___echo_json
+    redsl__commands__cli_awareness___register_self_assess_command --> redsl__commands__cli_awareness___init_manager
+    redsl__commands__cli_awareness___register_self_assess_command --> redsl__commands__cli_awareness___echo_json
+    redsl__commands__cli_awareness__register --> redsl__commands__cli_awareness___register_history_command
+    redsl__commands__cli_awareness__register --> redsl__commands__cli_awareness___register_ecosystem_command
+    redsl__commands__cli_awareness__register --> redsl__commands__cli_awareness___register_health_command
+    redsl__commands__cli_awareness__register --> redsl__commands__cli_awareness___register_predict_command
+    redsl__commands__cli_awareness__register --> redsl__commands__cli_awareness___register_self_assess_command
+    redsl__consciousness_loop__ConsciousnessLoop____init__ --> redsl__config__AgentConfig__from_env
+    redsl__consciousness_loop__ConsciousnessLoop___inner_thought --> redsl__execution__reporter__get_memory_stats
+    redsl__consciousness_loop__ConsciousnessLoop___profile_performance --> redsl__diagnostics__perf_bridge__profile_refactor_cycle
+    redsl__consciousness_loop__ConsciousnessLoop___profile_performance --> redsl__diagnostics__perf_bridge__generate_optimization_report
+    redsl__commands__doctor__heal --> redsl__commands__doctor__diagnose
+    redsl__commands__doctor__heal_batch --> redsl__commands__doctor__heal
+    examples__01_basic_analysis__main__main --> redsl__examples__basic_analysis__run_basic_analysis_example
+    redsl__commands__doctor_fstring_fixers___apply_single_line_fstring_fixes --> redsl__commands__doctor_fstring_fixers___fix_single_line_fstring_line
+    redsl__commands__doctor_fstring_fixers___fix_multiline_fstring_chunk --> redsl__commands__doctor_fstring_fixers___escape_fstring_body_braces
+    redsl__commands__doctor_fstring_fixers___consume_open_fstring_brace --> redsl__commands__doctor_fstring_fixers___is_fstring_expr
+    redsl__commands__doctor_fstring_fixers___fix_broken_fstring --> redsl__commands___fixer_utils___read_source
+    redsl__commands__doctor_fstring_fixers___fix_broken_fstring --> redsl__commands__doctor_fstring_fixers___fix_multiline_fstring_braces
+    redsl__commands__doctor_fstring_fixers___fix_broken_fstring --> redsl__commands__doctor_fstring_fixers___apply_single_line_fstring_fixes
+    redsl__commands__doctor_fstring_fixers___fix_broken_fstring --> redsl__commands__doctor_fstring_fixers___write_if_parses
+    redsl__commands__doctor_fstring_fixers___fix_multiline_fstring_braces --> redsl__commands__doctor_fstring_fixers___fix_multiline_fstring_chunk
+    redsl__commands__doctor_fstring_fixers___escape_fstring_body_braces --> redsl__commands__doctor_fstring_fixers___consume_open_fstring_brace
+    redsl__commands__doctor_fstring_fixers___escape_fstring_body_braces --> redsl__commands__doctor_fstring_fixers___consume_close_fstring_brace
+    redsl__commands__planfile_bridge__create_ticket --> redsl__commands__planfile_bridge__list_tickets
+    redsl__commands__planfile_bridge__create_ticket --> redsl__commands__planfile_bridge___build_ticket_cmd
+    redsl__commands__planfile_bridge__create_ticket --> redsl__commands__planfile_bridge__is_available
+    redsl__commands__planfile_bridge__create_ticket --> redsl__commands__planfile_bridge___extract_ticket_id
+    redsl__commands__planfile_bridge__list_tickets --> redsl__commands__planfile_bridge__is_available
+    redsl__commands__planfile_bridge__list_tickets --> redsl__commands__planfile_bridge___safe_json
+    redsl__commands__planfile_bridge__report_refactor_results --> redsl__commands__planfile_bridge__create_ticket
+    examples__11_model_policy__main__demo_policy_check --> redsl__llm__check_model_policy
+    examples__11_model_policy__main__demo_list_allowed --> redsl__llm__list_allowed_models
+    examples__11_model_policy__main__demo_safe_completion --> redsl__llm__safe_completion
+    examples__11_model_policy__main__main --> examples__11_model_policy__main__demo_strict_mode
+    examples__11_model_policy__main__main --> examples__11_model_policy__main__demo_safe_completion
+    redsl__commands___guard_fixers___fix_guard_in_try_block --> redsl__commands___fixer_utils___read_source
+    redsl__commands___guard_fixers___fix_guard_in_try_block --> redsl__commands___guard_fixers___collect_guard_body
+    redsl__commands___guard_fixers___fix_guard_in_try_block --> redsl__commands___guard_fixers___is_guard_followed_by_except
+    redsl__commands___guard_fixers___fix_guard_with_excess_indent --> redsl__commands___guard_fixers___process_guard_and_indent
+    redsl__commands___guard_fixers___fix_guard_with_excess_indent --> redsl__commands___indent_fixers___iterative_fix
+    redsl__commands___guard_fixers___process_guard_and_indent --> redsl__commands___guard_fixers___handle_guard
+    redsl__commands___guard_fixers___process_guard_and_indent --> redsl__commands___indent_fixers___handle_function_indent
+    redsl__commands___guard_fixers___is_guard_followed_by_except --> redsl__commands___guard_fixers___next_non_blank_index
+    examples__09_pr_bot__main__main --> redsl__examples__pr_bot__run_pr_bot_example
+    redsl__commands__github_source__fetch_issues --> redsl__commands__github_source___build_headers
+    redsl__commands__github_source__fetch_issues --> redsl__commands__github_source___build_url
+    redsl__commands__github_source__fetch_issues --> redsl__commands__github_source___fetch_all_pages
+    redsl__commands__github_source__fetch_issues --> redsl__commands__github_source__resolve_auth_ref
+    redsl__commands__github_source___fetch_all_pages --> redsl__commands__github_source___parse_next_link
+    redsl__commands__github_source___fetch_all_pages --> redsl__commands__github_source___normalise_issue
+    redsl__commands__github_source___normalise_issue --> redsl__commands__github_source___priority_from_labels
+    redsl__commands__github_source___normalise_issue --> redsl__commands__github_source__fingerprint_issue
+    redsl__commands__cli_autonomy___register_gate_check --> redsl__autonomy__quality_gate__run_quality_gate
+    redsl__commands__cli_autonomy___register_gate_check --> redsl__commands__cli_autonomy___echo_json
+    redsl__commands__cli_autonomy___register_gate_details --> redsl__autonomy__quality_gate__run_quality_gate
+    redsl__commands__cli_autonomy___register_gate_details --> redsl__commands__cli_autonomy___format_gate_details
+    redsl__commands__cli_autonomy___register_gate_install_hook --> redsl__autonomy__quality_gate__install_pre_commit_hook
+    redsl__commands__cli_autonomy___register_gate_fix --> redsl__autonomy__quality_gate__run_quality_gate
+    redsl__commands__cli_autonomy___register_gate_fix --> redsl__autonomy__auto_fix__auto_fix_violations
+    redsl__commands__cli_autonomy___register_gate_fix --> redsl__commands__cli_autonomy___format_gate_fix_result
+    redsl__commands__cli_autonomy___register_gate_commands --> redsl__commands__cli_autonomy___register_gate_check
+    redsl__commands__cli_autonomy___register_gate_commands --> redsl__commands__cli_autonomy___register_gate_details
+    redsl__commands__cli_autonomy___register_gate_commands --> redsl__commands__cli_autonomy___register_gate_install_hook
+    redsl__commands__cli_autonomy___register_gate_commands --> redsl__commands__cli_autonomy___register_gate_fix
+    redsl__commands__cli_autonomy___register_review_commands --> redsl__cli__llm_banner__print_llm_banner
+    redsl__commands__cli_autonomy___register_review_commands --> redsl__autonomy__review__review_staged_changes
+    redsl__commands__cli_autonomy___register_review_commands --> redsl__autonomy__intent__analyze_commit_intent
+    redsl__commands__cli_autonomy___register_review_commands --> redsl__commands__cli_autonomy___echo_json
+    redsl__commands__cli_autonomy___register_watch_cmd --> redsl__cli__llm_banner__print_llm_banner
+    redsl__commands__cli_autonomy___register_improve_cmd --> redsl__cli__llm_banner__print_llm_banner
+    redsl__commands__cli_autonomy___register_improve_cmd --> redsl__commands__cli_autonomy___echo_json
+    redsl__commands__cli_autonomy___register_watch_commands --> redsl__commands__cli_autonomy___register_watch_cmd
+    redsl__commands__cli_autonomy___register_watch_commands --> redsl__commands__cli_autonomy___register_improve_cmd
+    redsl__commands__cli_autonomy___register_growth_cmd --> redsl__commands__cli_autonomy___echo_json
+    redsl__commands__cli_autonomy___register_growth_cmd --> redsl__commands__cli_autonomy___format_growth_report
+    redsl__commands__cli_autonomy___register_autonomy_status_cmd --> redsl__autonomy__metrics__collect_autonomy_metrics
+    redsl__commands__cli_autonomy___register_autonomy_status_cmd --> redsl__commands__cli_autonomy___echo_json
+    redsl__commands__cli_autonomy___register_autonomy_status_cmd --> redsl__commands__cli_autonomy___format_autonomy_status
+    redsl__commands__cli_autonomy___register_growth_and_status_commands --> redsl__commands__cli_autonomy___register_growth_cmd
+    redsl__commands__cli_autonomy___register_growth_and_status_commands --> redsl__commands__cli_autonomy___register_autonomy_status_cmd
+    redsl__commands__cli_autonomy___register_pr_commands --> redsl__cli__llm_banner__print_llm_banner
+    redsl__commands__cli_autonomy___register_pr_commands --> redsl__commands__autonomy_pr__run_autonomous_pr
+    redsl__commands__cli_autonomy__register --> redsl__commands__cli_autonomy___register_gate_commands
+    redsl__commands__cli_autonomy__register --> redsl__commands__cli_autonomy___register_review_commands
+    redsl__commands__cli_autonomy__register --> redsl__commands__cli_autonomy___register_watch_commands
+    redsl__commands__cli_autonomy__register --> redsl__commands__cli_autonomy___register_growth_and_status_commands
+    redsl__commands__cli_autonomy__register --> redsl__commands__cli_autonomy___register_pr_commands
+    redsl__commands__doctor_fixers___apply_fixer_to_issues --> redsl__commands__doctor_helpers___fix_via_git_revert
+    redsl__commands__doctor_fixers__fix_broken_guards --> redsl__refactors__body_restorer__repair_file
+    redsl__commands__doctor_fixers__fix_broken_guards --> redsl__commands___guard_fixers___fix_guard_in_try_block
+    redsl__commands__doctor_fixers__fix_broken_guards --> redsl__commands___guard_fixers___fix_guard_with_excess_indent
+    redsl__commands__doctor_fixers__fix_broken_guards --> redsl__commands___indent_fixers___fix_stolen_indent
+    redsl__commands__doctor_fixers__fix_broken_guards --> redsl__commands__doctor_helpers___fix_via_git_revert
+    redsl__commands__doctor_fixers__fix_stolen_indent --> redsl__commands__doctor_fixers___apply_fixer_to_issues
+    redsl__commands__doctor_fixers__fix_broken_fstrings --> redsl__commands__doctor_fixers___apply_fixer_to_issues
+    redsl__commands__doctor_fixers__fix_missing_install --> redsl__commands__doctor_helpers___find_pip
+    redsl__commands__cli_doctor___register_doctor_check --> redsl__commands__doctor__diagnose
+    redsl__commands__cli_doctor___register_doctor_check --> redsl__commands__cli_doctor___echo_json
+    redsl__commands__cli_doctor___register_doctor_check --> redsl__commands__cli_doctor___format_check_report
+    redsl__commands__cli_doctor___register_doctor_heal --> redsl__commands__doctor__heal
+    redsl__commands__cli_doctor___register_doctor_heal --> redsl__commands__cli_doctor___echo_json
+    redsl__commands__cli_doctor___register_doctor_heal --> redsl__commands__cli_doctor___format_heal_report
+    redsl__commands__cli_doctor___register_doctor_batch --> redsl__commands__doctor__heal_batch
+    redsl__commands__cli_doctor___register_doctor_batch --> redsl__commands__cli_doctor___echo_json
+    redsl__commands__cli_doctor___register_doctor_batch --> redsl__commands__cli_doctor___format_batch_report
+    redsl__commands__cli_doctor__register --> redsl__commands__cli_doctor___register_doctor_check
+    redsl__commands__cli_doctor__register --> redsl__commands__cli_doctor___register_doctor_heal
+    redsl__commands__cli_doctor__register --> redsl__commands__cli_doctor___register_doctor_batch
+    redsl__commands___indent_fixers___process_def_block --> redsl__commands___indent_fixers___scan_next_nonblank
+    redsl__commands___indent_fixers___process_def_block --> redsl__commands___indent_fixers___fix_body_indent
+    redsl__commands___indent_fixers___process_def_block --> redsl__commands___indent_fixers___check_excess_indent
+    redsl__commands___indent_fixers___fix_stolen_indent --> redsl__commands___fixer_utils___read_source
+    redsl__commands___indent_fixers___fix_stolen_indent --> redsl__commands___indent_fixers___process_def_block
+    redsl__commands___indent_fixers___handle_function_indent --> redsl__commands___indent_fixers___fix_body_indent
+    redsl__commands___indent_fixers___handle_function_indent --> redsl__commands___indent_fixers___check_excess_indent
+    redsl__commands___indent_fixers___check_excess_indent --> redsl__commands___indent_fixers___detect_excess_indent
+    redsl__commands___indent_fixers___check_excess_indent --> redsl__commands___indent_fixers___strip_excess_indent
+    redsl__commands___indent_fixers___iterative_fix --> redsl__commands___indent_fixers___fix_stolen_indent
+    redsl__commands__batch_pyqual__verdict__compute_verdict --> redsl__commands__batch_pyqual__verdict___combine_verdicts
+    redsl__commands__batch_pyqual__verdict__compute_verdict --> redsl__commands__batch_pyqual__verdict___check_analysis_passed
+    redsl__commands__batch_pyqual__verdict__compute_verdict --> redsl__commands__batch_pyqual__verdict___check_gates_passed
+    redsl__commands__batch_pyqual__verdict__compute_verdict --> redsl__commands__batch_pyqual__verdict___check_pipeline_requirement
+    redsl__commands__batch_pyqual__verdict__compute_verdict --> redsl__commands__batch_pyqual__verdict___check_push_requirement
+    redsl__commands__batch_pyqual__verdict__compute_verdict --> redsl__commands__batch_pyqual__verdict___check_publish_requirement
+    redsl__commands__batch___process_batch_project --> redsl__commands__batch__measure_todo_reduction
+    redsl__commands__batch___process_batch_project --> redsl__commands__batch__apply_refactor
+    redsl__commands__batch___process_batch_project --> redsl__commands__batch___print_project_results
+    redsl__commands__batch___process_batch_project --> redsl__commands__hybrid___regenerate_todo
+    redsl__commands__batch__run_semcod_batch --> redsl__commands__batch___find_todo_projects
+    redsl__commands__batch__run_semcod_batch --> redsl__commands__batch___save_markdown_report
+    redsl__commands__batch__run_semcod_batch --> redsl__commands__batch___process_batch_project
+    redsl__commands__batch__apply_refactor --> redsl__config__AgentConfig__from_env
+    redsl__commands__batch___save_markdown_report --> redsl__formatters__batch__format_batch_report_markdown
+    redsl__commands__batch_pyqual__utils__git_status_lines --> redsl__commands__batch_pyqual__utils__run_cmd
+    redsl__commands__batch_pyqual__runner___format_project_status --> redsl__commands__batch_pyqual__runner___status_config_parts
+    redsl__commands__batch_pyqual__runner___format_project_status --> redsl__commands__batch_pyqual__runner___status_gates_parts
+    redsl__commands__batch_pyqual__runner___format_project_status --> redsl__commands__batch_pyqual__runner___status_git_parts
+    redsl__commands__batch_pyqual__runner__run_pyqual_batch --> redsl__commands__batch_pyqual__discovery___filter_packages
+    redsl__commands__batch_pyqual__runner__run_pyqual_batch --> redsl__commands__batch_pyqual__runner___pyqual_cli_available
+    redsl__commands__batch_pyqual__runner__run_pyqual_batch --> redsl__commands__batch_pyqual__runner___print_batch_header
+    redsl__commands__batch_pyqual__runner__run_pyqual_batch --> redsl__commands__autofix__reporting___build_summary
+    redsl__commands__batch_pyqual__runner__run_pyqual_batch --> redsl__commands__hybrid___print_summary
+    redsl__commands__batch_pyqual__runner__run_pyqual_batch --> redsl__commands__batch_pyqual__reporting___save_report
+    redsl__commands__batch_pyqual__runner__run_pyqual_batch --> redsl__commands__batch_pyqual__discovery___find_packages
+    redsl__commands__batch_pyqual__runner__run_pyqual_batch --> redsl__commands__batch_pyqual__pipeline__process_project
+    redsl__commands__batch_pyqual__discovery___find_packages --> redsl__commands__batch_pyqual__discovery___is_package
+    redsl__commands__batch_pyqual__discovery___filter_packages --> redsl__commands__batch_pyqual__discovery___normalize_patterns
+    redsl__commands__batch_pyqual__discovery___filter_packages --> redsl__commands__batch_pyqual__discovery___matches_any
+    redsl__commands__doctor_detectors___python_files --> redsl__commands__doctor_detectors___should_skip
+    redsl__commands__doctor_detectors___stolen_indent_issue_for_header --> redsl__commands__doctor_detectors___next_non_blank_index
+    redsl__commands__doctor_detectors__detect_broken_guards --> redsl__commands__doctor_detectors___python_files
+    redsl__commands__doctor_detectors__detect_stolen_indent --> redsl__commands__doctor_detectors___python_files
+    redsl__commands__doctor_detectors__detect_stolen_indent --> redsl__commands__doctor_detectors___read_python_source
+    redsl__commands__doctor_detectors__detect_stolen_indent --> redsl__commands__doctor_detectors___has_main_guard
+    redsl__commands__doctor_detectors__detect_stolen_indent --> redsl__commands__doctor_detectors___stolen_indent_issue_for_header
+    redsl__commands__doctor_detectors__detect_broken_fstrings --> redsl__commands__doctor_detectors___python_files
+    redsl__commands__doctor_detectors__detect_missing_install --> redsl__commands__doctor_detectors___guess_package_name
+    redsl__commands__doctor_detectors__detect_module_level_exit --> redsl__commands__doctor_detectors___python_files
+    redsl__commands__doctor_detectors__detect_module_level_exit --> redsl__commands__doctor_detectors___is_sys_exit_call
+    redsl__commands__doctor_detectors___detect_mismatches --> redsl__commands__doctor_detectors___python_files
+    redsl__commands__doctor_detectors__detect_version_mismatch --> redsl__commands__doctor_detectors___detect_mismatches
+    redsl__commands__hybrid___regenerate_todo --> redsl__commands__hybrid___count_todo_issues
+    redsl__commands__hybrid___save_results --> redsl__commands__hybrid___writable_path
+    redsl__commands__hybrid___save_markdown_report --> redsl__commands__hybrid___writable_path
+    redsl__commands__hybrid___save_markdown_report --> redsl__formatters__batch__format_batch_report_markdown
+    redsl__commands__hybrid___apply_quality_decisions --> redsl__execution__decision___execute_direct_refactor
+    redsl__commands__hybrid__run_hybrid_quality_refactor --> redsl__commands__hybrid___setup_hybrid_orchestrator
+    redsl__commands__hybrid__run_hybrid_quality_refactor --> redsl__commands__hybrid___get_quality_decisions
+    redsl__commands__hybrid__run_hybrid_quality_refactor --> redsl__commands__hybrid___apply_quality_decisions
+    redsl__commands__hybrid___process_single_project --> redsl__commands__hybrid___count_todo_issues
+    redsl__commands__hybrid___process_single_project --> redsl__commands__hybrid__run_hybrid_quality_refactor
+    redsl__commands__hybrid___process_single_project --> redsl__commands__hybrid___regenerate_todo
+    redsl__commands__hybrid__run_hybrid_batch --> redsl__commands__hybrid___find_projects
+    redsl__commands__hybrid__run_hybrid_batch --> redsl__commands__hybrid___calculate_summary_stats
+    redsl__commands__hybrid__run_hybrid_batch --> redsl__commands__hybrid___print_summary
+    redsl__commands__hybrid__run_hybrid_batch --> redsl__commands__hybrid___save_results
+    redsl__commands__hybrid__run_hybrid_batch --> redsl__commands__hybrid___save_markdown_report
+    redsl__commands__hybrid__run_hybrid_batch --> redsl__commands__hybrid___process_single_project
+    redsl__commands__autofix__runner__run_autofix_batch --> redsl__commands__batch_pyqual__discovery___find_packages
+    redsl__commands__autofix__runner__run_autofix_batch --> redsl__commands__autofix__reporting___build_summary
+    redsl__commands__autofix__runner__run_autofix_batch --> redsl__commands__hybrid___print_summary
+    redsl__commands__autofix__runner__run_autofix_batch --> redsl__commands__autofix__reporting___save_reports
+    redsl__commands__autofix__runner__run_autofix_batch --> redsl__commands__autofix__pipeline___process_project
+    redsl__commands__autofix__reporting___build_summary --> redsl__commands__autofix__reporting___aggregate_totals
+    redsl__commands__autofix__reporting___build_summary --> redsl__commands__autofix__reporting___project_details
+    redsl__commands__autofix__hybrid___run_hybrid_fix --> redsl__execution__decision___execute_direct_refactor
+    redsl__commands__autofix__discovery___find_packages --> redsl__commands__autofix__discovery___is_package
+    redsl__commands__batch_pyqual__reporting___count_passed --> redsl__commands__batch_pyqual__reporting___count_by_status
+    redsl__commands__batch_pyqual__reporting___count_failed --> redsl__commands__batch_pyqual__reporting___count_by_status
+    redsl__commands__batch_pyqual__reporting___count_ready --> redsl__commands__batch_pyqual__reporting___count_by_status
+    redsl__commands__batch_pyqual__reporting___count_skipped --> redsl__commands__batch_pyqual__reporting___count_by_status
+    redsl__commands__batch_pyqual__reporting___aggregate_verdicts --> redsl__commands__batch_pyqual__reporting___count_passed
+    redsl__commands__batch_pyqual__reporting___aggregate_verdicts --> redsl__commands__batch_pyqual__reporting___count_ready
+    redsl__commands__batch_pyqual__reporting___aggregate_verdicts --> redsl__commands__batch_pyqual__reporting___count_failed
+    redsl__commands__batch_pyqual__reporting___aggregate_verdicts --> redsl__commands__batch_pyqual__reporting___count_skipped
+    redsl__commands__batch_pyqual__reporting___build_totals --> redsl__commands__batch_pyqual__reporting___compute_batch_verdict
+    redsl__commands__batch_pyqual__reporting___build_pipeline_totals --> redsl__commands__batch_pyqual__reporting___build_gate_pipeline_totals
+    redsl__commands__batch_pyqual__reporting___build_pipeline_totals --> redsl__commands__batch_pyqual__reporting___build_git_totals
+    redsl__commands__batch_pyqual__reporting___build_summary --> redsl__commands__batch_pyqual__reporting___aggregate_metrics
+    redsl__commands__batch_pyqual__reporting___build_summary --> redsl__commands__batch_pyqual__reporting___aggregate_verdicts
+    redsl__commands__batch_pyqual__reporting___build_summary --> redsl__commands__batch_pyqual__reporting___build_totals
+    redsl__commands__batch_pyqual__reporting___build_summary --> redsl__commands__batch_pyqual__reporting___build_pipeline_totals
+    redsl__commands__batch_pyqual__reporting___build_summary --> redsl__commands__batch_pyqual__reporting___build_project_detail
+    redsl__commands__batch_pyqual__reporting___print_summary --> redsl__commands__batch_pyqual__reporting___format_summary_verdicts
+    redsl__commands__batch_pyqual__reporting___print_summary --> redsl__commands__batch_pyqual__reporting___format_summary_config_and_gates
+    redsl__commands__batch_pyqual__reporting___print_summary --> redsl__commands__batch_pyqual__reporting___format_summary_pipeline_and_totals
+    redsl__commands__batch_pyqual__reporting___build_project_table --> redsl__commands__batch_pyqual__reporting___format_project_row
+    redsl__commands__batch_pyqual__reporting___save_report --> redsl__commands__batch_pyqual__reporting___build_report_header
+    redsl__commands__batch_pyqual__reporting___save_report --> redsl__commands__batch_pyqual__reporting___build_project_table
+    redsl__commands__batch_pyqual__reporting___save_report --> redsl__commands__batch_pyqual__reporting___build_project_notes
+    redsl__commands__batch_pyqual__reporting___save_report --> redsl__commands__batch_pyqual__reporting___build_report_footer
+    redsl__commands__sumr_planfile__extractors__extract_refactor_decisions --> redsl__commands__sumr_planfile__parsers__get_toon_patterns
+    redsl__commands__sumr_planfile__extractors__extract_refactor_decisions --> redsl__commands__sumr_planfile__utils__make_id_generator
+    redsl__commands__sumr_planfile__extractors__extract_complexity_layers --> redsl__commands__sumr_planfile__parsers__get_toon_patterns
+    redsl__commands__sumr_planfile__extractors__extract_complexity_layers --> redsl__commands__sumr_planfile__extractors___build_dir_entries
+    redsl__commands__sumr_planfile__extractors__extract_complexity_layers --> redsl__commands__sumr_planfile__utils__make_id_generator
+    redsl__commands__sumr_planfile__extractors__extract_complexity_layers --> redsl__commands__sumr_planfile__extractors___build_file_path
+    redsl__commands__sumr_planfile__extractors__extract_complexity_layers --> redsl__commands__sumr_planfile__extractors___verify_file_path
+    redsl__commands__sumr_planfile__extractors__extract_complexity_layers --> redsl__commands__sumr_planfile__extractors___create_complexity_task
+    redsl__commands__sumr_planfile__extractors__extract_duplications --> redsl__commands__sumr_planfile__parsers__get_toon_patterns
+    redsl__commands__sumr_planfile__extractors__extract_duplications --> redsl__commands__sumr_planfile__utils__make_id_generator
+    redsl__commands__sumr_planfile__extractors___create_task_from_raw --> redsl__commands__sumr_planfile__extractors___map_status
+    redsl__commands__sumr_planfile__extractors___create_task_from_raw --> redsl__commands__sumr_planfile__extractors___extract_target
+    redsl__commands__sumr_planfile__extractors___create_task_from_raw --> redsl__commands__sumr_planfile__extractors___parse_priority
+    redsl__commands__sumr_planfile__extractors___create_task_from_raw --> redsl__commands__sumr_planfile__extractors___compute_effort
+    redsl__commands__sumr_planfile__extractors___create_task_from_raw --> redsl__commands__sumr_planfile__extractors___build_labels
+    redsl__commands__sumr_planfile__extractors__refactor_plan_to_tasks --> redsl__commands__sumr_planfile__extractors___create_task_from_raw
+    redsl__commands__sumr_planfile__extractors__toon_to_tasks --> redsl__commands__sumr_planfile__utils__make_id_generator
+    redsl__commands__sumr_planfile__extractors__toon_to_tasks --> redsl__commands__sumr_planfile__extractors__extract_refactor_decisions
+    redsl__commands__sumr_planfile__extractors__toon_to_tasks --> redsl__commands__sumr_planfile__extractors__extract_complexity_layers
+    redsl__commands__sumr_planfile__extractors__toon_to_tasks --> redsl__commands__sumr_planfile__extractors__extract_duplications
+    redsl__commands__autofix__pipeline___stage_ensure_todo --> redsl__commands__hybrid___count_todo_issues
+    redsl__commands__autofix__pipeline___stage_ensure_todo --> redsl__commands__autofix__todo_gen___generate_todo_md
+    redsl__commands__autofix__pipeline___stage_ensure_todo --> redsl__autonomy__quality_gate__run_quality_gate
+    redsl__commands__autofix__pipeline___stage_apply_fixes --> redsl__commands__autofix__hybrid___run_hybrid_fix
+    redsl__commands__autofix__pipeline___stage_quality_gate_check --> redsl__autonomy__quality_gate__run_quality_gate
+    redsl__commands__autofix__pipeline___stage_quality_gate_check --> redsl__commands__autofix__todo_gen___append_gate_violations_to_todo
+    redsl__commands__autofix__pipeline___stage_pyqual_gates --> redsl__validation__pyqual_bridge__check_gates
+    redsl__commands__autofix__pipeline___process_project --> redsl__commands__autofix__pipeline___stage_collect_metrics
+    redsl__commands__autofix__pipeline___process_project --> redsl__commands__autofix__pipeline___stage_ensure_todo
+    redsl__commands__autofix__pipeline___process_project --> redsl__commands__autofix__pipeline___stage_apply_fixes
+    redsl__commands__autofix__pipeline___process_project --> redsl__commands__autofix__pipeline___stage_quality_gate_check
+    redsl__commands__autofix__pipeline___process_project --> redsl__commands__autofix__pipeline___stage_pyqual_gates
+    redsl__commands__autofix__pipeline___process_project --> redsl__commands__hybrid___count_todo_issues
+    redsl__commands__sumr_planfile___raw_task_to_plan_task --> redsl__commands__sumr_planfile___raw_task_target
+    redsl__commands__sumr_planfile__refactor_plan_to_tasks --> redsl__commands__sumr_planfile__parsers__parse_refactor_plan_yaml
+    redsl__commands__sumr_planfile__refactor_plan_to_tasks --> redsl__commands__sumr_planfile___raw_task_to_plan_task
+    redsl__commands__sumr_planfile__utils__deduplicate_tasks --> www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__set
+    redsl__commands__sumr_planfile__core___collect_from_sumr_source --> redsl__commands__sumr_planfile__parsers__parse_sumr
+    redsl__commands__sumr_planfile__core___collect_from_sumr_source --> redsl__commands__sumr_planfile__extractors__toon_to_tasks
+    redsl__commands__sumr_planfile__core___collect_from_sumr_source --> redsl__commands__sumr_planfile__core___tasks_from_refactor_plan
+    redsl__commands__sumr_planfile__core___collect_from_generated_files --> redsl__commands__sumr_planfile__extractors__toon_to_tasks
+    redsl__commands__sumr_planfile__core___collect_from_standalone_toons --> redsl__commands__sumr_planfile__extractors__toon_to_tasks
+    redsl__commands__sumr_planfile__core__generate_planfile --> redsl__commands__sumr_planfile__core___collect_from_generated_files
+    redsl__commands__sumr_planfile__core__generate_planfile --> redsl__commands__sumr_planfile__utils__deduplicate_tasks
+    redsl__commands__sumr_planfile__core__generate_planfile --> redsl__commands__sumr_planfile__core___collect_from_sumr_source
+    redsl__commands__sumr_planfile__core__generate_planfile --> redsl__commands__sumr_planfile__utils__make_id_generator
+    redsl__commands__sumr_planfile__core__generate_planfile --> redsl__commands__sumr_planfile__core___collect_from_standalone_toons
+    redsl__commands__pyqual__bandit_analyzer__BanditAnalyzer__analyze --> www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__set
+    redsl__commands__pyqual__fix_decisions___unused_import_decisions --> redsl__commands__pyqual__fix_decisions___relative_to
+    redsl__commands__pyqual__fix_decisions___magic_number_decisions --> redsl__commands__pyqual__fix_decisions___relative_to
+    redsl__commands__pyqual__fix_decisions___module_execution_decisions --> www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__set
+    redsl__commands__pyqual__fix_decisions___module_execution_decisions --> redsl__commands__pyqual__fix_decisions___relative_to
+    redsl__commands__pyqual__fix_decisions__build_pyqual_fix_decisions --> redsl__commands__pyqual__fix_decisions___module_execution_decisions
+    redsl__commands__pyqual__fix_decisions__build_pyqual_fix_decisions --> redsl__commands__pyqual__fix_decisions___unused_import_decisions
+    redsl__commands__pyqual__fix_decisions__build_pyqual_fix_decisions --> redsl__commands__pyqual__fix_decisions___magic_number_decisions
+    redsl__commands__autonomy_pr__analyzer___step_analyze --> redsl__commands__autonomy_pr__analyzer___refactor_cmd
+    redsl__commands__autonomy_pr__analyzer___run_auto_apply --> redsl__commands__autonomy_pr__analyzer___refactor_cmd
+    redsl__commands__autonomy_pr__analyzer___step_apply --> redsl__commands__autonomy_pr__analyzer___parse_worktree_changes
+    redsl__commands__autonomy_pr__analyzer___step_apply --> redsl__commands__autonomy_pr__analyzer___split_generated_and_real_changes
+    redsl__commands__autonomy_pr__analyzer___step_apply --> redsl__commands__autonomy_pr__analyzer___run_auto_apply
+    redsl__commands__pyqual__PyQualAnalyzer___find_python_files --> www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__set
+    redsl__commands__pyqual___print_pyqual_report --> redsl__commands__pyqual___format_pyqual_issues
+    redsl__commands__pyqual___print_pyqual_report --> redsl__commands__pyqual___format_pyqual_metrics
+    redsl__commands__pyqual___print_pyqual_report --> redsl__commands__pyqual___format_pyqual_recommendations
+    redsl__commands__pyqual__run_pyqual_analysis --> redsl__commands__pyqual___get_output_dir
+    redsl__commands__pyqual__run_pyqual_analysis --> redsl__commands__pyqual___print_pyqual_report
+    redsl__commands__pyqual__run_pyqual_fix --> redsl__commands__pyqual__fix_decisions__build_pyqual_fix_decisions
+    redsl__commands__autonomy_pr__validator___step_validate --> redsl__commands__autonomy_pr__validator___run_testql_validation
+    redsl__commands__autonomy_pr__validator___step_validate --> redsl__commands__autonomy_pr__validator___run_quality_gate
+    redsl__commands__autonomy_pr__validator___step_validate --> redsl__commands__autonomy_pr__validator___run_project_tests
+    redsl__commands__autonomy_pr__validator___run_testql_validation --> redsl__commands__autonomy_pr__validator___detect_api_base_url
+    redsl__commands__autonomy_pr__validator___run_testql_validation --> redsl__commands__autonomy_pr__validator___check_testql_available
+    redsl__commands__autonomy_pr__validator___run_quality_gate --> redsl__autonomy__quality_gate__run_quality_gate
+    redsl__commands__autonomy_pr__validator___run_project_tests --> redsl__commands__autonomy_pr__validator___detect_test_command
+    redsl__commands__autonomy_pr___step_finalize --> redsl__commands__autonomy_pr__git_ops___step_branch_and_commit
+    redsl__commands__autonomy_pr___step_finalize --> redsl__commands__autonomy_pr__git_ops___step_push
+    redsl__commands__autonomy_pr___step_finalize --> redsl__commands__autonomy_pr__git_ops___step_create_pr
+    redsl__commands__autonomy_pr___step_finalize --> redsl__commands__autonomy_pr__reporter___print_workflow_complete
+    redsl__commands__autonomy_pr___run_clone_step --> redsl__commands__autonomy_pr__git_ops___step_clone
+    redsl__commands__autonomy_pr___run_dry_run --> redsl__commands__autonomy_pr__analyzer___step_analyze
+    redsl__commands__autonomy_pr___run_dry_run --> redsl__commands__autonomy_pr___output_dry_run_json
+    redsl__commands__autonomy_pr___run_dry_run --> redsl__commands__autonomy_pr___output_dry_run_text
+    redsl__commands__autonomy_pr___run_analyze_step --> redsl__commands__autonomy_pr__analyzer___step_analyze
+    redsl__commands__autonomy_pr___run_apply_step --> redsl__commands__autonomy_pr__analyzer___step_apply
+    redsl__commands__autonomy_pr___run_apply_step --> redsl__commands__autonomy_pr__reporter___abort_no_changes
+    redsl__commands__autonomy_pr___run_validate_step --> redsl__commands__autonomy_pr__validator___step_validate
+    redsl__commands__autonomy_pr__run_autonomous_pr --> redsl__commands__autonomy_pr___setup_workflow
+    redsl__commands__autonomy_pr__run_autonomous_pr --> redsl__commands__autonomy_pr__reporter___print_workflow_header
+    redsl__commands__autonomy_pr__run_autonomous_pr --> redsl__commands__autonomy_pr___run_clone_step
+    redsl__commands__autonomy_pr__run_autonomous_pr --> redsl__commands__autonomy_pr___run_apply_step
+    redsl__commands__autonomy_pr__run_autonomous_pr --> redsl__commands__autonomy_pr___step_finalize
+    redsl__commands__autonomy_pr__run_autonomous_pr --> redsl__commands__autonomy_pr___run_dry_run
+    redsl__commands__autonomy_pr__run_autonomous_pr --> redsl__commands__autonomy_pr___run_analyze_step
+    redsl__commands__autonomy_pr__run_autonomous_pr --> redsl__commands__autonomy_pr___run_validate_step
+    redsl__commands__autonomy_pr__run_autonomous_pr --> redsl__commands__autonomy_pr___output_success_json
+    redsl__commands__autonomy_pr__git_ops___step_branch_and_commit --> redsl__commands__autonomy_pr__git_ops___resolve_branch_name
+    redsl__history__HistoryWriter____init__ --> redsl__history___default_history_dir
+    redsl__history__HistoryReader____init__ --> redsl__history___default_history_dir
+    redsl__commands__scan___count_python_files --> redsl__analyzers__utils___load_gitignore_patterns
+    redsl__commands__scan___count_python_files --> www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__set
+    redsl__commands__scan___count_python_files --> redsl__analyzers__utils___should_ignore_file
+    redsl__commands__scan___CollectMetricsStep__execute --> redsl__commands__scan___detect_languages
+    redsl__commands__scan___CollectMetricsStep__execute --> redsl__commands__scan___count_python_files
+    redsl__commands__scan___CollectMetricsStep__execute --> redsl__commands__scan___git_activity
+    redsl__commands__scan___RunAnalyzersStep__execute --> redsl__commands__scan___extract_hotspots
+    redsl__commands__scan___BuildReportStep__execute --> redsl__commands__scan___compute_priority
+    redsl__commands__scan___analyze_single_project --> redsl__commands__scan___compute_priority
+    redsl__commands__scan__scan_folder --> redsl__commands__scan___is_project_dir
+    redsl__commands__scan__scan_folder --> redsl__commands__scan___analyze_single_project
+    redsl__commands__multi_project__MultiProjectRunner____init__ --> redsl__config__AgentConfig__from_env
+    redsl__config_standard__store__ConfigStore__create_default --> redsl__config_standard__profiles__build_default_config
+    redsl__config_standard__store__ConfigStore__apply_profile --> redsl__config_standard__paths__deep_merge
+    redsl__config_standard__store__ConfigStore__save --> redsl__config_standard__profiles__config_doc_to_yaml
+    redsl__config_standard__store__ConfigStore__write_schema_files --> redsl__config_standard__profiles__export_config_schema
+    redsl__config_standard__store__ConfigStore__write_schema_files --> redsl__config_standard__proposals__export_proposal_schema
+    redsl__config_standard__store__ConfigStore__save_profile --> redsl__config_standard__profiles__config_doc_to_yaml
+    redsl__config_standard__store__ConfigStore__inspect --> redsl__config_standard__paths__get_nested_value
+    redsl__config_standard__store__ConfigStore__diff_documents --> redsl__config_standard__paths__materialize_diff
+    redsl__config_standard__store__ConfigStore__clone_from --> redsl__config_standard__store__ConfigStore__resolve
+    redsl__config_standard__nlp_handlers__dispatch_tool --> redsl__config_standard__nlp_handlers___handle_inspect_config
+    redsl__config_standard__nlp_handlers__dispatch_tool --> redsl__config_standard__nlp_handlers___handle_search_config_schema
+    redsl__config_standard__nlp_handlers__dispatch_tool --> redsl__config_standard__nlp_handlers___handle_propose_changes
+    redsl__config_standard__nlp_handlers__dispatch_tool --> redsl__config_standard__nlp_handlers___handle_test_api_key
+    redsl__config_standard__nlp_handlers___handle_inspect_config --> redsl__config_standard__nlp_handlers___assert_not_secret_value_path
+    redsl__config_standard__nlp_handlers___handle_inspect_config --> redsl__config_standard__paths__get_nested_value
+    redsl__config_standard__nlp_handlers___handle_inspect_config --> redsl__config_standard__catalog__get_risk_level
+    redsl__config_standard__nlp_handlers___handle_search_config_schema --> redsl__config_standard__catalog__search_schema_matches
+    redsl__config_standard__nlp_handlers___handle_propose_changes --> redsl__config_standard__nlp_handlers___highest_risk
+    redsl__config_standard__nlp_handlers___handle_propose_changes --> redsl__config_standard__catalog__get_risk_level
+    redsl__config_standard__nlp_handlers___handle_propose_changes --> redsl__config_standard__paths__get_nested_value
+    redsl__config_standard__nlp_handlers___handle_test_api_key --> redsl__config_standard__nlp_handlers___smoke_test_provider
+    redsl__config_standard__nlp_handlers___handle_test_api_key --> redsl__config_standard__agent_bridge__resolve_secret_ref
+    redsl__config_standard__security__SecretInterceptor__redact --> www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__set
+    redsl__config_standard__security__mask_sensitive_mapping --> redsl__config_standard__security__is_sensitive_key
+    redsl__config_standard__agent_bridge__resolve_secret_ref --> redsl__config_standard__agent_bridge___resolve_vault_ref
+    redsl__config_standard__agent_bridge__resolve_secret_ref --> redsl__config_standard__agent_bridge___resolve_doppler_ref
+    redsl__config_standard__agent_bridge__load_agent_config_from_substrate --> redsl__config_standard__agent_bridge___document_to_agent_config
+    redsl__config_standard__agent_bridge__load_agent_config_from_substrate --> redsl__config_standard__agent_bridge__find_config_root
+    redsl__config_standard__agent_bridge__load_agent_config_from_substrate --> redsl__config_standard__paths__deep_merge
+    redsl__config_standard__agent_bridge___document_to_agent_config --> redsl__config_standard__agent_bridge___select_model_from_policy
+    redsl__config_standard__agent_bridge___document_to_agent_config --> redsl__config_standard__agent_bridge__resolve_secret_ref
+    redsl__config_standard__agent_bridge__agent_config_from_substrate_or_env --> redsl__config_standard__agent_bridge__find_config_root
+    redsl__config_standard__agent_bridge__agent_config_from_substrate_or_env --> redsl__config__AgentConfig__from_env
+    redsl__config_standard__agent_bridge__agent_config_from_substrate_or_env --> redsl__config_standard__agent_bridge__load_agent_config_from_substrate
+    redsl__commands__batch_pyqual__pipeline___init_project_context --> redsl__commands__batch_pyqual__config_gen___detect_publish_configured
+    redsl__commands__batch_pyqual__pipeline___init_project_context --> redsl__commands__batch_pyqual__config_gen___generate_pyqual_yaml
+    redsl__commands__batch_pyqual__pipeline___validate_config --> redsl__validation__pyqual_bridge__validate_config
+    redsl__commands__batch_pyqual__pipeline___run_analysis_stage --> redsl__commands__autofix__helpers___collect_python_files
+    redsl__commands__batch_pyqual__pipeline___run_analysis_stage --> redsl__commands__autofix__helpers___measure_metrics
+    redsl__commands__batch_pyqual__pipeline___run_redsl_fix_stage --> redsl__autonomy__quality_gate__run_quality_gate
+    redsl__commands__batch_pyqual__pipeline___run_redsl_fix_stage --> redsl__commands__autofix__hybrid___run_hybrid_fix
+    redsl__commands__batch_pyqual__pipeline___run_redsl_fix_stage --> redsl__autonomy__auto_fix__auto_fix_violations
+    redsl__commands__batch_pyqual__pipeline___run_gates_stage --> redsl__validation__pyqual_bridge__check_gates
+    redsl__commands__batch_pyqual__pipeline___run_gates_stage --> redsl__commands__batch_pyqual__pipeline___process_gate_result
+    redsl__commands__batch_pyqual__pipeline___run_pipeline_stage --> redsl__validation__pyqual_bridge__run_pipeline
+    redsl__commands__batch_pyqual__pipeline___run_preflight_check --> redsl__validation__pyqual_bridge__git_push
+    redsl__commands__batch_pyqual__pipeline___commit_changes --> redsl__validation__pyqual_bridge__git_commit
+    redsl__commands__batch_pyqual__pipeline___push_changes --> redsl__validation__pyqual_bridge__git_push
+    redsl__commands__batch_pyqual__pipeline___run_git_stage --> redsl__commands__batch_pyqual__pipeline___run_preflight_check
+    redsl__commands__batch_pyqual__pipeline___run_git_stage --> redsl__commands__batch_pyqual__pipeline___commit_changes
+    redsl__commands__batch_pyqual__pipeline___run_git_stage --> redsl__commands__batch_pyqual__pipeline___push_changes
+    redsl__commands__batch_pyqual__pipeline___run_git_stage --> redsl__commands__batch_pyqual__pipeline___print_git_status
+    redsl__commands__batch_pyqual__pipeline___finalize_result --> redsl__commands__batch_pyqual__verdict__compute_verdict
+    redsl__commands__batch_pyqual__pipeline__process_project --> redsl__commands__batch_pyqual__pipeline___init_project_context
+    redsl__commands__batch_pyqual__pipeline__process_project --> redsl__commands__batch_pyqual__pipeline___validate_config
+    redsl__commands__batch_pyqual__pipeline__process_project --> redsl__commands__batch_pyqual__pipeline___run_analysis_stage
+    redsl__commands__batch_pyqual__pipeline__process_project --> redsl__commands__batch_pyqual__pipeline___run_redsl_fix_stage
+    redsl__commands__batch_pyqual__pipeline__process_project --> redsl__commands__batch_pyqual__pipeline___run_gates_stage
+    redsl__commands__batch_pyqual__pipeline__process_project --> redsl__commands__batch_pyqual__pipeline___run_pipeline_stage
+    redsl__commands__batch_pyqual__pipeline__process_project --> redsl__commands__batch_pyqual__pipeline___run_git_stage
+    redsl__commands__batch_pyqual__pipeline__process_project --> redsl__commands__batch_pyqual__pipeline___finalize_result
+    redsl__examples__basic_analysis__run_basic_analysis_example --> redsl__examples___common__load_example_yaml
+    redsl__examples__basic_analysis__run_basic_analysis_example --> redsl__examples___common__print_banner
+    redsl__examples__basic_analysis__main --> redsl__examples___common__parse_scenario
+    redsl__examples__basic_analysis__main --> redsl__examples__basic_analysis__run_basic_analysis_example
+    redsl__config_standard__paths__get_nested_value --> redsl__config_standard__paths__parse_config_path
+    redsl__config_standard__paths__set_nested_value --> redsl__config_standard__paths__parse_config_path
+    redsl__config_standard__paths__set_nested_value --> redsl__config_standard__paths___navigate
+    redsl__config_standard__paths__remove_nested_value --> redsl__config_standard__paths__parse_config_path
+    redsl__config_standard__paths__remove_nested_value --> redsl__config_standard__paths___navigate
+    redsl__config_standard__paths__materialize_diff --> redsl__config_standard__paths__deep_diff
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer____destruct --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__smtpClose
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__mailPassthru --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__secureHeader
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__mailPassthru --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__encodeHeader
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__mailPassthru --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__edebug
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addAddress --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addOrEnqueueAnAddress
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addCC --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addOrEnqueueAnAddress
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addBCC --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addOrEnqueueAnAddress
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addReplyTo --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addOrEnqueueAnAddress
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addOrEnqueueAnAddress --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__lang
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addOrEnqueueAnAddress --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setError
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addOrEnqueueAnAddress --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__edebug
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addOrEnqueueAnAddress --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__has8bitChars
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addOrEnqueueAnAddress --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__idnSupported
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setBoundaries --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__generateId
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addAnAddress --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__lang
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addAnAddress --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setError
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addAnAddress --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__edebug
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addAnAddress --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__validateAddress
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__parseAddresses --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__validateAddress
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setFrom --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__send
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setFrom --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__has8bitChars
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setFrom --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__idnSupported
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setFrom --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__validateAddress
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setFrom --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__lang
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setFrom --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setError
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setFrom --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__edebug
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__punyencodeAddress --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__idnSupported
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__punyencodeAddress --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__has8bitChars
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__send --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__preSend
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__send --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__postSend
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__send --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setError
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__preSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setLE
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__preSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__lang
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__preSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__anyAddressHasUnicodeLocalPart
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__preSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addressHasUnicodeLocalPart
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__preSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__punyencodeAddress
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__postSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__sendmailSend
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__postSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__smtpSend
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__postSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__mailSend
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__postSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setError
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__postSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__edebug
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__sendmailSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__edebug
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__sendmailSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__stripTrailingWSP
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__sendmailSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__validateAddress
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__sendmailSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__isShellSafe
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__sendmailSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__lang
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__fileIsAccessible --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__isPermittedPath
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__mailSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__stripTrailingWSP
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__mailSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addrFormat
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__mailSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__preSend
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__mailSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__validateAddress
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__mailSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__isShellSafe
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__mailSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__mailPassthru
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__smtpSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__stripTrailingWSP
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__smtpSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__smtpConnect
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__smtpSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__lang
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__smtpSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__preSend
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__smtpSend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setError
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__smtpConnect --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__getSMTPInstance
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__smtpConnect --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__edebug
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__smtpConnect --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__lang
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__smtpConnect --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__isValidHost
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setLanguage --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__fileIsAccessible
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__getTranslations --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setLanguage
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addrAppend --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addrFormat
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addrFormat --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__secureHeader
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addrFormat --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__encodeHeader
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__wrapText --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__normalizeBreaks
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__wrapText --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__utf8CharBoundary
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setWordWrap --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__wrapText
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createHeader --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__headerLine
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createHeader --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__rfcDate
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createHeader --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addrFormat
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createHeader --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__addrAppend
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createHeader --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__encodeHeader
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createHeader --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__secureHeader
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createHeader --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__serverHostname
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__getMailMIME --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__headerLine
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__getMailMIME --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__textLine
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__getSentMIMEMessage --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__stripTrailingWSP
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createBody --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setBoundaries
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createBody --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__getMailMIME
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createBody --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__setWordWrap
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createBody --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__has8bitChars
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createBody --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__hasLineLongerThanMax
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createBody --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__getBoundary
+    www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createBody --> www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__encodeString
+
+    classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
+    class www__config_api__validateConfig,www__app__form,www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__authenticate,www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__data,www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__get_lines,www__vendor__composer__InstalledVersions__Composer__InstalledVersions__getInstalled,test_refactor_bad__complex_code__process_data,test_refactor_bad__complex_code__process_data_copy,www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__parseAddresses,www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__validateAddress,www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__preSend,www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__sendmailSend,www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__smtpConnect,www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__wrapText,www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createHeader,www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__getMailMIME,www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__createBody,www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__attachAll,www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__encodeHeader,www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__msgHTML,www__vendor__phpmailer__phpmailer__src__PHPMailer__PHPMailer_PHPMailer__PHPMailer__DKIM_Add highCC
+    class www__nda_form__generateNDAText,www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__applyConfig,www__vendor__phpmailer__phpmailer__src__DSNConfigurator__PHPMailer_PHPMailer__DSNConfigurator__configureOptions,www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__edebug,www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__connect,www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__getSMTPConnection,www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__parseHelloFields,www__vendor__phpmailer__phpmailer__src__SMTP__PHPMailer_PHPMailer__SMTP__sendCommand,www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__addPsr4,www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__findFile,www__vendor__composer__ClassLoader__Composer_Autoload__ClassLoader__findFileWithExtension,redsl__commands___scan_report___render_priority_tiers,redsl__commands___scan_report___build_recommendations,redsl__commands__doctor__heal,redsl__commands__doctor_fstring_fixers___consume_open_fstring_brace,redsl__commands__planfile_bridge___extract_ticket_id,redsl__commands__planfile_bridge__create_ticket,redsl__commands__planfile_bridge__list_tickets,redsl__commands___guard_fixers___fix_guard_in_try_block,redsl__commands___guard_fixers___handle_guard,redsl__commands__github_source__resolve_auth_ref,redsl__commands__doctor_fixers__fix_broken_guards,redsl__commands__doctor_fixers__fix_module_level_exit,redsl__commands__doctor_fixers__fix_pytest_collision,redsl__commands__cli_doctor___format_batch_report,redsl__commands___indent_fixers___fix_body_indent,redsl__commands__batch_pyqual__verdict___check_push_requirement,redsl__commands__batch_pyqual__verdict__compute_verdict,redsl__commands__batch_pyqual__runner___print_batch_header,redsl__commands__doctor_detectors__detect_stolen_indent medCC

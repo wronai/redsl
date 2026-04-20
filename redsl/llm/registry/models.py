@@ -96,7 +96,10 @@ class ModelInfo:
         """Calculate age in days from release date."""
         if self.release_date is None:
             return None
-        return (datetime.now(timezone.utc) - self.release_date).days
+        rd = self.release_date
+        if rd.tzinfo is None:
+            rd = rd.replace(tzinfo=timezone.utc)
+        return (datetime.now(timezone.utc) - rd).days
 
 
 @dataclass

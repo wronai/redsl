@@ -2,6 +2,7 @@ examples/11-model-policy/.env.template
 vendor/
 .idea
 dist
+www/vendor
 .redsl
 refactor_output
 redsl-*

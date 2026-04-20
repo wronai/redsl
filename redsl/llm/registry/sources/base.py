@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
@@ -127,7 +127,8 @@ class ModelsDevSource(ModelRegistrySource):
         for provider, pdata in data.get("providers", {}).items():
             for model_name, mdata in pdata.get("models", {}).items():
                 rd_str = mdata.get("release_date")
-                release_date = datetime.fromisoformat(rd_str) if rd_str else None
+                _dt = datetime.fromisoformat(rd_str) if rd_str else None
+                release_date = _dt.replace(tzinfo=timezone.utc) if _dt is not None and _dt.tzinfo is None else _dt
                 model_id = f"{provider}/{model_name}"
                 out.append(
                     ModelInfo(
@@ -166,7 +167,7 @@ class OpenAIProviderSource(ModelRegistrySource):
         out = []
         for m in data.get("data", []):
             created = m.get("created")
-            release_date = datetime.utcfromtimestamp(created) if created else None
+            release_date = datetime.fromtimestamp(created, tz=timezone.utc) if created else None
             model_id = f"openai/{m['id']}"
             out.append(
                 ModelInfo(

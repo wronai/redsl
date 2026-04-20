@@ -143,3 +143,22 @@ redsl-config/
 - ✓ Append-only audit log
 - ✓ Fingerprinting for optimistic concurrency
 - ✓ Schema validation with NLP-friendly aliases
+
+## Web UI (jeśli dostępny)
+
+| Endpoint | Opis |
+|----------|------|
+| `/config-editor.php` | Edytor YAML z walidacją i backupami |
+| `/config-api.php?path=validate` | Walidacja konfiguracji (JSON) |
+| `/config-api.php?path=show` | Podgląd konfiguracji (z redakcją sekretów) |
+| `/config-api.php?path=history` | Historia zmian (JSON) |
+
+### Quick curl
+
+```bash
+# Walidacja
+curl http://localhost:8080/config-api.php?path=validate | jq
+
+# Podgląd configu
+curl http://localhost:8080/config-api.php?path=show | jq '.config.metadata'
+```

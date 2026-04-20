@@ -291,3 +291,37 @@ from redsl.config_standard import export_config_schema
 schema = export_config_schema()
 # Use for IDE autocomplete, validation, or documentation
 ```
+
+## Web UI Editor
+
+Dla wygody dostępny jest webowy edytor konfiguracji pod adresem `/config-editor.php` (jeśli wdrożony web interface):
+
+### Funkcje edytora
+
+- **Visual YAML Editor** — edycja z podświetlaniem składni
+- **Secret Redaction** — sekrety są zredagowane (pokazuje tylko referencje, nie wartości)
+- **Auto-backup** — tworzy backup przy każdym zapisie
+- **Risk Level Indicators** — pokazuje które zmiany wymagają potwierdzenia
+- **Validation** — walidacja struktury i schematu YAML
+- **Quick Init** — tworzenie domyślnej konfiguracji jednym kliknięciem
+
+### API Endpoints
+
+```
+GET /config-api.php?path=validate   — walidacja konfiguracji
+GET /config-api.php?path=show        — pobranie konfiguracji (z redakcją sekretów)
+GET /config-api.php?path=history     — lista historii zmian
+POST /config-api.php?path=diff       — porównanie z proposal
+```
+
+### Przykład użycia API
+
+```bash
+# Walidacja
+curl http://localhost:8080/config-api.php?path=validate
+
+# Historia zmian
+curl http://localhost:8080/config-api.php?path=history
+```
+
+Szczegóły w [`www/README_CONFIG.md`](./www/README_CONFIG.md).

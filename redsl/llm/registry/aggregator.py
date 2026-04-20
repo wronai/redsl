@@ -16,6 +16,14 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
+def _parse_aware_dt(value: str) -> datetime:
+    """Parse ISO datetime string, ensuring timezone-aware result (UTC if naive)."""
+    dt = datetime.fromisoformat(value)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
 class RegistryAggregator:
     """Aggregates model info from multiple sources with caching."""
 
@@ -165,7 +173,13 @@ class RegistryAggregator:
     def _compute_release_date(self, source_dates: dict, model_id: str) -> "datetime | None":
         """Compute conservative release date from source dates."""
         from datetime import datetime
-        dates_only = [d for d in source_dates.values() if d is not None]
+        # Ensure all dates are timezone-aware before comparison
+        def _ensure_aware(d):
+            if d is not None and d.tzinfo is None:
+                return d.replace(tzinfo=timezone.utc)
+            return d
+
+        dates_only = [_ensure_aware(d) for d in source_dates.values() if d is not None]
 
         if len(dates_only) >= 2:
             spread = (max(dates_only) - min(dates_only)).days
@@ -263,14 +277,14 @@ class RegistryAggregator:
                 self._cache[mid] = ModelInfo(
                     id=m["id"],
                     provider=m["provider"],
-                    release_date=datetime.fromisoformat(m["release_date"])
+                    release_date=_parse_aware_dt(m["release_date"])
                     if m.get("release_date")
                     else None,
                     deprecated=m.get("deprecated", False),
                     context_length=m.get("context_length"),
                     sources=tuple(m["sources"]),
                     source_dates={
-                        k: datetime.fromisoformat(v)
+                        k: _parse_aware_dt(v)
                         for k, v in m["source_dates"].items()
                     },
                     raw={},

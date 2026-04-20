@@ -1,14 +1,14 @@
-# redup/duplication | 14 groups | 219f 31658L | 2026-04-19
+# redup/duplication | 15 groups | 236f 33571L | 2026-04-20
 
 SUMMARY:
-  files_scanned: 219
-  total_lines:   31658
-  dup_groups:    14
-  dup_fragments: 47
-  saved_lines:   132
-  scan_ms:       13458
+  files_scanned: 236
+  total_lines:   33571
+  dup_groups:    15
+  dup_fragments: 50
+  saved_lines:   140
+  scan_ms:       9399
 
-DUPLICATES[14] (ranked by impact):
+DUPLICATES[15] (ranked by impact):
   [1907a33a0fa70761]   STRU  example_basic_analysis  L=3 N=9 saved=24 sim=1.00
       redsl/cli/examples.py:26-28  (example_basic_analysis)
       redsl/cli/examples.py:34-36  (example_custom_rules)
@@ -46,6 +46,10 @@ DUPLICATES[14] (ranked by impact):
   [b027db1c8d821268]   STRU  _register_history_command  L=10 N=2 saved=10 sim=1.00
       redsl/commands/cli_awareness.py:22-31  (_register_history_command)
       redsl/commands/cli_awareness.py:44-53  (_register_health_command)
+  [7089d0a97fbe9457]   STRU  _check_tool_calling  L=4 N=3 saved=8 sim=1.00
+      redsl/llm/selection/checks.py:43-46  (_check_tool_calling)
+      redsl/llm/selection/checks.py:49-52  (_check_json_mode)
+      redsl/llm/selection/checks.py:55-58  (_check_streaming)
   [ce2537bbaad1fba9]   STRU  export_config_schema  L=7 N=2 saved=7 sim=1.00
       redsl/config_standard/profiles.py:82-88  (export_config_schema)
       redsl/config_standard/proposals.py:78-84  (export_proposal_schema)
@@ -56,8 +60,8 @@ DUPLICATES[14] (ranked by impact):
       redsl/cli/batch.py:52-55  (batch_hybrid)
       redsl/cli/pyqual.py:31-34  (pyqual_fix)
   [d63bc3468205cd17]   EXAC  __init__  L=3 N=2 saved=3 sim=1.00
-      redsl/llm/registry/sources/base.py:153-155  (__init__)
-      redsl/llm/registry/sources/base.py:190-192  (__init__)
+      redsl/llm/registry/sources/base.py:154-156  (__init__)
+      redsl/llm/registry/sources/base.py:191-193  (__init__)
   [77d5f2d33a9f8d05]   STRU  _extract_file_path  L=3 N=2 saved=3 sim=1.00
       redsl/autonomy/auto_fix.py:65-67  (_extract_file_path)
       redsl/autonomy/auto_fix.py:70-72  (_extract_function_name)
@@ -71,7 +75,7 @@ DUPLICATES[14] (ranked by impact):
       redsl/main.py:214-216  (_dispatch_analyze)
       redsl/main.py:219-221  (_dispatch_explain)
 
-REFACTOR[14] (ranked by priority):
+REFACTOR[15] (ranked by priority):
   [1] ○ extract_function   → redsl/cli/utils/example_basic_analysis.py
       WHY: 9 occurrences of 3-line block across 1 files — saves 24 lines
       FILES: redsl/cli/examples.py
@@ -90,31 +94,34 @@ REFACTOR[14] (ranked by priority):
   [6] ○ extract_function   → redsl/commands/utils/_register_history_command.py
       WHY: 2 occurrences of 10-line block across 1 files — saves 10 lines
       FILES: redsl/commands/cli_awareness.py
-  [7] ○ extract_function   → redsl/config_standard/utils/export_config_schema.py
+  [7] ○ extract_function   → redsl/llm/selection/utils/_check_tool_calling.py
+      WHY: 3 occurrences of 4-line block across 1 files — saves 8 lines
+      FILES: redsl/llm/selection/checks.py
+  [8] ○ extract_function   → redsl/config_standard/utils/export_config_schema.py
       WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
       FILES: redsl/config_standard/profiles.py, redsl/config_standard/proposals.py
-  [8] ○ extract_function   → redsl/commands/batch_pyqual/utils/_check_analysis_passed.py
+  [9] ○ extract_function   → redsl/commands/batch_pyqual/utils/_check_analysis_passed.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: redsl/commands/batch_pyqual/verdict.py
-  [9] ○ extract_function   → redsl/cli/utils/batch_hybrid.py
+  [10] ○ extract_function   → redsl/cli/utils/batch_hybrid.py
       WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
       FILES: redsl/cli/batch.py, redsl/cli/pyqual.py
-  [10] ○ extract_function   → redsl/llm/registry/sources/utils/__init__.py
+  [11] ○ extract_function   → redsl/llm/registry/sources/utils/__init__.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: redsl/llm/registry/sources/base.py
-  [11] ○ extract_function   → redsl/autonomy/utils/_extract_file_path.py
+  [12] ○ extract_function   → redsl/autonomy/utils/_extract_file_path.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: redsl/autonomy/auto_fix.py
-  [12] ○ extract_function   → redsl/cli/utils/register_model_policy.py
+  [13] ○ extract_function   → redsl/cli/utils/register_model_policy.py
       WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
       FILES: redsl/cli/model_policy.py, redsl/cli/models.py
-  [13] ○ extract_function   → redsl/cli/utils/model_policy.py
+  [14] ○ extract_function   → redsl/cli/utils/model_policy.py
       WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
       FILES: redsl/cli/model_policy.py, redsl/cli/models.py
-  [14] ○ extract_function   → redsl/utils/_dispatch_analyze.py
+  [15] ○ extract_function   → redsl/utils/_dispatch_analyze.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: redsl/main.py
 
 METRICS-TARGET:
-  dup_groups:  14 → 0
-  saved_lines: 132 lines recoverable
+  dup_groups:  15 → 0
+  saved_lines: 140 lines recoverable
