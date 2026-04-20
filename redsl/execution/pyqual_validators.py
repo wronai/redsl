@@ -206,6 +206,89 @@ def _retry_gates_after_tune(exe: str, project_dir: Path, step, _hw) -> None:
         )
 
 
+def _resolve_pyqual_step(project_dir: Path, workflow):
+    """Resolve pyqual_gates step config. Returns (step, exe) or (None, None)."""
+    from redsl.execution.workflow import WorkflowConfig, load_workflow
+
+    wf: WorkflowConfig = workflow or load_workflow(project_dir)
+    step = wf.validate.get_step("pyqual_gates")
+    if step is None:
+        return None, None
+
+    # Resolve "auto": run only if pyqual.yaml present
+    if step.enabled == "auto":
+        enabled = (project_dir / "pyqual.yaml").exists()
+    else:
+        enabled = bool(step.enabled)
+
+    if not enabled:
+        return None, None
+
+    if not (project_dir / "pyqual.yaml").exists():
+        logger.debug("pyqual.yaml not found in %s — skipping pyqual_gates", project_dir.name)
+        return None, None
+
+    exe = _find_project_pyqual(project_dir)
+    if not exe:
+        logger.debug("pyqual.yaml found in %s but pyqual not installed", project_dir.name)
+        return None, None
+
+    return step, exe
+
+
+def _execute_pyqual_gates(exe: str, project_dir: Path, step, _hw) -> None:
+    """Run pyqual gates and handle failure via on_failure strategy."""
+    import subprocess
+
+    proc = subprocess.run(
+        [exe, "gates", "--config", "pyqual.yaml"],
+        capture_output=True,
+        text=True,
+        timeout=120,
+        cwd=str(project_dir),
+    )
+    if proc.returncode == 0:
+        logger.info("pyqual gates: PASSED in %s", project_dir.name)
+        _hw.record_event(
+            "validator_gates_passed",
+            status="passed",
+            thought=f"pyqual gates PASSED in {project_dir.name}",
+            details={"step": "pyqual_gates", "output": (proc.stdout + proc.stderr)[-500:]},
+        )
+        return
+
+    # Gates failed — apply on_failure strategy
+    on_failure = step.on_failure
+    gates_fail_output = (proc.stdout + proc.stderr)[-1000:]
+    logger.warning(
+        "pyqual gates: FAILED in %s (rc=%d) — on_failure=%s",
+        project_dir.name, proc.returncode, on_failure,
+    )
+    _hw.record_event(
+        "validator_gates_failed",
+        status="failed",
+        reason=f"pyqual gates FAILED rc={proc.returncode} on_failure={on_failure}",
+        details={
+            "step": "pyqual_gates",
+            "returncode": proc.returncode,
+            "on_failure": on_failure,
+            "output": gates_fail_output,
+        },
+    )
+
+    if on_failure == "tune":
+        tune_ok = _run_tune_strategy(exe, project_dir, step, _hw)
+        if not tune_ok:
+            return
+        if step.tune.retry:
+            _retry_gates_after_tune(exe, project_dir, step, _hw)
+    elif on_failure in ("warn", "stop"):
+        logger.warning(
+            "pyqual gates: FAILED in %s (on_failure=%s) — continuing",
+            project_dir.name, on_failure,
+        )
+
+
 def _run_project_validators_phase(
     project_dir: Path,
     report: "CycleReport",
@@ -222,29 +305,8 @@ def _run_project_validators_phase(
     if report.proposals_applied == 0:
         return
 
-    from redsl.execution.workflow import WorkflowConfig, load_workflow
-
-    wf: WorkflowConfig = workflow or load_workflow(project_dir)
-    step = wf.validate.get_step("pyqual_gates")
+    step, exe = _resolve_pyqual_step(project_dir, workflow)
     if step is None:
-        return
-
-    # Resolve "auto": run only if pyqual.yaml present
-    if step.enabled == "auto":
-        enabled = (project_dir / "pyqual.yaml").exists()
-    else:
-        enabled = bool(step.enabled)
-
-    if not enabled:
-        return
-
-    if not (project_dir / "pyqual.yaml").exists():
-        logger.debug("pyqual.yaml not found in %s — skipping pyqual_gates", project_dir.name)
-        return
-
-    exe = _find_project_pyqual(project_dir)
-    if not exe:
-        logger.debug("pyqual.yaml found in %s but pyqual not installed", project_dir.name)
         return
 
     import subprocess
@@ -254,55 +316,7 @@ def _run_project_validators_phase(
 
     logger.info("=== PROJECT VALIDATORS: pyqual gates (%s) ===", project_dir.name)
     try:
-        proc = subprocess.run(
-            [exe, "gates", "--config", "pyqual.yaml"],
-            capture_output=True,
-            text=True,
-            timeout=120,
-            cwd=str(project_dir),
-        )
-        if proc.returncode == 0:
-            logger.info("pyqual gates: PASSED in %s", project_dir.name)
-            _hw.record_event(
-                "validator_gates_passed",
-                status="passed",
-                thought=f"pyqual gates PASSED in {project_dir.name}",
-                details={"step": "pyqual_gates", "output": (proc.stdout + proc.stderr)[-500:]},
-            )
-            return
-
-        # Gates failed — apply on_failure strategy
-        on_failure = step.on_failure
-        gates_fail_output = (proc.stdout + proc.stderr)[-1000:]
-        logger.warning(
-            "pyqual gates: FAILED in %s (rc=%d) — on_failure=%s",
-            project_dir.name, proc.returncode, on_failure,
-        )
-        _hw.record_event(
-            "validator_gates_failed",
-            status="failed",
-            reason=f"pyqual gates FAILED rc={proc.returncode} on_failure={on_failure}",
-            details={
-                "step": "pyqual_gates",
-                "returncode": proc.returncode,
-                "on_failure": on_failure,
-                "output": gates_fail_output,
-            },
-        )
-
-        if on_failure == "tune":
-            tune_ok = _run_tune_strategy(exe, project_dir, step, _hw)
-            if not tune_ok:
-                return
-            if step.tune.retry:
-                _retry_gates_after_tune(exe, project_dir, step, _hw)
-        elif on_failure in ("warn", "stop"):
-            logger.warning(
-                "pyqual gates: FAILED in %s (on_failure=%s) — continuing",
-                project_dir.name, on_failure,
-            )
-        # rollback not implemented for pyqual gates (no direct file to revert)
-
+        _execute_pyqual_gates(exe, project_dir, step, _hw)
     except subprocess.TimeoutExpired:
         logger.warning("pyqual gates: timed out in %s", project_dir.name)
         _hw.record_event(

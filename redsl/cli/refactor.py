@@ -47,6 +47,7 @@ def _resolve_cli_export(name: str, fallback: Any) -> Any:
 @click.option("--target-file", type=str, default=None, help="Restrict decisions to a project-relative file or path prefix")
 @click.option("--run-tests", is_flag=True, help="Run project test suite after applying changes; roll back and create planfile task on regression")
 @click.option("--from-planfile", is_flag=True, help="Use planfile.yaml todo tasks to guide file-targeted refactoring")
+@click.option("--to-planfile", is_flag=True, help="Save decisions as todo tasks in planfile.yaml instead of markdown report")
 @click.pass_context
 def refactor(
     ctx: click.Context,
@@ -61,6 +62,7 @@ def refactor(
     target_file: str | None,
     run_tests: bool,
     from_planfile: bool,
+    to_planfile: bool,
 ) -> None:
     """Run refactoring on a project."""
     verbose = ctx.obj.get("verbose", False)
@@ -85,7 +87,7 @@ def refactor(
     )
 
     if dry_run:
-        _handle_dry_run(format, decisions, analysis, project_path, log_file)
+        _handle_dry_run(format, decisions, analysis, project_path, log_file, to_planfile=to_planfile)
         return
 
     if from_planfile:
@@ -103,12 +105,24 @@ def refactor(
     )
 
 
-def _handle_dry_run(format: str, decisions: list[Any], analysis: Any, project_path: Path, log_file: Path) -> None:
-    """Handle dry-run path: emit plan and save markdown + toon reports."""
+def _handle_dry_run(
+    format: str,
+    decisions: list[Any],
+    analysis: Any,
+    project_path: Path,
+    log_file: Path,
+    to_planfile: bool = False,
+) -> None:
+    """Handle dry-run path: emit plan and optionally save to planfile or markdown."""
     _emit_refactor_dry_run(format, decisions, analysis)
-    md_report, toon_report = _save_refactor_reports(project_path, None, decisions, analysis, log_file, dry_run=True)
-    click.echo(f"Markdown report saved to: {md_report}", err=True)
-    click.echo(f"TOON report saved to: {toon_report}", err=True)
+    if to_planfile:
+        from ..execution.planfile_updater import add_decision_tasks
+        added = add_decision_tasks(project_path, decisions, source="redsl:dry_run")
+        click.echo(f"planfile: added {added} decision task(s) to planfile.yaml", err=True)
+    else:
+        md_report, toon_report = _save_refactor_reports(project_path, None, decisions, analysis, log_file, dry_run=True)
+        click.echo(f"Markdown report saved to: {md_report}", err=True)
+        click.echo(f"TOON report saved to: {toon_report}", err=True)
 
 
 def _execute_from_planfile(

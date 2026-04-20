@@ -32,14 +32,14 @@ function env(string $key, string $default = ''): string {
 
 // Demo data — in production loaded from database/API
 $proposals = [
-    ['id' => 1, 'title' => 'Refaktoryzacja klasy UserService', 'file' => 'src/services/UserService.php', 'effort' => 'M', 'lines' => 150, 'price' => 10, 'priority' => 1, 'redsl_min' => 8],
-    ['id' => 2, 'title' => 'Ekstrakcja metod w PaymentController', 'file' => 'src/controllers/PaymentController.php', 'effort' => 'S', 'lines' => 80, 'price' => 10, 'priority' => 2, 'redsl_min' => 4],
-    ['id' => 3, 'title' => 'Redukcja złożoności cyklomatycznej', 'file' => 'src/utils/Calculator.php', 'effort' => 'L', 'lines' => 320, 'price' => 10, 'priority' => 1, 'redsl_min' => 15],
-    ['id' => 4, 'title' => 'Usunięcie duplikacji kodu w walidacjach', 'file' => 'src/validators/', 'effort' => 'M', 'lines' => 200, 'price' => 10, 'priority' => 2, 'redsl_min' => 10],
-    ['id' => 5, 'title' => 'Poprawa nazewnictwa i konwencji', 'file' => 'src/models/', 'effort' => 'S', 'lines' => 120, 'price' => 10, 'priority' => 3, 'redsl_min' => 3],
-    ['id' => 6, 'title' => 'Refaktoryzacja repository pattern', 'file' => 'src/repositories/', 'effort' => 'L', 'lines' => 450, 'price' => 10, 'priority' => 1, 'redsl_min' => 20],
-    ['id' => 7, 'title' => 'Ekstrakcja interfejsów', 'file' => 'src/contracts/', 'effort' => 'M', 'lines' => 180, 'price' => 10, 'priority' => 2, 'redsl_min' => 9],
-    ['id' => 8, 'title' => 'Usunięcie martwego kodu', 'file' => 'src/legacy/', 'effort' => 'S', 'lines' => 90, 'price' => 10, 'priority' => 3, 'redsl_min' => 3],
+    ['id' => 1, 'title' => 'UserService class refactoring', 'file' => 'src/services/UserService.php', 'effort' => 'M', 'lines' => 150, 'price' => 10, 'priority' => 1, 'redsl_min' => 8],
+    ['id' => 2, 'title' => 'Method extraction in PaymentController', 'file' => 'src/controllers/PaymentController.php', 'effort' => 'S', 'lines' => 80, 'price' => 10, 'priority' => 2, 'redsl_min' => 4],
+    ['id' => 3, 'title' => 'Cyclomatic complexity reduction', 'file' => 'src/utils/Calculator.php', 'effort' => 'L', 'lines' => 320, 'price' => 10, 'priority' => 1, 'redsl_min' => 15],
+    ['id' => 4, 'title' => 'Remove code duplication in validators', 'file' => 'src/validators/', 'effort' => 'M', 'lines' => 200, 'price' => 10, 'priority' => 2, 'redsl_min' => 10],
+    ['id' => 5, 'title' => 'Improve naming and conventions', 'file' => 'src/models/', 'effort' => 'S', 'lines' => 120, 'price' => 10, 'priority' => 3, 'redsl_min' => 3],
+    ['id' => 6, 'title' => 'Repository pattern refactoring', 'file' => 'src/repositories/', 'effort' => 'L', 'lines' => 450, 'price' => 10, 'priority' => 1, 'redsl_min' => 20],
+    ['id' => 7, 'title' => 'Interface extraction', 'file' => 'src/contracts/', 'effort' => 'M', 'lines' => 180, 'price' => 10, 'priority' => 2, 'redsl_min' => 9],
+    ['id' => 8, 'title' => 'Remove dead code', 'file' => 'src/legacy/', 'effort' => 'S', 'lines' => 90, 'price' => 10, 'priority' => 3, 'redsl_min' => 3],
 ];
 
 // Handle form submission
@@ -370,12 +370,12 @@ $issue = date('Y.m');
                 <li><code>1, 3, 7</code> — select specific numbers (comma separated)</li>
                 <li><code>12-15</code> — range from 12 to 15 inclusive</li>
                 <li><code>all</code> — entire list</li>
-                <li><code>everything under 15</code> — all tickets (each $10)</li>
+                <li><code>everything under 15</code> — all tickets ($10 each)</li>
             </ul>
         </div>
 
         <div class="selection-panel">
-            <div class="selection-title">Select options</div>
+            <div class="selection-title">Choose your tickets</div>
 
             <label class="option-row">
                 <input type="radio" name="selection" value="all" checked>
@@ -385,7 +385,7 @@ $issue = date('Y.m');
 
             <label class="option-row">
                 <input type="radio" name="selection" value="under_15">
-                <span class="option-label">Everything under $15 (i.e., all)</span>
+                <span class="option-label">Everything under $15 (all tickets)</span>
                 <span class="option-price">$<?= count($proposals) * 10 ?></span>
             </label>
 
@@ -394,17 +394,17 @@ $issue = date('Y.m');
                 <span class="option-label" style="flex: 0 0 auto;">Custom selection:</span>
                 <input type="text" name="custom_input" class="custom-input" placeholder="e.g. 1, 3, 7, 12-15, 24" style="flex: 1; min-width: 200px;">
             </label>
-            <p class="hint">Każdy ticket: <strong>10 zł</strong> (do 500 LOC, po zmergeowaniu PR)</p>
+            <p class="hint">Each ticket: <strong>$10</strong> (up to 500 LOC, after PR merge)</p>
         </div>
 
         <div class="proposals-list">
             <div class="proposal-item" style="background: #fafafa; font-weight: 600; color: #666;">
                 <div class="prop-id">ID</div>
-                <div class="prop-title">Tytuł / Plik</div>
+                <div class="prop-title">Title / File</div>
                 <div class="prop-effort" style="text-align:center">ReDSL</div>
-                <div class="prop-effort" style="text-align:center">Człowiek</div>
-                <div class="prop-lines">Linie</div>
-                <div class="prop-price">Cena</div>
+                <div class="prop-effort" style="text-align:center">Human</div>
+                <div class="prop-lines">Lines</div>
+                <div class="prop-price">Price</div>
             </div>
             <?php foreach ($proposals as $p): ?>
             <div class="proposal-item">
@@ -413,20 +413,20 @@ $issue = date('Y.m');
                     <div class="prop-title"><?= h($p['title']) ?></div>
                     <div class="prop-file"><?= h($p['file']) ?></div>
                 </div>
-                <div class="prop-effort" style="text-align:center" title="Czas wykonania przez ReDSL"><?= $p['redsl_min'] ?> min</div>
-                <div class="prop-effort" style="text-align:center; color:#888" title="Szacowany czas ręczny"><?= $humanHours[$p['effort']] ?></div>
+                <div class="prop-effort" style="text-align:center" title="ReDSL execution time"><?= $p['redsl_min'] ?> min</div>
+                <div class="prop-effort" style="text-align:center; color:#888" title="Estimated manual effort"><?= $humanHours[$p['effort']] ?></div>
                 <div class="prop-lines">~<?= $p['lines'] ?></div>
-                <div class="prop-price"><?= $p['price'] ?> zł</div>
+                <div class="prop-price">$<?= $p['price'] ?></div>
             </div>
             <?php endforeach; ?>
         </div>
 
         <div class="summary-bar">
             <div>
-                <div class="summary-text">Wybierz opcje powyżej</div>
-                <div class="summary-note">Płatność po zmergeowaniu PR. NDA podpisujemy przed skanem.</div>
+                <div class="summary-text">Select options above</div>
+                <div class="summary-note">Payment after PR merge. NDA signed before scan.</div>
             </div>
-            <button type="submit" class="btn-submit">Potwierdź wybór →</button>
+            <button type="submit" class="btn-submit">Confirm selection →</button>
         </div>
     </form>
 
