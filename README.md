@@ -1,12 +1,10 @@
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-1.2.53-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$13.80-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-35.8h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-yellow) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fopenai%2Fgpt-5-mini-lightgrey)
 
-- 🤖 **LLM usage:** $13.7992 (105 commits)
-- 👤 **Human dev:** ~$3584 (35.8h @ $100/h, 30min dedup)
+This project uses AI-generated code. Total cost: **$7.5000** with **100** AI commits.
 
-Generated on 2026-04-20 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
+Generated on 2026-04-20 using [openrouter/openai/gpt-5-mini](https://openrouter.ai/models/openrouter/openai/gpt-5-mini)
 
 ---
 
@@ -16,7 +14,7 @@ Generated on 2026-04-20 using [openrouter/qwen/qwen3-coder-next](https://openrou
 
 ReDSL to eksperymentalny framework łączący LLM, formalny runtime DSL, CI/CD i pętlę samorefaktoryzacji w jeden autonomiczny cykl życia kodu.
 
-![Version](https://img.shields.io/badge/version-1.2.53-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-571%20passing-green) ![E2E](https://img.shields.io/badge/e2e-18%20tests-green) [![Docs](https://img.shields.io/badge/docs-29%20projektów-green)](./docs/)
+![Version](https://img.shields.io/badge/version-1.2.54-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-571%20passing-green) ![E2E](https://img.shields.io/badge/e2e-18%20tests-green) [![Docs](https://img.shields.io/badge/docs-29%20projektów-green)](./docs/)
 
 ---
 

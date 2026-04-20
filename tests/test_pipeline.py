@@ -105,6 +105,7 @@ class TestPipelineDuplication:
         assert isinstance(groups, list)
 
     @skip_if_redup_unavailable
+    @pytest.mark.slow
     def test_enrich_analysis_adds_duplicates(self, redsl_enriched_analysis):
         enriched = redsl_enriched_analysis
         assert isinstance(enriched.duplicates, list)
@@ -148,6 +149,7 @@ class TestPipelineDecide:
             assert d.score > 0
             assert d.rule_name
 
+    @pytest.mark.slow
     def test_code2llm_enrich_redup_then_decide(self, redsl_enriched_analysis):
         engine = DSLEngine()
         decisions = engine.top_decisions(redsl_enriched_analysis.to_dsl_contexts(), limit=10)

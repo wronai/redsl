@@ -1,16 +1,9 @@
 <?php
 /**
- * ReDSL — Propozycje Refaktoryzacji (Panel SaaS) — wersja PL
- *
- * Klient otrzymuje e-mail z linkiem do tej strony.
- * Może wybrać, które propozycje (tickety) chce zrealizować.
- *
- * Format wyboru: "1, 3, 7, 12-15, 24" lub "wszystkie" lub "wszystko pod 15"
+ * Redirect legacy PL URL → unified /proposals?lang=pl
  */
-
-declare(strict_types=1);
-
-session_start();
+header('Location: /proposals?lang=pl', true, 301);
+exit;
 
 function load_env_pl(string $path): void {
     if (!is_readable($path)) return;

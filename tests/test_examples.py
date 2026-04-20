@@ -10,6 +10,8 @@ from pathlib import Path
 
 import pytest
 
+pytestmark = [pytest.mark.slow]
+
 # Base directory for examples
 EXAMPLES_DIR = Path(__file__).parent.parent / "examples"
 

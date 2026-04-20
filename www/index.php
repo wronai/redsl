@@ -419,7 +419,7 @@ $issue = date('Y.m');
         <div class="kicker"><?=h($t('hero.kicker'))?></div>
 
         <h1 class="headline">
-            <?=h($t('hero.headline'))?>
+            <?=$th('hero.headline')?>
         </h1>
 
         <p class="lede">
@@ -459,7 +459,7 @@ $issue = date('Y.m');
 <section class="section pain">
     <div class="container">
         <div class="section-label"><?=h($t('pain.label'))?></div>
-        <h2 class="section-title"><?=h($t('pain.title'))?></h2>
+        <h2 class="section-title"><?=$th('pain.title')?></h2>
 
         <div class="pain-grid">
             <div class="pain-col pain-before">
@@ -467,14 +467,14 @@ $issue = date('Y.m');
                 <ul>
                     <li><?=h($t('pain.without_1'))?></li>
                     <li><?=h($t('pain.without_2'))?></li>
-                    <li><?=h($t('pain.without_3'))?></li>
+                    <li><?=$th('pain.without_3')?></li>
                     <li><?=h($t('pain.without_4'))?></li>
                 </ul>
             </div>
             <div class="pain-col pain-after">
                 <div class="pain-label"><span class="pain-icon">✓</span> <?=h($t('pain.with'))?></div>
                 <ul>
-                    <li><?=h($t('pain.with_1'))?></li>
+                    <li><?=$th('pain.with_1')?></li>
                     <li><?=h($t('pain.with_2'))?></li>
                     <li><?=h($t('pain.with_3'))?></li>
                     <li><?=h($t('pain.with_4'))?></li>
@@ -482,7 +482,7 @@ $issue = date('Y.m');
             </div>
         </div>
 
-        <p class="pain-punchline"><?=h($t('pain.punchline'))?></p>
+        <p class="pain-punchline"><?=$th('pain.punchline')?></p>
     </div>
 </section>
 
@@ -501,7 +501,7 @@ $issue = date('Y.m');
             </div>
             <div>
                 <h3><?=h($t('why.title_3'))?></h3>
-                <p><?=h($t('why.desc_3'))?></p>
+                <p><?=$th('why.desc_3')?></p>
             </div>
         </div>
     </div>
@@ -592,7 +592,7 @@ $issue = date('Y.m');
                     <span class="tag-corner tag-corner-br"></span>
                     <div class="price-label"><?=h($t('pricing.made_title'))?></div>
                     <div class="price-value">
-                        <span class="amount"><?=h($getPricing('ticket_found', false))?></span>
+                        <span class="amount"><?=h($getPricing('ticket_yours', false))?></span>
                         <span class="currency"><?=h($getCurrencyConfig()['symbol'])?></span>
                     </div>
                 </div>
@@ -608,8 +608,7 @@ $issue = date('Y.m');
         </div>
 
         <div class="bulk-note">
-            <strong><?=h($t('pricing.bundle_title'))?></strong>
-            — <?=h(sprintf($t('pricing.bundle_note'), h($getPricing('bundle_20'))))?>
+            <?=$th('pricing.made_note')?>
         </div>
     </div>
 </section>

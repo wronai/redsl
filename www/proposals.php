@@ -31,14 +31,16 @@ function env(string $key, string $default = ''): string {
 }
 
 // ---- i18n ----
-$i18n = require __DIR__ . '/lib/i18n.php';
-$t = $i18n['t'];
-$lang = $i18n['lang'];
-$getLangUrls = $i18n['getLangUrls'];
-$getLangName = $i18n['getLangName'];
-$formatPrice = $i18n['formatPrice'];
-$getPricing = $i18n['getPricing'];
-$getCurrencyConfig = $i18n['getCurrencyConfig'];
+require_once __DIR__ . '/lib/i18n.php';
+$_i18n       = I18n::getInstance();
+$t           = fn(string $k, array $p = []): string => $_i18n->t($k, $p);
+$th          = fn(string $k, array $p = []): string => $_i18n->th($k, $p);
+$lang        = $_i18n->getLang();
+$getLangUrls = fn(): array => $_i18n->getLangUrls();
+$getLangName = fn(string $l): string => $_i18n->getLangName($l);
+$formatPrice = fn(float $usd, bool $sym = true): string => $_i18n->formatPrice($usd, $sym);
+$getPricing  = fn(string $k, bool $sym = true): string => $_i18n->getPricing($k, $sym);
+$getCurrencyConfig = fn(): array => $_i18n->getCurrencyConfig();
 
 // Demo data — in production loaded from database/API
 $proposals = [
@@ -77,10 +79,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!empty($selectedIds)) {
-        $totalPriceFormatted = $i18n->formatPrice($totalPriceUsd);
+        $totalPriceFormatted = $formatPrice($totalPriceUsd);
         $message = sprintf(
             $t('proposals.success'),
-            count($selectedIds),
+            (int)count($selectedIds),
             $totalPriceFormatted
         );
         // In production: save to database, send confirmation email
@@ -112,7 +114,7 @@ function h(string $s): string {
 
 $priorityEmoji = [1 => '🔴', 2 => '🟠', 3 => '🟡'];
 $humanHours = ['S' => '~2h', 'M' => '~4h', 'L' => '~8h'];
-$ticketPrice = $i18n->formatPrice(10.0);
+$ticketPrice = $formatPrice(10.0);
 
 $year = date('Y');
 $issue = date('Y.m');
@@ -370,21 +372,20 @@ $issue = date('Y.m');
             <a href="/config-editor.php">Config</a>
             <a href="/proposals">Proposals</a>
             <a href="/#contact">Contact</a>
+            <div class="lang-switcher">
+                <?php foreach ($getLangUrls() as $code => $url): ?>
+                <a href="<?=h($url)?>" class="lang-btn <?= $code === $lang ? 'lang-btn-active' : '' ?>"><?=h(strtoupper($code))?></a>
+                <?php endforeach; ?>
+            </div>
         </nav>
     </div>
     <div class="rule"></div>
 </header>
 
 <main class="proposals-container">
-    <div class="lang-switch">
-        <span class="active">EN</span>
-        &nbsp;|&nbsp;
-        <a href="/propozycje">PL</a>
-    </div>
-
     <div class="page-header">
-        <h1>Refactoring Proposals</h1>
-        <p class="subtitle">Project: <strong>my-app</strong> · Received: <?=h(date('F j, Y'))?></p>
+        <h1><?=h($t('proposals.title'))?></h1>
+        <p class="subtitle"><?=h($t('proposals.project'))?>: <strong>my-app</strong> · <?=h($t('proposals.received'))?>: <?=h(date('j F Y'))?></p>
     </div>
 
     <?php if ($message): ?>
@@ -393,46 +394,46 @@ $issue = date('Y.m');
 
     <form method="post">
         <div class="instructions">
-            <strong>How to select:</strong>
+            <strong><?=h($t('proposals.how_to'))?></strong>
             <ul style="margin: 8px 0; padding-left: 20px;">
-                <li><code>1, 3, 7</code> — select specific numbers (comma separated)</li>
-                <li><code>12-15</code> — range from 12 to 15 inclusive</li>
-                <li><code>all</code> — entire list</li>
-                <li><code>everything under 15</code> — all tickets ($10 each)</li>
+                <li><code>1, 3, 7</code> — <?=h($t('proposals.how_1'))?></li>
+                <li><code>12-15</code> — <?=h($t('proposals.how_2'))?></li>
+                <li><code>all</code> — <?=h($t('proposals.how_3'))?></li>
+                <li><code>everything under 15</code> — <?=h($t('proposals.how_4'))?></li>
             </ul>
         </div>
 
         <div class="selection-panel">
-            <div class="selection-title">Choose your tickets</div>
+            <div class="selection-title"><?=h($t('proposals.select_options'))?></div>
 
             <label class="option-row">
                 <input type="radio" name="selection" value="all" checked>
-                <span class="option-label">All proposals</span>
-                <span class="option-price"><?=h($i18n->formatPrice(count($proposals) * 10.0))?></span>
+                <span class="option-label"><?=h($t('proposals.all_proposals'))?></span>
+                <span class="option-price"><?=h($formatPrice(count($proposals) * 10.0))?></span>
             </label>
 
             <label class="option-row">
                 <input type="radio" name="selection" value="under_15">
-                <span class="option-label">Everything under <?=h($i18n->formatPrice(15.0))?> (all tickets)</span>
-                <span class="option-price"><?=h($i18n->formatPrice(count($proposals) * 10.0))?></span>
+                <span class="option-label"><?=h($t('proposals.under_15'))?></span>
+                <span class="option-price"><?=h($formatPrice(count($proposals) * 10.0))?></span>
             </label>
 
             <label class="option-row" style="flex-wrap: wrap;">
                 <input type="radio" name="selection" value="custom">
-                <span class="option-label" style="flex: 0 0 auto;">Custom selection:</span>
-                <input type="text" name="custom_input" class="custom-input" placeholder="e.g. 1, 3, 7, 12-15, 24" style="flex: 1; min-width: 200px;">
+                <span class="option-label" style="flex: 0 0 auto;"><?=h($t('proposals.custom'))?></span>
+                <input type="text" name="custom_input" class="custom-input" placeholder="<?=h($t('proposals.placeholder'))?>" style="flex: 1; min-width: 200px;">
             </label>
-            <p class="hint">Each ticket: <strong><?=h($ticketPrice)?></strong> (up to 500 LOC, after PR merge)</p>
+            <p class="hint"><?=$th('proposals.hint')?></p>
         </div>
 
         <div class="proposals-list">
             <div class="proposal-item" style="background: #fafafa; font-weight: 600; color: #666;">
-                <div class="prop-id">ID</div>
-                <div class="prop-title">Title / File</div>
-                <div class="prop-effort" style="text-align:center">ReDSL</div>
-                <div class="prop-effort" style="text-align:center">Human</div>
-                <div class="prop-lines">Lines</div>
-                <div class="prop-price">Price</div>
+                <div class="prop-id"><?=h($t('proposals.table_id'))?></div>
+                <div class="prop-title"><?=h($t('proposals.table_title'))?></div>
+                <div class="prop-effort" style="text-align:center"><?=h($t('proposals.table_redsl'))?></div>
+                <div class="prop-effort" style="text-align:center"><?=h($t('proposals.table_human'))?></div>
+                <div class="prop-lines"><?=h($t('proposals.table_lines'))?></div>
+                <div class="prop-price"><?=h($t('proposals.table_price'))?></div>
             </div>
             <?php foreach ($proposals as $p): ?>
             <div class="proposal-item">
@@ -441,25 +442,25 @@ $issue = date('Y.m');
                     <div class="prop-title"><?= h($p['title']) ?></div>
                     <div class="prop-file"><?= h($p['file']) ?></div>
                 </div>
-                <div class="prop-effort" style="text-align:center" title="ReDSL execution time"><?= $p['redsl_min'] ?> min</div>
-                <div class="prop-effort" style="text-align:center; color:#888" title="Estimated manual effort"><?= $humanHours[$p['effort']] ?></div>
+                <div class="prop-effort" style="text-align:center" title="<?=h($t('proposals.redsl_tooltip'))?>"><?= $p['redsl_min'] ?> min</div>
+                <div class="prop-effort" style="text-align:center; color:#888" title="<?=h($t('proposals.human_tooltip'))?>"><?= $humanHours[$p['effort']] ?></div>
                 <div class="prop-lines">~<?= $p['lines'] ?></div>
-                <div class="prop-price"><?=h($i18n->formatPrice($p['price']))?></div>
+                <div class="prop-price"><?=h($formatPrice($p['price']))?></div>
             </div>
             <?php endforeach; ?>
         </div>
 
         <div class="summary-bar">
             <div>
-                <div class="summary-text">Select options above</div>
-                <div class="summary-note">Payment after PR merge. NDA signed before scan.</div>
+                <div class="summary-text"><?=h($t('proposals.summary_select'))?></div>
+                <div class="summary-note"><?=h($t('proposals.summary_note'))?></div>
             </div>
-            <button type="submit" class="btn-submit">Confirm selection →</button>
+            <button type="submit" class="btn-submit"><?=h($t('proposals.confirm'))?></button>
         </div>
     </form>
 
     <p class="help-text">
-        Questions? <a href="/#contact">Contact us</a> or
+        <?=h($t('proposals.questions'))?> <a href="/#contact">Contact</a> ·
         <a href="mailto:contact@redsl.io">contact@redsl.io</a>
     </p>
 </main>
@@ -473,7 +474,7 @@ $issue = date('Y.m');
                 <p class="footer-sub">Refactor · DSL · Self-Learning</p>
             </div>
             <div>
-                <h5>Product</h5>
+                <h5><?=h($t('footer.product'))?></h5>
                 <ul>
                     <li><a href="/#how">How it works</a></li>
                     <li><a href="/#pricing">Pricing</a></li>
@@ -481,7 +482,7 @@ $issue = date('Y.m');
                 </ul>
             </div>
             <div>
-                <h5>Resources</h5>
+                <h5><?=h($t('footer.resources'))?></h5>
                 <ul>
                     <li><a href="https://github.com/wronai/redsl" rel="noopener">GitHub</a></li>
                     <li><a href="https://github.com/wronai/redsl/tree/main/docs" rel="noopener">Documentation</a></li>
@@ -489,11 +490,11 @@ $issue = date('Y.m');
                 </ul>
             </div>
             <div>
-                <h5>Legal</h5>
+                <h5><?=h($t('footer.legal'))?></h5>
                 <ul>
-                    <li><a href="/nda-wzor">NDA Template</a></li>
-                    <li><a href="/polityka-prywatnosci">Privacy</a></li>
-                    <li><a href="/regulamin">Terms</a></li>
+                    <li><a href="/nda-wzor"><?=h($t('footer.nda'))?></a></li>
+                    <li><a href="/polityka-prywatnosci"><?=h($t('footer.privacy'))?></a></li>
+                    <li><a href="/regulamin"><?=h($t('footer.terms'))?></a></li>
                 </ul>
             </div>
         </div>
@@ -502,7 +503,7 @@ $issue = date('Y.m');
             <span class="dot">·</span>
             <span>Poland · EU</span>
             <span class="dot">·</span>
-            <span>Built in one night, maintained by one person.</span>
+            <span><?=h($t('footer.copyright'))?></span>
         </div>
     </div>
 </footer>

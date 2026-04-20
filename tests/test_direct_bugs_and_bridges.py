@@ -373,6 +373,7 @@ class TestPyqualBridgeUnit:
 # pyqual_bridge — integration tests
 # ---------------------------------------------------------------------------
 
+@pytest.mark.integration
 class TestPyqualBridgeIntegration:
     @skip_if_pyqual_missing
     def test_doctor_returns_dict(self):
@@ -442,6 +443,7 @@ class TestPlanfileBridgeUnit:
 # planfile_bridge — integration tests
 # ---------------------------------------------------------------------------
 
+@pytest.mark.integration
 class TestPlanfileBridgeIntegration:
     @skip_if_planfile_missing
     def test_is_available_consistent(self):

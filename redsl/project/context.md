@@ -21,14 +21,14 @@
 - **Functions**: 25
 - **File**: `reporting.py`
 
+### root.main
+- **Functions**: 23
+- **File**: `main.py`
+
 ### awareness.git_timeline
 - **Functions**: 23
 - **Classes**: 1
 - **File**: `git_timeline.py`
-
-### root.main
-- **Functions**: 23
-- **File**: `main.py`
 
 ### analyzers.radon_analyzer
 - **Functions**: 23
@@ -219,11 +219,6 @@ Pure-Python implementation that doesn't requ
 - **Methods**: 9
 - **Key Methods**: awareness.ecosystem.EcosystemGraph.build, awareness.ecosystem.EcosystemGraph.summarize, awareness.ecosystem.EcosystemGraph.project, awareness.ecosystem.EcosystemGraph.impacted_projects, awareness.ecosystem.EcosystemGraph._build_node, awareness.ecosystem.EcosystemGraph._link_dependencies, awareness.ecosystem.EcosystemGraph._read_dependencies, awareness.ecosystem.EcosystemGraph._extract_dependency_tokens, awareness.ecosystem.EcosystemGraph._is_project_dir
 
-### autonomy.growth_control.GrowthController
-> Enforce growth budgets on a project.
-- **Methods**: 8
-- **Key Methods**: autonomy.growth_control.GrowthController.__init__, autonomy.growth_control.GrowthController.check_growth, autonomy.growth_control.GrowthController.suggest_consolidation, autonomy.growth_control.GrowthController._measure_weekly_growth, autonomy.growth_control.GrowthController._find_untested_new_modules, autonomy.growth_control.GrowthController._find_oversized_files, autonomy.growth_control.GrowthController._find_tiny_modules, autonomy.growth_control.GrowthController._group_by_prefix
-
 ### memory.AgentMemory
 > Kompletny system pamięci z trzema warstwami.
 
@@ -231,6 +226,11 @@ Pure-Python implementation that doesn't requ
 - 
 - **Methods**: 8
 - **Key Methods**: memory.AgentMemory.__init__, memory.AgentMemory.remember_action, memory.AgentMemory.recall_similar_actions, memory.AgentMemory.learn_pattern, memory.AgentMemory.recall_patterns, memory.AgentMemory.store_strategy, memory.AgentMemory.recall_strategies, memory.AgentMemory.stats
+
+### autonomy.growth_control.GrowthController
+> Enforce growth budgets on a project.
+- **Methods**: 8
+- **Key Methods**: autonomy.growth_control.GrowthController.__init__, autonomy.growth_control.GrowthController.check_growth, autonomy.growth_control.GrowthController.suggest_consolidation, autonomy.growth_control.GrowthController._measure_weekly_growth, autonomy.growth_control.GrowthController._find_untested_new_modules, autonomy.growth_control.GrowthController._find_oversized_files, autonomy.growth_control.GrowthController._find_tiny_modules, autonomy.growth_control.GrowthController._group_by_prefix
 
 ## Data Transformation Functions
 
@@ -259,10 +259,6 @@ Key functions that process and transform data:
 > Format doctor batch report as text.
 - **Output to**: lines.append, None.join, len, len, len
 
-### commands._indent_fixers._process_def_block
-> Handle a def/class/try block: fix body indent or strip excess indent.
-- **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
-
 ### commands.cli_autonomy._format_gate_details
 > Format quality gate details as text.
 - **Output to**: None.join, lines.append, lines.append, lines.append, verdict.metrics_before.get
@@ -283,6 +279,26 @@ Key functions that process and transform data:
 > Format growth check result as text.
 - **Output to**: None.join, lines.append, lines.append, lines.append, lines.append
 
+### commands.batch._process_batch_project
+> Process a single project in the batch.
+- **Output to**: print, print, print, commands.batch.measure_todo_reduction, print
+
+### commands._indent_fixers._process_def_block
+> Handle a def/class/try block: fix body indent or strip excess indent.
+- **Output to**: new_lines.append, commands._indent_fixers._scan_next_nonblank, len, len, len
+
+### commands.batch_pyqual.runner._format_project_status
+> Format project result status into readable parts.
+- **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
+
+### commands.hybrid._process_single_project
+> Process a single project and return results.
+- **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
+
+### commands.autofix.runner._format_project_status
+> Format brief status line for a project result.
+- **Output to**: None.join, status_parts.append, status_parts.append, status_parts.append, status_parts.append
+
 ### commands.batch_pyqual.reporting._format_summary_verdicts
 > Format verdict and project count lines.
 - **Output to**: None.join
@@ -298,17 +314,9 @@ Key functions that process and transform data:
 ### commands.batch_pyqual.reporting._format_project_row
 > Format a single project row for the details table.
 
-### commands.batch._process_batch_project
-> Process a single project in the batch.
-- **Output to**: print, print, print, commands.batch.measure_todo_reduction, print
-
-### commands.hybrid._process_single_project
-> Process a single project and return results.
-- **Output to**: commands.hybrid._count_todo_issues, commands.hybrid.run_hybrid_quality_refactor, commands.hybrid._regenerate_todo, commands.hybrid._count_todo_issues, print
-
-### commands.autofix.runner._format_project_status
-> Format brief status line for a project result.
-- **Output to**: None.join, status_parts.append, status_parts.append, status_parts.append, status_parts.append
+### commands.autofix.pipeline._process_project
+> Full autofix pipeline for a single project.
+- **Output to**: ProjectFixResult, commands.autofix.pipeline._stage_collect_metrics, commands.autofix.pipeline._stage_ensure_todo, commands.autofix.pipeline._stage_apply_fixes, commands.autofix.pipeline._stage_quality_gate_check
 
 ### commands.sumr_planfile.parsers.parse_sumr
 > Parse a SUMR.md file and extract refactoring-relevant data.
@@ -320,21 +328,13 @@ Key functions that process and transform data:
 The format is a multi-document YAML (``---`` 
 - **Output to**: list, yaml.safe_load_all, doc.get, doc.get, isinstance
 
-### commands.batch_pyqual.runner._format_project_status
-> Format project result status into readable parts.
-- **Output to**: parts.extend, parts.extend, parts.extend, parts.append, None.join
+### commands.pyqual.mypy_analyzer.MypyAnalyzer._parse_mypy_line
+> Parsuj jedną linię wyjścia mypy.
+- **Output to**: line.split, line.strip, len, int, None.strip
 
-### commands.autofix.pipeline._process_project
-> Full autofix pipeline for a single project.
-- **Output to**: ProjectFixResult, commands.autofix.pipeline._stage_collect_metrics, commands.autofix.pipeline._stage_ensure_todo, commands.autofix.pipeline._stage_apply_fixes, commands.autofix.pipeline._stage_quality_gate_check
-
-### commands.pyqual._format_pyqual_issues
-> Format pyqual issues section.
-- **Output to**: summary.get, summary.get, summary.get, summary.get, summary.get
-
-### commands.pyqual._format_pyqual_metrics
-> Format pyqual metrics section.
-- **Output to**: metrics.get, metrics.get, metrics.get
+### commands.autonomy_pr.analyzer._parse_worktree_changes
+> Parse `git status --porcelain` output into a list of file paths.
+- **Output to**: status_output.splitlines, None.strip, len, paths.append
 
 ## Public API Surface
 
@@ -356,13 +356,13 @@ Functions exposed as public API (no underscore prefix):
 - `cli.config.config_apply` - 30 calls
 - `cli.events.events_show` - 30 calls
 - `cli.refactor.refactor` - 29 calls
-- `llm.registry.sources.base.OpenRouterSource.fetch` - 29 calls
 - `cli.workflow.workflow_scan` - 29 calls
+- `llm.registry.sources.base.OpenRouterSource.fetch` - 29 calls
 - `cli.planfile.source_add` - 28 calls
 - `refactors.engine.RefactorEngine.generate_proposal` - 28 calls
 - `examples.full_pipeline.run_full_pipeline_example` - 27 calls
-- `examples.api_integration.run_api_integration_example` - 26 calls
 - `config_standard.applier.ConfigApplier.apply` - 26 calls
+- `examples.api_integration.run_api_integration_example` - 26 calls
 - `commands.pyqual.run_pyqual_fix` - 24 calls
 - `cli.config.config_diff` - 24 calls
 - `cli.llm_banner.print_llm_banner` - 23 calls
@@ -371,15 +371,15 @@ Functions exposed as public API (no underscore prefix):
 - `commands.sumr_planfile.core.generate_planfile` - 21 calls
 - `cli.config.config_clone` - 21 calls
 - `commands.sumr_planfile.parsers.parse_sumr` - 20 calls
-- `cli.model_policy.check_model` - 20 calls
 - `cli.config.config_rollback` - 20 calls
-- `awareness.health_model.HealthModel.assess` - 20 calls
+- `cli.model_policy.check_model` - 20 calls
 - `awareness.AwarenessManager.build_snapshot` - 20 calls
+- `awareness.health_model.HealthModel.assess` - 20 calls
 - `validation.vallm_bridge.validate_proposal` - 20 calls
 - `commands.github_source.resolve_auth_ref` - 19 calls
 - `config_standard.store.ConfigStore.clone_from` - 19 calls
-- `autonomy.metrics.collect_autonomy_metrics` - 19 calls
 - `formatters.batch.format_batch_results` - 19 calls
+- `formatters.batch.format_batch_report_markdown` - 19 calls
 
 ## System Interactions
 

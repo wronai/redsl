@@ -7,11 +7,13 @@ import logging
 import re
 import shutil
 import subprocess
+from functools import lru_cache
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 
+@lru_cache(maxsize=1)
 def is_available() -> bool:
     """Return True if pyqual CLI is installed and functional."""
     if not shutil.which("pyqual"):

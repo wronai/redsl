@@ -472,6 +472,7 @@ class TestScheduler:
 # CLI smoke tests
 # ===========================================================================
 
+@pytest.mark.slow
 class TestCLI:
     def test_gate_check_cli(self, tmp_git_project: Path) -> None:
         from click.testing import CliRunner

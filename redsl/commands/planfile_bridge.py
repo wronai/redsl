@@ -5,12 +5,14 @@ from __future__ import annotations
 import logging
 import shutil
 import subprocess
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
+@lru_cache(maxsize=1)
 def is_available() -> bool:
     """Return True if planfile CLI is installed and functional."""
     if not shutil.which("planfile"):

@@ -14,6 +14,8 @@ import subprocess
 from abc import ABC
 from subprocess import TimeoutExpired
 
+_availability_cache: dict[str, bool] = {}
+
 
 class CliBridge(ABC):
     """Base class for bridges wrapping external CLI tools.
@@ -47,8 +49,13 @@ class CliBridge(ABC):
 
         Uses ``check_args`` instead of bare ``shutil.which`` — the tool may
         exist in PATH but crash on startup (e.g. import error in a Python CLI).
+        Result is cached per subclass for the lifetime of the process.
         """
+        key = cls.__name__
+        if key in _availability_cache:
+            return _availability_cache[key]
         if shutil.which(cls.cli_name) is None:
+            _availability_cache[key] = False
             return False
         try:
             proc = subprocess.run(
@@ -57,9 +64,11 @@ class CliBridge(ABC):
                 text=True,
                 timeout=cls.check_timeout,
             )
-            return proc.returncode == 0
+            result = proc.returncode == 0
         except (OSError, TimeoutExpired, Exception):
-            return False
+            result = False
+        _availability_cache[key] = result
+        return result
 
     # ------------------------------------------------------------------
     # Helpers shared by multiple bridges (dup group #11)
