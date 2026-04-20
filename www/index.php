@@ -31,6 +31,9 @@ $t = $i18n['t'];
 $lang = $i18n['lang'];
 $getLangUrls = $i18n['getLangUrls'];
 $getLangName = $i18n['getLangName'];
+$formatPrice = $i18n['formatPrice'];
+$getPricing = $i18n['getPricing'];
+$getCurrencyConfig = $i18n['getCurrencyConfig'];
 
 // ---- Logger ----
 if (is_readable(__DIR__ . '/lib/Logger.php')) {
@@ -555,15 +558,15 @@ $issue = date('Y.m');
                     <span class="tag-corner tag-corner-tr"></span>
                     <span class="tag-corner tag-corner-bl"></span>
                     <span class="tag-corner tag-corner-br"></span>
-                    <div class="price-label">Ticket znaleziony</div>
+                    <div class="price-label"><?=h($t('pricing.ticket_found'))?></div>
                     <div class="price-value">
-                        <span class="amount">10</span>
-                        <span class="currency">zł</span>
+                        <span class="amount"><?=h($getPricing('ticket_found', false))?></span>
+                        <span class="currency"><?=h($getCurrencyConfig()['symbol'])?></span>
                     </div>
-                    <div class="price-unit">za sztukę</div>
+                    <div class="price-unit"><?=h($t('pricing.ticket_found_unit'))?></div>
                 </div>
                 <div class="price-desc">
-                    <p class="price-what">Automatyczny wynik analizy twojego kodu. Mały, jednoznaczny, z jasnym kryterium <em>before / after</em>.</p>
+                    <p class="price-what"><?=h($t('pricing.ticket_found_desc'))?></p>
                     <ul class="price-list">
                         <li>Rozbicie funkcji CC &gt; 15 na mniejsze</li>
                         <li>Usunięcie duplikatu kodu (≥3 wystąpienia)</li>
@@ -583,15 +586,15 @@ $issue = date('Y.m');
                     <span class="tag-corner tag-corner-tr"></span>
                     <span class="tag-corner tag-corner-bl"></span>
                     <span class="tag-corner tag-corner-br"></span>
-                    <div class="price-label">Ticket twój</div>
+                    <div class="price-label"><?=h($t('pricing.ticket_yours'))?></div>
                     <div class="price-value">
-                        <span class="amount">100</span>
-                        <span class="currency">zł</span>
+                        <span class="amount"><?=h($getPricing('ticket_yours', false))?></span>
+                        <span class="currency"><?=h($getCurrencyConfig()['symbol'])?></span>
                     </div>
-                    <div class="price-unit">za sztukę (+ 10 zł / sub)</div>
+                    <div class="price-unit"><?=h($t('pricing.ticket_yours_unit'))?></div>
                 </div>
                 <div class="price-desc">
-                    <p class="price-what">Twój request w naturalnym języku. Wymaga analizy i rozbicia na sub-tickety.</p>
+                    <p class="price-what"><?=h($t('pricing.ticket_yours_desc'))?></p>
                     <ul class="price-list">
                         <li>„Zrefaktoruj moduł auth na JWT"</li>
                         <li>„Przepisz <code>OrderService</code> żeby był testowalny"</li>
@@ -599,15 +602,15 @@ $issue = date('Y.m');
                         <li>„Dodaj retry+backoff do wszystkich wywołań API"</li>
                     </ul>
                     <p class="price-note">
-                        100 zł pokrywa analizę + rozbicie + wykonanie <strong>pierwszych 5 sub-ticketów</strong>.
-                        Powyżej — po 10 zł każdy. Cenę końcową znasz <em>zanim</em> zaczniemy.
+                        <?=h($getPricing('ticket_yours'))?> pokrywa analizę + rozbicie + wykonanie <strong>pierwszych 5 sub-ticketów</strong>.
+                        Powyżej — po <?=h($formatPrice(10.0))?> każdy. Cenę końcową znasz <em>zanim</em> zaczniemy.
                     </p>
                 </div>
             </article>
         </div>
 
         <div class="bulk-note">
-            <strong>Pakiet 50 ticketów z góry:</strong> 400 zł (rabat 20%). Ważny 6 miesięcy. Nie dotyczy ticketów klienta.
+            <strong><?=h(sprintf($t('pricing.bulk_note'), $getPricing('bulk_50')))?></strong>
         </div>
     </div>
 </section>

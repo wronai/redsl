@@ -77,13 +77,16 @@
     "title": "Dwie kategorie. Koniec.",
     "ticket_found": "Ticket znaleziony",
     "ticket_found_price": "10",
+    "ticket_found_currency": "zł",
     "ticket_found_unit": "za sztuke",
     "ticket_found_desc": "Automatyczny wynik analizy twojego kodu. Maly, jednoznaczny, z jasnym kryterium before / after.",
     "ticket_yours": "Ticket twoj",
     "ticket_yours_price": "100",
-    "ticket_yours_unit": "za sztuke (+ 10 zl / sub)",
+    "ticket_yours_currency": "zł",
+    "ticket_yours_unit": "za sztuke (+ 10 zł / sub)",
     "ticket_yours_desc": "Twoj request w naturalnym jezyku. Wymaga analizy i rozbicia na sub-tickety.",
-    "bulk_note": "Pakiet 50 ticketow z gory: 400 zl (rabat 20%). Wazny 6 miesiecy. Nie dotyczy ticketow klienta."
+    "bulk_note": "Pakiet 50 ticketow z gory: %s (rabat 20%). Wazny 6 miesiecy. Nie dotyczy ticketow klienta.",
+    "bulk_price": "400"
   },
   "scope": {
     "label": "05 - Scope",

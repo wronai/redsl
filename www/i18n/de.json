@@ -77,7 +77,7 @@
     "title": "Zwei Kategorien. Das ist's.",
     "found_title": "Ticket Gefunden",
     "found_price": "10",
-    "found_currency": "$",
+    "found_currency": "€",
     "found_desc": "Durch Analyse erkannt: Duplikate, Komplexität, Kopplung.",
     "found_scope": "Umfang",
     "found_scope_desc": "bis zu 500 LOC pro Ticket",
@@ -87,7 +87,7 @@
     "found_guarantee_desc": "CI green oder wir fixen",
     "made_title": "Ticket Erstellt",
     "made_price": "10",
-    "made_currency": "$",
+    "made_currency": "€",
     "made_desc": "Du meldest Schmerz, wir lokalisieren, bepreisen und fixen.",
     "made_report": "Meldung",
     "made_report_desc": "Fehler / Anti-Pattern einfügen",
@@ -97,8 +97,9 @@
     "made_delivery_desc": "PR mit Fix in 48h",
     "bundle_title": "Paket 20 Tickets",
     "bundle_price": "180",
-    "bundle_currency": "$",
-    "bundle_note": "statt $200 — 10% Rabatt"
+    "bundle_currency": "€",
+    "bundle_note": "statt %s — 10% Rabatt",
+    "bundle_original": "200 €"
   },
   "contact": {
     "label": "05 · Kontakt",

@@ -60,7 +60,8 @@ docker compose logs -f db
    - `index.php` — landing page
    - `style.css`, `app.js` — assets
    - `config-editor.php`, `config-api.php` — edytor + API konfiguracji
-   - `propozycje.php` — wybór ticketów
+   - `proposals.php` — wybór ticketów (EN)
+   - `propozycje.php` — wybór ticketów (PL)
    - `nda-form.php` — automatyczne NDA
    - `email-notifications.php` — wysyłka powiadomień
    - `polityka-prywatnosci.php`, `regulamin.php` — strony prawne
@@ -199,15 +200,93 @@ Formularz ma ukryte pole `website`. Boty które scrape'ują HTML często je wype
 
 **Zmiana cennika** — sekcja `.pricing` w `index.php`. Jeśli zmienisz liczby, pamiętaj zmienić też w sekcji FAQ i kontakt.
 
+## System i18n (Internationalization)
+
+Strona obsługuje 3 języki: Polski (PL), Angielski (EN), Niemiecki (DE).
+
+### Struktura
+
+```
+www/
+├── i18n/
+│   ├── pl.json    # polskie tłumaczenia (domyślne)
+│   ├── en.json    # angielskie tłumaczenia
+│   └── de.json    # niemieckie tłumaczenia
+└── lib/
+    └── i18n.php   # helper functions
+```
+
+### Użycie w PHP
+
+```php
+// Inicjalizacja (na początku pliku)
+$i18n = require __DIR__ . '/lib/i18n.php';
+$t = $i18n['t'];
+$lang = $i18n['lang'];
+$getLangUrls = $i18n['getLangUrls'];
+$getLangName = $i18n['getLangName'];
+
+// Użycie w HTML
+<?=h($t('nav.contact'))?>
+<?=h($t('hero.kicker'))?>
+```
+
+### Priorytety wykrywania języka
+
+1. **URL param** - `?lang=en` (najwyższy priorytet)
+2. **Cookie** - `lang=pl` (zapamiętuje wybór)
+3. **Browser** - `Accept-Language` header
+4. **Domyślny** - `pl` (polski)
+
+### Dodawanie nowych tłumaczeń
+
+1. Dodaj klucz do wszystkich 3 plików JSON w `i18n/`
+2. Użyj w PHP: `<?=h($t('sekcja.klucz'))?>`
+
+### Testowanie
+
+```bash
+# Smoke test (bash)
+cd www
+./smoke-test.sh
+
+# Playwright E2E tests
+cd www/tests/e2e
+npm install  # jeśli pierwszy raz
+npx playwright install  # instalacja przeglądarek
+npx playwright test  # uruchom wszystkie testy
+npx playwright test --ui  # tryb UI z podglądem
+```
+php -r '
+$_GET["lang"] = "en";
+$i18n = require "lib/i18n.php";
+$t = $i18n["t"];
+$lang = $i18n["lang"];
+echo "Lang: $lang\n";
+echo "Nav contact: " . $t("nav.contact") . "\n";
+'
+
+# Test w przeglądarce
+http://localhost:8080/?lang=en
+http://localhost:8080/?lang=de
+http://localhost:8080/?lang=pl
+```
+
 ## Testy
 
 ### PHPUnit (backend logic)
 
 ```bash
 cd www
-composer install
-composer test              # wszystkie testy
+composer install --ignore-platform-req=ext-dom --ignore-platform-req=ext-xml --ignore-platform-req=ext-xmlwriter
+composer test              # wszystkie testy (35 unit + 1 skipped bez DB)
 composer test:gui          # tylko testy GUI
+```
+
+Lub w Dockerze (wszystkie rozszerzenia dostępne):
+
+```bash
+docker exec redsl-www php vendor/bin/phpunit --testdox
 ```
 
 ### Playwright (E2E browser tests)
@@ -228,7 +307,8 @@ Szczegóły w [`tests/README_TESTS.md`](tests/README_TESTS.md).
 |--------|-----|------|
 | **Config Editor** | `/config-editor.php` | Edytor YAML konfiguracji z walidacją i backupami |
 | **Config API** | `/config-api.php` | REST API do walidacji, historii, diff |
-| **Wybór propozycji** | `/propozycje.php` | Panel wyboru ticketów refaktoryzacji |
+| **Propozycje (PL)** | `/propozycje` | Panel wyboru ticketów — wersja polska |
+| **Proposals (EN)** | `/proposals` | Panel wyboru ticketów — wersja angielska |
 | **NDA** | `/nda-form.php` | Automatyczne generowanie umowy NDA (NIP → dane firmy) |
 | **Panel admina** | `/admin/` | Zarządzanie klientami, kontraktami, rozliczeniami (Basic Auth) |
 | **Panel klienta** | `/klient/` | Podgląd i akcje dla klienta |

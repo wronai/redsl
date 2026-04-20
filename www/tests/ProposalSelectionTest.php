@@ -15,14 +15,15 @@ class ProposalSelectionTest extends TestCase
     public function testProposalListRendering(): void
     {
         $proposals = [
-            ['id' => 1, 'title' => 'Refaktoryzacja klasy UserService', 'file' => 'src/services/UserService.php', 'effort' => 'M', 'lines' => 150, 'price' => 10],
-            ['id' => 2, 'title' => 'Ekstrakcja metod', 'file' => 'src/controllers/Test.php', 'effort' => 'S', 'lines' => 80, 'price' => 10],
+            ['id' => 1, 'title' => 'Refaktoryzacja klasy UserService', 'file' => 'src/services/UserService.php', 'effort' => 'M', 'lines' => 150, 'price' => 10, 'redsl_min' => 8],
+            ['id' => 2, 'title' => 'Ekstrakcja metod', 'file' => 'src/controllers/Test.php', 'effort' => 'S', 'lines' => 80, 'price' => 10, 'redsl_min' => 4],
         ];
         
         $this->assertCount(2, $proposals);
         $this->assertEquals(1, $proposals[0]['id']);
         $this->assertEquals('Refaktoryzacja klasy UserService', $proposals[0]['title']);
         $this->assertEquals(10, $proposals[0]['price']);
+        $this->assertEquals(8, $proposals[0]['redsl_min']);
     }
     
     /**
@@ -82,19 +83,37 @@ class ProposalSelectionTest extends TestCase
     }
     
     /**
-     * Test effort labels
+     * Test effort labels — human hours + ReDSL minutes
      */
     public function testEffortLabels(): void
     {
-        $effortLabels = [
-            'S' => 'S (~2h)',
-            'M' => 'M (~4h)',
-            'L' => 'L (~8h)',
+        $humanHours = [
+            'S' => '~2h',
+            'M' => '~4h',
+            'L' => '~8h',
         ];
-        
-        $this->assertEquals('S (~2h)', $effortLabels['S']);
-        $this->assertEquals('M (~4h)', $effortLabels['M']);
-        $this->assertEquals('L (~8h)', $effortLabels['L']);
+
+        $this->assertEquals('~2h', $humanHours['S']);
+        $this->assertEquals('~4h', $humanHours['M']);
+        $this->assertEquals('~8h', $humanHours['L']);
+    }
+
+    /**
+     * Test redsl_min field present and reasonable
+     */
+    public function testRedslMinField(): void
+    {
+        $proposals = [
+            ['id' => 1, 'effort' => 'M', 'redsl_min' => 8],
+            ['id' => 2, 'effort' => 'S', 'redsl_min' => 4],
+            ['id' => 3, 'effort' => 'L', 'redsl_min' => 15],
+        ];
+
+        foreach ($proposals as $p) {
+            $this->assertArrayHasKey('redsl_min', $p);
+            $this->assertGreaterThan(0, $p['redsl_min']);
+            $this->assertLessThanOrEqual(60, $p['redsl_min']);
+        }
     }
     
     /**

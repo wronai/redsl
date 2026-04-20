@@ -66,20 +66,24 @@
 
 ## Large Files (>400 LoC)
 
-- [ ] Split `redsl/cli.py` — 629 lines
-- [ ] Split `tests/test_tier3.py` — 629 lines
-- [ ] Split `redsl/formatters.py` — 614 lines
-- [ ] Split `redsl/commands/autofix.py` — 485 lines
-- [ ] Split `tests/test_autonomy.py` — 485 lines
-- [ ] Split `redsl/api.py` — 470 lines
-- [ ] Split `redsl/commands/batch_pyqual.py` — 460 lines
-- [ ] Split `tests/test_bridges.py` — 453 lines
-- [ ] Split `redsl/dsl/engine.py` — 417 lines
-- [ ] Split `tests/test_direct_bugs_and_bridges.py` — 410 lines
+> Stan na 2026-04-20 — pliki zweryfikowane:
 
-## Quality Gate Violations
+- [x] ~~Split `redsl/cli.py` — 629 lines~~ — już podzielony na `redsl/cli/` package (99 linii `__init__.py`)
+- [x] ~~Split `redsl/dsl/engine.py` — 417 lines~~ — aktualnie 290 linii
+- [x] ~~Split `redsl/api.py` — 470 lines~~ — plik nie istnieje (zrefaktoryzowany)
+- [x] ~~Split `redsl/formatters.py` — 614 lines~~ — plik nie istnieje (zrefaktoryzowany)
+- [x] ~~Split `redsl/commands/autofix.py` — 485 lines~~ — plik nie istnieje (podzielony)
+- [x] ~~Split `redsl/commands/batch_pyqual.py` — 460 lines~~ — plik nie istnieje (podzielony na pipeline.py)
+- [ ] Split `redsl/cli/planfile.py` — **533 linii** ⚠️ (nowy kandydat)
+- [ ] Split `redsl/cli/config.py` — **410 linii**
+- [ ] Split `redsl/cli/models.py` — **435 linii**
+- [ ] Split `redsl/execution/cycle.py` — **445 linii**
+- [ ] Split `redsl/execution/workflow.py` — **439 linii**
 
-- [ ] redsl/cli.py exceeded 500L (491->629L)
+## Quality Gate Violations (aktualne)
+
+- [x] ~~redsl/cli.py exceeded 500L (491->667L)~~ — już podzielony
+- [ ] redsl/cli/planfile.py — 533 linii (>500L threshold)
 
 ## Moderate Complexity Functions
 
@@ -105,4 +109,4 @@
 - [ ] Simplify `_parse_health_line` in `redsl/analyzers/parsers/project_parser.py` — CC=9
 ## Quality Gate Violations (auto-detected)
 
-- [ ] redsl/cli.py exceeded 500L (491->667L)
+- [x] ~~redsl/cli.py exceeded 500L (491->667L)~~ — już podzielony

@@ -98,7 +98,8 @@
     "bundle_title": "Bundle of 20 tickets",
     "bundle_price": "180",
     "bundle_currency": "$",
-    "bundle_note": "instead of $200 — 10% off"
+    "bundle_note": "instead of %s — 10% off",
+    "bundle_original": "$200"
   },
   "contact": {
     "label": "05 · Contact",

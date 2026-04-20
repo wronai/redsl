@@ -36,6 +36,9 @@ $t = $i18n['t'];
 $lang = $i18n['lang'];
 $getLangUrls = $i18n['getLangUrls'];
 $getLangName = $i18n['getLangName'];
+$formatPrice = $i18n['formatPrice'];
+$getPricing = $i18n['getPricing'];
+$getCurrencyConfig = $i18n['getCurrencyConfig'];
 
 // Demo data — in production loaded from database/API
 $proposals = [
