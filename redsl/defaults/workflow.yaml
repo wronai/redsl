@@ -1,0 +1,40 @@
+apiVersion: redsl.workflow/v1
+kind: RefactorWorkflow
+metadata:
+  name: redsl-default
+  description: Domyślny workflow redsl — fallback gdy projekt nie ma redsl.yaml
+
+spec:
+  perceive:
+    use_code2llm: false
+    use_redup: true
+
+  decide:
+    max_actions: 5
+
+  execute:
+    use_sandbox: false
+    rollback_on_failure: false
+
+  validate:
+    steps:
+      - name: regix
+        enabled: true
+        on_failure: warn
+
+      - name: pyqual_gates
+        enabled: auto
+        on_failure: tune
+        tune:
+          strategy: conservative
+          retry: true
+
+      - name: tests
+        enabled: false
+        on_failure: rollback
+
+  planfile:
+    update_on_apply: true
+
+  reflect:
+    enabled: true
