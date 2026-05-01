@@ -145,3 +145,9 @@
 ## Quality Gate Violations (auto-detected)
 
 - [x] ~~redsl/cli.py exceeded 500L (491->667L)~~ — już podzielony
+
+## Discovered
+
+- Verify README and API docs reflect new API capabilities (see docs(docs): new API capabilities)
+- Add unit tests for autonomy_pr analyzer and reporter modules (ensure package __init__ imports behave as expected)
+- Update CI/Makefile to use pytest-xdist and validate parallel test runs

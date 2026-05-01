@@ -4,17 +4,39 @@
 
 - **Project**: /home/tom/github/semcod/redsl
 - **Primary Language**: python
-- **Languages**: python: 240, php: 24, shell: 4, javascript: 1
+- **Languages**: python: 248, md: 73, yaml: 63, php: 33, json: 9
 - **Analysis Mode**: static
-- **Total Functions**: 1504
-- **Total Classes**: 215
-- **Modules**: 269
-- **Entry Points**: 774
+- **Total Functions**: 4289
+- **Total Classes**: 249
+- **Modules**: 447
+- **Entry Points**: 3460
 
 ## Architecture by Module
 
+### SUMD
+- **Functions**: 997
+- **Classes**: 11
+- **File**: `SUMD.md`
+
+### project.map.toon
+- **Functions**: 973
+- **File**: `map.toon.yaml`
+
+### project_test.map.toon
+- **Functions**: 797
+- **File**: `map.toon.yaml`
+
+### SUMR
+- **Functions**: 57
+- **Classes**: 11
+- **File**: `SUMR.md`
+
+### www.project.map.toon
+- **Functions**: 38
+- **File**: `map.toon.yaml`
+
 ### redsl.cli.planfile
-- **Functions**: 27
+- **Functions**: 30
 - **File**: `planfile.py`
 
 ### redsl.commands.batch_pyqual.reporting
@@ -82,33 +104,17 @@
 - **Classes**: 3
 - **File**: `history.py`
 
-### redsl.commands.plan_sync
-- **Functions**: 16
-- **Classes**: 2
-- **File**: `plan_sync.py`
-
-### redsl.autonomy.scheduler
-- **Functions**: 16
-- **Classes**: 2
-- **File**: `scheduler.py`
-
-### redsl.llm.registry.aggregator
-- **Functions**: 16
-- **Classes**: 1
-- **File**: `aggregator.py`
-
-### redsl.awareness
-- **Functions**: 16
-- **Classes**: 2
-- **File**: `__init__.py`
-
-### redsl.execution.cycle
-- **Functions**: 16
-- **File**: `cycle.py`
-
 ## Key Entry Points
 
 Main execution flows into the system:
+
+### redsl.cli.planfile.planfile_validate
+> Check whether planfile.yaml tickets are still current.
+
+For each open task, validates:
+- File still exists (otherwise: STALE_FILE_MISSING)
+- For reduc
+- **Calls**: planfile_group.command, click.argument, click.option, click.option, redsl.analyzers.incremental.EvolutionaryCache.set, history_file.exists, sum, click.echo
 
 ### redsl.llm.registry.aggregator.RegistryAggregator._load_stale_cache
 > Load cache even if stale (when network fails).
@@ -122,6 +128,33 @@ Example:
     redsl models estima
 - **Calls**: models_group.command, click.option, click.option, click.option, click.option, click.option, redsl.cli.models._build_selector, Console
 
+### redsl.cli.workflow.workflow_show
+> Show effective workflow config for PROJECT_DIR (resolved with fallbacks).
+- **Calls**: workflow_group.command, click.argument, None.resolve, project.map.toon.load_workflow, click.echo, click.echo, click.echo, click.echo
+
+### redsl.cli.events.events_cycles
+> Show per-cycle summary from cycle_started / cycle_completed events.
+- **Calls**: events_group.command, click.argument, redsl.cli.events._load_events, sorted, click.echo, click.echo, e.get, e.get
+
+### redsl.cli.deploy.deploy_migrate
+> Full detect → plan → apply on HOST in one command.
+- **Calls**: deploy.command, click.argument, click.option, click.option, click.option, click.option, click.option, click.option
+
+### redsl.cli.events.events_summary
+> Print a statistical summary of all recorded events.
+- **Calls**: events_group.command, click.argument, redsl.cli.events._load_events, len, Counter, sum, sum, sum
+
+### redsl.cli.deploy.deploy_run
+> Run full pipeline from a migration spec YAML (source + target in one file).
+- **Calls**: deploy.command, click.argument, click.option, click.option, click.option, click.option, Console, console.print
+
+### redsl.execution.cycle.run_cycle
+> Run a complete refactoring cycle driven by WorkflowConfig.
+
+If *workflow* is None, ``load_workflow(project_dir)`` is called automatically
+which search
+- **Calls**: logger.debug, redsl.execution.cycle._new_cycle_report, getattr, orchestrator.history.record_event, orchestrator.history.record_event, project.map.toon.load_workflow, hasattr, orchestrator.llm.set_chat_log
+
 ### redsl.analyzers.sumd_bridge.SumdAnalyzer.generate_map_toon
 > Generate map.toon.yaml content compatible with redsl.
 
@@ -132,17 +165,32 @@ Returns:
     map.toon.yaml content as string
 - **Calls**: self.analyze, None.isoformat, None.join, a, a, a, None.join, a
 
+### redsl.cli.deploy.deploy_plan
+> Generate migration-plan.yaml from infra.yaml + desired state.
+- **Calls**: deploy.command, click.option, click.option, click.option, click.option, click.option, click.option, click.option
+
+### redsl.cli.events.events_show
+> Show decision events for a project from .redsl/history.jsonl.
+- **Calls**: events_group.command, click.argument, click.option, click.option, click.option, click.option, click.option, redsl.cli.events._load_events
+
 ### redsl.cli.config.config_apply
 > Apply a ConfigChangeProposal atomically.
 - **Calls**: config.command, click.option, click.argument, click.option, click.option, click.option, redsl.cli.config._resolve_store, yaml.safe_load
+
+### redsl.cli.refactor.refactor
+> Run refactoring on a project.
+- **Calls**: click.command, click.argument, click.option, click.option, click.option, click.option, click.option, click.option
 
 ### redsl.llm.registry.sources.base.OpenRouterSource.fetch
 > Fetch models from OpenRouter with full pricing and capabilities.
 - **Calls**: self._http_get, self._fetch_programming_category, data.get, m.get, m.get, m.get, m.get, m.get
 
-### redsl.cli.refactor.refactor
-> Run refactoring on a project.
-- **Calls**: click.command, click.argument, click.option, click.option, click.option, click.option, click.option, click.option
+### redsl.cli.workflow.workflow_scan
+> Scan PROJECT_DIR and build a map of configuration files.
+
+By default prints the detected map.  Use --write to persist it into
+the project's redsl.yaml
+- **Calls**: workflow_group.command, click.argument, click.option, click.option, None.resolve, redsl.execution.project_scanner.scan_project, click.echo, click.echo
 
 ### redsl.cli.planfile.source_add
 > Add a GitHub source to planfile.yaml.
@@ -155,22 +203,29 @@ Examples:
 
 ### redsl.refactors.engine.RefactorEngine.generate_proposal
 > Wygeneruj propozycję refaktoryzacji na podstawie decyzji DSL.
-- **Calls**: PROMPTS.get, redsl.refactors.prompts.build_ecosystem_context, prompt_template.format, self.llm.call_json, response_data.get, self._resolve_confidence, RefactorProposal, logger.info
-
-### redsl.config_standard.applier.ConfigApplier.apply
-- **Calls**: self.store.lock, self.store.load, self._check_preconditions, self._backup, current.model_dump, datetime.now, updated.compute_fingerprint, self.store.validate
-
-### redsl.cli.workflow.workflow_show
-> Show effective workflow config for PROJECT_DIR (resolved with fallbacks).
-- **Calls**: workflow_group.command, click.argument, None.resolve, redsl.execution.workflow.load_workflow, click.echo, click.echo, click.echo, click.echo
+- **Calls**: PROMPTS.get, SUMD.build_ecosystem_context, prompt_template.format, self.llm.call_json, response_data.get, self._resolve_confidence, RefactorProposal, logger.info
 
 ### redsl.commands.pyqual.run_pyqual_fix
 > Run automatic fixes based on pyqual analysis.
-- **Calls**: PyQualAnalyzer, pyqual_analyzer.analyze_project, dict, redsl.commands.pyqual.fix_decisions.build_pyqual_fix_decisions, print, AgentConfig, Path, RefactorOrchestrator
+- **Calls**: PyQualAnalyzer, pyqual_analyzer.analyze_project, dict, SUMD.build_pyqual_fix_decisions, docs.model-policy-quickstart.print, AgentConfig, Path, RefactorOrchestrator
+
+### redsl.cli.deploy.deploy_detect
+> Probe infrastructure on HOST and save infra.yaml.
+- **Calls**: deploy.command, click.argument, click.option, click.option, click.option, Console, console.print, redsl.bridges.redeploy_bridge.detect_and_save
 
 ### redsl.cli.config.config_diff
 > Diff current config against another config file or root.
 - **Calls**: config.command, click.option, click.option, click.option, redsl.cli.config._resolve_store, store.load, redsl.cli.config._load_document_from_path, store.diff_documents
+
+### redsl.cli.llm_banner.print_llm_banner
+> Print the LLM config banner to stderr.
+
+Parameters
+----------
+mode:
+    One of ``"llm"`` (command may call LLM), ``"direct"`` (AST-only),
+    ``"mixed
+- **Calls**: AgentConfig.from_env, redsl.cli.llm_banner._provider_for_model, redsl.cli.llm_banner._find_dotenv, lines.append, lines.append, lines.append, lines.append, click.echo
 
 ### redsl.cli.config.config_init
 > Initialize a new redsl-config layout.
@@ -185,7 +240,25 @@ Examples:
 
 ### redsl.analyzers.python_analyzer.PythonAnalyzer._scan_top_nodes
 > Iteruj po węzłach top-level i class-level, zbieraj CC, nesting i alerty.
-- **Calls**: rel_path.endswith, ast.iter_child_nodes, isinstance, ast.iter_child_nodes, isinstance, isinstance, redsl.analyzers.python_analyzer.ast_cyclomatic_complexity, redsl.analyzers.python_analyzer.ast_max_nesting_depth
+- **Calls**: rel_path.endswith, ast.iter_child_nodes, isinstance, ast.iter_child_nodes, isinstance, isinstance, SUMD.ast_cyclomatic_complexity, SUMD.ast_max_nesting_depth
+
+### redsl.commands.sumr_planfile.core.generate_planfile
+> Generate or update planfile.yaml for *project_path* from SUMR.md.
+
+Parameters
+----------
+project_path:
+    Root of the target project.
+dry_run:
+    If
+- **Calls**: None.resolve, sumr_file.exists, redsl.commands.sumr_planfile.core._collect_from_generated_files, all_tasks.extend, sources.extend, project.map.toon.deduplicate_tasks, PlanfileResult, redsl.commands.sumr_planfile.core._collect_from_sumr_source
+
+### redsl.commands.autonomy_pr.validator._step_validate
+> Validate refactored code using available validators.
+
+Runs testql scenarios if available, plus pyqual quality gate.
+Returns success if all validators 
+- **Calls**: click.echo, redsl.commands.autonomy_pr.validator._run_testql_validation, results.append, redsl.commands.autonomy_pr.validator._run_quality_gate, results.append, redsl.commands.autonomy_pr.validator._run_project_tests, results.append, sum
 
 ### redsl.cli.config.config_clone
 > Clone a config substrate locally.
@@ -193,118 +266,66 @@ Examples:
 
 ### examples.11-model-policy.main.main
 > Run all demos.
-- **Calls**: print, print, print, print, print, examples.11-model-policy.main.demo_strict_mode, examples.11-model-policy.main.demo_safe_completion, print
-
-### redsl.cli.model_policy.check_model
-> Check if a model is allowed by policy.
-
-Example:
-    redsl model-policy check gpt-4o
-    redsl model-policy check anthropic/claude-3-5-sonnet -j
-- **Calls**: model_policy.command, click.argument, click.option, redsl.llm.check_model_policy, click.echo, click.echo, click.echo, click.echo
-
-### redsl.cli.config.config_rollback
-> Rollback config to a previous version atomically.
-- **Calls**: config.command, click.option, click.option, click.option, redsl.cli.config._resolve_store, ConfigApplier, applier.rollback, redsl.cli.config._dump_json
-
-### redsl.awareness.AwarenessManager.build_snapshot
-- **Calls**: None.resolve, self._build_cache_key, GitTimelineAnalyzer, timeline_analyzer.build_timeline, timeline_analyzer.analyze_trends, ChangePatternLearner, pattern_learner.learn_from_timeline, self.health_model.assess
-
-### redsl.awareness.health_model.HealthModel.assess
-- **Calls**: trends.get, trends.get, trends.get, self._bounded_score, self._bounded_score, self._bounded_score, self._bounded_score, self._status_for_score
-
-### redsl.validation.vallm_bridge.validate_proposal
-> Waliduj wszystkie zmiany w propozycji refaktoryzacji.
-
-Args:
-    proposal: Propozycja z listą FileChange.
-    project_dir: Opcjonalny katalog projektu
-- **Calls**: redsl.validation.vallm_bridge.is_available, Path, redsl.analyzers.incremental.EvolutionaryCache.set, redsl.validation.vallm_bridge.validate_patch, scores.append, tempfile.mkdtemp, shutil.rmtree, failures.append
-
-### redsl.analyzers.parsers.project_parser.ProjectParser._parse_emoji_alert_line
-> T001: Parsuj linie code2llm v2: 🟡 CC func_name CC=41 (limit:10)
-- **Calls**: None.strip, re.match, match.group, re.search, re.search, alert_type_map.get, match.group, int
-
-### redsl.config_standard.store.ConfigStore.clone_from
-- **Calls**: Path, ConfigStore.resolve, self.load_document, ConfigOrigin, datetime.now, datetime.now, cloned.compute_fingerprint, source_path.is_file
-
-### redsl.cli.config.config_validate
-> Validate a config manifest against the standard.
-- **Calls**: config.command, click.option, click.option, redsl.cli.config._resolve_store, store.validate, store.load, redsl.cli.config._dump_json, SystemExit
-
-### redsl.cli.batch.batch_pyqual_run
-> Multi-project quality pipeline: ReDSL analysis + pyqual gates + optional push.
-- **Calls**: batch.command, click.argument, click.option, click.option, click.option, click.option, click.option, click.option
-
-### redsl.cli.models.show_coding_config
-> Show current coding model selection configuration.
-- **Calls**: models_group.command, Console, console.print, os.getenv, console.print, os.getenv, console.print, console.print
-
-### redsl.analyzers.toon_analyzer.ToonAnalyzer.analyze_from_toon_content
-> Analizuj z bezpośredniego contentu toon (bez plików).
-- **Calls**: AnalysisResult, len, sum, self.parser.parse_project_toon, data.get, data.get, data.get, self.parser.parse_duplication_toon
-
-### redsl.analyzers.toon_analyzer.ToonAnalyzer._process_project_ton
-> Parsuj plik project_toon i zaktualizuj result.
-- **Calls**: toon_file.read_text, project_data.get, health.get, health.get, health.get, project_data.get, health.get, health.get
+- **Calls**: docs.model-policy-quickstart.print, docs.model-policy-quickstart.print, docs.model-policy-quickstart.print, docs.model-policy-quickstart.print, docs.model-policy-quickstart.print, examples.11-model-policy.main.demo_strict_mode, examples.11-model-policy.main.demo_safe_completion, docs.model-policy-quickstart.print
 
 ## Process Flows
 
 Key execution flows identified:
 
-### Flow 1: _load_stale_cache
+### Flow 1: planfile_validate
+```
+planfile_validate [redsl.cli.planfile]
+  └─ →> set
+      └─ →> _file_hash
+```
+
+### Flow 2: _load_stale_cache
 ```
 _load_stale_cache [redsl.llm.registry.aggregator.RegistryAggregator]
 ```
 
-### Flow 2: estimate_cost
+### Flow 3: estimate_cost
 ```
 estimate_cost [redsl.cli.models]
 ```
 
-### Flow 3: generate_map_toon
-```
-generate_map_toon [redsl.analyzers.sumd_bridge.SumdAnalyzer]
-```
-
-### Flow 4: config_apply
-```
-config_apply [redsl.cli.config]
-```
-
-### Flow 5: fetch
-```
-fetch [redsl.llm.registry.sources.base.OpenRouterSource]
-```
-
-### Flow 6: refactor
-```
-refactor [redsl.cli.refactor]
-```
-
-### Flow 7: source_add
-```
-source_add [redsl.cli.planfile]
-```
-
-### Flow 8: generate_proposal
-```
-generate_proposal [redsl.refactors.engine.RefactorEngine]
-  └─ →> build_ecosystem_context
-      └─> _format_trends
-      └─> _format_alerts
-```
-
-### Flow 9: apply
-```
-apply [redsl.config_standard.applier.ConfigApplier]
-```
-
-### Flow 10: workflow_show
+### Flow 4: workflow_show
 ```
 workflow_show [redsl.cli.workflow]
   └─ →> load_workflow
-      └─> default_workflow
+```
+
+### Flow 5: events_cycles
+```
+events_cycles [redsl.cli.events]
+  └─> _load_events
+```
+
+### Flow 6: deploy_migrate
+```
+deploy_migrate [redsl.cli.deploy]
+```
+
+### Flow 7: events_summary
+```
+events_summary [redsl.cli.events]
+  └─> _load_events
+```
+
+### Flow 8: deploy_run
+```
+deploy_run [redsl.cli.deploy]
+```
+
+### Flow 9: run_cycle
+```
+run_cycle [redsl.execution.cycle]
+  └─> _new_cycle_report
+```
+
+### Flow 10: generate_map_toon
+```
+generate_map_toon [redsl.analyzers.sumd_bridge.SumdAnalyzer]
 ```
 
 ## Key Classes
@@ -375,6 +396,15 @@ Pure-Python implementation that doesn't requ
 - **Methods**: 10
 - **Key Methods**: redsl.history.HistoryReader.__init__, redsl.history.HistoryReader.load_events, redsl.history.HistoryReader.filter_by_file, redsl.history.HistoryReader.filter_by_type, redsl.history.HistoryReader.has_recent_proposal, redsl.history.HistoryReader.has_recent_ticket, redsl.history.HistoryReader._format_event_header, redsl.history.HistoryReader._format_event_details, redsl.history.HistoryReader._maybe_add_cycle_header, redsl.history.HistoryReader.generate_decision_report
 
+### redsl.llm.LLMLayer
+> Warstwa abstrakcji nad LLM z obsługą:
+- wywołań tekstowych
+- odpowiedzi JSON
+- zliczania tokenów
+- f
+- **Methods**: 10
+- **Key Methods**: redsl.llm.LLMLayer.__init__, redsl.llm.LLMLayer.set_chat_log, redsl.llm.LLMLayer._record_chat, redsl.llm.LLMLayer._load_provider_key, redsl.llm.LLMLayer._resolve_provider_key, redsl.llm.LLMLayer._build_completion_kwargs, redsl.llm.LLMLayer.call, redsl.llm.LLMLayer.call_json, redsl.llm.LLMLayer.reflect, redsl.llm.LLMLayer.total_calls
+
 ### redsl.awareness.timeline_toon.ToonCollector
 > Collects and processes toon files from git history.
 - **Methods**: 10
@@ -414,116 +444,66 @@ Pure-Python implementation that doesn't requ
 - **Methods**: 8
 - **Key Methods**: redsl.autonomy.growth_control.GrowthController.__init__, redsl.autonomy.growth_control.GrowthController.check_growth, redsl.autonomy.growth_control.GrowthController.suggest_consolidation, redsl.autonomy.growth_control.GrowthController._measure_weekly_growth, redsl.autonomy.growth_control.GrowthController._find_untested_new_modules, redsl.autonomy.growth_control.GrowthController._find_oversized_files, redsl.autonomy.growth_control.GrowthController._find_tiny_modules, redsl.autonomy.growth_control.GrowthController._group_by_prefix
 
-### redsl.llm.LLMLayer
-> Warstwa abstrakcji nad LLM z obsługą:
-- wywołań tekstowych
-- odpowiedzi JSON
-- zliczania tokenów
-- f
-- **Methods**: 8
-- **Key Methods**: redsl.llm.LLMLayer.__init__, redsl.llm.LLMLayer._load_provider_key, redsl.llm.LLMLayer._resolve_provider_key, redsl.llm.LLMLayer._build_completion_kwargs, redsl.llm.LLMLayer.call, redsl.llm.LLMLayer.call_json, redsl.llm.LLMLayer.reflect, redsl.llm.LLMLayer.total_calls
-
 ## Data Transformation Functions
 
 Key functions that process and transform data:
 
-### www.propozycje.parseSelection
-- **Output to**: www.propozycje.array_map, www.propozycje.explode, www.propozycje.foreach, www.propozycje.strpos, www.propozycje.intval
+### SUMR._format_event_header
 
-### www.config-api.validateConfig
-- **Output to**: www.config-api.isset, www.config-api.elseif, www.config-api.apiVersion, www.config-api.kind, www.config-api.is_array
+### SUMR._format_event_details
 
-### www.admin.auth.validateCsrfToken
-- **Output to**: www.admin.auth.hash_equals, www.admin.auth.http_response_code, www.admin.auth.exit
+### docs.nfo-automatyczne-logowanie-funkcji.process_data
 
-### redsl.history.HistoryReader._format_event_header
-> Format event header line with timestamp, type, target and action.
-- **Output to**: ev.get, ev.get, ev.get, ev.get
+### examples.03-full-pipeline.advanced.process_order
 
-### redsl.history.HistoryReader._format_event_details
-> Format event details (thought, reflection, outcome, reason).
-- **Output to**: ev.get, ev.get, ev.get, ev.get, details.append
+### examples.03-full-pipeline.default.process_order
 
-### test_refactor_bad.complex_code.process_data
-> Very complex function with high CC.
-- **Output to**: range, int, callback, callback
+### examples.09-pr-bot.advanced.validate
 
-### test_refactor_bad.complex_code.process_data_copy
-> Copy of process_data - exact duplicate.
-- **Output to**: range, int, callback, callback
+### examples.07-pyqual.advanced.process
 
-### redsl.commands.doctor_fstring_fixers._write_if_parses
-- **Output to**: path.write_text, ast.parse
+### examples.07-pyqual.advanced.format
 
-### redsl.commands._guard_fixers._process_guard_and_indent
-> Process lines to remove guard blocks and fix excess indentation.
-- **Output to**: len, None.rstrip, _GUARD_RE.match, new_lines.append, redsl.commands._guard_fixers._handle_guard
+### examples.07-pyqual.default.process
 
-### redsl.commands.github_source._parse_next_link
-> Parse GitHub Link header to find next page URL.
-- **Output to**: link_header.split, part.strip, None.strip, url_part.startswith, url_part.endswith
+### examples.07-pyqual.default.format
 
-### redsl.commands.cli_doctor._format_check_report
-> Format doctor check report as text.
-- **Output to**: None.join, lines.append, lines.append, lines.append
+### SUMD.process_order
 
-### redsl.commands.cli_doctor._format_heal_report
-> Format doctor heal report as text.
-- **Output to**: lines.append, None.join, lines.append, lines.append, lines.append
+### SUMD._validate_order_and_user
 
-### redsl.commands.cli_doctor._format_batch_report
-> Format doctor batch report as text.
-- **Output to**: lines.append, None.join, len, len, len
+### SUMD._process_physical_item
 
-### redsl.commands.cli_autonomy._format_gate_details
-> Format quality gate details as text.
-- **Output to**: None.join, lines.append, lines.append, lines.append, verdict.metrics_before.get
+### SUMD._process_radon_results
 
-### redsl.commands.cli_autonomy._format_gate_fix_result
-> Format gate fix result as text.
-- **Output to**: lines.append, lines.append, None.join, lines.append, len
+### SUMD._process_block_alert
 
-### redsl.commands.cli_autonomy._format_improve_result
-> Format improve cycle result as text.
-- **Output to**: result.get, result.get, None.join, lines.append, lines.append
+### SUMD._parse_map_metrics
 
-### redsl.commands.cli_autonomy._format_autonomy_status
-> Format autonomy metrics as human-readable text.
-- **Output to**: None.join, lines.append, lines.append
+### SUMD._serialize_example_result
 
-### redsl.commands.cli_autonomy._format_growth_report
-> Format growth check result as text.
-- **Output to**: None.join, lines.append, lines.append, lines.append, lines.append
+### SUMD._format_refactor_result
 
-### redsl.commands.hybrid._process_single_project
-> Process a single project and return results.
-- **Output to**: redsl.commands.hybrid._count_todo_issues, redsl.commands.hybrid.run_hybrid_quality_refactor, redsl.commands.hybrid._regenerate_todo, redsl.commands.hybrid._count_todo_issues, print
+### SUMD._parse_changed_files_from_diff
 
-### redsl.commands._indent_fixers._process_def_block
-> Handle a def/class/try block: fix body indent or strip excess indent.
-- **Output to**: new_lines.append, redsl.commands._indent_fixers._scan_next_nonblank, len, len, len
+### SUMD.config_validate
 
-### redsl.commands.batch._process_batch_project
-> Process a single project in the batch.
-- **Output to**: print, print, print, redsl.commands.batch.measure_todo_reduction, print
+### SUMD._format_task_line
 
-### redsl.commands.autofix.runner._format_project_status
-> Format brief status line for a project result.
-- **Output to**: None.join, status_parts.append, status_parts.append, status_parts.append, status_parts.append
+### SUMD._process_guard_and_indent
 
-### redsl.commands.batch_pyqual.reporting._format_summary_verdicts
-> Format verdict and project count lines.
-- **Output to**: None.join
+### SUMD._process_def_block
 
-### redsl.commands.batch_pyqual.reporting._format_summary_config_and_gates
-> Format config, gates, and fix lines.
-- **Output to**: lines.append, lines.append, lines.append, None.join, lines.append
+### SUMD._process_project
 
-### redsl.commands.batch_pyqual.reporting._format_summary_pipeline_and_totals
-> Format pipeline, git, and size lines.
-- **Output to**: lines.append, lines.append, None.join, lines.append, lines.append
+### SUMD._format_project_status
 
 ## Behavioral Patterns
+
+### recursion_mask_sensitive_mapping
+- **Type**: recursion
+- **Confidence**: 0.90
+- **Functions**: redsl.config_standard.security.mask_sensitive_mapping
 
 ### recursion_deep_merge
 - **Type**: recursion
@@ -539,11 +519,6 @@ Key functions that process and transform data:
 - **Type**: recursion
 - **Confidence**: 0.90
 - **Functions**: redsl.config_standard.paths.walk_paths
-
-### recursion_mask_sensitive_mapping
-- **Type**: recursion
-- **Confidence**: 0.90
-- **Functions**: redsl.config_standard.security.mask_sensitive_mapping
 
 ### recursion__flatten_radon_blocks
 - **Type**: recursion
@@ -564,24 +539,35 @@ Key functions that process and transform data:
 
 Functions exposed as public API (no underscore prefix):
 
+- `redsl.cli.planfile.planfile_validate` - 66 calls
 - `redsl.cli.models.estimate_cost` - 44 calls
+- `redsl.cli.workflow.workflow_show` - 44 calls
+- `redsl.cli.events.events_cycles` - 42 calls
 - `redsl.examples.pyqual_example.run_pyqual_example` - 41 calls
+- `redsl.cli.deploy.deploy_migrate` - 41 calls
 - `redsl.examples.pr_bot.run_pr_bot_example` - 40 calls
+- `redsl.cli.events.events_summary` - 35 calls
+- `redsl.cli.deploy.deploy_run` - 35 calls
+- `redsl.execution.planfile_updater.add_decision_tasks` - 35 calls
 - `redsl.examples.custom_rules.run_custom_rules_example` - 34 calls
+- `redsl.execution.cycle.run_cycle` - 34 calls
 - `redsl.examples.badge.run_badge_example` - 33 calls
 - `redsl.analyzers.sumd_bridge.SumdAnalyzer.generate_map_toon` - 32 calls
 - `redsl.examples.basic_analysis.run_basic_analysis_example` - 31 calls
+- `redsl.cli.deploy.deploy_plan` - 31 calls
+- `redsl.cli.events.events_show` - 30 calls
 - `redsl.cli.config.config_apply` - 30 calls
+- `redsl.cli.refactor.refactor` - 29 calls
 - `redsl.llm.registry.sources.base.OpenRouterSource.fetch` - 29 calls
-- `redsl.cli.refactor.refactor` - 28 calls
+- `redsl.cli.workflow.workflow_scan` - 29 calls
 - `redsl.cli.planfile.source_add` - 28 calls
 - `redsl.refactors.engine.RefactorEngine.generate_proposal` - 28 calls
 - `redsl.examples.full_pipeline.run_full_pipeline_example` - 27 calls
 - `redsl.examples.api_integration.run_api_integration_example` - 26 calls
 - `redsl.config_standard.applier.ConfigApplier.apply` - 26 calls
-- `redsl.cli.workflow.workflow_show` - 26 calls
 - `examples.11-model-policy.main.demo_strict_mode` - 25 calls
 - `redsl.commands.pyqual.run_pyqual_fix` - 24 calls
+- `redsl.cli.deploy.deploy_detect` - 24 calls
 - `redsl.cli.config.config_diff` - 24 calls
 - `redsl.cli.llm_banner.print_llm_banner` - 23 calls
 - `redsl.cli.config.config_init` - 23 calls
@@ -590,20 +576,9 @@ Functions exposed as public API (no underscore prefix):
 - `redsl.cli.config.config_clone` - 21 calls
 - `examples.11-model-policy.main.main` - 20 calls
 - `redsl.commands.sumr_planfile.parsers.parse_sumr` - 20 calls
-- `redsl.cli.model_policy.check_model` - 20 calls
+- `redsl.cli.deploy.deploy_apply` - 20 calls
 - `redsl.cli.config.config_rollback` - 20 calls
-- `redsl.awareness.AwarenessManager.build_snapshot` - 20 calls
-- `redsl.awareness.health_model.HealthModel.assess` - 20 calls
-- `redsl.validation.vallm_bridge.validate_proposal` - 20 calls
-- `redsl.commands.github_source.resolve_auth_ref` - 19 calls
-- `redsl.config_standard.store.ConfigStore.clone_from` - 19 calls
-- `redsl.autonomy.metrics.collect_autonomy_metrics` - 19 calls
-- `redsl.formatters.batch.format_batch_results` - 19 calls
-- `redsl.formatters.batch.format_batch_report_markdown` - 19 calls
-- `redsl.cli.config.config_validate` - 19 calls
-- `redsl.cli.batch.batch_pyqual_run` - 19 calls
-- `redsl.cli.models.show_coding_config` - 19 calls
-- `redsl.refactors.body_restorer.repair_file` - 19 calls
+- `redsl.cli.model_policy.check_model` - 20 calls
 
 ## System Interactions
 
@@ -611,6 +586,10 @@ How components interact:
 
 ```mermaid
 graph TD
+    planfile_validate --> command
+    planfile_validate --> argument
+    planfile_validate --> option
+    planfile_validate --> set
     _load_stale_cache --> exists
     _load_stale_cache --> loads
     _load_stale_cache --> fromisoformat
@@ -618,29 +597,25 @@ graph TD
     _load_stale_cache --> items
     estimate_cost --> command
     estimate_cost --> option
-    generate_map_toon --> analyze
-    generate_map_toon --> isoformat
-    generate_map_toon --> join
-    generate_map_toon --> a
-    config_apply --> command
-    config_apply --> option
-    config_apply --> argument
-    fetch --> _http_get
-    fetch --> _fetch_programming_c
-    fetch --> get
-    refactor --> command
-    refactor --> argument
-    refactor --> option
-    source_add --> command
-    source_add --> option
-    generate_proposal --> get
-    generate_proposal --> build_ecosystem_cont
-    generate_proposal --> format
-    generate_proposal --> call_json
-    apply --> lock
-    apply --> load
-    apply --> _check_preconditions
-    apply --> _backup
+    workflow_show --> command
+    workflow_show --> argument
+    workflow_show --> resolve
+    workflow_show --> load_workflow
+    workflow_show --> echo
+    events_cycles --> command
+    events_cycles --> argument
+    events_cycles --> _load_events
+    events_cycles --> sorted
+    events_cycles --> echo
+    deploy_migrate --> command
+    deploy_migrate --> argument
+    deploy_migrate --> option
+    events_summary --> command
+    events_summary --> argument
+    events_summary --> _load_events
+    events_summary --> len
+    events_summary --> Counter
+    deploy_run --> command
 ```
 
 ## Reverse Engineering Guidelines

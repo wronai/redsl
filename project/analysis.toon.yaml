@@ -1,232 +1,268 @@
-# code2llm | 269f 41234L | python:240,php:24,shell:4,javascript:1 | 2026-04-20
-# CC̄=3.7 | critical:5/1504 | dups:0 | cycles:0
+# code2llm | 447f 93878L | python:248,md:73,yaml:63,php:33,json:9,shell:6,txt:5,yml:3,toml:2,xml:1,javascript:1 | 2026-05-01
+# CC̄=1.4 | critical:11/4289 | dups:0 | cycles:0
 
-HEALTH[5]:
-  🟡 CC    validateConfig CC=17 (limit:15)
+HEALTH[13]:
+  🔴 GOD   SUMR.md = 1282L, 11 classes, 53m, max CC=0.0
+  🔴 GOD   SUMD.md = 2929L, 11 classes, 908m, max CC=0.0
   🟡 CC    form CC=17 (limit:15)
   🟡 CC    process_data CC=25 (limit:15)
   🟡 CC    process_data_copy CC=25 (limit:15)
-  🟡 CC    _run_project_validators_phase CC=17 (limit:15)
+  🟡 CC    events_show CC=25 (limit:15)
+  🟡 CC    events_summary CC=21 (limit:15)
+  🟡 CC    events_cycles CC=20 (limit:15)
+  🟡 CC    add_decision_tasks CC=16 (limit:15)
+  🟡 CC    planfile_validate CC=44 (limit:15)
+  🟡 CC    _detect_from_scripts CC=16 (limit:15)
+  🟡 CC    _run_deploy_phase CC=21 (limit:15)
+  🟡 CC    run_cycle CC=18 (limit:15)
 
-REFACTOR[1]:
-  1. split 5 high-CC methods  (CC>15)
+REFACTOR[3]:
+  1. split SUMR.md  (god module)
+  2. split SUMD.md  (god module)
+  3. split 11 high-CC methods  (CC>15)
 
-PIPELINES[703]:
-  [1] Src [parseSelection]: parseSelection
+PIPELINES[882]:
+  [1] Src [load_env_pl]: load_env_pl
       PURITY: 100% pure
-  [2] Src [h]: h
+  [2] Src [env_pl]: env_pl
       PURITY: 100% pure
-  [3] Src [loadConfig]: loadConfig
+  [3] Src [parseSelection_pl]: parseSelection_pl
       PURITY: 100% pure
-  [4] Src [saveConfig]: saveConfig
+  [4] Src [h_pl]: h_pl
       PURITY: 100% pure
-  [5] Src [getNestedValue]: getNestedValue
+  [5] Src [handleStep1]: handleStep1 → extractNip
       PURITY: 100% pure
 
 LAYERS:
-  test_refactor_project/          CC̄=4.0    ←in:0  →out:0
+  test_refactor_project/          CC̄=4.0    ←in:0  →out:4
+  │ redsl_refactor_report.md    27L  0C    0m  CC=0.0    ←0
   │ bad_code                    24L  1C    2m  CC=4      ←0
+  │ redsl_refactor_plan.md      19L  0C    0m  CC=0.0    ←0
   │
-  redsl/                          CC̄=3.8    ←in:30  →out:26  !! split
-  │ !! planfile                   533L  0C   27m  CC=8      ←0
-  │ !! cycle                      467L  0C   16m  CC=17     ←1
-  │ models                     435L  0C   14m  CC=12     ←1
+  redsl/                          CC̄=3.9    ←in:17  →out:76  !! split
+  │ !! pyqual_report.yaml        1623L  0C    0m  CC=0.0    ←0
+  │ !! planfile                   730L  0C   30m  CC=44     ←0
+  │ !! pyqual_report.yaml         673L  0C    0m  CC=0.0    ←0
+  │ !! cycle                      445L  0C   14m  CC=21     ←0
+  │ workflow                   439L  12C   11m  CC=8      ←0
+  │ models                     435L  0C   14m  CC=12     ←0
   │ sumd_bridge                417L  2C   13m  CC=11     ←0
-  │ config                     410L  0C   13m  CC=7      ←1
-  │ decision                   405L  0C    9m  CC=8      ←6
-  │ radon_analyzer             394L  1C   23m  CC=10     ←1
-  │ pipeline                   390L  1C   14m  CC=10     ←1
-  │ refactor                   363L  0C   14m  CC=6      ←1
+  │ config                     410L  0C   13m  CC=7      ←0
+  │ decision                   408L  0C    9m  CC=8      ←0
+  │ context.md                 402L  0C    0m  CC=0.0    ←0
+  │ radon_analyzer             394L  1C   23m  CC=10     ←0
+  │ pipeline                   390L  1C   14m  CC=10     ←0
+  │ __init__                   382L  2C   14m  CC=8      ←0
+  │ !! deploy_detector            381L  2C   10m  CC=16     ←2
+  │ refactor                   377L  0C   14m  CC=6      ←0
+  │ !! planfile_updater           371L  0C   12m  CC=16     ←2
+  │ redeploy_bridge            365L  0C   10m  CC=9      ←1
   │ nlp_handlers               358L  1C   10m  CC=12     ←0
   │ cli_autonomy               356L  0C   20m  CC=6      ←0
-  │ cycle                      354L  0C   18m  CC=9      ←1
-  │ __init__                   349L  2C   12m  CC=8      ←6
+  │ cycle                      354L  0C   18m  CC=9      ←0
+  │ analysis.toon.yaml         350L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         350L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         350L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         350L  0C    0m  CC=0.0    ←0
+  │ engine                     342L  1C    9m  CC=12     ←1
   │ base                       336L  6C   13m  CC=14     ←0
-  │ engine                     336L  1C    9m  CC=12     ←1
-  │ reporting                  332L  0C   25m  CC=12     ←2
-  │ planfile_updater           331L  0C   13m  CC=7      ←2
-  │ quality_gate               325L  1C   10m  CC=11     ←4
+  │ pyqual_validators          335L  0C    7m  CC=7      ←0
+  │ reporting                  332L  0C   25m  CC=12     ←0
+  │ README.md                  330L  0C    0m  CC=0.0    ←0
+  │ README.md                  329L  0C    0m  CC=0.0    ←0
+  │ quality_gate               325L  1C   10m  CC=11     ←0
   │ __init__                   325L  2C   16m  CC=10     ←0
-  │ plan_sync                  324L  2C   16m  CC=8      ←1
+  │ plan_sync                  324L  2C   16m  CC=8      ←0
   │ aggregator                 324L  1C   16m  CC=8      ←0
-  │ agent_bridge               320L  1C    8m  CC=12     ←2
-  │ doctor_detectors           319L  0C   17m  CC=8      ←1
-  │ validator                  314L  0C    7m  CC=12     ←1
-  │ regix_bridge               313L  1C    8m  CC=9      ←2
-  │ llx_router                 312L  1C   15m  CC=10     ←2
+  │ agent_bridge               320L  1C    8m  CC=12     ←0
+  │ doctor_detectors           319L  0C   17m  CC=8      ←0
+  │ validator                  314L  0C    7m  CC=12     ←0
+  │ regix_bridge               313L  1C    8m  CC=9      ←1
+  │ llx_router                 312L  1C   15m  CC=10     ←0
   │ vallm_bridge               306L  1C    7m  CC=10     ←1
-  │ hybrid                     304L  0C   14m  CC=9      ←4
+  │ hybrid                     304L  0C   14m  CC=9      ←0
   │ project_parser             300L  1C   18m  CC=12     ←0
-  │ extractors                 299L  0C   15m  CC=11     ←1
+  │ extractors                 299L  0C   15m  CC=11     ←0
   │ testql_bridge              299L  2C   10m  CC=12     ←0
+  │ context.md                 299L  0C    0m  CC=0.0    ←0
   │ toon_analyzer              296L  1C   13m  CC=14     ←0
   │ store                      294L  5C   22m  CC=8      ←1
-  │ workflow                   292L  9C    6m  CC=7      ←2
-  │ incremental                291L  2C   17m  CC=8      ←25
-  │ refactor_routes            291L  0C    8m  CC=6      ←1
+  │ incremental                291L  2C   17m  CC=8      ←29
+  │ refactor_routes            291L  0C    8m  CC=6      ←0
   │ engine                     290L  6C   12m  CC=10     ←0
-  │ perf_bridge                289L  3C   11m  CC=6      ←2
+  │ perf_bridge                289L  3C   11m  CC=6      ←0
   │ __init__                   288L  1C   13m  CC=7      ←0
-  │ pyqual_bridge              286L  0C   13m  CC=11     ←1
+  │ pyqual_bridge              288L  0C   13m  CC=11     ←1
   │ diff_manager               283L  0C    9m  CC=9      ←0
+  │ deploy                     278L  0C    7m  CC=13     ←0
   │ growth_control             277L  3C   12m  CC=11     ←0
-  │ prompts                    277L  0C    3m  CC=9      ←1
-  │ python_analyzer            273L  1C    8m  CC=12     ←3
-  │ main                       272L  0C   23m  CC=6      ←1
+  │ prompts                    277L  0C    3m  CC=9      ←0
+  │ python_analyzer            273L  1C    8m  CC=12     ←0
+  │ main                       272L  0C   23m  CC=6      ←0
   │ rule_generator             271L  2C   11m  CC=6      ←0
   │ semantic_chunker           270L  2C   11m  CC=11     ←0
   │ scheduler                  264L  2C   16m  CC=9      ←0
   │ github_actions             260L  1C    6m  CC=6      ←0
   │ multi_project              251L  3C   10m  CC=5      ←0
-  │ metrics                    249L  1C   11m  CC=7      ←2
+  │ metrics                    249L  1C   11m  CC=7      ←0
   │ github_source              246L  0C    9m  CC=10     ←0
   │ redup_bridge               246L  1C    7m  CC=9      ←1
   │ scan                       243L  4C   13m  CC=8      ←0
-  │ catalog                    237L  1C    3m  CC=5      ←1
+  │ analysis.toon.yaml         239L  0C    0m  CC=0.0    ←0
+  │ catalog                    237L  1C    3m  CC=5      ←0
   │ __init__                   235L  4C   18m  CC=8      ←0
+  │ analysis.toon.yaml         232L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         231L  0C    0m  CC=0.0    ←0
   │ doctor_fixers              230L  0C    9m  CC=10     ←0
   │ history                    227L  3C   16m  CC=7      ←0
-  │ auto_fix                   220L  1C   13m  CC=8      ←2
-  │ batch                      212L  0C   12m  CC=7      ←4
+  │ auto_fix                   220L  1C   13m  CC=8      ←0
+  │ batch                      212L  0C   12m  CC=7      ←0
   │ direct_imports             210L  1C   14m  CC=7      ←0
   │ sandbox                    210L  3C    9m  CC=11     ←0
   │ quality_visitor            209L  1C   18m  CC=8      ←0
-  │ core                       206L  0C    5m  CC=11     ←1
+  │ project_scanner            207L  1C    7m  CC=8      ←1
+  │ core                       206L  0C    5m  CC=11     ←0
   │ consciousness_loop         204L  1C    7m  CC=5      ←0
-  │ git_ops                    204L  0C    7m  CC=6      ←1
-  │ body_restorer              203L  0C    7m  CC=11     ←1
-  │ planfile_bridge            201L  0C    7m  CC=10     ←0
-  │ __init__                   197L  0C   11m  CC=8      ←1
-  │ model_policy               190L  0C    6m  CC=11     ←1
-  │ paths                      189L  0C    9m  CC=12     ←4
-  │ _indent_fixers             188L  0C    9m  CC=9      ←2
-  │ applier                    187L  2C    7m  CC=8      ←0
+  │ git_ops                    204L  0C    7m  CC=6      ←0
+  │ planfile_bridge            203L  0C    7m  CC=10     ←0
+  │ body_restorer              203L  0C    7m  CC=11     ←0
+  │ __init__                   197L  0C   11m  CC=8      ←0
+  │ !! events                     195L  0C    6m  CC=25     ←0
+  │ model_policy               190L  0C    6m  CC=11     ←0
+  │ paths                      189L  0C    9m  CC=12     ←0
+  │ _indent_fixers             188L  0C    9m  CC=9      ←0
+  │ applier                    187L  2C    7m  CC=8      ←1
   │ code2llm_bridge            185L  1C    5m  CC=5      ←1
   │ gate                       184L  2C    7m  CC=10     ←0
-  │ refactor                   183L  0C    9m  CC=7      ←3
-  │ _guard_fixers              179L  0C    7m  CC=11     ←1
+  │ refactor                   183L  0C    9m  CC=7      ←0
+  │ _guard_fixers              179L  0C    7m  CC=11     ←0
   │ runner                     177L  1C    7m  CC=8      ←0
+  │ backup_manager             173L  0C    7m  CC=7      ←1
   │ timeline_toon              173L  1C   10m  CC=11     ←1
   │ orchestrator               172L  2C    5m  CC=8      ←0
   │ timeline_analysis          169L  1C    7m  CC=11     ←1
-  │ audit                      168L  0C   10m  CC=4      ←1
-  │ intent                     167L  0C    7m  CC=8      ←1
+  │ audit                      168L  0C   10m  CC=4      ←0
+  │ intent                     167L  0C    7m  CC=8      ←0
+  │ workflow                   165L  0C    5m  CC=9      ←0
   │ git_timeline               165L  1C   23m  CC=5      ←0
   │ selector                   163L  1C    9m  CC=8      ←0
   │ _scan_report               158L  0C    8m  CC=10     ←0
-  │ badge                      158L  0C    8m  CC=6      ←1
+  │ badge                      158L  0C    8m  CC=6      ←0
   │ doctor_fstring_fixers      155L  0C   10m  CC=10     ←0
-  │ analyzer                   155L  0C    6m  CC=8      ←1
-  │ resolution                 154L  0C    6m  CC=9      ←4
+  │ analyzer                   155L  0C    6m  CC=8      ←0
+  │ resolution                 154L  0C    6m  CC=9      ←0
+  │ planfile_runner            152L  0C    3m  CC=5      ←0
   │ health_model               151L  3C    6m  CC=9      ←0
   │ reporter                   148L  1C    5m  CC=8      ←0
   │ direct_guard               148L  1C    6m  CC=8      ←0
   │ functions_parser           148L  1C    6m  CC=9      ←0
   │ config                     144L  5C    4m  CC=6      ←17
-  │ review                     143L  0C    6m  CC=9      ←1
-  │ security                   142L  2C    6m  CC=8      ←1
-  │ llm_banner                 140L  0C    5m  CC=8      ←5
-  │ utils                      140L  0C    9m  CC=7      ←4
+  │ review                     143L  0C    6m  CC=9      ←0
+  │ security                   142L  2C    6m  CC=8      ←0
+  │ llm_banner                 140L  0C    5m  CC=8      ←0
+  │ utils                      140L  0C    9m  CC=7      ←0
   │ batch                      139L  0C    7m  CC=4      ←0
-  │ reporting                  138L  0C    5m  CC=12     ←1
+  │ reporting                  138L  0C    5m  CC=12     ←0
   │ proactive                  138L  2C    5m  CC=7      ←0
   │ models                     138L  0C    0m  CC=0.0    ←0
-  │ profiles                   136L  0C    3m  CC=1      ←2
-  │ pr_bot                     136L  0C    6m  CC=7      ←1
+  │ profiles                   136L  0C    3m  CC=1      ←0
+  │ pr_bot                     136L  0C    6m  CC=7      ←0
   │ ecosystem                  134L  2C   10m  CC=10     ←0
-  │ parsers                    133L  0C    3m  CC=8      ←3
+  │ parsers                    133L  0C    3m  CC=8      ←0
   │ ast_transformers           131L  2C    9m  CC=8      ←0
   │ direct_constants           130L  1C    6m  CC=9      ←0
-  │ memory_learning            129L  0C    6m  CC=6      ←1
+  │ memory_learning            129L  0C    6m  CC=6      ←0
   │ timeline_git               128L  1C    7m  CC=8      ←1
-  │ pipeline                   126L  0C    6m  CC=6      ←1
+  │ pipeline                   126L  0C    6m  CC=6      ←0
   │ change_patterns            125L  2C    6m  CC=12     ←0
-  │ doctor                     124L  0C    3m  CC=8      ←1
+  │ doctor                     124L  0C    3m  CC=8      ←0
   │ direct_types               124L  1C    5m  CC=8      ←0
   │ smart_scorer               122L  0C    5m  CC=7      ←0
-  │ batch                      121L  0C    6m  CC=3      ←1
+  │ batch                      121L  0C    6m  CC=3      ←0
   │ self_model                 121L  3C    7m  CC=6      ←0
   │ llm_policy                 120L  5C    1m  CC=2      ←0
-  │ examples                   118L  0C   14m  CC=4      ←1
+  │ examples                   118L  0C   14m  CC=4      ←0
   │ cli_doctor                 116L  0C    8m  CC=8      ←0
   │ __init__                   116L  0C    0m  CC=0.0    ←0
   │ core                       115L  6C    3m  CC=1      ←0
-  │ config                     114L  0C    7m  CC=4      ←2
+  │ config                     114L  0C    7m  CC=4      ←0
   │ models                     113L  7C    0m  CC=0.0    ←0
-  │ verdict                    109L  0C    7m  CC=10     ←1
-  │ webhook                    109L  0C    3m  CC=4      ←1
-  │ utils                      108L  0C    4m  CC=10     ←2
+  │ verdict                    109L  0C    7m  CC=10     ←0
+  │ webhook                    109L  0C    3m  CC=4      ←0
+  │ utils                      108L  0C    4m  CC=10     ←0
   │ timeline_models            107L  3C    3m  CC=3      ←0
   │ adaptive_executor          106L  1C    3m  CC=7      ←0
-  │ reflector                  106L  0C    2m  CC=5      ←1
+  │ reflector                  106L  0C    2m  CC=5      ←0
   │ __init__                   105L  0C    5m  CC=7      ←0
-  │ fix_decisions              104L  0C    5m  CC=4      ←1
-  │ proposals                  103L  5C    4m  CC=3      ←1
-  │ awareness                  101L  0C    6m  CC=6      ←1
-  │ checks                      98L  0C    9m  CC=5      ←1
-  │ __init__                    97L  0C    4m  CC=1      ←0
+  │ fix_decisions              104L  0C    5m  CC=4      ←0
+  │ proposals                  103L  5C    4m  CC=3      ←0
+  │ awareness                  101L  0C    6m  CC=6      ←0
+  │ __init__                   101L  0C    4m  CC=1      ←0
+  │ base                        98L  1C    2m  CC=6      ←2
+  │ checks                      98L  0C    9m  CC=5      ←0
   │ resolver                    97L  1C    4m  CC=8      ←1
   │ models                      96L  13C    0m  CC=0.0    ←0
-  │ example_routes              95L  0C    4m  CC=7      ←1
-  │ _common                     94L  0C    6m  CC=4      ←12
-  │ base                        89L  1C    2m  CC=6      ←2
+  │ example_routes              95L  0C    4m  CC=7      ←0
+  │ _common                     94L  0C    6m  CC=4      ←0
   │ ast_analyzer                88L  1C    2m  CC=7      ←0
-  │ config_gen                  87L  1C    3m  CC=4      ←1
+  │ config_gen                  87L  1C    3m  CC=4      ←0
   │ __init__                    87L  0C    0m  CC=0.0    ←0
-  │ reporter                    86L  0C    4m  CC=9      ←6
-  │ workflow                    85L  0C    4m  CC=4      ←0
+  │ reporter                    86L  0C    4m  CC=9      ←0
   │ executor                    85L  0C    0m  CC=0.0    ←0
   │ cli_awareness               83L  0C    8m  CC=1      ←0
   │ metrics                     81L  2C    2m  CC=2      ←0
-  │ pyqual_example              74L  0C    2m  CC=8      ←1
-  │ todo_gen                    72L  0C    3m  CC=8      ←1
+  │ pyqual_example              74L  0C    2m  CC=8      ←0
+  │ todo_gen                    72L  0C    3m  CC=8      ←0
   │ duplication_parser          72L  1C    5m  CC=6      ←0
+  │ evolution.toon.yaml         72L  0C    0m  CC=0.0    ←0
   │ pipeline                    71L  4C    4m  CC=4      ←0
   │ analyzer                    71L  1C    8m  CC=1      ←0
-  │ strategy                    70L  1C    3m  CC=9      ←1
+  │ strategy                    70L  1C    3m  CC=9      ←0
   │ __init__                    70L  0C    2m  CC=1      ←0
-  │ sandbox_execution           69L  0C    1m  CC=4      ←1
-  │ custom_rules                68L  0C    3m  CC=6      ←1
-  │ full_pipeline               67L  0C    2m  CC=4      ←1
+  │ sandbox_execution           69L  0C    1m  CC=4      ←0
+  │ custom_rules                68L  0C    3m  CC=6      ←0
+  │ full_pipeline               67L  0C    2m  CC=4      ←0
   │ __init__                    67L  0C    0m  CC=0.0    ←0
-  │ discovery                   66L  0C    5m  CC=7      ←2
+  │ discovery                   66L  0C    5m  CC=7      ←0
   │ __init__                    64L  0C    0m  CC=0.0    ←0
   │ direct                      63L  1C    6m  CC=1      ←0
   │ models                      62L  1C    0m  CC=0.0    ←0
   │ mypy_analyzer               61L  1C    2m  CC=7      ←0
-  │ debug                       60L  0C    5m  CC=3      ←1
-  │ debug_routes                59L  0C    1m  CC=1      ←1
-  │ hybrid                      57L  0C    1m  CC=7      ←2
-  │ validation                  57L  0C    2m  CC=6      ←2
+  │ debug                       60L  0C    5m  CC=3      ←0
+  │ debug_routes                59L  0C    1m  CC=1      ←0
+  │ workflow.yaml               58L  0C    0m  CC=0.0    ←0
+  │ hybrid                      57L  0C    1m  CC=7      ←0
+  │ validation                  57L  0C    2m  CC=6      ←0
   │ runner                      56L  0C    2m  CC=6      ←0
   │ models                      56L  4C    1m  CC=2      ←0
   │ __init__                    55L  0C    0m  CC=0.0    ←0
-  │ basic_analysis              54L  0C    2m  CC=3      ←1
+  │ basic_analysis              54L  0C    2m  CC=3      ←0
   │ models                      54L  3C    1m  CC=1      ←0
   │ secrets                     53L  2C    2m  CC=4      ←0
   │ ruff_analyzer               49L  1C    1m  CC=10     ←0
   │ models                      49L  3C    0m  CC=0.0    ←0
-  │ logging                     48L  0C    1m  CC=6      ←3
+  │ logging                     48L  0C    1m  CC=6      ←0
   │ bandit_analyzer             47L  1C    1m  CC=9      ←0
   │ utils                       47L  0C    2m  CC=3      ←0
   │ ops                         47L  0C    1m  CC=3      ←0
   │ models                      46L  6C    0m  CC=0.0    ←0
   │ metrics                     45L  0C    2m  CC=2      ←0
   │ doctor_data                 41L  2C    1m  CC=2      ←0
-  │ api_integration             41L  0C    2m  CC=2      ←1
+  │ api_integration             41L  0C    2m  CC=2      ←0
   │ scan                        41L  0C    2m  CC=6      ←0
   │ __init__                    41L  0C    0m  CC=0.0    ←0
-  │ doctor_helpers              40L  0C    2m  CC=5      ←1
-  │ reporter                    40L  0C    3m  CC=4      ←1
+  │ doctor_helpers              40L  0C    2m  CC=5      ←0
+  │ reporter                    40L  0C    3m  CC=4      ←0
   │ validation_parser           40L  1C    1m  CC=12     ←0
   │ __init__                    39L  0C    0m  CC=0.0    ←0
-  │ pyqual                      38L  0C    4m  CC=1      ←1
+  │ pyqual                      38L  0C    4m  CC=1      ←0
   │ __init__                    38L  0C    0m  CC=0.0    ←0
   │ utils                       37L  0C    3m  CC=4      ←0
   │ debug                       36L  0C    1m  CC=6      ←0
-  │ pyqual_routes               33L  0C    1m  CC=1      ←1
+  │ pyqual_routes               33L  0C    1m  CC=1      ←0
   │ __init__                    33L  0C    0m  CC=0.0    ←0
   │ doctor_indent_fixers        31L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml          31L  0C    0m  CC=0.0    ←0
   │ models                      30L  1C    0m  CC=0.0    ←0
   │ __init__                    30L  0C    0m  CC=0.0    ←0
   │ __init__                    29L  1C    0m  CC=0.0    ←0
@@ -234,20 +270,20 @@ LAYERS:
   │ discovery                   26L  0C    2m  CC=5      ←0
   │ __init__                    23L  0C    0m  CC=0.0    ←0
   │ __init__                    22L  0C    0m  CC=0.0    ←0
-  │ tool_check                  21L  0C    1m  CC=2      ←3
-  │ health_routes               20L  0C    1m  CC=1      ←1
+  │ tool_check                  21L  0C    1m  CC=2      ←0
+  │ health_routes               20L  0C    1m  CC=1      ←0
   │ __init__                    19L  0C    0m  CC=0.0    ←0
-  │ helpers                     17L  0C    2m  CC=1      ←2
+  │ helpers                     17L  0C    2m  CC=1      ←0
   │ json_helpers                17L  0C    1m  CC=4      ←0
   │ __init__                    17L  0C    0m  CC=0.0    ←0
-  │ webhook_routes              16L  0C    1m  CC=1      ←1
+  │ webhook_routes              16L  0C    1m  CC=1      ←0
   │ _base                       15L  1C    1m  CC=1      ←0
   │ __init__                    15L  0C    0m  CC=0.0    ←0
   │ __init__                    15L  0C    0m  CC=0.0    ←0
-  │ core                        14L  0C    1m  CC=1      ←2
-  │ _fixer_utils                13L  0C    1m  CC=2      ←3
+  │ core                        14L  0C    1m  CC=1      ←0
+  │ _fixer_utils                13L  0C    1m  CC=2      ←0
   │ __main__                     6L  0C    0m  CC=0.0    ←0
-  │ __init__                     3L  0C    0m  CC=0.0    ←0
+  │ __init__                     4L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │ __main__                     1L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
@@ -256,45 +292,106 @@ LAYERS:
   │
   test_refactor_bad/              CC̄=3.8    ←in:0  →out:0
   │ !! complex_code               137L  1C   17m  CC=25     ←0
+  │ redsl_refactor_report.md    38L  0C    0m  CC=0.0    ←0
   │
-  www/                            CC̄=3.2    ←in:0  →out:0
-  │ !! index.php                  719L  0C    7m  CC=5      ←0
-  │ !! nda-form.php               614L  0C    3m  CC=11     ←0
-  │ !! config-editor.php          507L  0C    4m  CC=4      ←0
+  www/                            CC̄=2.1    ←in:0  →out:0
+  │ !! index.php                  796L  0C    7m  CC=5      ←0
+  │ !! nda-form.php               699L  0C   11m  CC=11     ←0
+  │ !! config-editor.php          559L  0C    5m  CC=4      ←0
+  │ !! proposals.php              513L  0C    4m  CC=5      ←0
   │ projects.php               479L  0C    0m  CC=0.0    ←0
   │ contracts.php              460L  0C    0m  CC=0.0    ←0
+  │ propozycje.php             432L  0C    4m  CC=5      ←0
   │ clients.php                417L  0C    0m  CC=0.0    ←0
   │ tickets.php                397L  0C    0m  CC=0.0    ←0
-  │ propozycje.php             383L  0C    2m  CC=3      ←0
   │ invoices.php               359L  0C    0m  CC=0.0    ←0
+  │ README.md                  345L  0C    0m  CC=0.0    ←0
+  │ README.md                  339L  0C    0m  CC=0.0    ←0
+  │ install-plesk.sh           323L  0C    0m  CC=0.0    ←0
+  │ README-PLESK.md            316L  0C    0m  CC=0.0    ←0
+  │ en.json                    309L  0C    0m  CC=0.0    ←0
+  │ de.json                    309L  0C    0m  CC=0.0    ←0
+  │ pl.json                    309L  0C    0m  CC=0.0    ←0
+  │ context.md                 302L  0C    0m  CC=0.0    ←0
+  │ DEPLOY_CHECKLIST.md        269L  0C    0m  CC=0.0    ←0
   │ scans.php                  263L  0C    0m  CC=0.0    ←0
-  │ index.php                  227L  0C    1m  CC=1      ←0
-  │ !! config-api.php             223L  0C    3m  CC=17     ←0
+  │ test-plesk.sh              239L  0C    3m  CC=0.0    ←0
+  │ config-api.php             236L  0C   15m  CC=9      ←0
+  │ README.md                  211L  0C    0m  CC=0.0    ←0
+  │ index.php                  194L  0C    1m  CC=1      ←0
   │ smoke-test.sh              175L  0C    8m  CC=0.0    ←0
-  │ index.php                  175L  0C    0m  CC=0.0    ←0
   │ authorize.php              156L  0C    0m  CC=0.0    ←0
+  │ regulamin.php              150L  0C    1m  CC=1      ←0
   │ scan-worker.php            138L  0C    0m  CC=0.0    ←0
-  │ !! app.js                     127L  0C   14m  CC=17     ←0
+  │ redsl.php                  137L  0C    3m  CC=7      ←0
+  │ logs.php                   135L  0C    3m  CC=5      ←0
+  │ index.php                  135L  0C    0m  CC=0.0    ←0
+  │ !! app.js                     132L  0C   15m  CC=17     ←0
+  │ polityka-prywatnosci.php   131L  0C    1m  CC=1      ←0
+  │ README_CONFIG.md           127L  0C    0m  CC=0.0    ←0
   │ email-notifications.php    125L  0C    4m  CC=6      ←0
+  │ calls.yaml                 119L  0C    0m  CC=0.0    ←0
   │ invoice-generator.php      115L  0C    0m  CC=0.0    ←0
+  │ README_NDA.md              108L  0C    0m  CC=0.0    ←0
+  │ map.toon.yaml               98L  0C   36m  CC=0.0    ←0
+  │ README_PROPozycje.md        94L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          85L  0C    0m  CC=0.0    ←0
   │ access_token.php            82L  0C    0m  CC=0.0    ←0
   │ auth.php                    73L  0C    1m  CC=5      ←0
   │ user.php                    68L  0C    0m  CC=0.0    ←0
-  │ polityka-prywatnosci.php    46L  0C    0m  CC=0.0    ←0
-  │ regulamin.php               46L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml          59L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         51L  0C    0m  CC=0.0    ←0
+  │ prompt.txt                  49L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           44L  0C    0m  CC=0.0    ←0
+  │ calls.toon.yaml             38L  0C    0m  CC=0.0    ←0
   │ project.sh                  36L  0C    0m  CC=0.0    ←0
+  │ phpunit.xml                 30L  0C    0m  CC=0.0    ←0
   │ index.php                   29L  0C    0m  CC=0.0    ←0
+  │ composer.json               21L  0C    0m  CC=0.0    ←0
   │ nda-wzor.php                 6L  0C    0m  CC=0.0    ←0
+  │ debug.php                    0L  0C    0m  CC=0.0    ←0
+  │ test_currency.php            0L  0C    0m  CC=0.0    ←0
+  │ test_instance.php            0L  0C    0m  CC=0.0    ←0
+  │ test_get.php                 0L  0C    0m  CC=0.0    ←0
+  │ test_http_lang.php           0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │ debug_lang.php               0L  0C    0m  CC=0.0    ←0
   │
   .goal/                          CC̄=2.0    ←in:0  →out:0
   │ pre-commit-hook             23L  0C    1m  CC=2      ←0
   │ vallm-pre-commit.sh         17L  0C    0m  CC=0.0    ←0
   │
-  examples/                       CC̄=1.9    ←in:0  →out:0
+  examples/                       CC̄=0.8    ←in:0  →out:0
   │ main                       168L  0C    5m  CC=5      ←0
+  │ advanced.yaml              157L  0C    0m  CC=0.0    ←0
+  │ advanced.yaml              131L  4C    3m  CC=0.0    ←0
+  │ advanced.yaml              129L  0C    1m  CC=0.0    ←0
+  │ default.yaml               114L  0C    1m  CC=0.0    ←0
+  │ advanced.yaml              107L  0C    0m  CC=0.0    ←0
+  │ advanced.yaml              105L  0C    0m  CC=0.0    ←0
+  │ advanced.yaml              101L  0C    0m  CC=0.0    ←0
+  │ default.yaml                94L  0C    2m  CC=0.0    ←0
+  │ advanced.yaml               93L  0C    2m  CC=0.0    ←0
+  │ README.md                   89L  0C    0m  CC=0.0    ←0
+  │ default.yaml                88L  0C    0m  CC=0.0    ←0
+  │ default.yaml                88L  0C    0m  CC=0.0    ←0
+  │ advanced.yaml               84L  1C    6m  CC=0.0    ←0
+  │ README.md                   80L  0C    1m  CC=0.0    ←0
+  │ default.yaml                78L  0C    0m  CC=0.0    ←0
+  │ default.yaml                66L  0C    1m  CC=0.0    ←0
+  │ default.yaml                63L  0C    0m  CC=0.0    ←0
+  │ default.yaml                56L  1C    3m  CC=0.0    ←0
+  │ README.md                   56L  0C    0m  CC=0.0    ←0
+  │ README.md                   55L  0C    0m  CC=0.0    ←0
+  │ README.md                   51L  0C    0m  CC=0.0    ←0
+  │ advanced.yaml               48L  0C    0m  CC=0.0    ←0
+  │ team_rules.yaml             41L  0C    0m  CC=0.0    ←0
+  │ advanced.yaml               39L  0C    0m  CC=0.0    ←0
+  │ default.yaml                35L  0C    0m  CC=0.0    ←0
   │ main                        32L  0C    1m  CC=1      ←0
   │ main                        30L  0C    1m  CC=1      ←0
   │ main                        29L  0C    1m  CC=1      ←0
+  │ default.yaml                28L  0C    0m  CC=0.0    ←0
   │ main                        27L  0C    1m  CC=1      ←0
   │ main                        27L  0C    1m  CC=1      ←0
   │ main                        27L  0C    1m  CC=1      ←0
@@ -302,53 +399,177 @@ LAYERS:
   │ main                        25L  0C    1m  CC=1      ←0
   │ main                        25L  0C    1m  CC=1      ←0
   │ main                        25L  0C    1m  CC=1      ←0
+  │ README.md                   14L  0C    0m  CC=0.0    ←0
+  │ README.md                   14L  0C    0m  CC=0.0    ←0
+  │ README.md                   14L  0C    0m  CC=0.0    ←0
+  │ README.md                   13L  0C    0m  CC=0.0    ←0
+  │ README.md                   13L  0C    0m  CC=0.0    ←0
+  │ README.md                   10L  0C    0m  CC=0.0    ←0
+  │
+  ./                              CC̄=0.0    ←in:0  →out:0
+  │ !! SUMD.md                   2929L  11C  908m  CC=0.0    ←89
+  │ !! CHANGELOG.md              1368L  0C    0m  CC=0.0    ←0
+  │ !! SUMR.md                   1282L  11C   53m  CC=0.0    ←3
+  │ !! README.md                  676L  0C    2m  CC=0.0    ←0
+  │ !! goal.yaml                  512L  0C    0m  CC=0.0    ←0
+  │ README_EN.md               395L  0C    2m  CC=0.0    ←0
+  │ pyqual.yaml                217L  0C    0m  CC=0.0    ←0
+  │ planfile.yaml              163L  0C    0m  CC=0.0    ←0
+  │ TODO.md                    153L  0C    0m  CC=0.0    ←0
+  │ Taskfile.yml               148L  0C    0m  CC=0.0    ←0
+  │ sumd.json                  144L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             122L  0C    0m  CC=0.0    ←0
+  │ redsl_scan_report.md       105L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          49L  0C    0m  CC=0.0    ←0
+  │ redsl_refactor_report.md    48L  0C    0m  CC=0.0    ←0
+  │ project.sh                  36L  0C    0m  CC=0.0    ←0
+  │ requirements.txt            35L  0C    0m  CC=0.0    ←0
+  │ redsl_refactor_report.toon.yaml    27L  0C    0m  CC=0.0    ←0
+  │ pyqual_report.yaml          24L  0C    0m  CC=0.0    ←0
+  │ .pre-commit-config.yaml     16L  0C    0m  CC=0.0    ←0
+  │ vallm.toml                   5L  0C    0m  CC=0.0    ←0
+  │ Makefile                     0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │
+  docs/                           CC̄=0.0    ←in:424  →out:0
+  │ !! README.md                 1267L  0C    1m  CC=0.0    ←0
+  │ CONFIG_STANDARD.md         327L  0C    0m  CC=0.0    ←0
+  │ model-policy.md            256L  0C    3m  CC=0.0    ←4
+  │ CONFIG_MIGRATION.md        234L  0C    0m  CC=0.0    ←0
+  │ autonomous_pr_example.md   164L  0C    0m  CC=0.0    ←0
+  │ CONFIG_CHEATSHEET.md       164L  0C    0m  CC=0.0    ←0
+  │ model-policy-quickstart.md   132L  0C    1m  CC=0.0    ←29
+  │ zautomatyzowany-biznes-semcod.md    94L  0C    0m  CC=0.0    ←0
+  │ prellm-preprocessing-llm.md    55L  0C    0m  CC=0.0    ←0
+  │ prefact-linter-llm-aware.md    53L  0C    0m  CC=0.0    ←0
+  │ nfo-automatyczne-logowanie-funkcji.md    52L  0C    1m  CC=0.0    ←0
+  │ code2llm-analiza-przeplywu-kodu.md    47L  0C    0m  CC=0.0    ←0
+  │ cost-kalkulator-kosztow-ai.md    46L  0C    0m  CC=0.0    ←0
+  │ planfile-automatyzacja-sdlc.md    46L  0C    0m  CC=0.0    ←0
+  │ pfix-self-healing-python.md    46L  0C    0m  CC=0.0    ←0
+  │ regix-indeks-regresji.md    45L  0C    0m  CC=0.0    ←0
+  │ goal-automatyczny-git-push.md    45L  0C    0m  CC=0.0    ←0
+  │ weekly-analizator-jakosci.md    45L  0C    0m  CC=0.0    ←0
+  │ proxym-proxy-ai.md          45L  0C    0m  CC=0.0    ←0
+  │ redup-detekcja-duplikacji.md    45L  0C    0m  CC=0.0    ←0
+  │ metrun-profilowanie-wydajnosci.md    45L  0C    0m  CC=0.0    ←0
+  │ pyqual-quality-gates.md     45L  0C    0m  CC=0.0    ←0
+  │ vallm-walidacja-kodu-llm.md    45L  0C    0m  CC=0.0    ←0
+  │ code2docs-automatyczna-dokumentacja.md    45L  0C    0m  CC=0.0    ←0
+  │ llx-routing-modeli-llm.md    45L  0C    0m  CC=0.0    ←0
+  │ domd-walidacja-komend-markdown.md    43L  0C    0m  CC=0.0    ←0
+  │ toonic-format-toon.md       43L  0C    0m  CC=0.0    ←0
+  │ clickmd-markdown-terminal.md    43L  0C    0m  CC=0.0    ←0
+  │ qualbench-ci-dla-kodu-ai.md    43L  0C    0m  CC=0.0    ←0
+  │ code2logic-analiza-nlp.md    43L  0C    0m  CC=0.0    ←0
+  │ pactfix-bash-analyzer.md    43L  0C    0m  CC=0.0    ←0
+  │ ats-benchmark.md            35L  0C    0m  CC=0.0    ←0
+  │ heal-zdrowie-wellness.md    32L  0C    0m  CC=0.0    ←0
+  │
+  project/                        CC̄=0.0    ←in:0  →out:0
+  │ !! calls.yaml                6185L  0C    0m  CC=0.0    ←0
+  │ !! map.toon.yaml             1985L  0C  912m  CC=0.0    ←11
+  │ !! validation.toon.yaml       997L  0C    0m  CC=0.0    ←0
+  │ !! context.md                 656L  0C    0m  CC=0.0    ←0
+  │ !! calls.toon.yaml            630L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         355L  0C    0m  CC=0.0    ←0
+  │ README.md                  339L  0C    0m  CC=0.0    ←0
+  │ duplication.toon.yaml      133L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           57L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         56L  0C    0m  CC=0.0    ←0
+  │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
+  │
+  project_test/                   CC̄=0.0    ←in:0  →out:0
+  │ !! map.toon.yaml             1691L  0C  742m  CC=0.0    ←0
+  │ !! context.md                 657L  0C    0m  CC=0.0    ←0
+  │ README.md                  332L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         317L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         69L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           58L  0C    0m  CC=0.0    ←0
+  │ prompt.txt                  49L  0C    0m  CC=0.0    ←0
   │
   app/                            CC̄=0.0    ←in:0  →out:0
   │ models                      48L  3C    0m  CC=0.0    ←0
   │
-  ./                              CC̄=0.0    ←in:0  →out:0
-  │ project.sh                  36L  0C    0m  CC=0.0    ←0
+  .taskill/                       CC̄=0.0    ←in:0  →out:0
+  │ state.json                  11L  0C    0m  CC=0.0    ←0
+  │
+  vallm_text/                     CC̄=0.0    ←in:0  →out:0
+  │ validation.txt              15L  0C    0m  CC=0.0    ←0
+  │
+  .planfile/                      CC̄=0.0    ←in:0  →out:0
+  │ backlog.yaml                 5L  0C    0m  CC=0.0    ←0
+  │ current.yaml                 5L  0C    0m  CC=0.0    ←0
+  │ config.yaml                  3L  0C    0m  CC=0.0    ←0
+  │
+  vallm_analysis/                 CC̄=0.0    ←in:0  →out:0
+  │ validation.toon.yaml         8L  0C    0m  CC=0.0    ←0
+  │
+  vallm_json/                     CC̄=0.0    ←in:0  →out:0
+  │ validation.json             75L  0C    0m  CC=0.0    ←0
+  │
+  redsl_output/                   CC̄=0.0    ←in:0  →out:0
+  │ !! pyqual_report.json        9427L  0C    0m  CC=0.0    ←0
+  │ redsl_batch_hybrid_report.md    29L  0C    0m  CC=0.0    ←0
+  │ hybrid_refactor_results.json    17L  0C    0m  CC=0.0    ←0
+  │
+  vallm_analysis_full/            CC̄=0.0    ←in:0  →out:0
+  │ validation.toon.yaml         8L  0C    0m  CC=0.0    ←0
+  │
+  config/                         CC̄=0.0    ←in:0  →out:0
+  │ default_rules.yaml         117L  0C    0m  CC=0.0    ←0
   │
   ── zero ──
+     Dockerfile                                0L
+     Makefile                                  0L
      redsl/defaults/__init__.py                0L
+     www/Dockerfile                            0L
+     www/debug.php                             0L
+     www/debug_lang.php                        0L
+     www/test_currency.php                     0L
+     www/test_get.php                          0L
+     www/test_http_lang.php                    0L
+     www/test_instance.php                     0L
 
 COUPLING:
-                                         redsl         redsl.commands         redsl.autonomy              redsl.cli        redsl.analyzers        redsl.execution              redsl.api       redsl.validation         redsl.examples              redsl.llm       redsl.formatters        redsl.refactors  redsl.config_standard      redsl.diagnostics            redsl.utils
-                  redsl                     ──                     ←2                     ←6                      9                      2                      4                      6                     ←1                     ←1                      2                                                                    1                      2                         hub
-         redsl.commands                      2                     ──                     13                      4                      8                      3                                             7                                                                    2                      1                                                                       hub
-         redsl.autonomy                      6                      7                     ──                     ←1                      8                      3                                                                                                                                                                                                                 hub
-              redsl.cli                      8                      2                      1                     ──                                             3                                                                    1                      1                      4                                             4                      1                         hub
-        redsl.analyzers                     ←2                     ←8                     ←8                                            ──                     ←4                                            ←1                     ←1                     ←3                                            ←5                     ←1                                                hub
-        redsl.execution                      2                     ←3                     ←3                     ←3                      4                     ──                     ←3                      3                     ←1                      4                                             1                                                                       hub
-              redsl.api                      3                                                                                                                  3                     ──                                             2                                             6                                             1                                                hub
-       redsl.validation                      1                     ←7                                                                    1                     ←3                                            ──                                                                                          ←3                                                                    2  hub
-         redsl.examples                      1                                                                   ←1                      1                      1                     ←2                                            ──                                                                                                                                            hub
-              redsl.llm                      2                                                                   ←1                      3                     ←4                                                                                          ──                                                                                                                  1  hub
-       redsl.formatters                                            ←2                                            ←4                                                                   ←6                                                                                          ──                                                                                              hub
-        redsl.refactors                                            ←1                                                                    5                     ←1                                             3                                                                                          ──                                                                       !! fan-out
-  redsl.config_standard                      1                                                                   ←4                      1                                            ←1                                                                                                                                        ──                                                hub
-      redsl.diagnostics                     ←2                                                                   ←1                                                                                                                                                                                                                                    ──                      1
-            redsl.utils                                                                                                                                                                                      ←2                                            ←1                                                                                          ←1                     ──
+                                                docs                      SUMD            redsl.commands            redsl.examples                     redsl  examples.11-model-policy           redsl.analyzers                 redsl.cli           redsl.execution               project.map            redsl.autonomy     redsl.config_standard          redsl.validation                 redsl.api           redsl.refactors
+                      docs                        ──                                                ←124                      ←182                       ←46                       ←57                                                  ←1                        ←2                                                  ←3                                                                                                      ←5  hub
+                      SUMD                                                  ──                       ←88                       ←32                       ←24                        ←1                       ←17                       ←35                       ←23                                                 ←11                       ←19                        ←3                       ←14                        ←1  hub
+            redsl.commands                       124                        88                        ──                                                   2                                                   6                                                                            12                                                                             6                                                      !! fan-out
+            redsl.examples                       182                        32                                                  ──                         1                                                   1                                                                                                                                                                                                                  !! fan-out
+                     redsl                        46                        24                        ←2                        ←1                        ──                                                   2                        ←3                                                                            ←6                        ←1                        ←1                        ←3                            hub
+  examples.11-model-policy                        57                         1                                                                                                      ──                                                                                                                                                                                                                                            !! fan-out
+           redsl.analyzers                                                  17                        ←6                        ←1                        ←2                                                  ──                        ←3                        ←6                                                  ←7                        ←1                        ←1                                                  ←5  hub
+                 redsl.cli                         1                        35                                                                             3                                                   3                        ──                         4                         3                                                   2                                                                                !! fan-out
+           redsl.execution                         2                        23                                                                                                                                 6                        ←4                        ──                        11                                                                             3                                                   1  !! fan-out
+               project.map                                                                           ←12                                                                                                                                ←3                       ←11                        ──                                                                                                                                    hub
+            redsl.autonomy                         3                        11                                                                             6                                                   7                                                                                                      ──                                                                                                          !! fan-out
+     redsl.config_standard                                                  19                                                                             1                                                   1                        ←2                                                                                                      ──                                                                                !! fan-out
+          redsl.validation                                                   3                        ←6                                                   1                                                   1                                                  ←3                                                                                                      ──                                                  ←3  hub
+                 redsl.api                                                  14                                                                             3                                                                                                                                                                                                                                        ──                            !! fan-out
+           redsl.refactors                         5                         1                                                                                                                                 5                                                  ←1                                                                                                       3                                                  ──  !! fan-out
   CYCLES: none
-  HUB: redsl.api/ (fan-in=6)
-  HUB: redsl.autonomy/ (fan-in=14)
-  HUB: redsl.execution/ (fan-in=17)
-  HUB: redsl.cli/ (fan-in=13)
-  HUB: redsl.analyzers/ (fan-in=35)
-  HUB: redsl.commands/ (fan-in=9)
-  HUB: redsl.validation/ (fan-in=13)
-  HUB: redsl.llm/ (fan-in=7)
-  HUB: redsl.config_standard/ (fan-in=6)
-  HUB: redsl.formatters/ (fan-in=12)
-  HUB: redsl.examples/ (fan-in=13)
-  HUB: redsl/ (fan-in=30)
-  SMELL: redsl.api/ fan-out=16 → split needed
-  SMELL: redsl.autonomy/ fan-out=24 → split needed
-  SMELL: redsl.execution/ fan-out=14 → split needed
-  SMELL: redsl.cli/ fan-out=25 → split needed
-  SMELL: redsl.commands/ fan-out=40 → split needed
-  SMELL: redsl.refactors/ fan-out=8 → split needed
-  SMELL: redsl/ fan-out=26 → split needed
+  HUB: redsl.analyzers/ (fan-in=37)
+  HUB: docs/ (fan-in=424)
+  HUB: SUMR/ (fan-in=5)
+  HUB: redsl.validation/ (fan-in=12)
+  HUB: redsl.bridges/ (fan-in=7)
+  HUB: project.map/ (fan-in=31)
+  HUB: SUMD/ (fan-in=295)
+  HUB: redsl/ (fan-in=17)
+  SMELL: redsl.analyzers/ fan-out=19 → split needed
+  SMELL: redsl.formatters/ fan-out=11 → split needed
+  SMELL: redsl.execution/ fan-out=46 → split needed
+  SMELL: examples.11-model-policy/ fan-out=58 → split needed
+  SMELL: redsl.commands/ fan-out=238 → split needed
+  SMELL: redsl.api/ fan-out=17 → split needed
+  SMELL: redsl.cli/ fan-out=55 → split needed
+  SMELL: redsl.autonomy/ fan-out=27 → split needed
+  SMELL: redsl.config_standard/ fan-out=21 → split needed
+  SMELL: redsl.examples/ fan-out=216 → split needed
+  SMELL: redsl.refactors/ fan-out=14 → split needed
+  SMELL: redsl.llm/ fan-out=12 → split needed
+  SMELL: redsl/ fan-out=76 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

@@ -657,3 +657,20 @@ Szczegółowa dokumentacja projektów ekosystemu **semcod** dostępna w katalogu
 ## License
 
 Licensed under Apache-2.0.
+
+<!-- taskill:status:start -->
+
+## Status
+
+_Last updated by [taskill](https://github.com/oqlos/taskill) at 2026-04-25 13:46 UTC_
+
+| Metric | Value |
+|---|---|
+| HEAD | `ddbf5bb` |
+| Coverage | — |
+| Failing tests | — |
+| Commits in last cycle | 50 |
+
+> Mostly documentation fixes and broad refactorings; autonomy_pr was restructured into a package with new analyzer/reporter modules, i18n pricing text improved, and test tooling updated (pytest-xdist / test optimizations).
+
+<!-- taskill:status:end -->

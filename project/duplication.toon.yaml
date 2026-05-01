@@ -1,12 +1,12 @@
-# redup/duplication | 16 groups | 242f 35385L | 2026-04-20
+# redup/duplication | 16 groups | 247f 36781L | 2026-05-01
 
 SUMMARY:
-  files_scanned: 242
-  total_lines:   35385
+  files_scanned: 247
+  total_lines:   36781
   dup_groups:    16
   dup_fragments: 52
   saved_lines:   145
-  scan_ms:       10588
+  scan_ms:       9253
 
 DUPLICATES[16] (ranked by impact):
   [1907a33a0fa70761]   STRU  example_basic_analysis  L=3 N=9 saved=24 sim=1.00
@@ -55,7 +55,7 @@ DUPLICATES[16] (ranked by impact):
       redsl/config_standard/proposals.py:78-84  (export_proposal_schema)
   [a8c184096c6d5401]   EXAC  all_files  L=5 N=2 saved=5 sim=1.00
       redsl/execution/project_scanner.py:111-115  (all_files)
-      redsl/execution/workflow.py:178-182  (all_files)
+      redsl/execution/workflow.py:180-184  (all_files)
   [42758e6f93d15e46]   STRU  _check_analysis_passed  L=5 N=2 saved=5 sim=1.00
       redsl/commands/batch_pyqual/verdict.py:8-12  (_check_analysis_passed)
       redsl/commands/batch_pyqual/verdict.py:15-19  (_check_gates_passed)

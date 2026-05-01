@@ -31,6 +31,15 @@
   - Realna ocena projektu: Innowacyjność 9/10, Techniczna spójność 8.5/10, Adopcja 6/10, Ryzyko wysokie
   - Finalna konkluzja: eksperymentalny system operacyjny dla AI-driven software engineering
 
+- feat(autonomy_pr): extract analyzer and reporter modules
+- refactor(autonomy_pr): restructure as package with __init__.py
+- fix(autonomy_pr): __init__.py adjustments
+- feat(i18n): improve pricing section with translation functions
+- docs: new API capabilities and README updates
+- chore: add pytest-xdist dependency and test optimizations
+- refactor: assorted internal refactorings (reduce CLI fan-out, reorganize modules)
+- fix(docs): add markdown output across docs and tests
+
 ## [1.2.55] - 2026-04-20
 
 ### Docs

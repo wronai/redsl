@@ -13,6 +13,13 @@ declare(strict_types=1);
 
 session_start();
 
+require_once __DIR__ . '/lib/i18n.php';
+$_i18n       = I18n::getInstance();
+$t           = fn(string $k, array $p = []): string => $_i18n->t($k, $p);
+$lang        = $_i18n->getLang();
+$getLangUrls = fn(): array => $_i18n->getLangUrls();
+$getLangName = fn(string $l): string => $_i18n->getLangName($l);
+
 // Load database layer
 require __DIR__ . '/lib/Database.php';
 require __DIR__ . '/lib/Repository/ClientRepository.php';
@@ -276,13 +283,19 @@ Pieczęć firmowa (opcjonalnie):
 NDA;
 }
 
+$year  = date('Y');
+$issue = date('Y.m');
 ?>
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="<?= h($lang) ?>">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NDA — Podpisz umowę o poufności — ReDSL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title><?= h($t('nda.page_title')) ?></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="style.css">
     <style>
         * { box-sizing: border-box; }
         body {
@@ -463,27 +476,56 @@ NDA;
             border-color: #3b82f6;
             background: #f8fafc;
         }
-    </style>
+        .nda-wrap { max-width: 700px; margin: 0 auto; padding: 0 20px 60px; }
+    .nda-page-header { text-align: center; padding: 40px 0 20px; }
+    .nda-page-header h1 { margin: 0 0 8px; font-size: 28px; color: var(--ink, #1a1a2e); }
+    .nda-page-header .subtitle { color: #666; font-size: 16px; margin: 0; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Umowa o poufności (NDA)</h1>
-            <p class="subtitle">Wymagana przed pierwszym skanem kodu. Automatyczne generowanie.</p>
-        </header>
+
+<header class="masthead">
+    <div class="masthead-inner">
+        <div class="masthead-left">
+            <span class="issue"><?= h($t('meta.issue')) ?> <?= h($issue) ?></span>
+            <span class="dot">·</span>
+            <span class="date"><?= h(date('j F Y')) ?></span>
+        </div>
+        <a href="/" class="logo">
+            <span class="logo-r">R</span><span>edsl</span>
+        </a>
+        <nav class="masthead-right">
+            <a href="/#jak"><?= h($t('nav.how_it_works')) ?></a>
+            <a href="/#cennik"><?= h($t('nav.pricing')) ?></a>
+            <a href="/#kontakt"><?= h($t('nav.contact')) ?></a>
+            <div class="lang-switcher">
+                <?php foreach ($getLangUrls() as $code => $url): ?>
+                <a href="<?= h($url) ?>" class="lang-btn <?= $code === $lang ? 'lang-btn-active' : '' ?>" title="<?= h($getLangName($code)) ?>"><?= h(strtoupper($code)) ?></a>
+                <?php endforeach; ?>
+            </div>
+        </nav>
+    </div>
+    <div class="rule"></div>
+</header>
+
+    <div class="nda-wrap">
+        <div class="nda-page-header">
+            <h1><?= h($t('nda.heading')) ?></h1>
+            <p class="subtitle"><?= h($t('nda.subtitle')) ?></p>
+        </div>
         
         <div class="steps">
             <div class="step <?= $step === '1' ? 'active' : '' ?>">
                 <div class="step-number">1</div>
-                <div>NIP → Dane firmy</div>
+                <div><?= h($t('nda.step1_label')) ?></div>
             </div>
             <div class="step <?= $step === '2' ? 'active' : '' ?>">
                 <div class="step-number">2</div>
-                <div>Osoba kontaktowa</div>
+                <div><?= h($t('nda.step2_label')) ?></div>
             </div>
             <div class="step <?= $step === '3' ? 'active' : '' ?>">
                 <div class="step-number">3</div>
-                <div>Podpis i upload</div>
+                <div><?= h($t('nda.step3_label')) ?></div>
             </div>
         </div>
         
@@ -494,21 +536,21 @@ NDA;
         <?php if ($step === '1'): ?>
         <!-- Step 1: NIP lookup -->
         <div class="card">
-            <div class="card-title">Wprowadź NIP firmy</div>
+            <div class="card-title"><?= h($t('nda.s1_title')) ?></div>
             <p style="color: #666; margin-bottom: 20px;">
-                System automatycznie uzupełni dane z REGON/GUS. 
-                <a href="?manual=1" style="color: #3b82f6;">Wypełnij ręcznie →</a>
+                <?= h($t('nda.s1_desc')) ?>
+                <a href="?manual=1" style="color: #3b82f6;"><?= h($t('nda.s1_manual')) ?></a>
             </p>
             
             <form method="post">
                 <input type="hidden" name="step" value="1">
                 <div class="form-group">
-                    <label>NIP (10 cyfr)</label>
+                    <label><?= h($t('nda.s1_nip_label')) ?></label>
                     <div class="nip-input-group">
-                        <input type="text" name="nip" placeholder="1234567890" maxlength="10" pattern="[0-9]{10}" required>
-                        <button type="submit" class="btn btn-primary">Pobierz dane</button>
+                        <input type="text" name="nip" placeholder="<?= h($t('nda.s1_nip_placeholder')) ?>" maxlength="10" pattern="[0-9]{10}" required>
+                        <button type="submit" class="btn btn-primary"><?= h($t('nda.s1_btn')) ?></button>
                     </div>
-                    <p class="hint">Np. 1234567890 — bez spacji i myślników</p>
+                    <p class="hint"><?= h($t('nda.s1_nip_hint')) ?></p>
                 </div>
             </form>
         </div>
@@ -516,67 +558,67 @@ NDA;
         <?php elseif ($step === '2'): ?>
         <!-- Step 2: Company details + contact person -->
         <div class="card">
-            <div class="card-title">Dane firmy</div>
+            <div class="card-title"><?= h($t('nda.s2_company')) ?></div>
             
             <form method="post">
                 <input type="hidden" name="step" value="2">
                 
                 <div class="form-group">
-                    <label>Nazwa firmy</label>
+                    <label><?= h($t('nda.s2_name')) ?></label>
                     <input type="text" name="nazwa" value="<?= h($company['nazwa'] ?? '') ?>" required>
                 </div>
                 
                 <div class="form-group">
-                    <label>Ulica i numer</label>
+                    <label><?= h($t('nda.s2_street')) ?></label>
                     <input type="text" name="ulica" value="<?= h($company['ulica'] ?? '') ?>" required>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 120px 1fr; gap: 12px;">
                     <div class="form-group">
-                        <label>Kod</label>
+                        <label><?= h($t('nda.s2_zip')) ?></label>
                         <input type="text" name="kod" value="<?= h($company['kod'] ?? '') ?>" placeholder="00-001" required>
                     </div>
                     <div class="form-group">
-                        <label>Miasto</label>
+                        <label><?= h($t('nda.s2_city')) ?></label>
                         <input type="text" name="miasto" value="<?= h($company['miasto'] ?? '') ?>" required>
                     </div>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="form-group">
-                        <label>REGON</label>
+                        <label><?= h($t('nda.s2_regon')) ?></label>
                         <input type="text" name="regon" value="<?= h($company['regon'] ?? '') ?>">
                     </div>
                     <div class="form-group">
-                        <label>KRS</label>
+                        <label><?= h($t('nda.s2_krs')) ?></label>
                         <input type="text" name="krs" value="<?= h($company['krs'] ?? '') ?>">
                     </div>
                 </div>
                 
-                <div class="card-title" style="margin-top: 30px;">Osoba reprezentująca</div>
+                <div class="card-title" style="margin-top: 30px;"><?= h($t('nda.s2_person')) ?></div>
                 
                 <div class="form-group">
-                    <label>Imię i nazwisko</label>
+                    <label><?= h($t('nda.s2_fullname')) ?></label>
                     <input type="text" name="osoba" placeholder="Jan Kowalski" required>
                 </div>
                 
                 <div class="form-group">
-                    <label>Stanowisko</label>
+                    <label><?= h($t('nda.s2_position')) ?></label>
                     <input type="text" name="stanowisko" placeholder="CEO / CTO / Tech Lead" required>
                 </div>
                 
                 <div class="form-group">
-                    <label>Email</label>
+                    <label><?= h($t('nda.s2_email')) ?></label>
                     <input type="email" name="email" placeholder="jan@firma.pl" required>
                 </div>
                 
                 <div class="form-group">
-                    <label>Telefon</label>
+                    <label><?= h($t('nda.s2_phone')) ?></label>
                     <input type="tel" name="telefon" placeholder="+48 123 456 789">
                 </div>
                 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    Generuj NDA →
+                    <?= h($t('nda.s2_btn')) ?>
                 </button>
             </form>
         </div>
@@ -584,18 +626,18 @@ NDA;
         <?php elseif ($step === '3'): ?>
         <!-- Step 3: Generated NDA -->
         <div class="card">
-            <div class="card-title">Wygenerowana umowa NDA</div>
+            <div class="card-title"><?= h($t('nda.s3_title')) ?></div>
             
             <div class="alert alert-info">
-                Przeczytaj umowę, pobierz PDF, podpisz i prześlij zeskanowaną wersję.
+                <?= h($t('nda.s3_info')) ?>
             </div>
             
             <?php if (!empty($_SESSION['nda_contract_id'])): ?>
             <div class="alert" style="background: #e8f5e9; color: #2e7d32; border-left: 4px solid #2e7d32; padding: 12px; margin-bottom: 16px;">
-                <strong>✓ Zapisano w systemie</strong><br>
+                <strong>✓ <?= h($t('nda.s3_saved')) ?></strong><br>
                 Klient ID: <?= $_SESSION['nda_client_id'] ?? '?' ?> | 
                 Umowa ID: <?= $_SESSION['nda_contract_id'] ?><br>
-                <small>Zobacz w <a href="admin/contracts.php" style="color: #1b5e20;">panelu admina</a></small>
+                <small>Zobacz w <a href="admin/contracts.php" style="color: #1b5e20;"><?= h($t('nda.s3_admin_link')) ?></a></small>
             </div>
             <?php endif; ?>
             
@@ -605,42 +647,53 @@ NDA;
             
             <div class="action-buttons">
                 <button onclick="window.print()" class="btn btn-secondary">
-                    Drukuj / Zapisz PDF
+                    <?= h($t('nda.s3_print')) ?>
                 </button>
                 <a href="data:text/plain;charset=utf-8,<?= urlencode(generateNDAText($company, $_SESSION['nda_osoba'] ?? '', $_SESSION['nda_stanowisko'] ?? '', $_SESSION['nda_email'] ?? '', $_SESSION['nda_telefon'] ?? '')) ?>" 
                    download="NDA-<?= h($nip) ?>.txt" 
                    class="btn btn-primary" 
                    style="text-decoration: none;">
-                    Pobierz TXT
+                    <?= h($t('nda.s3_download')) ?>
                 </a>
             </div>
         </div>
         
         <div class="card">
-            <div class="card-title">Prześlij podpisaną umowę</div>
+            <div class="card-title"><?= h($t('nda.s3_upload_title')) ?></div>
             
             <div class="upload-zone" onclick="alert('W produkcji: upload pliku PDF/JPG')">
                 <div style="font-size: 48px; margin-bottom: 12px;">📄</div>
-                <div style="font-weight: 600; margin-bottom: 8px;">Kliknij lub przeciągnij plik</div>
+                <div style="font-weight: 600; margin-bottom: 8px;"><?= h($t('nda.s3_upload_click')) ?></div>
                 <div style="font-size: 13px; color: #6b7280;">
-                    Akceptowane formaty: PDF, JPG, PNG (max 10MB)
+                    <?= h($t('nda.s3_upload_formats')) ?>
                 </div>
             </div>
             
             <p class="hint" style="text-align: center; margin-top: 16px;">
-                Alternatywnie: wyślij podpisaną umowę na 
+                <?= h($t('nda.s3_upload_alt')) ?>
                 <a href="mailto:nda@redsl.io" style="color: #3b82f6;">nda@redsl.io</a>
             </p>
         </div>
         
         <div style="text-align: center; padding: 20px;">
-            <a href="/" style="color: #6b7280; text-decoration: none;">← Wróć do strony głównej</a>
+            <a href="/" style="color: #6b7280; text-decoration: none;"><?= h($t('nda.s3_back')) ?></a>
         </div>
         <?php endif; ?>
         
         <p style="text-align: center; margin-top: 30px; font-size: 12px; color: #9ca3af;">
-            Integracja z REGON/GUS w produkcji. Obecnie: demo mode.
+            <?= h($t('nda.demo_note')) ?>
         </p>
     </div>
+
+<footer class="colophon">
+    <div class="container">
+        <div class="colophon-bottom">
+            <span>&copy; <?= h((string)$year) ?> REDSL &middot; <?= h($t('meta.issue')) ?> <?= h($issue) ?></span>
+            <span class="dot">&middot;</span>
+            <span>Polska &middot; UE</span>
+        </div>
+    </div>
+</footer>
+
 </body>
 </html>

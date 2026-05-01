@@ -1,50 +1,68 @@
 # code2llm call graph | /home/tom/github/semcod/redsl
-# nodes: 475 | edges: 500 | modules: 101
-# CC̄=3.7
+# nodes: 482 | edges: 500 | modules: 74
+# CC̄=1.4
 
 HUBS[20]:
-  redsl.examples.pyqual_example.run_pyqual_example
-    CC=8  in:2  out:41  total:43
-  redsl.examples.pr_bot.run_pr_bot_example
-    CC=3  in:2  out:40  total:42
-  redsl.examples.custom_rules.run_custom_rules_example
-    CC=6  in:2  out:34  total:36
-  redsl.cli.llm_banner.print_llm_banner
-    CC=7  in:12  out:23  total:35
-  redsl.examples.badge.run_badge_example
-    CC=5  in:2  out:33  total:35
-  redsl.config.AgentConfig.from_env
-    CC=4  in:21  out:12  total:33
-  redsl.examples.basic_analysis.run_basic_analysis_example
-    CC=3  in:2  out:31  total:33
+  docs.model-policy-quickstart.print
+    CC=0  in:418  out:0  total:418
   redsl.analyzers.incremental.EvolutionaryCache.set
-    CC=1  in:29  out:2  total:31
+    CC=1  in:40  out:2  total:42
+  redsl.examples.custom_rules.run_custom_rules_example
+    CC=6  in:1  out:34  total:35
+  redsl.examples.badge.run_badge_example
+    CC=5  in:1  out:33  total:34
+  redsl.examples.basic_analysis.run_basic_analysis_example
+    CC=3  in:1  out:31  total:32
   redsl.config_standard.nlp_handlers._handle_propose_changes
     CC=12  in:1  out:29  total:30
-  redsl.examples.full_pipeline.run_full_pipeline_example
-    CC=4  in:2  out:27  total:29
   redsl.examples.api_integration.run_api_integration_example
-    CC=2  in:2  out:26  total:28
+    CC=2  in:1  out:26  total:27
   redsl.commands.sumr_planfile.core._collect_from_sumr_source
     CC=11  in:1  out:25  total:26
   examples.11-model-policy.main.demo_strict_mode
     CC=3  in:1  out:25  total:26
-  redsl.diagnostics.perf_bridge._parse_metrun_output
-    CC=5  in:1  out:23  total:24
   redsl.commands.sumr_planfile._raw_task_to_plan_task
     CC=7  in:1  out:23  total:24
   redsl.commands.pyqual.run_pyqual_fix
     CC=7  in:0  out:24  total:24
-  redsl.autonomy.quality_gate.run_quality_gate
-    CC=11  in:8  out:15  total:23
-  redsl.commands.autonomy_pr.validator._step_validate
-    CC=9  in:1  out:21  total:22
   redsl.commands.sumr_planfile.core.generate_planfile
-    CC=7  in:1  out:21  total:22
-  redsl.autonomy.metrics.collect_autonomy_metrics
-    CC=3  in:2  out:19  total:21
+    CC=7  in:0  out:21  total:21
+  redsl.commands.autonomy_pr.validator._step_validate
+    CC=9  in:0  out:21  total:21
+  examples.11-model-policy.main.main
+    CC=3  in:0  out:20  total:20
+  redsl.commands.github_source.resolve_auth_ref
+    CC=10  in:1  out:19  total:20
+  redsl.commands.planfile_bridge.create_ticket
+    CC=8  in:1  out:18  total:19
+  redsl.commands.cli_autonomy._register_watch_cmd
+    CC=1  in:1  out:18  total:19
+  redsl.examples.awareness.run_awareness_example
+    CC=1  in:1  out:17  total:18
+  redsl.commands.cli_autonomy._register_improve_cmd
+    CC=1  in:1  out:17  total:18
+  redsl.commands.autonomy_pr.git_ops._step_branch_and_commit
+    CC=3  in:0  out:18  total:18
 
 MODULES:
+  SUMD  [85 funcs]
+    _abort_no_changes  CC=0  out:0
+    _append_gate_violations_to_todo  CC=0  out:0
+    _build_summary  CC=0  out:0
+    _collect_python_files  CC=0  out:0
+    _compute_priority  CC=0  out:0
+    _count_python_files  CC=0  out:0
+    _count_todo_issues  CC=0  out:0
+    _detect_languages  CC=0  out:0
+    _detect_publish_configured  CC=0  out:0
+    _execute_direct_refactor  CC=0  out:0
+  SUMR  [1 funcs]
+    _default_history_dir  CC=0  out:0
+  docs.model-policy  [2 funcs]
+    check_model_policy  CC=0  out:0
+    safe_completion  CC=0  out:0
+  docs.model-policy-quickstart  [1 funcs]
+    print  CC=0  out:0
   examples.01-basic-analysis.main  [1 funcs]
     main  CC=1  out:1
   examples.02-custom-rules.main  [1 funcs]
@@ -71,57 +89,13 @@ MODULES:
     demo_safe_completion  CC=4  out:12
     demo_strict_mode  CC=3  out:25
     main  CC=3  out:20
+  project.map.toon  [4 funcs]
+    deduplicate_tasks  CC=0  out:0
+    get_toon_patterns  CC=0  out:0
+    make_id_generator  CC=0  out:0
+    parse_refactor_plan_yaml  CC=0  out:0
   redsl.analyzers.incremental  [1 funcs]
     set  CC=1  out:2
-  redsl.analyzers.python_analyzer  [1 funcs]
-    ast_cyclomatic_complexity  CC=1  out:7
-  redsl.analyzers.utils  [2 funcs]
-    _load_gitignore_patterns  CC=7  out:8
-    _should_ignore_file  CC=4  out:2
-  redsl.autonomy.adaptive_executor  [1 funcs]
-    execute_adaptive  CC=7  out:13
-  redsl.autonomy.auto_fix  [1 funcs]
-    auto_fix_violations  CC=4  out:12
-  redsl.autonomy.intent  [7 funcs]
-    _assess_risk  CC=8  out:3
-    _changed_python_files  CC=6  out:9
-    _recent_commit_messages  CC=5  out:6
-    _score_from_files  CC=6  out:3
-    _score_from_messages  CC=5  out:2
-    _select_primary_and_active  CC=5  out:3
-    analyze_commit_intent  CC=2  out:10
-  redsl.autonomy.metrics  [5 funcs]
-    _check_gate_installed  CC=4  out:3
-    _check_scheduler_running  CC=2  out:1
-    _count_gate_blocks_last_week  CC=6  out:8
-    _get_growth_last_week  CC=4  out:9
-    collect_autonomy_metrics  CC=3  out:19
-  redsl.autonomy.quality_gate  [9 funcs]
-    _cli_main  CC=4  out:9
-    _collect_python_files  CC=5  out:6
-    _file_cc_functions  CC=4  out:6
-    _get_metrics_at_ref  CC=1  out:2
-    _get_metrics_current  CC=9  out:16
-    _git_diff_names  CC=6  out:11
-    _measure_metrics  CC=6  out:11
-    install_pre_commit_hook  CC=1  out:5
-    run_quality_gate  CC=11  out:15
-  redsl.autonomy.review  [5 funcs]
-    _get_diff  CC=5  out:5
-    _llm_review  CC=1  out:1
-    _parse_changed_files_from_diff  CC=4  out:5
-    _static_review  CC=9  out:13
-    review_staged_changes  CC=3  out:9
-  redsl.autonomy.smart_scorer  [5 funcs]
-    _confidence_multiplier  CC=4  out:3
-    _coupling_multiplier  CC=3  out:5
-    _ecosystem_multiplier  CC=5  out:5
-    _trend_multiplier  CC=7  out:3
-    smart_score  CC=2  out:5
-  redsl.cli.llm_banner  [1 funcs]
-    print_llm_banner  CC=7  out:23
-  redsl.commands._fixer_utils  [1 funcs]
-    _read_source  CC=2  out:1
   redsl.commands._guard_fixers  [7 funcs]
     _collect_guard_body  CC=7  out:7
     _fix_guard_in_try_block  CC=8  out:13
@@ -130,12 +104,11 @@ MODULES:
     _is_guard_followed_by_except  CC=2  out:3
     _next_non_blank_index  CC=3  out:2
     _process_guard_and_indent  CC=5  out:9
-  redsl.commands._indent_fixers  [9 funcs]
+  redsl.commands._indent_fixers  [8 funcs]
     _check_excess_indent  CC=2  out:2
     _detect_excess_indent  CC=5  out:6
     _fix_body_indent  CC=9  out:13
     _fix_stolen_indent  CC=6  out:11
-    _handle_function_indent  CC=7  out:13
     _iterative_fix  CC=5  out:7
     _process_def_block  CC=6  out:13
     _scan_next_nonblank  CC=3  out:2
@@ -150,9 +123,6 @@ MODULES:
   redsl.commands.autofix.discovery  [2 funcs]
     _find_packages  CC=5  out:5
     _is_package  CC=2  out:2
-  redsl.commands.autofix.helpers  [2 funcs]
-    _collect_python_files  CC=1  out:1
-    _measure_metrics  CC=1  out:1
   redsl.commands.autofix.hybrid  [1 funcs]
     _run_hybrid_fix  CC=7  out:10
   redsl.commands.autofix.pipeline  [6 funcs]
@@ -162,16 +132,14 @@ MODULES:
     _stage_ensure_todo  CC=4  out:8
     _stage_pyqual_gates  CC=6  out:7
     _stage_quality_gate_check  CC=3  out:8
-  redsl.commands.autofix.reporting  [4 funcs]
+  redsl.commands.autofix.reporting  [5 funcs]
     _aggregate_totals  CC=12  out:12
     _build_summary  CC=1  out:2
+    _print_summary  CC=7  out:15
     _project_details  CC=2  out:0
     _save_reports  CC=4  out:7
   redsl.commands.autofix.runner  [1 funcs]
     run_autofix_batch  CC=2  out:16
-  redsl.commands.autofix.todo_gen  [2 funcs]
-    _append_gate_violations_to_todo  CC=4  out:8
-    _generate_todo_md  CC=8  out:12
   redsl.commands.autonomy_pr  [11 funcs]
     _output_dry_run_json  CC=1  out:4
     _output_dry_run_text  CC=1  out:1
@@ -190,16 +158,9 @@ MODULES:
     _split_generated_and_real_changes  CC=5  out:6
     _step_analyze  CC=6  out:13
     _step_apply  CC=6  out:15
-  redsl.commands.autonomy_pr.git_ops  [5 funcs]
+  redsl.commands.autonomy_pr.git_ops  [2 funcs]
     _resolve_branch_name  CC=3  out:8
     _step_branch_and_commit  CC=3  out:18
-    _step_clone  CC=5  out:16
-    _step_create_pr  CC=6  out:11
-    _step_push  CC=5  out:8
-  redsl.commands.autonomy_pr.reporter  [3 funcs]
-    _abort_no_changes  CC=3  out:5
-    _print_workflow_complete  CC=2  out:3
-    _print_workflow_header  CC=4  out:8
   redsl.commands.autonomy_pr.validator  [7 funcs]
     _check_testql_available  CC=2  out:1
     _detect_api_base_url  CC=9  out:7
@@ -216,15 +177,13 @@ MODULES:
     apply_refactor  CC=1  out:4
     measure_todo_reduction  CC=4  out:6
     run_semcod_batch  CC=2  out:6
-  redsl.commands.batch_pyqual.config_gen  [1 funcs]
-    _detect_publish_configured  CC=4  out:3
   redsl.commands.batch_pyqual.discovery  [5 funcs]
     _filter_packages  CC=7  out:4
     _find_packages  CC=6  out:6
     _is_package  CC=2  out:2
     _matches_any  CC=2  out:2
     _normalize_patterns  CC=5  out:4
-  redsl.commands.batch_pyqual.pipeline  [13 funcs]
+  redsl.commands.batch_pyqual.pipeline  [14 funcs]
     _commit_changes  CC=3  out:6
     _finalize_result  CC=6  out:5
     _init_project_context  CC=5  out:14
@@ -324,9 +283,6 @@ MODULES:
     _fix_single_line_fstring_line  CC=5  out:9
     _is_fstring_expr  CC=3  out:4
     _write_if_parses  CC=2  out:2
-  redsl.commands.doctor_helpers  [2 funcs]
-    _find_pip  CC=5  out:4
-    _fix_via_git_revert  CC=3  out:6
   redsl.commands.github_source  [9 funcs]
     _build_headers  CC=2  out:0
     _build_url  CC=4  out:7
@@ -348,8 +304,6 @@ MODULES:
     _regenerate_todo  CC=6  out:10
     _save_markdown_report  CC=3  out:12
     _save_results  CC=1  out:4
-  redsl.commands.multi_project  [1 funcs]
-    __init__  CC=2  out:2
   redsl.commands.plan_sync  [14 funcs]
     _apply_external_update  CC=4  out:2
     _atomic_write  CC=1  out:4
@@ -366,7 +320,7 @@ MODULES:
     _extract_ticket_id  CC=10  out:11
     _safe_json  CC=2  out:1
     create_ticket  CC=8  out:18
-    is_available  CC=4  out:3
+    is_available  CC=4  out:4
     list_tickets  CC=8  out:8
     report_refactor_results  CC=2  out:4
   redsl.commands.pyqual  [5 funcs]
@@ -383,17 +337,15 @@ MODULES:
     _relative_to  CC=2  out:4
     _unused_import_decisions  CC=4  out:6
     build_pyqual_fix_decisions  CC=1  out:7
-  redsl.commands.scan  [11 funcs]
+  redsl.commands.scan  [8 funcs]
     execute  CC=1  out:2
     execute  CC=3  out:13
     execute  CC=3  out:6
     _analyze_single_project  CC=2  out:4
     _compute_priority  CC=4  out:0
     _count_python_files  CC=6  out:7
-    _detect_languages  CC=8  out:6
-    _extract_hotspots  CC=3  out:5
-    _git_activity  CC=6  out:12
     _is_project_dir  CC=4  out:8
+    scan_folder  CC=8  out:12
   redsl.commands.sumr_planfile  [3 funcs]
     _raw_task_target  CC=3  out:5
     _raw_task_to_plan_task  CC=7  out:23
@@ -414,17 +366,8 @@ MODULES:
     _parse_priority  CC=2  out:2
     _verify_file_path  CC=7  out:5
     extract_complexity_layers  CC=4  out:11
-  redsl.commands.sumr_planfile.parsers  [3 funcs]
-    get_toon_patterns  CC=1  out:0
-    parse_refactor_plan_yaml  CC=5  out:7
-    parse_sumr  CC=8  out:20
-  redsl.commands.sumr_planfile.utils  [2 funcs]
+  redsl.commands.sumr_planfile.utils  [1 funcs]
     deduplicate_tasks  CC=3  out:3
-    make_id_generator  CC=1  out:0
-  redsl.config  [3 funcs]
-    from_env  CC=4  out:12
-    _default_llm_model  CC=6  out:5
-    _resolve_provider_key  CC=6  out:10
   redsl.config_standard.agent_bridge  [8 funcs]
     _document_to_agent_config  CC=7  out:9
     _resolve_doppler_ref  CC=12  out:16
@@ -434,9 +377,8 @@ MODULES:
     find_config_root  CC=6  out:6
     load_agent_config_from_substrate  CC=8  out:10
     resolve_secret_ref  CC=11  out:16
-  redsl.config_standard.catalog  [2 funcs]
-    get_risk_level  CC=5  out:4
-    search_schema_matches  CC=5  out:7
+  redsl.config_standard.applier  [1 funcs]
+    _apply_change  CC=2  out:3
   redsl.config_standard.nlp_handlers  [8 funcs]
     _assert_not_secret_value_path  CC=3  out:2
     _handle_inspect_config  CC=3  out:10
@@ -446,81 +388,50 @@ MODULES:
     _highest_risk  CC=2  out:2
     _smoke_test_provider  CC=3  out:3
     dispatch_tool  CC=6  out:7
-  redsl.config_standard.paths  [8 funcs]
+  redsl.config_standard.paths  [7 funcs]
     _navigate  CC=12  out:12
     deep_diff  CC=11  out:6
-    deep_merge  CC=6  out:8
     get_nested_value  CC=4  out:2
     materialize_diff  CC=2  out:1
     parse_config_path  CC=8  out:9
     remove_nested_value  CC=6  out:11
     set_nested_value  CC=12  out:15
-  redsl.config_standard.profiles  [3 funcs]
-    build_default_config  CC=1  out:11
-    config_doc_to_yaml  CC=1  out:2
-    export_config_schema  CC=1  out:2
-  redsl.config_standard.proposals  [1 funcs]
-    export_proposal_schema  CC=1  out:2
   redsl.config_standard.security  [3 funcs]
     redact  CC=8  out:17
     is_sensitive_key  CC=3  out:3
     mask_sensitive_mapping  CC=5  out:7
-  redsl.config_standard.store  [9 funcs]
+  redsl.config_standard.store  [7 funcs]
     apply_profile  CC=2  out:4
-    clone_from  CC=5  out:19
     create_default  CC=1  out:3
     diff_documents  CC=1  out:3
     inspect  CC=1  out:2
-    resolve  CC=3  out:3
     save  CC=2  out:6
     save_profile  CC=1  out:3
     write_schema_files  CC=1  out:6
-  redsl.consciousness_loop  [3 funcs]
-    __init__  CC=2  out:2
+  redsl.consciousness_loop  [2 funcs]
     _inner_thought  CC=3  out:6
     _profile_performance  CC=3  out:7
-  redsl.diagnostics.perf_bridge  [11 funcs]
-    _build_fallback_suggestions  CC=2  out:1
-    _fallback_profile  CC=1  out:4
-    _metrun_available  CC=1  out:1
-    _parse_metrun_output  CC=5  out:23
-    _parse_profile_bottlenecks  CC=5  out:10
-    _profile_fallback_target  CC=2  out:9
-    _render_profile_stats  CC=1  out:5
-    generate_optimization_report  CC=6  out:9
-    profile_llm_latency  CC=4  out:3
-    profile_memory_operations  CC=4  out:4
-  redsl.examples._common  [6 funcs]
+  redsl.examples._common  [5 funcs]
     _examples_root  CC=2  out:4
     _resolve_yaml_path  CC=2  out:4
     list_available_examples  CC=4  out:10
     load_example_yaml  CC=3  out:6
-    parse_scenario  CC=1  out:3
     print_banner  CC=2  out:3
   redsl.examples.api_integration  [2 funcs]
     main  CC=1  out:2
     run_api_integration_example  CC=2  out:26
-  redsl.examples.audit  [10 funcs]
-    _compute_score  CC=1  out:12
-    _grade_for_score  CC=3  out:2
-    _print_badge  CC=1  out:9
-    _print_connect_section  CC=1  out:6
-    _print_grade_box  CC=1  out:8
-    _print_metrics_table  CC=2  out:14
-    _print_recommendations  CC=4  out:12
-    _print_scan_phases  CC=2  out:7
-    main  CC=1  out:2
-    run_audit_example  CC=1  out:18
-  redsl.examples.awareness  [5 funcs]
+  redsl.examples.awareness  [6 funcs]
     _build_timeline  CC=2  out:14
     _print_patterns  CC=4  out:9
     _print_signals  CC=4  out:9
+    _print_summary_section  CC=6  out:9
     main  CC=1  out:2
     run_awareness_example  CC=1  out:17
-  redsl.examples.badge  [6 funcs]
+  redsl.examples.badge  [7 funcs]
     _dimension_color  CC=6  out:0
     _format_dimension_badges  CC=3  out:4
     _grade_for_score  CC=3  out:0
+    _print_badge_code  CC=2  out:5
     _print_summary  CC=4  out:12
     main  CC=1  out:2
     run_badge_example  CC=5  out:33
@@ -530,101 +441,91 @@ MODULES:
   redsl.examples.custom_rules  [2 funcs]
     main  CC=1  out:2
     run_custom_rules_example  CC=6  out:34
-  redsl.examples.full_pipeline  [1 funcs]
-    run_full_pipeline_example  CC=4  out:27
-  redsl.examples.memory_learning  [1 funcs]
-    run_memory_learning_example  CC=1  out:17
-  redsl.examples.pr_bot  [2 funcs]
-    main  CC=1  out:2
-    run_pr_bot_example  CC=3  out:40
-  redsl.examples.pyqual_example  [2 funcs]
-    main  CC=1  out:2
-    run_pyqual_example  CC=8  out:41
-  redsl.execution.decision  [2 funcs]
-    _execute_decision  CC=6  out:15
-    _execute_direct_refactor  CC=8  out:17
-  redsl.execution.reporter  [1 funcs]
-    get_memory_stats  CC=1  out:2
-  redsl.formatters.batch  [1 funcs]
-    format_batch_report_markdown  CC=1  out:19
-  redsl.history  [3 funcs]
+  redsl.history  [2 funcs]
     __init__  CC=1  out:2
     __init__  CC=1  out:2
-    _default_history_dir  CC=1  out:0
-  redsl.llm  [3 funcs]
-    check_model_policy  CC=1  out:3
-    list_allowed_models  CC=1  out:2
-    safe_completion  CC=2  out:4
-  redsl.refactors.body_restorer  [1 funcs]
-    repair_file  CC=11  out:19
-  redsl.utils.tool_check  [1 funcs]
-    is_tool_available  CC=2  out:1
-  redsl.validation.pyqual_bridge  [5 funcs]
-    check_gates  CC=4  out:6
-    git_commit  CC=5  out:6
-    git_push  CC=5  out:6
-    run_pipeline  CC=6  out:11
-    validate_config  CC=4  out:6
-  redsl.validation.regix_bridge  [1 funcs]
-    check_gates  CC=5  out:8
+  test_refactor_project.bad_code  [1 funcs]
+    method1  CC=4  out:4
   www.app  [4 funcs]
     form  CC=17  out:13
     setInvalid  CC=4  out:2
     validEmail  CC=1  out:1
     validRepo  CC=3  out:1
+  www.config-api  [15 funcs]
+    _validateConfigHeader  CC=5  out:4
+    _validateConfigSecrets  CC=6  out:7
+    _validateConfigSpec  CC=9  out:5
+    buildDiff  CC=6  out:1
+    computeFingerprint  CC=1  out:3
+    getHistory  CC=2  out:8
+    handleDiff  CC=4  out:7
+    handleHistory  CC=1  out:2
+    handleNotFound  CC=1  out:1
+    handleShow  CC=3  out:5
   www.index  [3 funcs]
     env  CC=3  out:1
     send_notification  CC=5  out:6
     send_notification_smtp  CC=4  out:10
+  www.nda-form  [10 funcs]
+    buildClientData  CC=10  out:0
+    createNdaContract  CC=1  out:5
+    extractNip  CC=2  out:2
+    fetchCompanyData  CC=4  out:0
+    h  CC=1  out:1
+    handleStep1  CC=3  out:3
+    handleStep2  CC=1  out:2
+    saveClient  CC=2  out:3
+    saveNdaToDatabase  CC=3  out:8
+    storeStep2Data  CC=11  out:0
 
 EDGES:
+  www.nda-form.handleStep1 → www.nda-form.extractNip
+  www.nda-form.handleStep1 → www.nda-form.fetchCompanyData
+  www.nda-form.handleStep1 → www.nda-form.h
+  www.nda-form.saveNdaToDatabase → www.nda-form.buildClientData
+  www.nda-form.saveNdaToDatabase → www.nda-form.saveClient
+  www.nda-form.saveNdaToDatabase → www.nda-form.createNdaContract
+  www.nda-form.handleStep2 → www.nda-form.storeStep2Data
+  www.nda-form.handleStep2 → www.nda-form.saveNdaToDatabase
   www.index.send_notification → www.index.env
   www.index.send_notification → www.index.send_notification_smtp
   www.index.send_notification_smtp → www.index.env
+  www.config-api.validateConfig → www.config-api._validateConfigHeader
+  www.config-api.validateConfig → www.config-api._validateConfigSecrets
+  www.config-api.validateConfig → www.config-api._validateConfigSpec
+  www.config-api.handleValidate → www.config-api.loadConfig
+  www.config-api.handleValidate → www.config-api.sendError
+  www.config-api.handleValidate → www.config-api.validateConfig
+  www.config-api.handleValidate → www.config-api.redactSecrets
+  www.config-api.handleHistory → www.config-api.getHistory
+  www.config-api.handleShow → www.config-api.loadConfig
+  www.config-api.handleShow → www.config-api.sendError
+  www.config-api.handleShow → www.config-api.redactSecrets
+  www.config-api.handleShow → www.config-api.computeFingerprint
+  www.config-api.handleDiff → www.config-api.loadConfig
+  www.config-api.handleDiff → www.config-api.sendError
+  www.config-api.handleDiff → www.config-api.buildDiff
+  www.config-api.handleNotFound → www.config-api.sendError
   www.app.form → www.app.setInvalid
   www.app.form → www.app.validEmail
   www.app.form → www.app.validRepo
-  examples.03-full-pipeline.main.main → redsl.examples.full_pipeline.run_full_pipeline_example
-  redsl.consciousness_loop.ConsciousnessLoop.__init__ → redsl.config.AgentConfig.from_env
-  redsl.consciousness_loop.ConsciousnessLoop._inner_thought → redsl.execution.reporter.get_memory_stats
-  redsl.consciousness_loop.ConsciousnessLoop._profile_performance → redsl.diagnostics.perf_bridge.profile_refactor_cycle
-  redsl.consciousness_loop.ConsciousnessLoop._profile_performance → redsl.diagnostics.perf_bridge.generate_optimization_report
-  examples.07-pyqual.main.main → redsl.examples.pyqual_example.run_pyqual_example
-  examples.08-audit.main.main → redsl.examples.audit.run_audit_example
-  examples.01-basic-analysis.main.main → redsl.examples.basic_analysis.run_basic_analysis_example
+  examples.10-badge.main.main → SUMD.run_badge_example
+  examples.03-full-pipeline.main.main → SUMD.run_full_pipeline_example
+  examples.08-audit.main.main → SUMD.run_audit_example
+  examples.11-model-policy.main.demo_policy_check → docs.model-policy-quickstart.print
+  examples.11-model-policy.main.demo_policy_check → docs.model-policy.check_model_policy
+  examples.11-model-policy.main.demo_list_allowed → docs.model-policy-quickstart.print
+  examples.11-model-policy.main.demo_list_allowed → SUMD.list_allowed_models
+  examples.11-model-policy.main.demo_safe_completion → docs.model-policy-quickstart.print
+  examples.11-model-policy.main.demo_safe_completion → docs.model-policy.safe_completion
+  examples.11-model-policy.main.demo_strict_mode → docs.model-policy-quickstart.print
+  examples.11-model-policy.main.main → docs.model-policy-quickstart.print
+  examples.11-model-policy.main.main → examples.11-model-policy.main.demo_strict_mode
+  examples.11-model-policy.main.main → examples.11-model-policy.main.demo_safe_completion
+  examples.02-custom-rules.main.main → SUMD.run_custom_rules_example
+  redsl.consciousness_loop.ConsciousnessLoop._inner_thought → SUMD.get_memory_stats
+  redsl.consciousness_loop.ConsciousnessLoop._profile_performance → SUMD.profile_refactor_cycle
+  redsl.consciousness_loop.ConsciousnessLoop._profile_performance → SUMD.generate_optimization_report
   redsl.commands.cli_awareness._register_history_command → redsl.commands.cli_awareness._init_manager
   redsl.commands.cli_awareness._register_history_command → redsl.commands.cli_awareness._echo_json
   redsl.commands.cli_awareness._register_ecosystem_command → redsl.commands.cli_awareness._init_manager
-  redsl.commands.cli_awareness._register_ecosystem_command → redsl.commands.cli_awareness._echo_json
-  redsl.commands.cli_awareness._register_health_command → redsl.commands.cli_awareness._init_manager
-  redsl.commands.cli_awareness._register_health_command → redsl.commands.cli_awareness._echo_json
-  redsl.commands.cli_awareness._register_predict_command → redsl.commands.cli_awareness._init_manager
-  redsl.commands.cli_awareness._register_predict_command → redsl.commands.cli_awareness._echo_json
-  redsl.commands.cli_awareness._register_self_assess_command → redsl.commands.cli_awareness._init_manager
-  redsl.commands.cli_awareness._register_self_assess_command → redsl.commands.cli_awareness._echo_json
-  redsl.commands.cli_awareness.register → redsl.commands.cli_awareness._register_history_command
-  redsl.commands.cli_awareness.register → redsl.commands.cli_awareness._register_ecosystem_command
-  redsl.commands.cli_awareness.register → redsl.commands.cli_awareness._register_health_command
-  redsl.commands.cli_awareness.register → redsl.commands.cli_awareness._register_predict_command
-  redsl.commands.cli_awareness.register → redsl.commands.cli_awareness._register_self_assess_command
-  redsl.history.HistoryWriter.__init__ → redsl.history._default_history_dir
-  redsl.history.HistoryReader.__init__ → redsl.history._default_history_dir
-  redsl.commands.doctor.heal → redsl.commands.doctor.diagnose
-  redsl.commands.doctor.heal_batch → redsl.commands.doctor.heal
-  examples.09-pr-bot.main.main → redsl.examples.pr_bot.run_pr_bot_example
-  redsl.commands._scan_report._build_recommendations → redsl.commands._scan_report._tier_names
-  redsl.commands._scan_report.render_markdown → redsl.commands._scan_report._group_results_by_tier
-  redsl.commands._scan_report.render_markdown → redsl.commands._scan_report._render_report_header
-  redsl.commands._scan_report.render_markdown → redsl.commands._scan_report._render_executive_summary
-  redsl.commands.doctor_fstring_fixers._apply_single_line_fstring_fixes → redsl.commands.doctor_fstring_fixers._fix_single_line_fstring_line
-  redsl.commands.doctor_fstring_fixers._fix_multiline_fstring_chunk → redsl.commands.doctor_fstring_fixers._escape_fstring_body_braces
-  redsl.commands.doctor_fstring_fixers._consume_open_fstring_brace → redsl.commands.doctor_fstring_fixers._is_fstring_expr
-  redsl.commands.doctor_fstring_fixers._fix_broken_fstring → redsl.commands._fixer_utils._read_source
-  redsl.commands.doctor_fstring_fixers._fix_broken_fstring → redsl.commands.doctor_fstring_fixers._fix_multiline_fstring_braces
-  redsl.commands.doctor_fstring_fixers._fix_broken_fstring → redsl.commands.doctor_fstring_fixers._apply_single_line_fstring_fixes
-  redsl.commands.doctor_fstring_fixers._fix_broken_fstring → redsl.commands.doctor_fstring_fixers._write_if_parses
-  redsl.commands.doctor_fstring_fixers._fix_multiline_fstring_braces → redsl.commands.doctor_fstring_fixers._fix_multiline_fstring_chunk
-  redsl.commands.doctor_fstring_fixers._escape_fstring_body_braces → redsl.commands.doctor_fstring_fixers._consume_open_fstring_brace
-  redsl.commands.doctor_fstring_fixers._escape_fstring_body_braces → redsl.commands.doctor_fstring_fixers._consume_close_fstring_brace
-  redsl.commands.planfile_bridge.create_ticket → redsl.commands.planfile_bridge.list_tickets
-  redsl.commands.planfile_bridge.create_ticket → redsl.commands.planfile_bridge._build_ticket_cmd

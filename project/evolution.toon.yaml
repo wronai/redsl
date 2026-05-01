@@ -1,31 +1,51 @@
-# code2llm/evolution | 1436 func | 193f | 2026-04-20
+# code2llm/evolution | 4201 func | 218f | 2026-05-01
 
-NEXT[4] (ranked by impact):
+NEXT[9] (ranked by impact):
   [1] !! SPLIT           redsl/cli/planfile.py
-      WHY: 533L, 0 classes, max CC=8
-      EFFORT: ~4h  IMPACT: 4264
+      WHY: 730L, 0 classes, max CC=44
+      EFFORT: ~4h  IMPACT: 32120
 
-  [2] !  SPLIT-FUNC      form  CC=17  fan=13
+  [2] !! SPLIT-FUNC      planfile_validate  CC=44  fan=37
+      WHY: CC=44 exceeds 15
+      EFFORT: ~1h  IMPACT: 1628
+
+  [3] !  SPLIT-FUNC      run_cycle  CC=18  fan=25
+      WHY: CC=18 exceeds 15
+      EFFORT: ~1h  IMPACT: 450
+
+  [4] !  SPLIT-FUNC      events_cycles  CC=20  fan=18
+      WHY: CC=20 exceeds 15
+      EFFORT: ~1h  IMPACT: 360
+
+  [5] !  SPLIT-FUNC      add_decision_tasks  CC=16  fan=21
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 336
+
+  [6] !! SPLIT-FUNC      events_show  CC=25  fan=11
+      WHY: CC=25 exceeds 15
+      EFFORT: ~1h  IMPACT: 275
+
+  [7] !  SPLIT-FUNC      events_summary  CC=21  fan=12
+      WHY: CC=21 exceeds 15
+      EFFORT: ~1h  IMPACT: 252
+
+  [8] !  SPLIT-FUNC      form  CC=17  fan=13
       WHY: CC=17 exceeds 15
       EFFORT: ~1h  IMPACT: 221
 
-  [3] !  SPLIT-FUNC      validateConfig  CC=17  fan=11
-      WHY: CC=17 exceeds 15
-      EFFORT: ~1h  IMPACT: 187
-
-  [4] !  SPLIT-FUNC      _run_project_validators_phase  CC=17  fan=10
-      WHY: CC=17 exceeds 15
-      EFFORT: ~1h  IMPACT: 170
+  [9] !  SPLIT-FUNC      _detect_from_scripts  CC=16  fan=13
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 208
 
 
 RISKS[1]:
-  ⚠ Splitting redsl/cli/planfile.py may break 27 import paths
+  ⚠ Splitting redsl/cli/planfile.py may break 30 import paths
 
 METRICS-TARGET:
-  CC̄:          3.8 → ≤2.7
-  max-CC:      25 → ≤12
+  CC̄:          1.4 → ≤1.0
+  max-CC:      44 → ≤20
   god-modules: 1 → 0
-  high-CC(≥15): 5 → ≤2
+  high-CC(≥15): 11 → ≤5
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -53,4 +73,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=3.9 → now CC̄=3.8
+  prev CC̄=3.8 → now CC̄=1.4

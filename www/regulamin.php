@@ -5,11 +5,12 @@
  */
 declare(strict_types=1);
 
-$i18n = require __DIR__ . '/lib/i18n.php';
-$t = $i18n['t'];
-$lang = $i18n['lang']();
-$getLangUrls = $i18n['getLangUrls'];
-$getLangName = $i18n['getLangName'];
+require_once __DIR__ . '/lib/i18n.php';
+$_i18n       = I18n::getInstance();
+$t           = fn(string $k, array $p = []): string => $_i18n->t($k, $p);
+$lang        = $_i18n->getLang();
+$getLangUrls = fn(): array => $_i18n->getLangUrls();
+$getLangName = fn(string $l): string => $_i18n->getLangName($l);
 
 function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES | ENT_HTML5, 'UTF-8'); }
 
@@ -90,11 +91,7 @@ $issue = date('Y.m');
             <a href="/#kontakt"><?=h($t('nav.contact'))?></a>
             <div class="lang-switcher">
                 <?php foreach ($getLangUrls() as $code => $url): ?>
-                    <?php if ($code === $lang): ?>
-                        <span class="lang-current"><?=h(strtoupper($code))?></span>
-                    <?php else: ?>
-                        <a href="<?=h($url)?>" class="lang-link" title="<?=h($getLangName($code))?>"><?=h(strtoupper($code))?></a>
-                    <?php endif; ?>
+                    <a href="<?=h($url)?>" class="lang-btn <?= $code === $lang ? 'lang-btn-active' : '' ?>" title="<?=h($getLangName($code))?>"><?=h(strtoupper($code))?></a>
                 <?php endforeach; ?>
             </div>
         </nav>

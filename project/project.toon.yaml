@@ -1,57 +1,57 @@
-# redsl | 1504 func | 215f | 68332L | python | 2026-04-20
+# redsl | 4289 func | 249f | 259076L | python | 2026-05-01
 
 HEALTH:
-  CC̄=3.7  critical=68 (limit:10)  dup=4  cycles=0
+  CC̄=1.4  critical=79 (limit:10)  dup=16  cycles=0
 
 ALERTS[20]:
+  !!! cc_exceeded      planfile_validate = 44 (limit:15)
+  !!! high_fan_out     planfile_validate = 37 (limit:10)
+  !!! high_fan_out     _parse_workflow = 28 (limit:10)
   !!! cc_exceeded      process_data = 25 (limit:15)
   !!! cc_exceeded      process_data_copy = 25 (limit:15)
+  !!! cc_exceeded      events_show = 25 (limit:15)
+  !!! high_fan_out     run_cycle = 25 (limit:10)
   !!! high_fan_out     _handle_propose_changes = 22 (limit:10)
   !!! high_fan_out     ConfigApplier.apply = 22 (limit:10)
   !!! high_fan_out     source_add = 22 (limit:10)
-  !!! high_fan_out     RegistryAggregator._load_stale_cache = 21 (limit:10)
-  !!! high_fan_out     _parse_workflow = 21 (limit:10)
-  !!! high_fan_out     _register_refactor_endpoints = 21 (limit:10)
-  !!  high_fan_out     _build_gate = 18 (limit:10)
-  !!  high_fan_out     run_pyqual_fix = 17 (limit:10)
 
-MODULES[269] (top by size):
-  M[www/index.php] 719L C:0 F:7 CC↑5 D:0 (php)
-  M[www/nda-form.php] 614L C:0 F:3 CC↑11 D:0 (php)
-  M[redsl/cli/planfile.py] 533L C:0 F:27 CC↑8 D:0 (python)
-  M[www/config-editor.php] 507L C:0 F:4 CC↑4 D:0 (php)
-  M[www/admin/projects.php] 479L C:0 F:0 CC↑0 D:0 (php)
-  M[redsl/execution/cycle.py] 467L C:0 F:16 CC↑17 D:1 (python)
-  M[www/admin/contracts.php] 460L C:0 F:0 CC↑0 D:0 (php)
-  M[redsl/cli/models.py] 435L C:0 F:14 CC↑12 D:1 (python)
-  M[redsl/analyzers/sumd_bridge.py] 417L C:2 F:13 CC↑11 D:0 (python)
-  M[www/admin/clients.php] 417L C:0 F:0 CC↑0 D:0 (php)
-  M[redsl/cli/config.py] 410L C:0 F:13 CC↑7 D:1 (python)
-  M[redsl/execution/decision.py] 405L C:0 F:9 CC↑8 D:6 (python)
-  M[www/admin/tickets.php] 397L C:0 F:0 CC↑0 D:0 (php)
-  M[redsl/analyzers/radon_analyzer.py] 394L C:1 F:23 CC↑10 D:1 (python)
-  M[redsl/commands/batch_pyqual/pipeline.py] 390L C:1 F:14 CC↑10 D:1 (python)
-  LANGS: python:240/php:24/shell:4/javascript:1
+MODULES[447] (top by size):
+  M[redsl_output/pyqual_report.json] 9427L C:0 F:0 CC↑0 D:0 (json)
+  M[project/calls.yaml] 6185L C:0 F:0 CC↑0 D:0 (yaml)
+  M[SUMD.md] 2929L C:11 F:908 CC↑0 D:89 (md)
+  M[project/map.toon.yaml] 1985L C:0 F:912 CC↑0 D:11 (yaml)
+  M[project_test/map.toon.yaml] 1691L C:0 F:742 CC↑0 D:0 (yaml)
+  M[redsl/pyqual_report.yaml] 1623L C:0 F:0 CC↑0 D:0 (yaml)
+  M[CHANGELOG.md] 1368L C:0 F:0 CC↑0 D:0 (md)
+  M[SUMR.md] 1282L C:11 F:53 CC↑0 D:3 (md)
+  M[docs/README.md] 1267L C:0 F:1 CC↑0 D:0 (md)
+  M[project/validation.toon.yaml] 997L C:0 F:0 CC↑0 D:0 (yaml)
+  M[www/index.php] 796L C:0 F:7 CC↑5 D:0 (php)
+  M[redsl/cli/planfile.py] 730L C:0 F:30 CC↑44 D:0 (python)
+  M[www/nda-form.php] 699L C:0 F:11 CC↑11 D:0 (php)
+  M[README.md] 676L C:0 F:2 CC↑0 D:0 (md)
+  M[redsl/formatters/pyqual_report.yaml] 673L C:0 F:0 CC↑0 D:0 (yaml)
+  LANGS: python:248/md:73/yaml:63/php:33/json:9/shell:6/txt:5/other:3/yml:3/toml:2/javascript:1/xml:1
 
 HOTSPOTS[10]:
+  ★ planfile_validate fan=37  // Check whether planfile.yaml tickets are still current.
+
+For each open task, vali
+  ★ _parse_workflow fan=28  // Orchestrates 28 calls
+  ★ run_cycle fan=25  // Run a complete refactoring cycle driven by WorkflowConfig.
+
+If *workflow* is Non
   ★ _handle_propose_changes fan=22  // Validate and package a ConfigChangeProposal.
 
 The proposal is *not* applied here
   ★ ConfigApplier.apply fan=22  // Orchestrates 22 calls
-  ★ source_add fan=22  // Add a GitHub source to planfile.yaml.
 
-
-Examples:
-  redsl planfile source add -
-  ★ RegistryAggregator._load_stale_cache fan=21  // Load cache even if stale (when network fails).
-  ★ _parse_workflow fan=21  // Orchestrates 21 calls
-
-REFACTOR[12]:
+REFACTOR[15]:
   [1] H/L Split process_data (CC=25)
   [2] H/L Split process_data_copy (CC=25)
-  [3] H/H Split god module www/nda-form.php (614L, 0 classes)
-  [4] H/H Split god module redsl/cli/planfile.py (533L, 0 classes)
-  [5] H/H Split god module www/index.php (719L, 0 classes)
+  [3] H/L Split events_show (CC=25)
+  [4] H/L Split planfile_validate (CC=44)
+  [5] H/H Split god module redsl/cli/planfile.py (730L, 0 classes)
 
 EVOLUTION:
-  2026-04-20 CC̄=3.7 crit=68 68332L // Automated analysis
+  2026-05-01 CC̄=1.4 crit=79 259076L // Automated analysis

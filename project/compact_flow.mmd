@@ -1,21 +1,26 @@
 flowchart TD
+    SUMD["SUMD<br/>908 funcs"]
+    SUMR["SUMR<br/>53 funcs"]
+    docs__model_policy["docs.model-policy<br/>3 funcs"]
+    docs__model_policy_quickstart["docs.model-policy-quickstart<br/>1 funcs"]
     examples__01_basic_analysis["examples.01-basic-analysis<br/>1 funcs"]
     examples__02_custom_rules["examples.02-custom-rules<br/>1 funcs"]
-    examples__03_full_pipeline["examples.03-full-pipeline<br/>1 funcs"]
+    examples__03_full_pipeline["examples.03-full-pipeline<br/>4 funcs"]
     examples__04_memory_learning["examples.04-memory-learning<br/>1 funcs"]
-    examples__05_api_integration["examples.05-api-integration<br/>1 funcs"]
+    examples__05_api_integration["examples.05-api-integration<br/>3 funcs"]
     examples__06_awareness["examples.06-awareness<br/>1 funcs"]
-    examples__07_pyqual["examples.07-pyqual<br/>1 funcs"]
+    examples__07_pyqual["examples.07-pyqual<br/>10 funcs"]
     examples__08_audit["examples.08-audit<br/>1 funcs"]
-    examples__09_pr_bot["examples.09-pr-bot<br/>1 funcs"]
+    examples__09_pr_bot["examples.09-pr-bot<br/>6 funcs"]
     examples__10_badge["examples.10-badge<br/>1 funcs"]
-    examples__11_model_policy["examples.11-model-policy<br/>5 funcs"]
+    examples__11_model_policy["examples.11-model-policy<br/>6 funcs"]
+    project__map["project.map<br/>912 funcs"]
     redsl__analyzers["redsl.analyzers<br/>168 funcs"]
     redsl__api["redsl.api<br/>18 funcs"]
     redsl__autonomy["redsl.autonomy<br/>83 funcs"]
     redsl__awareness["redsl.awareness<br/>100 funcs"]
-    redsl__bridges["redsl.bridges<br/>2 funcs"]
-    redsl__cli["redsl.cli<br/>121 funcs"]
+    redsl__bridges["redsl.bridges<br/>12 funcs"]
+    redsl__cli["redsl.cli<br/>138 funcs"]
     redsl__commands["redsl.commands<br/>360 funcs"]
     redsl__config["redsl.config<br/>4 funcs"]
     redsl__config_standard["redsl.config_standard<br/>78 funcs"]
@@ -23,79 +28,74 @@ flowchart TD
     redsl__diagnostics["redsl.diagnostics<br/>11 funcs"]
     redsl__dsl["redsl.dsl<br/>23 funcs"]
     redsl__examples["redsl.examples<br/>53 funcs"]
-    redsl__execution["redsl.execution<br/>59 funcs"]
+    redsl__execution["redsl.execution<br/>95 funcs"]
     redsl__formatters["redsl.formatters<br/>41 funcs"]
+    redsl__history["redsl.history<br/>16 funcs"]
     redsl__integrations["redsl.integrations<br/>3 funcs"]
-    redsl__llm["redsl.llm<br/>95 funcs"]
+    redsl__llm["redsl.llm<br/>97 funcs"]
     redsl__main["redsl.main<br/>23 funcs"]
-    redsl__orchestrator["redsl.orchestrator<br/>5 funcs"]
     redsl__refactors["redsl.refactors<br/>75 funcs"]
-    redsl__utils["redsl.utils<br/>2 funcs"]
     redsl__validation["redsl.validation<br/>47 funcs"]
-    redsl__commands ==>|13| redsl__autonomy
-    redsl__commands ==>|8| redsl__analyzers
-    redsl__autonomy ==>|8| redsl__analyzers
-    redsl__commands ==>|7| redsl__validation
-    redsl__autonomy ==>|7| redsl__commands
-    redsl__autonomy ==>|6| redsl__config
-    redsl__cli ==>|6| redsl__llm
-    redsl__execution ==>|6| redsl__llm
-    redsl__api ==>|6| redsl__formatters
+    test_refactor_project__bad_code["test_refactor_project.bad_code<br/>2 funcs"]
+    redsl__examples ==>|182| docs__model_policy_quickstart
+    redsl__commands ==>|124| docs__model_policy_quickstart
+    redsl__commands ==>|88| SUMD
+    examples__11_model_policy ==>|55| docs__model_policy_quickstart
+    redsl__main ==>|45| docs__model_policy_quickstart
+    redsl__cli ==>|44| SUMD
+    redsl__examples ==>|32| SUMD
+    redsl__execution ==>|23| SUMD
+    redsl__api ==>|20| SUMD
+    redsl__config_standard ==>|19| SUMD
+    redsl__analyzers ==>|17| SUMD
+    redsl__commands ==>|12| project__map
+    redsl__autonomy ==>|11| SUMD
+    redsl__formatters ==>|11| SUMD
+    redsl__execution ==>|11| project__map
+    redsl__autonomy ==>|7| redsl__analyzers
+    redsl__commands ==>|6| redsl__analyzers
+    redsl__llm ==>|6| SUMD
     redsl__llm ==>|5| redsl__analyzers
+    redsl__llm ==>|5| project__map
+    redsl__refactors ==>|5| docs__model_policy_quickstart
     redsl__refactors ==>|5| redsl__analyzers
-    redsl__commands ==>|4| redsl__cli
-    redsl__cli ==>|4| redsl__formatters
-    redsl__cli ==>|4| redsl__config_standard
-    redsl__api ==>|4| redsl__config
-    redsl__execution ==>|4| redsl__analyzers
-    redsl__commands -->|3| redsl__execution
-    examples__11_model_policy -->|3| redsl__llm
-    redsl__autonomy -->|3| redsl__execution
-    redsl__cli -->|3| redsl__config
-    redsl__cli -->|3| redsl__execution
-    redsl__main -->|3| redsl__execution
-    redsl__execution -->|3| redsl__validation
-    redsl__refactors -->|3| redsl__validation
-    redsl__api -->|3| redsl__execution
-    redsl__consciousness_loop -->|2| redsl__diagnostics
-    redsl__commands -->|2| redsl__formatters
-    redsl__commands -->|2| redsl__config
-    redsl__cli -->|2| redsl__commands
-    redsl__validation -->|2| redsl__utils
+    test_refactor_project__bad_code ==>|4| docs__model_policy_quickstart
+    redsl__cli ==>|4| redsl__bridges
+    redsl__cli ==>|4| redsl__execution
+    redsl__consciousness_loop -->|3| SUMD
+    redsl__autonomy -->|3| docs__model_policy_quickstart
+    redsl__cli -->|3| redsl__analyzers
+    redsl__cli -->|3| project__map
+    redsl__execution -->|3| redsl__analyzers
+    redsl__main -->|3| SUMD
+    redsl__validation -->|3| SUMD
+    examples__11_model_policy -->|2| docs__model_policy
+    redsl__history -->|2| SUMR
+    redsl__config -->|2| SUMR
+    redsl__execution -->|2| docs__model_policy
     redsl__analyzers -->|2| redsl__bridges
-    redsl__api -->|2| redsl__examples
-    examples__03_full_pipeline -->|1| redsl__examples
-    redsl__consciousness_loop -->|1| redsl__config
-    redsl__consciousness_loop -->|1| redsl__execution
-    examples__07_pyqual -->|1| redsl__examples
-    examples__08_audit -->|1| redsl__examples
-    examples__01_basic_analysis -->|1| redsl__examples
-    examples__09_pr_bot -->|1| redsl__examples
-    redsl__commands -->|1| redsl__refactors
-    examples__05_api_integration -->|1| redsl__examples
-    examples__04_memory_learning -->|1| redsl__examples
-    examples__10_badge -->|1| redsl__examples
-    examples__02_custom_rules -->|1| redsl__examples
-    examples__06_awareness -->|1| redsl__examples
-    redsl__config_standard -->|1| redsl__config
+    examples__10_badge -->|1| SUMD
+    examples__03_full_pipeline -->|1| SUMD
+    examples__08_audit -->|1| SUMD
+    examples__11_model_policy -->|1| SUMD
+    examples__02_custom_rules -->|1| SUMD
+    examples__07_pyqual -->|1| SUMD
+    examples__09_pr_bot -->|1| SUMD
+    examples__06_awareness -->|1| SUMD
+    examples__05_api_integration -->|1| SUMD
+    examples__01_basic_analysis -->|1| SUMD
+    examples__04_memory_learning -->|1| SUMD
     redsl__config_standard -->|1| redsl__analyzers
     redsl__examples -->|1| redsl__analyzers
-    redsl__config -->|1| redsl__config_standard
-    redsl__diagnostics -->|1| redsl__utils
-    redsl__cli -->|1| redsl__examples
-    redsl__cli -->|1| redsl__diagnostics
-    redsl__cli -->|1| redsl__autonomy
-    redsl__main -->|1| redsl__config
-    redsl__execution -->|1| redsl__refactors
-    redsl__orchestrator -->|1| redsl__config
-    redsl__llm -->|1| redsl__utils
-    redsl__examples -->|1| redsl__config
-    redsl__examples -->|1| redsl__execution
+    redsl__diagnostics -->|1| SUMD
+    redsl__config -->|1| SUMD
+    redsl__cli -->|1| redsl__config_standard
+    redsl__cli -->|1| docs__model_policy
+    redsl__llm -->|1| docs__model_policy
+    redsl__refactors -->|1| SUMD
     redsl__awareness -->|1| redsl__analyzers
     redsl__validation -->|1| redsl__bridges
     redsl__validation -->|1| redsl__analyzers
-    redsl__validation -->|1| redsl__config
-    redsl__integrations -->|1| redsl__main
-    redsl__api -->|1| redsl__integrations
-    redsl__api -->|1| redsl__config_standard
+    redsl__integrations -->|1| SUMR
+    redsl__dsl -->|1| SUMD
     redsl__dsl -->|1| redsl__analyzers
