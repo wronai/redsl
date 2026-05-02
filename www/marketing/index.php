@@ -727,21 +727,28 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                     const statusUrl = 'http://localhost:8002/cqrs/query/scan/status?repo_url=' + encodeURIComponent(asyncRepoUrl);
                     try {
                         const response = await fetch(statusUrl);
-                        const data = await response.json();
+                        const raw = await response.json();
+                        // Normalize API wrapper: {status:"success", data:{status:"completed", ...}}
+                        const inner = raw && raw.data ? raw.data : {};
+                        const data = {
+                            status: inner.status || raw.status || '',
+                            phase: inner.phase || raw.phase || '',
+                            progress_percent: inner.progress_percent || raw.progress_percent || 0,
+                            message: inner.message || raw.message || '',
+                            error: inner.error || raw.error
+                        };
                         const statusDiv = document.getElementById('async-status-message');
-                        statusDiv.textContent = `Status: ${data.status} (${data.progress_percent || 0}%) - ${data.phase || ''}`;
+                        statusDiv.textContent = `Status: ${data.status} (${data.progress_percent}%) - ${data.phase || ''}`;
                         if (data.status === 'in_progress') {
-                            const phase = data.phase || '';
-                            const percent = data.progress_percent || 0;
-                            if (phase === 'clone') updateAsyncProgressStep('async-step-clone', 'active', `Klonowanie (${percent}%)`);
-                            else if (phase === 'analyze') {
+                            if (data.phase === 'clone') updateAsyncProgressStep('async-step-clone', 'active', `Klonowanie (${data.progress_percent}%)`);
+                            else if (data.phase === 'analyze') {
                                 updateAsyncProgressStep('async-step-clone', 'completed', 'Zakonczone');
-                                updateAsyncProgressStep('async-step-analyze', 'active', `Analiza (${percent}%)`);
-                            } else if (phase === 'complete') {
+                                updateAsyncProgressStep('async-step-analyze', 'active', `Analiza (${data.progress_percent}%)`);
+                            } else if (data.phase === 'complete') {
                                 updateAsyncProgressStep('async-step-clone', 'completed', 'Zakonczone');
                                 updateAsyncProgressStep('async-step-analyze', 'completed', 'Zakonczone');
                                 updateAsyncProgressStep('async-step-metrics', 'completed', 'Zakonczone');
-                                updateAsyncProgressStep('async-step-templates', 'active', `Generowanie (${percent}%)`);
+                                updateAsyncProgressStep('async-step-templates', 'active', `Generowanie (${data.progress_percent}%)`);
                             }
                         } else if (data.status === 'completed') {
                             updateAsyncProgressStep('async-step-templates', 'completed', 'Zakonczone');

@@ -12,26 +12,9 @@ declare(strict_types=1);
 
 session_start();
 
-// Load .env
-function load_env(string $path): void {
-    if (!is_readable($path)) return;
-    foreach (file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-        $line = trim($line);
-        if ($line === '' || str_starts_with($line, '#')) continue;
-        if (!str_contains($line, '=')) continue;
-        [$k, $v] = array_map('trim', explode('=', $line, 2));
-        $v = trim($v, "\"'");
-        $_ENV[$k] = $v;
-    }
-}
-load_env(__DIR__ . '/.env');
+require __DIR__ . '/bootstrap.php';
 
-function env(string $key, string $default = ''): string {
-    return (string)($_ENV[$key] ?? getenv($key) ?: $default);
-}
-
-// ---- i18n ----
-require_once __DIR__ . '/lib/i18n.php';
+// Re-bind page-specific helpers (bootstrap loaded Logger + i18n)
 $_i18n       = I18n::getInstance();
 $t           = fn(string $k, array $p = []): string => $_i18n->t($k, $p);
 $th          = fn(string $k, array $p = []): string => $_i18n->th($k, $p);

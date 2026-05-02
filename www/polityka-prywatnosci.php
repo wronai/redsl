@@ -5,7 +5,9 @@
  */
 declare(strict_types=1);
 
-require_once __DIR__ . '/lib/i18n.php';
+require __DIR__ . '/bootstrap.php';
+
+// Re-bind page-specific helpers (bootstrap loaded Logger + i18n)
 $_i18n       = I18n::getInstance();
 $t           = fn(string $k, array $p = []): string => $_i18n->t($k, $p);
 $lang        = $_i18n->getLang();

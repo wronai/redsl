@@ -14,7 +14,9 @@ declare(strict_types=1);
 
 session_start();
 
-require_once __DIR__ . '/lib/i18n.php';
+require __DIR__ . '/bootstrap.php';
+
+// Re-bind config-editor specific i18n helpers (bootstrap already loaded Logger + i18n)
 $i18n = I18n::getInstance();
 $lang = $i18n->getLang();
 $getLangUrls = fn(): array => $i18n->getLangUrls();
