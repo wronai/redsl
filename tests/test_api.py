@@ -78,3 +78,62 @@ def test_debug_config_masks_sensitive_environment_values(monkeypatch):
 
     assert payload["env_vars"]["OPENROUTER_API_KEY"] == "<redacted>"
     assert payload["env_vars"]["REFACTOR_DRY_RUN"] == "true"
+
+
+def test_scan_remote_endpoint_invalid_url():
+    client = TestClient(create_app())
+    response = client.post("/scan/remote", json={"repo_url": "not-a-valid-url"})
+    assert response.status_code == 400
+    payload = response.json()
+    assert "detail" in payload
+
+
+def test_scan_remote_endpoint_file_url():
+    """Test that file:// URLs are accepted for local testing."""
+    client = TestClient(create_app())
+    # Use a valid file:// URL format (even if the path doesn't exist)
+    response = client.post("/scan/remote", json={"repo_url": "file:///tmp/test-repo"})
+    # Should accept the URL format but fail to clone (expected behavior)
+    assert response.status_code in [400, 500]
+
+
+def test_scan_remote_endpoint_missing_url():
+    client = TestClient(create_app())
+    response = client.post("/scan/remote", json={})
+    assert response.status_code == 422  # Validation error
+
+
+def test_cqrs_scan_remote_endpoint_invalid_url():
+    client = TestClient(create_app())
+    response = client.post("/cqrs/scan/remote", json={"repo_url": "not-a-valid-url"})
+    assert response.status_code == 400
+
+
+def test_cqrs_scan_remote_endpoint_missing_url():
+    client = TestClient(create_app())
+    response = client.post("/cqrs/scan/remote", json={})
+    assert response.status_code == 422  # Validation error
+
+
+def test_cqrs_scan_remote_async_mode():
+    """Test async mode for CQRS scan."""
+    client = TestClient(create_app())
+    response = client.post(
+        "/cqrs/scan/remote",
+        json={
+            "repo_url": "https://github.com/oqlos/testql",
+            "branch": "main",
+            "depth": 1,
+            "async_mode": True
+        }
+    )
+    # Should accept the command and return aggregate_id
+    assert response.status_code == 200
+    payload = response.json()
+    assert "aggregate_id" in payload or "status" in payload
+
+
+def test_cqrs_query_scan_status_missing_url():
+    client = TestClient(create_app())
+    response = client.get("/cqrs/query/scan/status")
+    assert response.status_code == 422  # Missing repo_url parameter

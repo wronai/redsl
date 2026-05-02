@@ -139,6 +139,9 @@ class ToonAnalyzer:
                 and "validation" not in f.name
                 and "evolution" not in f.name
                 and "map" not in f.name
+                and "testql" not in f.name  # Skip test scenario files
+                and "test" not in f.name  # Skip test files
+                and "topology" not in f.name  # Skip topology files
             ]
             if toon_candidates:
                 files["project"] = toon_candidates[0]

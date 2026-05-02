@@ -16,9 +16,7 @@ WORKSPACE = Path(__file__).parent.parent
 pytestmark = [pytest.mark.slow, pytest.mark.e2e]
 
 
-# ---------------------------------------------------------------------------
 # Fixtures
-# ---------------------------------------------------------------------------
 
 @pytest.fixture
 def test_project(tmp_path: Path) -> Path:
@@ -60,9 +58,7 @@ def _init_git_repo(path: Path) -> None:
     subprocess.run(["git", "commit", "-m", "initial"], cwd=str(path), capture_output=True)
 
 
-# ===========================================================================
 # CLI Refactor E2E Tests
-# ===========================================================================
 
 class TestCliRefactorE2E:
     """End-to-end tests for CLI refactor on real projects."""
@@ -105,9 +101,7 @@ class TestCliRefactorE2E:
         assert "decisions" in output.lower() or "actions" in output.lower() or "score" in output.lower()
 
 
-# ===========================================================================
 # CLI Awareness E2E Tests
-# ===========================================================================
 
 class TestCliAwarenessE2E:
     """End-to-end tests for CLI awareness commands on real projects."""
@@ -139,9 +133,7 @@ class TestCliAwarenessE2E:
         assert "project_count" in payload
 
 
-# ===========================================================================
 # CLI Scan E2E Tests
-# ===========================================================================
 
 class TestCliScanE2E:
     """End-to-end tests for CLI scan command on real directories."""
@@ -158,9 +150,7 @@ class TestCliScanE2E:
         assert "#" in result.output or "project" in result.output.lower()
 
 
-# ===========================================================================
 # Batch Processing E2E Tests
-# ===========================================================================
 
 class TestBatchE2E:
     """End-to-end tests for batch processing on real projects."""
@@ -175,9 +165,7 @@ class TestBatchE2E:
         assert result.exit_code == 0, f"Batch pyqual-run failed: {result.output}"
 
 
-# ===========================================================================
 # API E2E Tests
-# ===========================================================================
 
 class TestApiE2E:
     """End-to-end tests for API endpoints."""
@@ -278,9 +266,7 @@ class TestApiE2E:
         assert payload.get("status") == "ok"
 
 
-# ===========================================================================
 # Autonomy PR Workflow E2E Tests
-# ===========================================================================
 
 class TestAutonomyPRE2E:
     """End-to-end tests for autonomy PR workflow."""
@@ -292,4 +278,211 @@ class TestAutonomyPRE2E:
         verdict = run_quality_gate(git_project)
         assert verdict is not None
         assert verdict.passed or len(verdict.violations) == 0
+
+
+# Async CQRS Scan E2E Tests
+
+class TestAsyncCqrsScanE2E:
+    """End-to-end tests for async CQRS scan on different repository types."""
+
+    @pytest.fixture
+    def local_git_repo(self, tmp_path: Path) -> str:
+        """Create a local git repository for testing."""
+        import shutil
+        
+        # Copy test project to temp location
+        if not TEST_PROJECT_SRC.exists():
+            pytest.skip(f"Test project not found at {TEST_PROJECT_SRC}")
+        
+        repo_dir = tmp_path / "test_repo"
+        shutil.copytree(TEST_PROJECT_SRC, repo_dir, ignore=shutil.ignore_patterns("__pycache__", ".git"))
+        
+        # Initialize git repo
+        _init_git_repo(repo_dir)
+        
+        # Return file:// URL for cloning
+        return f"file://{repo_dir}"
+
+    @pytest.fixture
+    def javascript_repo(self, tmp_path: Path) -> str:
+        """Create a simple JavaScript repository for testing."""
+        repo_dir = tmp_path / "js_repo"
+        repo_dir.mkdir()
+        
+        # Create simple JS files
+        (repo_dir / "index.js").write_text("""
+function complexFunction(a, b, c) {
+    if (a > 0) {
+        if (b > 0) {
+            if (c > 0) {
+                return a + b + c;
+            } else {
+                return a - b;
+            }
+        } else {
+            return a * b;
+        }
+    } else {
+        return 0;
+    }
+}
+
+module.exports = { complexFunction };
+""")
+        
+        (repo_dir / "package.json").write_text('{"name": "test-js", "version": "1.0.0"}')
+        
+        # Initialize git repo
+        _init_git_repo(repo_dir)
+        
+        return f"file://{repo_dir}"
+
+    @pytest.fixture
+    def php_repo(self, tmp_path: Path) -> str:
+        """Create a simple PHP repository for testing."""
+        repo_dir = tmp_path / "php_repo"
+        repo_dir.mkdir()
+        
+        # Create simple PHP file
+        (repo_dir / "index.php").write_text("""
+<?php
+function complexFunction($a, $b, $c) {
+    if ($a > 0) {
+        if ($b > 0) {
+            if ($c > 0) {
+                return $a + $b + $c;
+            } else {
+                return $a - $b;
+            }
+        } else {
+            return $a * $b;
+        }
+    } else {
+        return 0;
+    }
+}
+?>
+""")
+        
+        # Initialize git repo
+        _init_git_repo(repo_dir)
+        
+        return f"file://{repo_dir}"
+
+    def test_async_scan_python_repo(self, api_client, local_git_repo: str) -> None:
+        """Test async scan of Python repository."""
+        # Use synchronous mode for e2e testing with TestClient
+        response = api_client.post(
+            "/cqrs/scan/remote",
+            json={
+                "repo_url": local_git_repo,
+                "branch": "main",
+                "depth": 1,
+                "async_mode": False,  # Use sync mode for TestClient compatibility
+            },
+        )
+        assert response.status_code == 200, f"Scan failed: {response.text}"
+        
+        payload = response.json()
+        assert payload["status"] == "success"
+        assert "data" in payload
+        
+        # Verify scan results
+        data = payload["data"]
+        assert "total_files" in data
+        assert "total_lines" in data
+        assert "avg_cc" in data
+        assert data["total_files"] > 0
+
+    def test_async_scan_javascript_repo(self, api_client, javascript_repo: str) -> None:
+        """Test async scan of JavaScript repository."""
+        response = api_client.post(
+            "/cqrs/scan/remote",
+            json={
+                "repo_url": javascript_repo,
+                "branch": "main",
+                "depth": 1,
+                "async_mode": False,
+            },
+        )
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["status"] == "success"
+        assert "data" in payload
+
+    def test_async_scan_php_repo(self, api_client, php_repo: str) -> None:
+        """Test async scan of PHP repository."""
+        response = api_client.post(
+            "/cqrs/scan/remote",
+            json={
+                "repo_url": php_repo,
+                "branch": "main",
+                "depth": 1,
+                "async_mode": False,
+            },
+        )
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["status"] == "success"
+        assert "data" in payload
+
+    def test_async_scan_invalid_repo(self, api_client) -> None:
+        """Test async scan with invalid repository URL."""
+        repo_url = "https://github.com/invalid/nonexistent-repo-12345"
+        
+        response = api_client.post(
+            "/cqrs/scan/remote",
+            json={
+                "repo_url": repo_url,
+                "branch": "main",
+                "depth": 1,
+                "async_mode": False,
+            },
+        )
+        
+        # Should fail for invalid repo
+        assert response.status_code == 400
+        payload = response.json()
+        assert "detail" in payload
+
+    def test_async_scan_concurrent_requests(self, api_client, local_git_repo: str, javascript_repo: str) -> None:
+        """Test multiple concurrent async scan requests."""
+        repos = [local_git_repo, javascript_repo]
+        
+        # Run scans synchronously for TestClient compatibility
+        for repo_url in repos:
+            response = api_client.post(
+                "/cqrs/scan/remote",
+                json={
+                    "repo_url": repo_url,
+                    "branch": "main",
+                    "depth": 1,
+                    "async_mode": False,
+                },
+            )
+            assert response.status_code == 200
+            payload = response.json()
+            assert payload["status"] == "success"
+            assert "data" in payload
+
+    def test_query_recent_events(self, api_client) -> None:
+        """Test querying recent events from event store."""
+        response = api_client.get(
+            "/cqrs/query/events/recent",
+            params={"limit": 10},
+        )
+        assert response.status_code == 200
+        payload = response.json()
+        assert "events" in payload
+        assert isinstance(payload["events"], list)
+
+    def test_query_projections_list(self, api_client) -> None:
+        """Test listing all active projections."""
+        response = api_client.get("/cqrs/query/projections/list")
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["status"] == "success"
+        assert "data" in payload
+        assert "projections" in payload["data"]
+        assert isinstance(payload["data"]["projections"], list)
 

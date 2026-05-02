@@ -74,9 +74,16 @@ def _clone_repo(repo_url: str, branch: str = "main", depth: int = 1) -> Path | N
             import shutil
             shutil.rmtree(temp_dir, ignore_errors=True)
             temp_dir = tempfile.mkdtemp(prefix="redsl_scan_")
-            cmd[4] = "master"
-            cmd[6] = temp_dir  # Update temp_dir index
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+            cmd_master = [
+                "git", "clone",
+                "--depth", str(depth),
+                "--branch", "master",
+                "--single-branch",
+                "--no-tags",
+                repo_url,
+                temp_dir
+            ]
+            result = subprocess.run(cmd_master, capture_output=True, text=True, timeout=300)
             if result.returncode == 0:
                 logger.info("Clone with master branch successful")
                 return Path(temp_dir)
@@ -121,6 +128,9 @@ def _validate_repo_url(repo_url: str) -> bool:
         if parsed.scheme == 'https' and parsed.netloc:
             return True
         if repo_url.startswith('git@') and ':' in repo_url:
+            return True
+        # Allow file:// URLs for local testing
+        if parsed.scheme == 'file':
             return True
         return False
     except Exception:

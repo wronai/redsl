@@ -4,11 +4,11 @@
 
 - **Project**: /home/tom/github/semcod/redsl/redsl/dsl
 - **Primary Language**: python
-- **Languages**: python: 3
+- **Languages**: python: 3, md: 2, yaml: 1
 - **Analysis Mode**: static
 - **Total Functions**: 23
 - **Total Classes**: 8
-- **Modules**: 3
+- **Modules**: 6
 - **Entry Points**: 21
 
 ## Architecture by Module
@@ -55,6 +55,10 @@ Returns:
 > Wyciągnij wzorce z pamięci agenta.
 - **Calls**: defaultdict, dict, hasattr, self._memory.get_action_history, entry.get, entry.get, entry.get, logger.warning
 
+### engine.DSLEngine._load_default_rules
+> Załaduj domyślny zestaw reguł refaktoryzacji z YAML.
+- **Calls**: rules_file.exists, logger.warning, open, yaml.safe_load, self.add_rules_from_yaml, data.get, Path
+
 ### rule_generator.RuleGenerator.save
 > Zapisz wygenerowane reguły do pliku YAML.
 
@@ -62,10 +66,6 @@ Args:
     rules:       Lista reguł do zapisania
     output_path: Ścieżka docelowa (np. config/learned_rules
 - **Calls**: output_path.parent.mkdir, logger.info, open, yaml.dump, len, r.to_yaml_dict, len
-
-### engine.DSLEngine._load_default_rules
-> Załaduj domyślny zestaw reguł refaktoryzacji z YAML.
-- **Calls**: rules_file.exists, logger.warning, open, yaml.safe_load, self.add_rules_from_yaml, data.get, Path
 
 ### rule_generator.RuleGenerator.generate
 > Wygeneruj reguły DSL z wzorców w pamięci.
@@ -98,10 +98,6 @@ Args:
     history: Lista dict z kluczami: action, success, details (cc, fan_out, etc.)
 - **Calls**: self._history_to_patterns, self._patterns_to_rules, rules.sort
 
-### rule_generator.LearnedRule.to_yaml_dict
-> Serializuj do formatu YAML kompatybilnego z DSLEngine.
-- **Calls**: round, round
-
 ### engine.Rule.evaluate
 > Czy wszystkie warunki są spełnione?
 - **Calls**: all, c.evaluate
@@ -114,6 +110,10 @@ Args:
 > Dodaj regułę do silnika.
 - **Calls**: self.rules.append, logger.info
 
+### rule_generator.LearnedRule.to_yaml_dict
+> Serializuj do formatu YAML kompatybilnego z DSLEngine.
+- **Calls**: round, round
+
 ### engine.Condition.evaluate
 > Ewaluuj warunek na danym kontekście.
 - **Calls**: context.get
@@ -121,11 +121,11 @@ Args:
 ### engine.DSLEngine.__init__
 - **Calls**: self._load_default_rules
 
+### engine.Condition.__repr__
+
 ### rule_generator.RuleGenerator.__init__
 > Args:
     memory: AgentMemory instance (lub None → pusty generator)
-
-### engine.Condition.__repr__
 
 ## Process Flows
 
@@ -158,14 +158,14 @@ load_and_register [rule_generator.RuleGenerator]
 _extract_patterns [rule_generator.RuleGenerator]
 ```
 
-### Flow 6: save
-```
-save [rule_generator.RuleGenerator]
-```
-
-### Flow 7: _load_default_rules
+### Flow 6: _load_default_rules
 ```
 _load_default_rules [engine.DSLEngine]
+```
+
+### Flow 7: save
+```
+save [rule_generator.RuleGenerator]
 ```
 
 ### Flow 8: generate
@@ -208,15 +208,15 @@ zwraca posortowaną li
 - **Methods**: 2
 - **Key Methods**: engine.Condition.evaluate, engine.Condition.__repr__
 
-### rule_generator.LearnedRule
-> Reguła DSL wygenerowana z wzorców w pamięci.
-- **Methods**: 1
-- **Key Methods**: rule_generator.LearnedRule.to_yaml_dict
-
 ### engine.Decision
 > Wynik ewaluacji reguł — decyzja co refaktoryzować.
 - **Methods**: 1
 - **Key Methods**: engine.Decision.should_execute
+
+### rule_generator.LearnedRule
+> Reguła DSL wygenerowana z wzorców w pamięci.
+- **Methods**: 1
+- **Key Methods**: rule_generator.LearnedRule.to_yaml_dict
 
 ### engine.Operator
 - **Methods**: 0
@@ -242,10 +242,10 @@ Functions exposed as public API (no underscore prefix):
 - `engine.DSLEngine.top_decisions` - 5 calls
 - `engine.DSLEngine.explain` - 4 calls
 - `rule_generator.RuleGenerator.generate_from_history` - 3 calls
-- `rule_generator.LearnedRule.to_yaml_dict` - 2 calls
 - `engine.Rule.evaluate` - 2 calls
 - `engine.Rule.score` - 2 calls
 - `engine.DSLEngine.add_rule` - 2 calls
+- `rule_generator.LearnedRule.to_yaml_dict` - 2 calls
 - `engine.Condition.evaluate` - 1 calls
 
 ## System Interactions
@@ -275,15 +275,15 @@ graph TD
     _extract_patterns --> hasattr
     _extract_patterns --> get_action_history
     _extract_patterns --> get
-    save --> mkdir
-    save --> info
-    save --> open
-    save --> dump
-    save --> len
     _load_default_rules --> exists
     _load_default_rules --> warning
     _load_default_rules --> open
     _load_default_rules --> safe_load
+    _load_default_rules --> add_rules_from_yaml
+    save --> mkdir
+    save --> info
+    save --> open
+    save --> dump
 ```
 
 ## Reverse Engineering Guidelines

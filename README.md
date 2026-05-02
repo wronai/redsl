@@ -1,10 +1,10 @@
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-1.2.56-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-41.3h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fopenai%2Fgpt--5--mini-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-1.2.60-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-42.7h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fopenai%2Fgpt--5--mini-lightgrey)
 
-- 🤖 **LLM usage:** $7.5000 (108 commits)
-- 👤 **Human dev:** ~$4134 (41.3h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $7.5000 (109 commits)
+- 👤 **Human dev:** ~$4267 (42.7h @ $100/h, 30min dedup)
 
 Generated on 2026-05-02 using [openrouter/openai/gpt-5-mini](https://openrouter.ai/openai/gpt-5-mini)
 
@@ -17,7 +17,7 @@ Generated on 2026-05-02 using [openrouter/openai/gpt-5-mini](https://openrouter.
 ReDSL to eksperymentalny framework łączący LLM, 
 formalny runtime DSL, CI/CD i pętlę samorefaktoryzacji w jeden autonomiczny cykl życia kodu.
 
-![Version](https://img.shields.io/badge/version-1.2.56-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-776%20passing-green) ![E2E](https://img.shields.io/badge/e2e-18%20tests-green) [![Docs](https://img.shields.io/badge/docs-29%20projektów-green)](./docs/)
+![Version](https://img.shields.io/badge/version-1.2.60-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-776%20passing-green) ![E2E](https://img.shields.io/badge/e2e-18%20tests-green) [![Docs](https://img.shields.io/badge/docs-29%20projektów-green)](./docs/)
 
 ---
 

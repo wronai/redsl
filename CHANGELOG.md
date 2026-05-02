@@ -59,6 +59,91 @@
 - refactor: assorted internal refactorings (reduce CLI fan-out, reorganize modules)
 - fix(docs): add markdown output across docs and tests
 
+## [1.2.60] - 2026-05-02
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update redsl/dsl/project/README.md
+- Update redsl/dsl/project/context.md
+- Update redsl_scan_report.md
+
+### Test
+- Update tests/test_api.py
+- Update tests/test_e2e.py
+
+### Other
+- Update Makefile
+- Update VERSION
+- Update redsl/__init__.py
+- Update redsl/analyzers/toon_analyzer.py
+- Update redsl/api/scan_routes.py
+- Update redsl/dsl/project/analysis.toon.yaml
+- Update uv.lock
+- Update www/marketing/index.php
+
+## [1.2.59] - 2026-05-02
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update redsl/dsl/project/README.md
+- Update redsl/dsl/project/context.md
+- Update redsl_scan_report.md
+
+### Test
+- Update tests/test_api.py
+- Update tests/test_e2e.py
+
+### Other
+- Update Makefile
+- Update VERSION
+- Update redsl/__init__.py
+- Update redsl/analyzers/toon_analyzer.py
+- Update redsl/api/scan_routes.py
+- Update redsl/dsl/project/analysis.toon.yaml
+- Update uv.lock
+- Update www/marketing/index.php
+
+## [1.2.58] - 2026-05-02
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update redsl/dsl/project/README.md
+- Update redsl/dsl/project/context.md
+- Update redsl_scan_report.md
+
+### Test
+- Update tests/test_e2e.py
+
+### Other
+- Update Makefile
+- Update VERSION
+- Update redsl/__init__.py
+- Update redsl/analyzers/toon_analyzer.py
+- Update redsl/api/scan_routes.py
+- Update redsl/dsl/project/analysis.toon.yaml
+- Update uv.lock
+- Update www/marketing/index.php
+
+## [1.2.57] - 2026-05-02
+
+### Docs
+- Update README.md
+- Update redsl/dsl/project/README.md
+- Update redsl/dsl/project/context.md
+
+### Test
+- Update tests/test_e2e.py
+
+### Other
+- Update redsl/analyzers/toon_analyzer.py
+- Update redsl/api/scan_routes.py
+- Update redsl/dsl/project/analysis.toon.yaml
+- Update uv.lock
+- Update www/marketing/index.php
+
 ## [1.2.56] - 2026-05-02
 
 ### Docs

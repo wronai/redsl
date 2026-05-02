@@ -1,4 +1,4 @@
-.PHONY: help install dev-install test test-fast test-all lint type-check format format-check docker-up docker-down docker-build run run-local clean build publish publish-test bump-patch bump-minor bump-major
+.PHONY: help install dev-install test test-fast test-all lint type-check format format-check docker-up docker-down docker-build run run-local clean build publish publish-test bump-patch bump-minor bump-major start stop
 
 PYTHON := python3
 PIP := pip
@@ -15,6 +15,8 @@ help:
 	@echo "  type-check    - Sprawdzenie typów mypy"
 	@echo "  format        - Formatowanie kodu ruff"
 	@echo "  format-check  - Sprawdzenie formatowania kodu"
+	@echo "  start         - Zabija porty i uruchamia usługi Docker"
+	@echo "  stop          - Zabija porty i zatrzymuje usługi Docker"
 	@echo "  docker-up     - Uruchomienie usług Docker"
 	@echo "  docker-down   - Zatrzymanie usług Docker"
 	@echo "  docker-build  - Budowanie obrazów Docker"
@@ -64,6 +66,24 @@ docker-up:
 
 docker-down:
 	$(DOCKER_COMPOSE) down
+
+# Kill processes on specific ports
+kill-ports:
+	@echo "Killing processes on ports 8000, 8001, 9999..."
+	@for port in 8000 8001 9999; do \
+		pid=$$(lsof -ti :$$port 2>/dev/null); \
+		if [ -n "$$pid" ]; then \
+			echo "Killing process $$pid on port $$port"; \
+			kill -9 $$pid 2>/dev/null || true; \
+		fi; \
+	done
+	@echo "✓ Ports cleared"
+
+start: kill-ports docker-up
+	@echo "✓ Services started"
+
+stop: kill-ports docker-down
+	@echo "✓ Services stopped"
 
 docker-build:
 	$(DOCKER_COMPOSE) build

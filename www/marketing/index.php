@@ -13,7 +13,7 @@
 declare(strict_types=1);
 
 // Configuration
-$REDSL_API = getenv('REDSL_API_URL') ?: 'http://localhost:8001';
+$REDSL_API = getenv('REDSL_API_URL') ?: 'http://localhost:8002';
 
 // Helper function to call ReDSL API
 function callRedslApi(string $endpoint, array $payload): array {
@@ -210,6 +210,74 @@ Wrzucam jesli chcesz zobaczyc. Jesli nie - zaden problem.
 ];
 
 // Helper functions
+function generateMarkdownReport(array $result, string $repoUrl, string $contactName, string $senderName): string {
+    $md = "# ReDSL Marketing Hub - Outreach Report\n\n";
+    $md .= "**Generated:** " . date('Y-m-d H:i:s') . "\n";
+    $md .= "**Repository:** {$repoUrl}\n\n";
+    
+    // Analysis metrics
+    $analysis = $result['analysis'];
+    $md .= "## 📊 Repository Metrics\n\n";
+    $md .= "- **Files:** {$analysis['total_files']}\n";
+    $md .= "- **Lines of Code:** " . number_format($analysis['total_lines']) . "\n";
+    $md .= "- **Average CC:** " . number_format($analysis['avg_cc'], 1) . "\n";
+    $md .= "- **Critical Issues:** {$analysis['critical_count']}\n\n";
+    
+    // Top issues
+    $md .= "## 🔴 Top Issues\n\n";
+    $alerts = array_slice($analysis['alerts'] ?? [], 0, 5);
+    foreach ($alerts as $alert) {
+        $md .= "- **{$alert['name']}** (CC={$alert['value']}, limit={$alert['limit']})\n";
+        if (isset($alert['description'])) {
+            $md .= "  - {$alert['description']}\n";
+        }
+    }
+    $md .= "\n";
+    
+    // Email templates
+    $md .= "## 📧 Cold Email Templates\n\n";
+    foreach (['tech_lead', 'ceo', 'pm_agency'] as $type) {
+        if (isset($result['templates']['email_' . $type])) {
+            $tpl = $result['templates']['email_' . $type];
+            $md .= "### {$tpl['title']}\n\n";
+            $md .= "**Subject:** `{$tpl['subject']}`\n\n";
+            $md .= "```text\n{$tpl['body']}\n```\n\n";
+        }
+    }
+    
+    // LinkedIn templates
+    $md .= "## 📱 LinkedIn Templates\n\n";
+    foreach (['pain_hook', 'ai_contrarian', 'case_study'] as $type) {
+        if (isset($result['templates']['linkedin_' . $type])) {
+            $tpl = $result['templates']['linkedin_' . $type];
+            $md .= "### {$tpl['title']}\n\n";
+            $md .= "```text\n{$tpl['content']}\n```\n\n";
+        }
+    }
+    
+    // GitHub template
+    $md .= "## 🐙 GitHub OSS Template\n\n";
+    if (isset($result['templates']['github_oss'])) {
+        $tpl = $result['templates']['github_oss'];
+        $md .= "**Issue Title:** `{$tpl['issue_title']}`\n\n";
+        $md .= "```text\n{$tpl['body']}\n```\n\n";
+    }
+    
+    // Follow-up
+    $md .= "## 📅 Follow-up Template\n\n";
+    if (isset($result['templates']['follow_up'])) {
+        $tpl = $result['templates']['follow_up'];
+        $md .= "**Subject:** `{$tpl['subject']}`\n\n";
+        $md .= "```text\n{$tpl['body']}\n```\n\n";
+    }
+    
+    // JSON data
+    $md .= "## 📋 Raw JSON Data\n\n";
+    $md .= "```json\n" . json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n```\n";
+    
+    return $md;
+}
+
 function formatIssuesForEmail(array $analysis): string {
     $lines = [];
     $alerts = array_slice($analysis['alerts'] ?? [], 0, 3);
@@ -251,6 +319,9 @@ $error = null;
 $apiResult = null;
 $generatedTemplates = [];
 
+// Check for ?format=md parameter for markdown export
+$format = $_GET['format'] ?? 'html';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $repoUrl = $_POST['repo_url'] ?? '';
     $buyerType = $_POST['buyer_type'] ?? 'tech_lead';
@@ -281,7 +352,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'repo' => $repoUrl,
                 'message' => 'Scan rozpoczety w tle (CQRS Command)',
                 'check_status_url' => '/cqrs/query/scan/status?repo_url=' . urlencode($repoUrl),
-                'websocket' => 'ws://localhost:8001/ws/cqrs/events'
+                'websocket' => 'ws://localhost:8002/ws/cqrs/events'
             ];
         } elseif ($apiResult['ok']) {
             // Sync mode - process results immediately
@@ -377,6 +448,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'API Error: ' . $errorDetail;
         }
     }
+}
+
+// Handle ?format=md parameter - return markdown instead of HTML
+if ($format === 'md' && $result && !($result['async'] ?? false)) {
+    header('Content-Type: text/markdown; charset=utf-8');
+    header('Content-Disposition: attachment; filename="redsl_outreach_report.md"');
+    echo generateMarkdownReport($result, $result['repo'], $_POST['contact_name'] ?? 'Tam', $_POST['sender_name'] ?? 'Tomek');
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -672,6 +751,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <small>Aggregate ID: <?= htmlspecialchars($result['aggregate_id']) ?></small>
             </div>
             
+            <!-- Progress Bar for Async Mode -->
+            <div class="card" id="async-progress-card">
+                <h2>📡 Postep Skanowania - Czas rzeczywisty</h2>
+                
+                <!-- Progress Steps -->
+                <div id="async-progress-steps" style="margin: 20px 0;">
+                    <div class="progress-step" id="async-step-clone" style="opacity: 0.5;">
+                        <div class="step-icon">🔄</div>
+                        <div class="step-info">
+                            <div class="step-title">Klonowanie repozytorium</div>
+                            <div class="step-status">Oczekiwanie...</div>
+                        </div>
+                    </div>
+                    <div class="progress-step" id="async-step-analyze" style="opacity: 0.5;">
+                        <div class="step-icon">🔍</div>
+                        <div class="step-info">
+                            <div class="step-title">Analiza struktury kodu</div>
+                            <div class="step-status">Oczekiwanie...</div>
+                        </div>
+                    </div>
+                    <div class="progress-step" id="async-step-metrics" style="opacity: 0.5;">
+                        <div class="step-icon">📊</div>
+                        <div class="step-info">
+                            <div class="step-title">Obliczanie metryk</div>
+                            <div class="step-status">Oczekiwanie...</div>
+                        </div>
+                    </div>
+                    <div class="progress-step" id="async-step-templates" style="opacity: 0.5;">
+                        <div class="step-icon">📧</div>
+                        <div class="step-info">
+                            <div class="step-title">Generowanie szablonów</div>
+                            <div class="step-status">Oczekiwanie...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button onclick="pollScanStatus()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+                        🔄 Sprawdz status teraz
+                    </button>
+                    <div id="async-status-message" style="margin-top: 10px; font-size: 14px;"></div>
+                </div>
+            </div>
+            
             <div class="card" style="background: #f0f4ff;">
                 <h2>⏳ Sprawdz status skanu (CQRS Query)</h2>
                 <p>Skan jest wykonywany asynchronicznie. Użyj jednej z metod:</p>
@@ -692,13 +815,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 
                 <div style="margin: 15px 0;">
-                    <a href="http://localhost:8001<?= htmlspecialchars($result['check_status_url']) ?>" 
+                    <a href="http://localhost:8002<?= htmlspecialchars($result['check_status_url']) ?>" 
                        target="_blank" 
                        style="display: inline-block; background: #667eea; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none;">
                         🔍 Sprawdz status teraz
                     </a>
                 </div>
             </div>
+            
+            <script>
+                const asyncAggregateId = '<?= htmlspecialchars($result['aggregate_id']) ?>';
+                const asyncRepoUrl = '<?= htmlspecialchars($result['repo']) ?>';
+                let pollingInterval = null;
+                
+                function updateAsyncProgressStep(stepId, status, message) {
+                    const step = document.getElementById(stepId);
+                    if (!step) return;
+                    
+                    step.classList.remove('active', 'completed', 'error');
+                    step.style.opacity = '1';
+                    
+                    if (status === 'active') {
+                        step.classList.add('active');
+                    } else if (status === 'completed') {
+                        step.classList.add('completed');
+                    } else if (status === 'error') {
+                        step.classList.add('error');
+                    }
+                    
+                    const statusDiv = step.querySelector('.step-status');
+                    if (statusDiv) {
+                        statusDiv.textContent = message || status;
+                    }
+                }
+                
+                async function pollScanStatus() {
+                    const statusUrl = 'http://localhost:8002<?= htmlspecialchars($result['check_status_url']) ?>';
+                    try {
+                        const response = await fetch(statusUrl);
+                        const data = await response.json();
+                        
+                        const statusDiv = document.getElementById('async-status-message');
+                        statusDiv.textContent = `Status: ${data.status} (${data.progress_percent || 0}%) - ${data.phase || ''}`;
+                        
+                        // Update progress based on status
+                        if (data.status === 'in_progress') {
+                            const phase = data.phase || '';
+                            const percent = data.progress_percent || 0;
+                            
+                            if (phase === 'clone') {
+                                updateAsyncProgressStep('async-step-clone', 'active', `Klonowanie (${percent}%)`);
+                            } else if (phase === 'analyze') {
+                                updateAsyncProgressStep('async-step-clone', 'completed', 'Zakonczone');
+                                updateAsyncProgressStep('async-step-analyze', 'active', `Analiza (${percent}%)`);
+                            } else if (phase === 'complete') {
+                                updateAsyncProgressStep('async-step-clone', 'completed', 'Zakonczone');
+                                updateAsyncProgressStep('async-step-analyze', 'completed', 'Zakonczone');
+                                updateAsyncProgressStep('async-step-metrics', 'completed', 'Zakonczone');
+                                updateAsyncProgressStep('async-step-templates', 'active', `Generowanie (${percent}%)`);
+                            }
+                        } else if (data.status === 'completed') {
+                            updateAsyncProgressStep('async-step-templates', 'completed', 'Zakonczone');
+                            statusDiv.textContent = '✅ Skan zakonczony! Odswiez strone aby zobaczyc wyniki.';
+                            clearInterval(pollingInterval);
+                        } else if (data.status === 'failed') {
+                            updateAsyncProgressStep('async-step-clone', 'error', 'Blad: ' + (data.error?.message || 'Nieznany blad'));
+                            clearInterval(pollingInterval);
+                        }
+                    } catch (error) {
+                        console.error('Polling error:', error);
+                    }
+                }
+                
+                // Start polling automatically
+                pollingInterval = setInterval(pollScanStatus, 2000);
+                pollScanStatus(); // Initial check
+            </script>
             
         <?php elseif ($result): ?>
             <div class="success">
@@ -708,28 +900,149 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <!-- WebSocket Real-time Status (CQRS Event Sourcing) -->
             <div class="card" id="ws-status-card" style="display: none;">
-                <h2>📡 WebSocket - Postep w czasie rzeczywistym (CQRS/ES)</h2>
-                <div id="ws-status">Laczenie...</div>
-                <div id="ws-events" style="max-height: 200px; overflow-y: auto; background: #f5f5f5; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px;"></div>
+                <h2>📡 Postep Skanowania - Czas rzeczywisty</h2>
+                
+                <!-- Progress Steps -->
+                <div id="progress-steps" style="margin: 20px 0;">
+                    <div class="progress-step" id="step-clone" style="opacity: 0.5;">
+                        <div class="step-icon">🔄</div>
+                        <div class="step-info">
+                            <div class="step-title">Klonowanie repozytorium</div>
+                            <div class="step-status">Oczekiwanie...</div>
+                        </div>
+                    </div>
+                    <div class="progress-step" id="step-analyze" style="opacity: 0.5;">
+                        <div class="step-icon">🔍</div>
+                        <div class="step-info">
+                            <div class="step-title">Analiza struktury kodu</div>
+                            <div class="step-status">Oczekiwanie...</div>
+                        </div>
+                    </div>
+                    <div class="progress-step" id="step-metrics" style="opacity: 0.5;">
+                        <div class="step-icon">📊</div>
+                        <div class="step-info">
+                            <div class="step-title">Obliczanie metryk</div>
+                            <div class="step-status">Oczekiwanie...</div>
+                        </div>
+                    </div>
+                    <div class="progress-step" id="step-templates" style="opacity: 0.5;">
+                        <div class="step-icon">📧</div>
+                        <div class="step-info">
+                            <div class="step-title">Generowanie szablonów</div>
+                            <div class="step-status">Oczekiwanie...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Real-time Events -->
+                <div style="margin-top: 20px;">
+                    <h3>Surowe zdarzenia (debug)</h3>
+                    <div id="ws-events" style="max-height: 200px; overflow-y: auto; background: #f5f5f5; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px;"></div>
+                </div>
             </div>
+            
+            <style>
+                .progress-step {
+                    display: flex;
+                    align-items: center;
+                    padding: 15px;
+                    margin-bottom: 10px;
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    border-left: 4px solid #ddd;
+                    transition: all 0.3s;
+                }
+                .progress-step.active {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    border-left-color: #667eea;
+                }
+                .progress-step.completed {
+                    background: #e8f5e9;
+                    border-left-color: #4caf50;
+                }
+                .progress-step.error {
+                    background: #ffebee;
+                    border-left-color: #f44336;
+                }
+                .step-icon {
+                    font-size: 24px;
+                    margin-right: 15px;
+                    width: 40px;
+                    text-align: center;
+                }
+                .step-info {
+                    flex: 1;
+                }
+                .step-title {
+                    font-weight: 600;
+                    margin-bottom: 5px;
+                }
+                .step-status {
+                    font-size: 14px;
+                    opacity: 0.8;
+                }
+            </style>
             <script>
                 // WebSocket connection for real-time CQRS events
                 const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const wsUrl = wsProtocol + '//localhost:8001/ws/cqrs/events';
+                const wsUrl = wsProtocol + '//localhost:8002/ws/cqrs/events';
                 let ws = null;
                 let wsConnected = false;
                 
+                function updateProgressStep(stepId, status, message) {
+                    const step = document.getElementById(stepId);
+                    if (!step) return;
+                    
+                    step.classList.remove('active', 'completed', 'error');
+                    step.style.opacity = '1';
+                    
+                    if (status === 'active') {
+                        step.classList.add('active');
+                    } else if (status === 'completed') {
+                        step.classList.add('completed');
+                    } else if (status === 'error') {
+                        step.classList.add('error');
+                    }
+                    
+                    const statusDiv = step.querySelector('.step-status');
+                    if (statusDiv) {
+                        statusDiv.textContent = message || status;
+                    }
+                }
+                
                 function connectWebSocket() {
+                    console.log('[WebSocket] Attempting to connect to:', wsUrl);
                     ws = new WebSocket(wsUrl);
                     
                     ws.onopen = function() {
+                        console.log('[WebSocket] Connection opened');
                         wsConnected = true;
-                        document.getElementById('ws-status-card').style.display = 'block';
-                        document.getElementById('ws-status').innerHTML = '<span style="color: green;">● Polaczono (CQRS Event Stream)</span>';
+                        
+                        const statusCard = document.getElementById('ws-status-card');
+                        const statusElement = document.getElementById('ws-status');
+                        
+                        if (statusCard) {
+                            statusCard.style.display = 'block';
+                            console.log('[WebSocket] Status card displayed');
+                        } else {
+                            console.error('[WebSocket] ws-status-card element not found');
+                        }
+                        
+                        if (statusElement) {
+                            statusElement.innerHTML = '<span style="color: green;">● Polaczono (CQRS Event Stream)</span>';
+                            console.log('[WebSocket] Status updated');
+                        } else {
+                            console.error('[WebSocket] ws-status element not found');
+                        }
                         
                         // Subscribe to scan aggregate
                         const aggregateId = 'scan:<?= htmlspecialchars($repoUrl) ?>';
+                        console.log('[WebSocket] Subscribing to aggregate:', aggregateId);
                         ws.send(JSON.stringify({type: 'subscribe', aggregate_id: aggregateId}));
+                        
+                        // Initialize progress
+                        updateProgressStep('step-clone', 'active', 'Rozpoczynanie...');
                     };
                     
                     ws.onmessage = function(event) {
@@ -738,9 +1051,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         
                         if (data.type === 'event') {
                             const evt = data.data;
+                            const payload = evt.payload || {};
+                            
+                            // Update progress based on event type
+                            if (evt.event_type === 'ScanStarted') {
+                                updateProgressStep('step-clone', 'active', 'Klonowanie z ' + (payload.repo_url || 'repozytorium'));
+                            } else if (evt.event_type === 'ScanProgress') {
+                                const phase = payload.phase;
+                                const percent = payload.progress_percent || 0;
+                                const message = payload.message || '';
+                                
+                                if (phase === 'clone') {
+                                    updateProgressStep('step-clone', 'active', message + ` (${percent}%)`);
+                                } else if (phase === 'analyze') {
+                                    updateProgressStep('step-clone', 'completed', 'Zakonczone');
+                                    updateProgressStep('step-analyze', 'active', message + ` (${percent}%)`);
+                                } else if (phase === 'complete') {
+                                    updateProgressStep('step-analyze', 'completed', 'Zakonczone');
+                                    updateProgressStep('step-metrics', 'completed', 'Zakonczone');
+                                    updateProgressStep('step-templates', 'active', message + ` (${percent}%)`);
+                                }
+                            } else if (evt.event_type === 'ScanCompleted') {
+                                updateProgressStep('step-templates', 'completed', 'Zakonczone');
+                            } else if (evt.event_type === 'ScanFailed') {
+                                updateProgressStep('step-clone', 'error', 'Blad: ' + (payload.error_message || 'Nieznany blad'));
+                            }
+                            
+                            // Add to debug events
                             const line = document.createElement('div');
                             line.style.marginBottom = '4px';
-                            line.innerHTML = `<span style="color: #666;">${new Date().toLocaleTimeString()}</span> <strong>${evt.event_type}</strong>: ${JSON.stringify(evt.payload).substring(0, 100)}`;
+                            line.innerHTML = `<span style="color: #666;">${new Date().toLocaleTimeString()}</span> <strong>${evt.event_type}</strong>: ${JSON.stringify(payload).substring(0, 100)}`;
                             eventsDiv.insertBefore(line, eventsDiv.firstChild);
                         } else if (data.type === 'connection.established') {
                             const line = document.createElement('div');
@@ -751,12 +1091,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     };
                     
                     ws.onerror = function(error) {
-                        document.getElementById('ws-status').innerHTML = '<span style="color: red;">● Blad polaczenia WebSocket</span>';
+                        console.error('[WebSocket] Error:', error);
+                        const statusElement = document.getElementById('ws-status');
+                        if (statusElement) {
+                            statusElement.innerHTML = '<span style="color: red;">● Blad polaczenia WebSocket</span>';
+                        }
+                        updateProgressStep('step-clone', 'error', 'Blad polaczenia');
                     };
                     
                     ws.onclose = function() {
+                        console.log('[WebSocket] Connection closed');
                         wsConnected = false;
-                        document.getElementById('ws-status').innerHTML = '<span style="color: orange;">● Rozlaczono</span>';
+                        const statusElement = document.getElementById('ws-status');
+                        if (statusElement) {
+                            statusElement.innerHTML = '<span style="color: orange;">● Rozlaczono</span>';
+                        }
                     };
                 }
                 
@@ -804,6 +1153,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Generated Templates -->
             <div class="card">
                 <h2>📧 Wygenerowane Szablony</h2>
+                
+                <div style="margin-bottom: 20px;">
+                    <button onclick="downloadMarkdown()" style="background: #2196f3; font-size: 14px; padding: 10px 20px;">
+                        📥 Pobierz całość jako Markdown (z codeblocks i JSON)
+                    </button>
+                </div>
                 
                 <div class="tabs">
                     <div class="tab active" onclick="showTab('email')">Cold Email</div>
@@ -932,6 +1287,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     btn.style.background = '#4caf50';
                 }, 2000);
             });
+        }
+        
+        function downloadMarkdown() {
+            // Get current form data and add format=md parameter
+            const form = document.querySelector('form');
+            const formData = new FormData(form);
+            formData.append('format', 'md');
+            
+            // Create form submission with format parameter
+            const url = new URL(window.location.href);
+            url.searchParams.set('format', 'md');
+            
+            // Submit form to get markdown
+            fetch(url.toString(), {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = 'redsl_outreach_report.md';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(downloadUrl);
+            })
+            .catch(error => console.error('Download error:', error));
         }
     </script>
 </body>

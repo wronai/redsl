@@ -1,4 +1,4 @@
-# code2llm | 3f 583L | python:3 | 2026-04-20
+# code2llm | 6f 1247L | python:3,md:2,yaml:1 | 2026-05-02
 # CC̄=3.3 | critical:0/23 | dups:0 | cycles:0
 
 HEALTH[0]: ok
@@ -6,15 +6,15 @@ HEALTH[0]: ok
 REFACTOR[0]: none needed
 
 PIPELINES[19]:
-  [1] Src [to_yaml_dict]: to_yaml_dict
+  [1] Src [evaluate]: evaluate
       PURITY: 100% pure
-  [2] Src [generate]: generate
+  [2] Src [evaluate]: evaluate
       PURITY: 100% pure
-  [3] Src [generate_from_history]: generate_from_history
+  [3] Src [score]: score
       PURITY: 100% pure
-  [4] Src [save]: save
+  [4] Src [_calculate_impact]: _calculate_impact
       PURITY: 100% pure
-  [5] Src [load_and_register]: load_and_register
+  [5] Src [__init__]: __init__
       PURITY: 100% pure
 
 LAYERS:
@@ -22,6 +22,11 @@ LAYERS:
   │ engine                     290L  6C   12m  CC=10     ←0
   │ rule_generator             271L  2C   11m  CC=6      ←0
   │ __init__                    22L  0C    0m  CC=0.0    ←0
+  │
+  project/                        CC̄=0.0    ←in:0  →out:0
+  │ README.md                  329L  0C    0m  CC=0.0    ←0
+  │ context.md                 299L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml          36L  0C    0m  CC=0.0    ←0
   │
 
 COUPLING: no cross-package imports detected
