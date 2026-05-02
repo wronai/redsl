@@ -1,4 +1,4 @@
-# code2llm/evolution | 4201 func | 218f | 2026-05-01
+# code2llm/evolution | 4498 func | 220f | 2026-05-02
 
 NEXT[9] (ranked by impact):
   [1] !! SPLIT           redsl/cli/planfile.py
@@ -42,7 +42,7 @@ RISKS[1]:
   ⚠ Splitting redsl/cli/planfile.py may break 30 import paths
 
 METRICS-TARGET:
-  CC̄:          1.4 → ≤1.0
+  CC̄:          1.3 → ≤0.9
   max-CC:      44 → ≤20
   god-modules: 1 → 0
   high-CC(≥15): 11 → ≤5
@@ -73,4 +73,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=3.8 → now CC̄=1.4
+  prev CC̄=1.4 → now CC̄=1.3

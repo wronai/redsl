@@ -1,7 +1,7 @@
-# redsl | 4289 func | 249f | 259076L | python | 2026-05-01
+# redsl | 4586 func | 251f | 273845L | python | 2026-05-02
 
 HEALTH:
-  CC̄=1.4  critical=79 (limit:10)  dup=16  cycles=0
+  CC̄=1.4  critical=80 (limit:10)  dup=16  cycles=0
 
 ALERTS[20]:
   !!! cc_exceeded      planfile_validate = 44 (limit:15)
@@ -11,27 +11,27 @@ ALERTS[20]:
   !!! cc_exceeded      process_data_copy = 25 (limit:15)
   !!! cc_exceeded      events_show = 25 (limit:15)
   !!! high_fan_out     run_cycle = 25 (limit:10)
-  !!! high_fan_out     _handle_propose_changes = 22 (limit:10)
   !!! high_fan_out     ConfigApplier.apply = 22 (limit:10)
+  !!! high_fan_out     _handle_propose_changes = 22 (limit:10)
   !!! high_fan_out     source_add = 22 (limit:10)
 
-MODULES[447] (top by size):
+MODULES[445] (top by size):
   M[redsl_output/pyqual_report.json] 9427L C:0 F:0 CC↑0 D:0 (json)
-  M[project/calls.yaml] 6185L C:0 F:0 CC↑0 D:0 (yaml)
+  M[project/calls.yaml] 9174L C:0 F:0 CC↑0 D:0 (yaml)
+  M[project/map.toon.yaml] 8430L C:0 F:1198 CC↑0 D:13 (yaml)
+  M[docs/README.md] 2957L C:0 F:1 CC↑0 D:0 (md)
   M[SUMD.md] 2929L C:11 F:908 CC↑0 D:89 (md)
-  M[project/map.toon.yaml] 1985L C:0 F:912 CC↑0 D:11 (yaml)
   M[project_test/map.toon.yaml] 1691L C:0 F:742 CC↑0 D:0 (yaml)
   M[redsl/pyqual_report.yaml] 1623L C:0 F:0 CC↑0 D:0 (yaml)
   M[CHANGELOG.md] 1368L C:0 F:0 CC↑0 D:0 (md)
   M[SUMR.md] 1282L C:11 F:53 CC↑0 D:3 (md)
-  M[docs/README.md] 1267L C:0 F:1 CC↑0 D:0 (md)
-  M[project/validation.toon.yaml] 997L C:0 F:0 CC↑0 D:0 (yaml)
+  M[project/validation.toon.yaml] 1064L C:0 F:0 CC↑0 D:0 (yaml)
+  M[www/marketing/index.php] 801L C:0 F:5 CC↑5 D:0 (php)
   M[www/index.php] 796L C:0 F:7 CC↑5 D:0 (php)
   M[redsl/cli/planfile.py] 730L C:0 F:30 CC↑44 D:0 (python)
   M[www/nda-form.php] 699L C:0 F:11 CC↑11 D:0 (php)
   M[README.md] 676L C:0 F:2 CC↑0 D:0 (md)
-  M[redsl/formatters/pyqual_report.yaml] 673L C:0 F:0 CC↑0 D:0 (yaml)
-  LANGS: python:248/md:73/yaml:63/php:33/json:9/shell:6/txt:5/other:3/yml:3/toml:2/javascript:1/xml:1
+  LANGS: python:248/md:74/yaml:64/php:29/json:9/shell:6/txt:5/other:3/yml:3/toml:2/javascript:1/xml:1
 
 HOTSPOTS[10]:
   ★ planfile_validate fan=37  // Check whether planfile.yaml tickets are still current.
@@ -41,10 +41,10 @@ For each open task, vali
   ★ run_cycle fan=25  // Run a complete refactoring cycle driven by WorkflowConfig.
 
 If *workflow* is Non
+  ★ ConfigApplier.apply fan=22  // Orchestrates 22 calls
   ★ _handle_propose_changes fan=22  // Validate and package a ConfigChangeProposal.
 
 The proposal is *not* applied here
-  ★ ConfigApplier.apply fan=22  // Orchestrates 22 calls
 
 REFACTOR[15]:
   [1] H/L Split process_data (CC=25)
@@ -54,4 +54,4 @@ REFACTOR[15]:
   [5] H/H Split god module redsl/cli/planfile.py (730L, 0 classes)
 
 EVOLUTION:
-  2026-05-01 CC̄=1.4 crit=79 259076L // Automated analysis
+  2026-05-02 CC̄=1.4 crit=80 273845L // Automated analysis

@@ -4,8 +4,8 @@ path: /home/tom/github/semcod/redsl
 
 <!-- code2docs:start --># redsl
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-4564-green)
-> **4564** functions | **249** classes | **449** files | CC̄ = 3.9
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-4586-green)
+> **4586** functions | **251** classes | **453** files | CC̄ = 3.9
 
 > Auto-generated project documentation from source code analysis.
 
@@ -94,6 +94,7 @@ redsl/
 ├── pyproject
 ├── TODO
 ├── pyqual_report
+├── prefact
 ├── CHANGELOG
 ├── Taskfile
 ├── Dockerfile
@@ -220,6 +221,8 @@ redsl/
     ├── regulamin
     ├── README
     ├── app
+        ├── index
+        ├── landing-page-copy
         ├── README
         ├── authorize
         ├── access_token
@@ -499,6 +502,7 @@ redsl/
         ├── health_routes
     ├── api/
         ├── refactor_routes
+        ├── scan_routes
         ├── models
         ├── webhook_routes
         ├── debug_routes
@@ -514,8 +518,8 @@ redsl/
         ├── toon
         ├── toon
         ├── toon
-        ├── toon
     ├── README
+        ├── toon
     ├── calls
         ├── toon
 ```
@@ -736,6 +740,8 @@ redsl/
 - **`FunctionsParser`** — Parser sekcji functions_toon — per-funkcja CC.
 - **`ValidationParser`** — Parser sekcji validation_toon.
 - **`DuplicationParser`** — Parser sekcji duplication_toon.
+- **`ScanRepoRequest`** — Request to scan a remote repository.
+- **`ScanRepoResponse`** — Response from remote repository scan.
 - **`AnalyzeRequest`** — —
 - **`RefactorRequest`** — —
 - **`BatchSemcodRequest`** — —
@@ -1281,6 +1287,11 @@ redsl/
 - `flash()` — —
 - `headline()` — —
 - `y()` — —
+- `callRedslApi()` — —
+- `formatIssuesForEmail()` — —
+- `formatIssuesForGitHub()` — —
+- `showTab()` — —
+- `copyToClipboard()` — —
 - `h()` — —
 - `h()` — —
 - `classForLevel()` — —
@@ -2046,11 +2057,11 @@ redsl/
 - `fingerprint_issue()` — —
 - `fetch_issues()` — —
 - `compute_verdict()` — —
+- `process_project()` — —
 - `make_id_generator()` — —
 - `deduplicate_tasks()` — —
 - `merge_with_existing_planfile()` — —
 - `tasks_to_planfile_yaml()` — —
-- `process_project()` — —
 - `select_model()` — —
 - `select_reflection_model()` — —
 - `estimate_cycle_cost()` — —
@@ -2082,6 +2093,10 @@ redsl/
 - `format_cycle_report_markdown()` — —
 - `format_plan_yaml()` — —
 - `format_cycle_report_toon()` — —
+- `workflow_group()` — —
+- `workflow_init()` — —
+- `workflow_show()` — —
+- `workflow_scan()` — —
 - `explain_decisions()` — —
 - `get_memory_stats()` — —
 - `detect()` — —
@@ -2099,10 +2114,6 @@ redsl/
 - `rollback_to_checkpoint()` — —
 - `rollback_single_file()` — —
 - `build_ecosystem_context()` — —
-- `workflow_group()` — —
-- `workflow_init()` — —
-- `workflow_show()` — —
-- `workflow_scan()` — —
 - `snapshot()` — —
 - `compare()` — —
 - `compare_snapshots()` — —
@@ -2116,6 +2127,9 @@ redsl/
 - `diagnose()` — —
 - `heal()` — —
 - `heal_batch()` — —
+- `scan_folder()` — —
+- `merge_tasks()` — —
+- `apply_planfile_sources()` — —
 - `detect_broken_guards()` — —
 - `detect_stolen_indent()` — —
 - `detect_broken_fstrings()` — —
@@ -2128,25 +2142,22 @@ redsl/
 - `parse_sumr()` — —
 - `parse_refactor_plan_yaml()` — —
 - `get_toon_patterns()` — —
-- `merge_tasks()` — —
-- `apply_planfile_sources()` — —
 - `run_autonomous_pr()` — —
 - `is_sensitive_key()` — —
 - `mask_sensitive_mapping()` — —
-- `scan_folder()` — —
 - `run_pyqual_example()` — —
 - `main()` — —
 - `analyze_commit_intent()` — —
-- `print_llm_banner()` — —
 - `auto_fix_violations()` — —
+- `print_llm_banner()` — —
 - `scan_project()` — —
 - `project_map_to_yaml_block()` — —
+- `default_workflow()` — —
+- `load_workflow()` — —
 - `get_gate()` — —
 - `safe_completion()` — —
 - `check_model_policy()` — —
 - `list_allowed_models()` — —
-- `default_workflow()` — —
-- `load_workflow()` — —
 - `get_changed_files()` — —
 - `get_staged_files()` — —
 - `redsl_curl()` — —
@@ -2155,11 +2166,11 @@ redsl/
 - `run_pyqual_analysis()` — —
 - `run_pyqual_fix()` — —
 - `run_pr_bot_example()` — —
-- `smart_score()` — —
-- `format_refactor_plan()` — —
 - `collect_autonomy_metrics()` — —
 - `save_metrics()` — —
 - `load_metrics()` — —
+- `smart_score()` — —
+- `format_refactor_plan()` — —
 - `format_batch_results()` — —
 - `format_batch_report_markdown()` — —
 - `config()` — —
@@ -2181,10 +2192,16 @@ redsl/
 - `sendProposalEmail()` — —
 - `generateAccessToken()` — —
 - `verifyAccessToken()` — —
+- `cmd_analyze()` — —
+- `cmd_explain()` — —
+- `cmd_refactor()` — —
+- `cmd_memory_stats()` — —
+- `cmd_serve()` — —
 - `run_autofix_batch()` — —
-- `run_custom_rules_example()` — —
 - `run_badge_example()` — —
+- `run_custom_rules_example()` — —
 - `run_awareness_example()` — —
+- `run_memory_learning_example()` — —
 - `profile_refactor_cycle()` — —
 - `profile_llm_latency()` — —
 - `profile_memory_operations()` — —
@@ -2193,15 +2210,13 @@ redsl/
 - `scan()` — —
 - `refactor()` — —
 - `register_refactor()` — —
-- `run_memory_learning_example()` — —
-- `cmd_analyze()` — —
-- `cmd_explain()` — —
-- `cmd_refactor()` — —
-- `cmd_memory_stats()` — —
-- `cmd_serve()` — —
+- `setup_logging()` — —
 - `generate_github_workflow()` — —
 - `install_github_workflow()` — —
-- `setup_logging()` — —
+- `demo_policy_check()` — —
+- `demo_list_allowed()` — —
+- `demo_safe_completion()` — —
+- `demo_strict_mode()` — —
 - `load_env_pl()` — —
 - `env_pl()` — —
 - `parseSelection_pl()` — —
@@ -2216,26 +2231,27 @@ redsl/
 - `classForLevel()` — —
 - `fmtSize()` — —
 - `validateCsrfToken()` — —
-- `demo_policy_check()` — —
-- `demo_list_allowed()` — —
-- `demo_safe_completion()` — —
-- `demo_strict_mode()` — —
 - `main_loop()` — —
 - `run_multi_analysis()` — —
 - `get_risk_level()` — —
 - `search_schema_matches()` — —
+- `run_tasks_from_planfile()` — —
 - `check_hard_requirements()` — —
 - `score_quality()` — —
 - `generate_toon_files()` — —
 - `read_toon_contents()` — —
 - `analyze_with_code2llm()` — —
 - `maybe_analyze()` — —
-- `run_tasks_from_planfile()` — —
+- `callRedslApi()` — —
+- `formatIssuesForEmail()` — —
+- `formatIssuesForGitHub()` — —
+- `showTab()` — —
+- `copyToClipboard()` — —
+- `calculate()` — —
 - `h_ce()` — —
 - `saveConfig()` — —
 - `getNestedValue()` — —
 - `getRiskLevel()` — —
-- `calculate()` — —
 - `run_semcod_batch()` — —
 - `apply_refactor()` — —
 - `measure_todo_reduction()` — —
@@ -2243,6 +2259,7 @@ redsl/
 - `git_status_lines()` — —
 - `resolve_profile()` — —
 - `build_pyqual_fix_decisions()` — —
+- `run_full_pipeline_example()` — —
 - `load_example_yaml()` — —
 - `list_available_examples()` — —
 - `print_banner()` — —
@@ -2261,13 +2278,14 @@ redsl/
 - `example_badge()` — —
 - `example_list()` — —
 - `register_examples()` — —
-- `run_full_pipeline_example()` — —
 - `execute_sandboxed()` — —
 - `build_selector()` — —
 - `get_selector()` — —
 - `invalidate_selector()` — —
 - `extract_json_block()` — —
 - `handle_push_webhook()` — —
+- `export_proposal_schema()` — —
+- `proposal_to_yaml()` — —
 - `run_basic_analysis_example()` — —
 - `perf_command()` — —
 - `cost_command()` — —
@@ -2283,8 +2301,6 @@ redsl/
 - `batch_pyqual_run()` — —
 - `register_batch()` — —
 - `select_model_for_operation()` — —
-- `export_proposal_schema()` — —
-- `proposal_to_yaml()` — —
 - `run_api_integration_example()` — —
 - `track_model_selection()` — —
 - `check_cost_per_call()` — —
@@ -2299,7 +2315,6 @@ redsl/
 - `register_pyqual()` — —
 - `cli()` — —
 - `create_app()` — —
-- `OPENAI_API_KEY()` — —
 - `record()` — —
 - `record_event()` — —
 - `decision_signature()` — —
@@ -2316,21 +2331,8 @@ redsl/
 - `api_key()` — —
 - `from_env()` — —
 - `add_custom_rules()` — —
-- `OPENROUTER_API_KEY()` — —
-- `print()` — —
-- `retry_with_backoff()` — —
+- `OPENAI_API_KEY()` — —
 - `process_order()` — —
-- `reconcile_invoice()` — —
-- `generate_readme()` — —
-- `validate()` — —
-- `store()` — —
-- `lifecycle()` — —
-- `process()` — —
-- `helper()` — —
-- `format()` — —
-- `pad()` — —
-- `verify()` — —
-- `generate_token()` — —
 - `generate_behavior_tests()` — —
 - `generate_snapshot_test()` — —
 - `verify_behavior_preserved()` — —
@@ -2437,6 +2439,20 @@ redsl/
 - `test_cli_planfile_sync_dry_run()` — —
 - `test_cli_planfile_show()` — —
 - `test_cli_planfile_sync_json_format()` — —
+- `OPENROUTER_API_KEY()` — —
+- `print()` — —
+- `validate()` — —
+- `store()` — —
+- `lifecycle()` — —
+- `retry_with_backoff()` — —
+- `reconcile_invoice()` — —
+- `process()` — —
+- `helper()` — —
+- `format()` — —
+- `pad()` — —
+- `verify()` — —
+- `generate_token()` — —
+- `generate_readme()` — —
 - `check_http()` — —
 - `check_content()` — —
 - `check_php_syntax()` — —
@@ -2553,6 +2569,7 @@ redsl/
 📄 `examples.11-model-policy.main` (5 functions)
 📄 `goal`
 📄 `planfile`
+📄 `prefact`
 📄 `project`
 📄 `project.README`
 📄 `project.analysis.toon`
@@ -2561,7 +2578,7 @@ redsl/
 📄 `project.context`
 📄 `project.duplication.toon`
 📄 `project.evolution.toon`
-📄 `project.map.toon` (3977 functions)
+📄 `project.map.toon` (6992 functions)
 📄 `project.project.toon`
 📄 `project.prompt`
 📄 `project.validation.toon`
@@ -2603,6 +2620,7 @@ redsl/
 📄 `redsl.api.models` (13 classes)
 📄 `redsl.api.pyqual_routes` (1 functions)
 📄 `redsl.api.refactor_routes` (8 functions)
+📄 `redsl.api.scan_routes` (6 functions, 2 classes)
 📄 `redsl.api.webhook_routes` (1 functions)
 📦 `redsl.autonomy`
 📄 `redsl.autonomy.adaptive_executor` (3 functions, 1 classes)
@@ -2869,12 +2887,14 @@ redsl/
 📄 `www.debug`
 📄 `www.docker-compose`
 📄 `www.docs.README`
+📄 `www.docs.landing-page-copy`
 📄 `www.email-notifications` (4 functions)
 📄 `www.i18n.de`
 📄 `www.i18n.en`
 📄 `www.i18n.pl`
 📄 `www.index` (7 functions)
 📄 `www.install-plesk`
+📄 `www.marketing.index` (5 functions)
 📄 `www.mock-github.access_token`
 📄 `www.mock-github.authorize`
 📄 `www.mock-github.user`

@@ -10,21 +10,19 @@ flowchart TD
         redsl__cli__llm_banner___key_status["_key_status"]
         redsl__cli__llm_banner___dotenv_label["_dotenv_label"]
         redsl__cli__llm_banner__print_llm_banner["print_llm_banner"]
-        redsl__cli__pyqual__pyqual["pyqual"]
-        redsl__cli__pyqual__pyqual_analyze["pyqual_analyze"]
-        redsl__cli__pyqual__pyqual_fix["pyqual_fix"]
-        redsl__cli__pyqual__register_pyqual["register_pyqual"]
-        redsl__cli__examples___run_example["_run_example"]
-        redsl__cli__examples__example["example"]
-        redsl__cli__examples__example_basic_analysis["example_basic_analysis"]
-        redsl__cli__examples__example_custom_rules["example_custom_rules"]
-        redsl__cli__examples__example_full_pipeline["example_full_pipeline"]
+        redsl__cli__config__config["config"]
+        redsl__cli__config___resolve_store["_resolve_store"]
+        redsl__cli__config___load_document_from_path["_load_document_from_path"]
+        redsl__cli__config___dump_json["_dump_json"]
+        redsl__cli__config__config_init["config_init"]
+        redsl__cli__config__config_validate["config_validate"]
+        redsl__cli__config__config_diff["config_diff"]
+        redsl__cli__config__config_history["config_history"]
+        redsl__cli__config__config_apply["config_apply"]
         ...["+124 more"]
     end
 
     subgraph Core
-        README_EN__OPENAI_API_KEY["OPENAI_API_KEY"]
-        README_EN__main["main"]
         SUMR___analysis_source_method["_analysis_source_method"]
         SUMR___analysis_function_metrics["_analysis_function_metrics"]
         SUMR___print_analysis_summary["_print_analysis_summary"]
@@ -38,7 +36,9 @@ flowchart TD
         SUMR__cmd_refactor["cmd_refactor"]
         SUMR__cmd_memory_stats["cmd_memory_stats"]
         SUMR__cmd_serve["cmd_serve"]
-        ...["+3294 more"]
+        SUMR___print_usage["_print_usage"]
+        SUMR___get_arg["_get_arg"]
+        ...["+3581 more"]
     end
 
     subgraph Exporters
@@ -47,11 +47,12 @@ flowchart TD
         project__map__toon___resolve_cli_export["_resolve_cli_export"]
         project__map__toon__export_proposal_schema["export_proposal_schema"]
         project__map__toon__export_config_schema["export_config_schema"]
+        project__map__toon__test_root_package_exports_awareness_facade["test_root_package_exports_awar"]
         project_test__map__toon___resolve_cli_export["_resolve_cli_export"]
         project_test__map__toon__export_proposal_schema["export_proposal_schema"]
         project_test__map__toon__export_config_schema["export_config_schema"]
-        redsl__config_standard__profiles__export_config_schema["export_config_schema"]
         redsl__config_standard__proposals__export_proposal_schema["export_proposal_schema"]
+        redsl__config_standard__profiles__export_config_schema["export_config_schema"]
     end
 
-    class README_EN__OPENAI_API_KEY,README_EN__main,SUMR___analysis_source_method,SUMR___analysis_function_metrics,SUMR___print_analysis_summary,SUMR___print_top_functions,SUMR___print_alerts,SUMR___print_duplicates,SUMR___print_analysis_plan,SUMR__cmd_analyze entry
+    class SUMR___analysis_source_method,SUMR___analysis_function_metrics,SUMR___print_analysis_summary,SUMR___print_top_functions,SUMR___print_alerts,SUMR___print_duplicates,SUMR___print_analysis_plan,SUMR__cmd_analyze,SUMR__cmd_explain,SUMR___print_refactor_report entry

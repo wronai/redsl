@@ -19,19 +19,42 @@ $REDSL_API = getenv('REDSL_API_URL') ?: 'http://localhost:8001';
 function callRedslApi(string $endpoint, array $payload): array {
     global $REDSL_API;
     
-    $ch = curl_init($REDSL_API . $endpoint);
+    $url = $REDSL_API . $endpoint;
+    $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT => 120,
         CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => json_encode($payload),
+        CURLOPT_FAILONERROR => false,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_SSL_VERIFYHOST => 0,
     ]);
     $resp = curl_exec($ch);
+    $curlError = curl_error($ch);
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
     
+    if ($resp === false) {
+        return [
+            'ok' => false, 
+            'code' => 0, 
+            'data' => ['error' => 'CURL Error: ' . $curlError, 'url' => $url],
+            'curl_error' => $curlError
+        ];
+    }
+    
     $decoded = json_decode($resp ?: '{}', true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return [
+            'ok' => false, 
+            'code' => $code, 
+            'data' => ['error' => 'JSON decode error: ' . json_last_error_msg(), 'response' => substr($resp, 0, 500)],
+            'raw_response' => $resp
+        ];
+    }
+    
     return ['ok' => $code >= 200 && $code < 300, 'code' => $code, 'data' => $decoded];
 }
 
@@ -225,6 +248,7 @@ function formatIssuesForGitHub(array $analysis): string {
 // Handle form submissions
 $result = null;
 $error = null;
+$apiResult = null;
 $generatedTemplates = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -579,7 +603,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         
         <?php if ($error): ?>
-            <div class="error"><?= htmlspecialchars($error) ?></div>
+            <div class="error">
+                <strong><?= htmlspecialchars($error) ?></strong>
+                <?php if (isset($apiResult['code']) && $apiResult['code'] > 0): ?>
+                    <br><small>HTTP Code: <?= $apiResult['code'] ?></small>
+                <?php endif; ?>
+                <?php if (isset($apiResult['curl_error']) && $apiResult['curl_error']): ?>
+                    <br><small>CURL Error: <?= htmlspecialchars($apiResult['curl_error']) ?></small>
+                <?php endif; ?>
+                <?php if (isset($apiResult['data']['url'])): ?>
+                    <br><small>URL: <?= htmlspecialchars($apiResult['data']['url']) ?></small>
+                <?php endif; ?>
+                <?php if (isset($apiResult['raw_response'])): ?>
+                    <br><small>Raw Response: <?= htmlspecialchars(substr($apiResult['raw_response'], 0, 200)) ?></small>
+                <?php endif; ?>
+                <br><small>API Endpoint: <?= htmlspecialchars($REDSL_API) ?></small>
+            </div>
         <?php endif; ?>
         
         <?php if ($result): ?>

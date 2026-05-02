@@ -1,9 +1,9 @@
-# vallm batch | 466f | 0✓ 345⚠ 0✗ | 2026-05-01
+# vallm batch | 470f | 0✓ 348⚠ 0✗ | 2026-05-02
 
 SUMMARY:
-  scanned: 466  passed: 0 (0.0%)  warnings: 345  errors: 0  unsupported: 0
+  scanned: 470  passed: 0 (0.0%)  warnings: 348  errors: 0  unsupported: 0
 
-WARNINGS[345]{path,score}:
+WARNINGS[348]{path,score}:
   redsl/cli/events.py,0.68
     issues[4]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
@@ -176,6 +176,9 @@ WARNINGS[345]{path,score}:
   planfile.yaml,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse YAML: Download error: Language 'YAML' not available for download. Available groups: [""all""]",
+  prefact.yaml,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse YAML: Download error: Language 'YAML' not available for download. Available groups: [""all""]",
   project.sh,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse BASH: Download error: Language 'BASH' not available for download. Available groups: [""all""]",
@@ -273,6 +276,9 @@ WARNINGS[345]{path,score}:
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
   redsl/api/refactor_routes.py,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
+  redsl/api/scan_routes.py,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
   redsl/api/webhook_routes.py,0.78
@@ -1001,6 +1007,9 @@ WARNINGS[345]{path,score}:
   www/install-plesk.sh,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse BASH: Download error: Language 'BASH' not available for download. Available groups: [""all""]",
+  www/marketing/index.php,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
   www/migrations/001_core_schema.sql,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse SQL: Download error: Language 'SQL' not available for download. Available groups: [""all""]",

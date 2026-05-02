@@ -1,5 +1,5 @@
 # code2llm call graph | /home/tom/github/semcod/redsl
-# nodes: 482 | edges: 500 | modules: 74
+# nodes: 482 | edges: 500 | modules: 69
 # CC̄=1.4
 
 HUBS[20]:
@@ -7,24 +7,16 @@ HUBS[20]:
     CC=0  in:418  out:0  total:418
   redsl.analyzers.incremental.EvolutionaryCache.set
     CC=1  in:40  out:2  total:42
-  redsl.examples.custom_rules.run_custom_rules_example
-    CC=6  in:1  out:34  total:35
-  redsl.examples.badge.run_badge_example
-    CC=5  in:1  out:33  total:34
-  redsl.examples.basic_analysis.run_basic_analysis_example
-    CC=3  in:1  out:31  total:32
   redsl.config_standard.nlp_handlers._handle_propose_changes
     CC=12  in:1  out:29  total:30
-  redsl.examples.api_integration.run_api_integration_example
-    CC=2  in:1  out:26  total:27
-  redsl.commands.sumr_planfile.core._collect_from_sumr_source
-    CC=11  in:1  out:25  total:26
   examples.11-model-policy.main.demo_strict_mode
     CC=3  in:1  out:25  total:26
-  redsl.commands.sumr_planfile._raw_task_to_plan_task
-    CC=7  in:1  out:23  total:24
+  redsl.commands.sumr_planfile.core._collect_from_sumr_source
+    CC=11  in:1  out:25  total:26
   redsl.commands.pyqual.run_pyqual_fix
     CC=7  in:0  out:24  total:24
+  redsl.commands.sumr_planfile._raw_task_to_plan_task
+    CC=7  in:1  out:23  total:24
   redsl.commands.sumr_planfile.core.generate_planfile
     CC=7  in:0  out:21  total:21
   redsl.commands.autonomy_pr.validator._step_validate
@@ -37,15 +29,23 @@ HUBS[20]:
     CC=8  in:1  out:18  total:19
   redsl.commands.cli_autonomy._register_watch_cmd
     CC=1  in:1  out:18  total:19
-  redsl.examples.awareness.run_awareness_example
-    CC=1  in:1  out:17  total:18
   redsl.commands.cli_autonomy._register_improve_cmd
     CC=1  in:1  out:17  total:18
+  redsl.commands.batch_pyqual.runner.run_pyqual_batch
+    CC=6  in:0  out:18  total:18
   redsl.commands.autonomy_pr.git_ops._step_branch_and_commit
     CC=3  in:0  out:18  total:18
+  redsl.commands.batch_pyqual.pipeline._run_pipeline_stage
+    CC=10  in:1  out:16  total:17
+  redsl.commands.hybrid._print_summary
+    CC=5  in:1  out:16  total:17
+  redsl.config_standard.agent_bridge.resolve_secret_ref
+    CC=11  in:1  out:16  total:17
+  redsl.commands.sumr_planfile.extractors.extract_duplications
+    CC=11  in:1  out:16  total:17
 
 MODULES:
-  SUMD  [85 funcs]
+  SUMD  [87 funcs]
     _abort_no_changes  CC=0  out:0
     _append_gate_violations_to_todo  CC=0  out:0
     _build_summary  CC=0  out:0
@@ -56,11 +56,10 @@ MODULES:
     _detect_languages  CC=0  out:0
     _detect_publish_configured  CC=0  out:0
     _execute_direct_refactor  CC=0  out:0
-  SUMR  [1 funcs]
+  SUMR  [3 funcs]
     _default_history_dir  CC=0  out:0
-  docs.model-policy  [2 funcs]
-    check_model_policy  CC=0  out:0
-    safe_completion  CC=0  out:0
+    _default_llm_model  CC=0  out:0
+    _resolve_provider_key  CC=0  out:0
   docs.model-policy-quickstart  [1 funcs]
     print  CC=0  out:0
   examples.01-basic-analysis.main  [1 funcs]
@@ -368,6 +367,8 @@ MODULES:
     extract_complexity_layers  CC=4  out:11
   redsl.commands.sumr_planfile.utils  [1 funcs]
     deduplicate_tasks  CC=3  out:3
+  redsl.config  [1 funcs]
+    from_env  CC=4  out:12
   redsl.config_standard.agent_bridge  [8 funcs]
     _document_to_agent_config  CC=7  out:9
     _resolve_doppler_ref  CC=12  out:16
@@ -388,11 +389,9 @@ MODULES:
     _highest_risk  CC=2  out:2
     _smoke_test_provider  CC=3  out:3
     dispatch_tool  CC=6  out:7
-  redsl.config_standard.paths  [7 funcs]
+  redsl.config_standard.paths  [5 funcs]
     _navigate  CC=12  out:12
-    deep_diff  CC=11  out:6
     get_nested_value  CC=4  out:2
-    materialize_diff  CC=2  out:1
     parse_config_path  CC=8  out:9
     remove_nested_value  CC=6  out:11
     set_nested_value  CC=12  out:15
@@ -411,39 +410,20 @@ MODULES:
   redsl.consciousness_loop  [2 funcs]
     _inner_thought  CC=3  out:6
     _profile_performance  CC=3  out:7
-  redsl.examples._common  [5 funcs]
-    _examples_root  CC=2  out:4
-    _resolve_yaml_path  CC=2  out:4
-    list_available_examples  CC=4  out:10
-    load_example_yaml  CC=3  out:6
-    print_banner  CC=2  out:3
-  redsl.examples.api_integration  [2 funcs]
-    main  CC=1  out:2
-    run_api_integration_example  CC=2  out:26
-  redsl.examples.awareness  [6 funcs]
-    _build_timeline  CC=2  out:14
-    _print_patterns  CC=4  out:9
-    _print_signals  CC=4  out:9
-    _print_summary_section  CC=6  out:9
-    main  CC=1  out:2
-    run_awareness_example  CC=1  out:17
-  redsl.examples.badge  [7 funcs]
-    _dimension_color  CC=6  out:0
-    _format_dimension_badges  CC=3  out:4
-    _grade_for_score  CC=3  out:0
-    _print_badge_code  CC=2  out:5
-    _print_summary  CC=4  out:12
-    main  CC=1  out:2
-    run_badge_example  CC=5  out:33
-  redsl.examples.basic_analysis  [2 funcs]
-    main  CC=1  out:2
-    run_basic_analysis_example  CC=3  out:31
-  redsl.examples.custom_rules  [2 funcs]
-    main  CC=1  out:2
-    run_custom_rules_example  CC=6  out:34
   redsl.history  [2 funcs]
     __init__  CC=1  out:2
     __init__  CC=1  out:2
+  redsl.main  [23 funcs]
+    _analysis_function_metrics  CC=4  out:1
+    _analysis_source_method  CC=2  out:3
+    _dispatch_analyze  CC=1  out:2
+    _dispatch_explain  CC=1  out:2
+    _dispatch_memory_stats  CC=1  out:1
+    _dispatch_refactor  CC=2  out:7
+    _dispatch_serve  CC=1  out:3
+    _get_arg  CC=4  out:2
+    _get_orchestrator  CC=2  out:2
+    _has_flag  CC=1  out:0
   test_refactor_project.bad_code  [1 funcs]
     method1  CC=4  out:4
   www.app  [4 funcs]
@@ -479,6 +459,27 @@ MODULES:
     storeStep2Data  CC=11  out:0
 
 EDGES:
+  examples.01-basic-analysis.main.main → SUMD.run_basic_analysis_example
+  examples.10-badge.main.main → SUMD.run_badge_example
+  examples.05-api-integration.main.main → SUMD.run_api_integration_example
+  examples.09-pr-bot.main.main → SUMD.run_pr_bot_example
+  examples.04-memory-learning.main.main → SUMD.run_memory_learning_example
+  examples.03-full-pipeline.main.main → SUMD.run_full_pipeline_example
+  examples.11-model-policy.main.demo_policy_check → docs.model-policy-quickstart.print
+  examples.11-model-policy.main.demo_policy_check → SUMD.check_model_policy
+  examples.11-model-policy.main.demo_list_allowed → docs.model-policy-quickstart.print
+  examples.11-model-policy.main.demo_list_allowed → SUMD.list_allowed_models
+  examples.11-model-policy.main.demo_safe_completion → docs.model-policy-quickstart.print
+  examples.11-model-policy.main.demo_safe_completion → SUMD.safe_completion
+  examples.11-model-policy.main.demo_strict_mode → docs.model-policy-quickstart.print
+  examples.11-model-policy.main.main → docs.model-policy-quickstart.print
+  examples.11-model-policy.main.main → examples.11-model-policy.main.demo_strict_mode
+  examples.11-model-policy.main.main → examples.11-model-policy.main.demo_safe_completion
+  examples.02-custom-rules.main.main → SUMD.run_custom_rules_example
+  examples.06-awareness.main.main → SUMD.run_awareness_example
+  examples.07-pyqual.main.main → SUMD.run_pyqual_example
+  examples.08-audit.main.main → SUMD.run_audit_example
+  test_refactor_project.bad_code.BadClass.method1 → docs.model-policy-quickstart.print
   www.nda-form.handleStep1 → www.nda-form.extractNip
   www.nda-form.handleStep1 → www.nda-form.fetchCompanyData
   www.nda-form.handleStep1 → www.nda-form.h
@@ -508,24 +509,3 @@ EDGES:
   www.config-api.handleNotFound → www.config-api.sendError
   www.app.form → www.app.setInvalid
   www.app.form → www.app.validEmail
-  www.app.form → www.app.validRepo
-  examples.10-badge.main.main → SUMD.run_badge_example
-  examples.03-full-pipeline.main.main → SUMD.run_full_pipeline_example
-  examples.08-audit.main.main → SUMD.run_audit_example
-  examples.11-model-policy.main.demo_policy_check → docs.model-policy-quickstart.print
-  examples.11-model-policy.main.demo_policy_check → docs.model-policy.check_model_policy
-  examples.11-model-policy.main.demo_list_allowed → docs.model-policy-quickstart.print
-  examples.11-model-policy.main.demo_list_allowed → SUMD.list_allowed_models
-  examples.11-model-policy.main.demo_safe_completion → docs.model-policy-quickstart.print
-  examples.11-model-policy.main.demo_safe_completion → docs.model-policy.safe_completion
-  examples.11-model-policy.main.demo_strict_mode → docs.model-policy-quickstart.print
-  examples.11-model-policy.main.main → docs.model-policy-quickstart.print
-  examples.11-model-policy.main.main → examples.11-model-policy.main.demo_strict_mode
-  examples.11-model-policy.main.main → examples.11-model-policy.main.demo_safe_completion
-  examples.02-custom-rules.main.main → SUMD.run_custom_rules_example
-  redsl.consciousness_loop.ConsciousnessLoop._inner_thought → SUMD.get_memory_stats
-  redsl.consciousness_loop.ConsciousnessLoop._profile_performance → SUMD.profile_refactor_cycle
-  redsl.consciousness_loop.ConsciousnessLoop._profile_performance → SUMD.generate_optimization_report
-  redsl.commands.cli_awareness._register_history_command → redsl.commands.cli_awareness._init_manager
-  redsl.commands.cli_awareness._register_history_command → redsl.commands.cli_awareness._echo_json
-  redsl.commands.cli_awareness._register_ecosystem_command → redsl.commands.cli_awareness._init_manager

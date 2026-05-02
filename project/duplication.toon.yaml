@@ -1,12 +1,12 @@
-# redup/duplication | 16 groups | 247f 36781L | 2026-05-01
+# redup/duplication | 16 groups | 248f 36991L | 2026-05-02
 
 SUMMARY:
-  files_scanned: 247
-  total_lines:   36781
+  files_scanned: 248
+  total_lines:   36991
   dup_groups:    16
   dup_fragments: 52
   saved_lines:   145
-  scan_ms:       9253
+  scan_ms:       9376
 
 DUPLICATES[16] (ranked by impact):
   [1907a33a0fa70761]   STRU  example_basic_analysis  L=3 N=9 saved=24 sim=1.00

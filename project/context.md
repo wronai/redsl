@@ -4,23 +4,23 @@
 
 - **Project**: /home/tom/github/semcod/redsl
 - **Primary Language**: python
-- **Languages**: python: 248, md: 73, yaml: 63, php: 33, json: 9
+- **Languages**: python: 248, md: 74, yaml: 64, php: 29, json: 9
 - **Analysis Mode**: static
-- **Total Functions**: 4289
-- **Total Classes**: 249
-- **Modules**: 447
-- **Entry Points**: 3460
+- **Total Functions**: 4586
+- **Total Classes**: 251
+- **Modules**: 445
+- **Entry Points**: 3750
 
 ## Architecture by Module
+
+### project.map.toon
+- **Functions**: 6992
+- **File**: `map.toon.yaml`
 
 ### SUMD
 - **Functions**: 997
 - **Classes**: 11
 - **File**: `SUMD.md`
-
-### project.map.toon
-- **Functions**: 973
-- **File**: `map.toon.yaml`
 
 ### project_test.map.toon
 - **Functions**: 797
@@ -75,15 +75,15 @@
 - **Classes**: 4
 - **File**: `__init__.py`
 
-### redsl.analyzers.parsers.project_parser
-- **Functions**: 18
-- **Classes**: 1
-- **File**: `project_parser.py`
-
 ### redsl.analyzers.quality_visitor
 - **Functions**: 18
 - **Classes**: 1
 - **File**: `quality_visitor.py`
+
+### redsl.analyzers.parsers.project_parser
+- **Functions**: 18
+- **Classes**: 1
+- **File**: `project_parser.py`
 
 ### test_refactor_bad.complex_code
 - **Functions**: 17
@@ -148,6 +148,13 @@ Example:
 > Run full pipeline from a migration spec YAML (source + target in one file).
 - **Calls**: deploy.command, click.argument, click.option, click.option, click.option, click.option, Console, console.print
 
+### redsl.execution.planfile_updater.add_decision_tasks
+> Convert refactor decisions into todo tasks in planfile.yaml.
+
+Used with ``--to-planfile`` flag — instead of (or in addition to) generating
+a markdown 
+- **Calls**: redsl.execution.planfile_updater._load_yaml_module, redsl.execution.planfile_updater._load_planfile_data, redsl.execution.planfile_updater._get_tasks, None.isoformat, str, str, float, str
+
 ### redsl.execution.cycle.run_cycle
 > Run a complete refactoring cycle driven by WorkflowConfig.
 
@@ -169,28 +176,28 @@ Returns:
 > Generate migration-plan.yaml from infra.yaml + desired state.
 - **Calls**: deploy.command, click.option, click.option, click.option, click.option, click.option, click.option, click.option
 
-### redsl.cli.events.events_show
-> Show decision events for a project from .redsl/history.jsonl.
-- **Calls**: events_group.command, click.argument, click.option, click.option, click.option, click.option, click.option, redsl.cli.events._load_events
-
 ### redsl.cli.config.config_apply
 > Apply a ConfigChangeProposal atomically.
 - **Calls**: config.command, click.option, click.argument, click.option, click.option, click.option, redsl.cli.config._resolve_store, yaml.safe_load
 
+### redsl.cli.events.events_show
+> Show decision events for a project from .redsl/history.jsonl.
+- **Calls**: events_group.command, click.argument, click.option, click.option, click.option, click.option, click.option, redsl.cli.events._load_events
+
 ### redsl.cli.refactor.refactor
 > Run refactoring on a project.
 - **Calls**: click.command, click.argument, click.option, click.option, click.option, click.option, click.option, click.option
-
-### redsl.llm.registry.sources.base.OpenRouterSource.fetch
-> Fetch models from OpenRouter with full pricing and capabilities.
-- **Calls**: self._http_get, self._fetch_programming_category, data.get, m.get, m.get, m.get, m.get, m.get
 
 ### redsl.cli.workflow.workflow_scan
 > Scan PROJECT_DIR and build a map of configuration files.
 
 By default prints the detected map.  Use --write to persist it into
 the project's redsl.yaml
-- **Calls**: workflow_group.command, click.argument, click.option, click.option, None.resolve, redsl.execution.project_scanner.scan_project, click.echo, click.echo
+- **Calls**: workflow_group.command, click.argument, click.option, click.option, None.resolve, project.map.toon.scan_project, click.echo, click.echo
+
+### redsl.llm.registry.sources.base.OpenRouterSource.fetch
+> Fetch models from OpenRouter with full pricing and capabilities.
+- **Calls**: self._http_get, self._fetch_programming_category, data.get, m.get, m.get, m.get, m.get, m.get
 
 ### redsl.cli.planfile.source_add
 > Add a GitHub source to planfile.yaml.
@@ -205,17 +212,20 @@ Examples:
 > Wygeneruj propozycję refaktoryzacji na podstawie decyzji DSL.
 - **Calls**: PROMPTS.get, SUMD.build_ecosystem_context, prompt_template.format, self.llm.call_json, response_data.get, self._resolve_confidence, RefactorProposal, logger.info
 
+### redsl.config_standard.applier.ConfigApplier.apply
+- **Calls**: self.store.lock, self.store.load, self._check_preconditions, self._backup, current.model_dump, datetime.now, updated.compute_fingerprint, self.store.validate
+
 ### redsl.commands.pyqual.run_pyqual_fix
 > Run automatic fixes based on pyqual analysis.
 - **Calls**: PyQualAnalyzer, pyqual_analyzer.analyze_project, dict, SUMD.build_pyqual_fix_decisions, docs.model-policy-quickstart.print, AgentConfig, Path, RefactorOrchestrator
 
-### redsl.cli.deploy.deploy_detect
-> Probe infrastructure on HOST and save infra.yaml.
-- **Calls**: deploy.command, click.argument, click.option, click.option, click.option, Console, console.print, redsl.bridges.redeploy_bridge.detect_and_save
-
 ### redsl.cli.config.config_diff
 > Diff current config against another config file or root.
 - **Calls**: config.command, click.option, click.option, click.option, redsl.cli.config._resolve_store, store.load, redsl.cli.config._load_document_from_path, store.diff_documents
+
+### redsl.cli.deploy.deploy_detect
+> Probe infrastructure on HOST and save infra.yaml.
+- **Calls**: deploy.command, click.argument, click.option, click.option, click.option, Console, console.print, project.map.toon.detect_and_save
 
 ### redsl.cli.llm_banner.print_llm_banner
 > Print the LLM config banner to stderr.
@@ -259,14 +269,6 @@ dry_run:
 Runs testql scenarios if available, plus pyqual quality gate.
 Returns success if all validators 
 - **Calls**: click.echo, redsl.commands.autonomy_pr.validator._run_testql_validation, results.append, redsl.commands.autonomy_pr.validator._run_quality_gate, results.append, redsl.commands.autonomy_pr.validator._run_project_tests, results.append, sum
-
-### redsl.cli.config.config_clone
-> Clone a config substrate locally.
-- **Calls**: config.command, click.option, click.option, click.option, click.option, click.option, redsl.cli.config._resolve_store, target_store.ensure_layout
-
-### examples.11-model-policy.main.main
-> Run all demos.
-- **Calls**: docs.model-policy-quickstart.print, docs.model-policy-quickstart.print, docs.model-policy-quickstart.print, docs.model-policy-quickstart.print, docs.model-policy-quickstart.print, examples.11-model-policy.main.demo_strict_mode, examples.11-model-policy.main.demo_safe_completion, docs.model-policy-quickstart.print
 
 ## Process Flows
 
@@ -317,15 +319,17 @@ events_summary [redsl.cli.events]
 deploy_run [redsl.cli.deploy]
 ```
 
-### Flow 9: run_cycle
+### Flow 9: add_decision_tasks
+```
+add_decision_tasks [redsl.execution.planfile_updater]
+  └─> _load_yaml_module
+  └─> _load_planfile_data
+```
+
+### Flow 10: run_cycle
 ```
 run_cycle [redsl.execution.cycle]
   └─> _new_cycle_report
-```
-
-### Flow 10: generate_map_toon
-```
-generate_map_toon [redsl.analyzers.sumd_bridge.SumdAnalyzer]
 ```
 
 ## Key Classes
@@ -342,16 +346,16 @@ This is a thin facade that delegates
 - **Methods**: 22
 - **Key Methods**: redsl.config_standard.store.ConfigStore.__init__, redsl.config_standard.store.ConfigStore.resolve, redsl.config_standard.store.ConfigStore.ensure_layout, redsl.config_standard.store.ConfigStore.create_default, redsl.config_standard.store.ConfigStore.apply_profile, redsl.config_standard.store.ConfigStore.load_document, redsl.config_standard.store.ConfigStore.load, redsl.config_standard.store.ConfigStore.load_any, redsl.config_standard.store.ConfigStore.save, redsl.config_standard.store.ConfigStore.write_schema_files
 
-### redsl.analyzers.parsers.project_parser.ProjectParser
-> Parser sekcji project_toon.
-- **Methods**: 18
-- **Key Methods**: redsl.analyzers.parsers.project_parser.ProjectParser.parse_project_toon, redsl.analyzers.parsers.project_parser.ProjectParser._parse_header_lines, redsl.analyzers.parsers.project_parser.ProjectParser._detect_section_change, redsl.analyzers.parsers.project_parser.ProjectParser._parse_section_line, redsl.analyzers.parsers.project_parser.ProjectParser._parse_health_line, redsl.analyzers.parsers.project_parser.ProjectParser._parse_alerts_line, redsl.analyzers.parsers.project_parser.ProjectParser._parse_hotspots_line, redsl.analyzers.parsers.project_parser.ProjectParser._parse_modules_line, redsl.analyzers.parsers.project_parser.ProjectParser._parse_layers_section_line, redsl.analyzers.parsers.project_parser.ProjectParser._parse_refactors_line
-
 ### redsl.analyzers.quality_visitor.CodeQualityVisitor
 > Detects common code quality issues in Python AST.
 - **Methods**: 18
 - **Key Methods**: redsl.analyzers.quality_visitor.CodeQualityVisitor.__init__, redsl.analyzers.quality_visitor.CodeQualityVisitor.visit_Import, redsl.analyzers.quality_visitor.CodeQualityVisitor.visit_ImportFrom, redsl.analyzers.quality_visitor.CodeQualityVisitor.visit_Name, redsl.analyzers.quality_visitor.CodeQualityVisitor.visit_Assign, redsl.analyzers.quality_visitor.CodeQualityVisitor.visit_Attribute, redsl.analyzers.quality_visitor.CodeQualityVisitor._get_root_name, redsl.analyzers.quality_visitor.CodeQualityVisitor.visit_Constant, redsl.analyzers.quality_visitor.CodeQualityVisitor._count_untyped_params, redsl.analyzers.quality_visitor.CodeQualityVisitor.visit_FunctionDef
 - **Inherits**: ast.NodeVisitor
+
+### redsl.analyzers.parsers.project_parser.ProjectParser
+> Parser sekcji project_toon.
+- **Methods**: 18
+- **Key Methods**: redsl.analyzers.parsers.project_parser.ProjectParser.parse_project_toon, redsl.analyzers.parsers.project_parser.ProjectParser._parse_header_lines, redsl.analyzers.parsers.project_parser.ProjectParser._detect_section_change, redsl.analyzers.parsers.project_parser.ProjectParser._parse_section_line, redsl.analyzers.parsers.project_parser.ProjectParser._parse_health_line, redsl.analyzers.parsers.project_parser.ProjectParser._parse_alerts_line, redsl.analyzers.parsers.project_parser.ProjectParser._parse_hotspots_line, redsl.analyzers.parsers.project_parser.ProjectParser._parse_modules_line, redsl.analyzers.parsers.project_parser.ProjectParser._parse_layers_section_line, redsl.analyzers.parsers.project_parser.ProjectParser._parse_refactors_line
 
 ### redsl.autonomy.scheduler.Scheduler
 > Periodic quality-improvement loop.
@@ -452,22 +456,6 @@ Key functions that process and transform data:
 
 ### SUMR._format_event_details
 
-### docs.nfo-automatyczne-logowanie-funkcji.process_data
-
-### examples.03-full-pipeline.advanced.process_order
-
-### examples.03-full-pipeline.default.process_order
-
-### examples.09-pr-bot.advanced.validate
-
-### examples.07-pyqual.advanced.process
-
-### examples.07-pyqual.advanced.format
-
-### examples.07-pyqual.default.process
-
-### examples.07-pyqual.default.format
-
 ### SUMD.process_order
 
 ### SUMD._validate_order_and_user
@@ -497,6 +485,22 @@ Key functions that process and transform data:
 ### SUMD._process_project
 
 ### SUMD._format_project_status
+
+### SUMD._parse_worktree_changes
+
+### SUMD._step_validate
+
+### SUMD._process_batch_project
+
+### SUMD._validate_config
+
+### SUMD._process_gate_result
+
+### SUMD.process_project
+
+### SUMD._format_summary_verdicts
+
+### SUMD._format_summary_config_and_gates
 
 ## Behavioral Patterns
 
@@ -555,20 +559,20 @@ Functions exposed as public API (no underscore prefix):
 - `redsl.analyzers.sumd_bridge.SumdAnalyzer.generate_map_toon` - 32 calls
 - `redsl.examples.basic_analysis.run_basic_analysis_example` - 31 calls
 - `redsl.cli.deploy.deploy_plan` - 31 calls
-- `redsl.cli.events.events_show` - 30 calls
 - `redsl.cli.config.config_apply` - 30 calls
+- `redsl.cli.events.events_show` - 30 calls
 - `redsl.cli.refactor.refactor` - 29 calls
-- `redsl.llm.registry.sources.base.OpenRouterSource.fetch` - 29 calls
 - `redsl.cli.workflow.workflow_scan` - 29 calls
+- `redsl.llm.registry.sources.base.OpenRouterSource.fetch` - 29 calls
 - `redsl.cli.planfile.source_add` - 28 calls
 - `redsl.refactors.engine.RefactorEngine.generate_proposal` - 28 calls
 - `redsl.examples.full_pipeline.run_full_pipeline_example` - 27 calls
-- `redsl.examples.api_integration.run_api_integration_example` - 26 calls
 - `redsl.config_standard.applier.ConfigApplier.apply` - 26 calls
+- `redsl.examples.api_integration.run_api_integration_example` - 26 calls
 - `examples.11-model-policy.main.demo_strict_mode` - 25 calls
 - `redsl.commands.pyqual.run_pyqual_fix` - 24 calls
-- `redsl.cli.deploy.deploy_detect` - 24 calls
 - `redsl.cli.config.config_diff` - 24 calls
+- `redsl.cli.deploy.deploy_detect` - 24 calls
 - `redsl.cli.llm_banner.print_llm_banner` - 23 calls
 - `redsl.cli.config.config_init` - 23 calls
 - `redsl.cli.config.config_history` - 23 calls
@@ -576,8 +580,8 @@ Functions exposed as public API (no underscore prefix):
 - `redsl.cli.config.config_clone` - 21 calls
 - `examples.11-model-policy.main.main` - 20 calls
 - `redsl.commands.sumr_planfile.parsers.parse_sumr` - 20 calls
-- `redsl.cli.deploy.deploy_apply` - 20 calls
 - `redsl.cli.config.config_rollback` - 20 calls
+- `redsl.cli.deploy.deploy_apply` - 20 calls
 - `redsl.cli.model_policy.check_model` - 20 calls
 
 ## System Interactions
