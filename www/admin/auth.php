@@ -24,8 +24,26 @@ if (file_exists($envPath)) {
 $adminUser = getenv('ADMIN_USER') ?: 'admin';
 $adminPassHash = getenv('ADMIN_PASS_HASH') ?: '';
 
+// Try to load Logger for auth audit trail
+$loggerFile = __DIR__ . '/../lib/Logger.php';
+$loggerAvailable = is_readable($loggerFile);
+if ($loggerAvailable) {
+    require_once $loggerFile;
+    Logger::setLogDir(__DIR__ . '/../var/logs');
+}
+function _auth_log(string $ctx, string $msg, array $data = []): void {
+    if (class_exists('Logger', false)) {
+        Logger::info('admin_auth', "[$ctx] $msg", $data);
+    } else {
+        error_log("[admin_auth] [$ctx] $msg " . json_encode($data));
+    }
+}
+
+_auth_log('env', 'Admin env loaded', ['user' => $adminUser, 'hash_present' => !empty($adminPassHash)]);
+
 // If no password hash configured, show setup instructions
 if (empty($adminPassHash)) {
+    _auth_log('config', 'ADMIN_PASS_HASH missing — returning 500', ['env_path' => $envPath]);
     http_response_code(500);
     echo '<h1>Admin Not Configured</h1>';
     echo '<p>Set ADMIN_USER and ADMIN_PASS_HASH in .env</p>';
@@ -40,6 +58,13 @@ $providedPass = $_SERVER['PHP_AUTH_PW'] ?? '';
 $authenticated = false;
 if ($providedUser === $adminUser && password_verify($providedPass, $adminPassHash)) {
     $authenticated = true;
+    _auth_log('auth', 'Login successful', ['user' => $providedUser, 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'cli']);
+} else {
+    _auth_log('auth', 'Login failed', [
+        'user' => $providedUser,
+        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'cli',
+        'user_match' => $providedUser === $adminUser,
+    ]);
 }
 
 if (!$authenticated) {
