@@ -171,7 +171,7 @@ class ToonAnalyzer:
         result.avg_cc = health.get("CC\u0304", 0.0)
         result.critical_count = health.get("critical", 0)
         result.alerts = project_data.get("alerts", [])
-
+        logger.info("ToonAnalyzer: alerts from project_data=%d, critical_count=%d", len(result.alerts), result.critical_count)
         result._header_files = health.get("total_files", 0)  # type: ignore[attr-defined]
         result._header_lines = health.get("total_lines", 0)  # type: ignore[attr-defined]
 

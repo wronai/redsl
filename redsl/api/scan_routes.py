@@ -45,6 +45,8 @@ def _clone_repo(repo_url: str, branch: str = "main", depth: int = 1) -> Path | N
             logger.error("Git not available: %s", git_check.stderr.decode()[:200])
             return None
         
+        logger.info("Git version: %s", git_check.stdout.decode().strip())
+        
         cmd = [
             "git", "clone",
             "--depth", str(depth),
@@ -61,6 +63,7 @@ def _clone_repo(repo_url: str, branch: str = "main", depth: int = 1) -> Path | N
             text=True,
             timeout=300  # 5 minutes for larger repos
         )
+        logger.info("Clone result: rc=%d, stdout=%s, stderr=%s", result.returncode, result.stdout[:200], result.stderr[:500])
         if result.returncode == 0:
             logger.info("Clone successful: %s", temp_dir)
             return Path(temp_dir)
@@ -226,6 +229,24 @@ def _register_scan_routes(app: Any) -> None:
                 'critical_count': getattr(analysis, 'critical_count', 0),
                 'alerts': analysis.alerts if analysis.alerts else [],
             }
+            
+            # Log alert data for debugging
+            logger.info("Analysis completed: files=%d, lines=%d, cc=%.1f, critical=%d, alerts_count=%d", 
+                       analysis_dict['total_files'], analysis_dict['total_lines'], 
+                       analysis_dict['avg_cc'], analysis_dict['critical_count'], 
+                       len(analysis_dict['alerts']))
+            if analysis_dict['alerts']:
+                logger.info("First 2 alerts from analyzer: %s", analysis_dict['alerts'][:2])
+            else:
+                logger.warning("No alerts returned from analyzer")
+            
+            # Check if alerts are properly structured
+            if analysis_dict['alerts']:
+                first_alert = analysis_dict['alerts'][0]
+                logger.info("First alert structure: keys=%s, has_type=%s, has_name=%s", 
+                           list(first_alert.keys()) if isinstance(first_alert, dict) else 'not_dict',
+                           'type' in first_alert if isinstance(first_alert, dict) else False,
+                           'name' in first_alert if isinstance(first_alert, dict) else False)
             
             top_issues = _extract_top_issues(analysis_dict)
             summary = _generate_summary(analysis_dict)

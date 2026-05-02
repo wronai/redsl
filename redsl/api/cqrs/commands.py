@@ -142,15 +142,17 @@ class ScanRemoteHandler(CommandHandler):
             analyzer = CodeAnalyzer()
             analysis = await asyncio.to_thread(analyzer.analyze_project, repo_path)
             
+            logger.info("ScanRemoteHandler: Analysis completed, alerts_count=%d", len(analysis.alerts))
+            
             # Convert alerts to dicts
             alerts_list = [
                 {
-                    'type': getattr(a, 'type', 'unknown'),
-                    'name': getattr(a, 'name', 'unknown'),
-                    'severity': getattr(a, 'severity', 1),
-                    'value': getattr(a, 'value', 0),
-                    'limit': getattr(a, 'limit', 10),
-                    'message': getattr(a, 'message', ''),
+                    'type': a.get('type', 'unknown') if isinstance(a, dict) else getattr(a, 'type', 'unknown'),
+                    'name': a.get('name', 'unknown') if isinstance(a, dict) else getattr(a, 'name', 'unknown'),
+                    'severity': a.get('severity', 1) if isinstance(a, dict) else getattr(a, 'severity', 1),
+                    'value': a.get('value', 0) if isinstance(a, dict) else getattr(a, 'value', 0),
+                    'limit': a.get('limit', 10) if isinstance(a, dict) else getattr(a, 'limit', 10),
+                    'message': a.get('message', '') if isinstance(a, dict) else getattr(a, 'message', ''),
                 }
                 for a in (analysis.alerts or [])
             ]
@@ -177,6 +179,7 @@ class ScanRemoteHandler(CommandHandler):
             )
             await event_store.append(progress_complete)
             if command.notify_ws:
+                logger.info("ScanRemoteHandler: Broadcasting complete progress event")
                 await ws_manager.broadcast_event(progress_complete.to_dict())
             
             # Emit completed event
@@ -193,6 +196,7 @@ class ScanRemoteHandler(CommandHandler):
             )
             await event_store.append(completed)
             if command.notify_ws:
+                logger.info("ScanRemoteHandler: Broadcasting ScanCompleted event with %d alerts", len(alerts_list))
                 await ws_manager.broadcast_event(completed.to_dict())
             
             return {

@@ -464,202 +464,8 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReDSL Marketing Hub - Cold Email & LinkedIn Outreach</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: #f5f7fa;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px 20px;
-            text-align: center;
-            margin-bottom: 30px;
-            border-radius: 12px;
-        }
-        header h1 { font-size: 2.5em; margin-bottom: 10px; }
-        header p { font-size: 1.2em; opacity: 0.9; }
-        
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .card h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #555;
-        }
-        input[type="text"], input[type="url"], select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        input[type="text"]:focus, input[type="url"]:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
-        .metric {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .metric-value {
-            font-size: 2em;
-            font-weight: bold;
-            color: #667eea;
-        }
-        .metric-label {
-            color: #666;
-            margin-top: 5px;
-        }
-        
-        .template-card {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 0 8px 8px 0;
-        }
-        .template-card h4 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        .template-subject {
-            background: #e3f2fd;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-        .template-body {
-            background: white;
-            padding: 15px;
-            border-radius: 4px;
-            white-space: pre-wrap;
-            font-family: monospace;
-            font-size: 14px;
-            border: 1px solid #e0e0e0;
-        }
-        
-        .copy-btn {
-            background: #4caf50;
-            padding: 8px 20px;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        .copy-btn:hover {
-            box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
-        }
-        
-        .error {
-            background: #ffebee;
-            color: #c62828;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .tab {
-            background: #e0e0e0;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .tab.active {
-            background: #667eea;
-            color: white;
-        }
-        .tab:hover:not(.active) {
-            background: #d0d0d0;
-        }
-        
-        .alerts-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .alert-item {
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .alert-critical { background: #ffebee; border-left: 3px solid #c62828; }
-        .alert-warning { background: #fff3e0; border-left: 3px solid #ef6c00; }
-        .alert-info { background: #e3f2fd; border-left: 3px solid #1976d2; }
-        
-        .linkedin-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            white-space: pre-wrap;
-            line-height: 1.8;
-        }
-        
-        .hidden { display: none; }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
 </head>
 <body>
     <div class="container">
@@ -823,74 +629,8 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                 </div>
             </div>
             
-            <script>
-                const asyncAggregateId = '<?= htmlspecialchars($result['aggregate_id']) ?>';
-                const asyncRepoUrl = '<?= htmlspecialchars($result['repo']) ?>';
-                let pollingInterval = null;
-                
-                function updateAsyncProgressStep(stepId, status, message) {
-                    const step = document.getElementById(stepId);
-                    if (!step) return;
-                    
-                    step.classList.remove('active', 'completed', 'error');
-                    step.style.opacity = '1';
-                    
-                    if (status === 'active') {
-                        step.classList.add('active');
-                    } else if (status === 'completed') {
-                        step.classList.add('completed');
-                    } else if (status === 'error') {
-                        step.classList.add('error');
-                    }
-                    
-                    const statusDiv = step.querySelector('.step-status');
-                    if (statusDiv) {
-                        statusDiv.textContent = message || status;
-                    }
-                }
-                
-                async function pollScanStatus() {
-                    const statusUrl = 'http://localhost:8002<?= htmlspecialchars($result['check_status_url']) ?>';
-                    try {
-                        const response = await fetch(statusUrl);
-                        const data = await response.json();
-                        
-                        const statusDiv = document.getElementById('async-status-message');
-                        statusDiv.textContent = `Status: ${data.status} (${data.progress_percent || 0}%) - ${data.phase || ''}`;
-                        
-                        // Update progress based on status
-                        if (data.status === 'in_progress') {
-                            const phase = data.phase || '';
-                            const percent = data.progress_percent || 0;
-                            
-                            if (phase === 'clone') {
-                                updateAsyncProgressStep('async-step-clone', 'active', `Klonowanie (${percent}%)`);
-                            } else if (phase === 'analyze') {
-                                updateAsyncProgressStep('async-step-clone', 'completed', 'Zakonczone');
-                                updateAsyncProgressStep('async-step-analyze', 'active', `Analiza (${percent}%)`);
-                            } else if (phase === 'complete') {
-                                updateAsyncProgressStep('async-step-clone', 'completed', 'Zakonczone');
-                                updateAsyncProgressStep('async-step-analyze', 'completed', 'Zakonczone');
-                                updateAsyncProgressStep('async-step-metrics', 'completed', 'Zakonczone');
-                                updateAsyncProgressStep('async-step-templates', 'active', `Generowanie (${percent}%)`);
-                            }
-                        } else if (data.status === 'completed') {
-                            updateAsyncProgressStep('async-step-templates', 'completed', 'Zakonczone');
-                            statusDiv.textContent = '✅ Skan zakonczony! Odswiez strone aby zobaczyc wyniki.';
-                            clearInterval(pollingInterval);
-                        } else if (data.status === 'failed') {
-                            updateAsyncProgressStep('async-step-clone', 'error', 'Blad: ' + (data.error?.message || 'Nieznany blad'));
-                            clearInterval(pollingInterval);
-                        }
-                    } catch (error) {
-                        console.error('Polling error:', error);
-                    }
-                }
-                
-                // Start polling automatically
-                pollingInterval = setInterval(pollScanStatus, 2000);
-                pollScanStatus(); // Initial check
-            </script>
+            <script src="async-polling.js"></script>
+
             
         <?php elseif ($result): ?>
             <div class="success">
@@ -901,6 +641,7 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
             <!-- WebSocket Real-time Status (CQRS Event Sourcing) -->
             <div class="card" id="ws-status-card" style="display: none;">
                 <h2>📡 Postep Skanowania - Czas rzeczywisty</h2>
+                <div id="ws-status"></div>
                 
                 <!-- Progress Steps -->
                 <div id="progress-steps" style="margin: 20px 0;">
@@ -992,7 +733,12 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                 
                 function updateProgressStep(stepId, status, message) {
                     const step = document.getElementById(stepId);
-                    if (!step) return;
+                    if (!step) {
+                        console.error('[Progress] Step element not found:', stepId);
+                        return;
+                    }
+                    
+                    console.log('[Progress] Updating step:', stepId, 'status:', status, 'message:', message);
                     
                     step.classList.remove('active', 'completed', 'error');
                     step.style.opacity = '1';
@@ -1008,6 +754,104 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                     const statusDiv = step.querySelector('.step-status');
                     if (statusDiv) {
                         statusDiv.textContent = message || status;
+                    } else {
+                        console.error('[Progress] Status div not found for step:', stepId);
+                    }
+                }
+                
+                let pollingInterval = null;
+                
+                async function startPolling() {
+                    const repoUrl = '<?= htmlspecialchars($repoUrl) ?>';
+                    const statusUrl = `http://localhost:8002/cqrs/query/scan/status?repo_url=${encodeURIComponent(repoUrl)}`;
+                    
+                    console.log('[Polling] Starting polling for:', repoUrl);
+                    
+                    if (pollingInterval) {
+                        clearInterval(pollingInterval);
+                    }
+                    
+                    pollingInterval = setInterval(async () => {
+                        try {
+                            console.log('[Polling] Checking status...');
+                            const response = await fetch(statusUrl);
+                            const data = await response.json();
+                            
+                            console.log('[Polling] Status data:', data);
+                            
+                            if (data.status === 'in_progress') {
+                                const phase = data.phase || '';
+                                const percent = data.progress_percent || 0;
+                                const message = data.message || '';
+                                
+                                console.log('[Polling] Phase:', phase, 'Percent:', percent);
+                                
+                                if (phase === 'clone') {
+                                    updateProgressStep('step-clone', 'active', message + ` (${percent}%)`);
+                                } else if (phase === 'analyze') {
+                                    updateProgressStep('step-clone', 'completed', 'Zakonczone');
+                                    updateProgressStep('step-analyze', 'active', message + ` (${percent}%)`);
+                                } else if (phase === 'complete') {
+                                    updateProgressStep('step-clone', 'completed', 'Zakonczone');
+                                    updateProgressStep('step-analyze', 'completed', 'Zakonczone');
+                                    updateProgressStep('step-metrics', 'completed', 'Zakonczone');
+                                    updateProgressStep('step-templates', 'active', message + ` (${percent}%)`);
+                                }
+                            } else if (data.status === 'completed') {
+                                console.log('[Polling] Scan completed');
+                                updateProgressStep('step-clone', 'completed', 'Zakonczone');
+                                updateProgressStep('step-analyze', 'completed', 'Zakonczone');
+                                updateProgressStep('step-metrics', 'completed', 'Zakonczone');
+                                updateProgressStep('step-templates', 'completed', 'Zakonczone');
+                                clearInterval(pollingInterval);
+                            } else if (data.status === 'failed') {
+                                console.error('[Polling] Scan failed:', data.error);
+                                updateProgressStep('step-clone', 'error', 'Blad: ' + (data.error?.message || 'Nieznany blad'));
+                                clearInterval(pollingInterval);
+                            }
+                        } catch (error) {
+                            console.error('[Polling] Error:', error);
+                        }
+                    }, 2000);
+                    
+                    // Initial check
+                    pollScanStatus();
+                }
+                
+                async function pollScanStatus() {
+                    const repoUrl = '<?= htmlspecialchars($repoUrl) ?>';
+                    const statusUrl = `http://localhost:8002/cqrs/query/scan/status?repo_url=${encodeURIComponent(repoUrl)}`;
+                    
+                    try {
+                        console.log('[Polling] Initial status check');
+                        const response = await fetch(statusUrl);
+                        const data = await response.json();
+                        console.log('[Polling] Initial status:', data);
+                        
+                        if (data.status === 'in_progress') {
+                            const phase = data.phase || '';
+                            const percent = data.progress_percent || 0;
+                            const message = data.message || '';
+                            
+                            if (phase === 'clone') {
+                                updateProgressStep('step-clone', 'active', message + ` (${percent}%)`);
+                            } else if (phase === 'analyze') {
+                                updateProgressStep('step-clone', 'completed', 'Zakonczone');
+                                updateProgressStep('step-analyze', 'active', message + ` (${percent}%)`);
+                            } else if (phase === 'complete') {
+                                updateProgressStep('step-clone', 'completed', 'Zakonczone');
+                                updateProgressStep('step-analyze', 'completed', 'Zakonczone');
+                                updateProgressStep('step-metrics', 'completed', 'Zakonczone');
+                                updateProgressStep('step-templates', 'active', message + ` (${percent}%)`);
+                            }
+                        } else if (data.status === 'completed') {
+                            updateProgressStep('step-clone', 'completed', 'Zakonczone');
+                            updateProgressStep('step-analyze', 'completed', 'Zakonczone');
+                            updateProgressStep('step-metrics', 'completed', 'Zakonczone');
+                            updateProgressStep('step-templates', 'completed', 'Zakonczone');
+                        }
+                    } catch (error) {
+                        console.error('[Polling] Initial check error:', error);
                     }
                 }
                 
@@ -1043,50 +887,71 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                         
                         // Initialize progress
                         updateProgressStep('step-clone', 'active', 'Rozpoczynanie...');
+                        
+                        // Start polling as fallback
+                        startPolling();
                     };
                     
                     ws.onmessage = function(event) {
+                        console.log('[WebSocket] Message received, raw data:', event.data);
                         const data = JSON.parse(event.data);
                         const eventsDiv = document.getElementById('ws-events');
+                        
+                        console.log('[WebSocket] Parsed data type:', data.type);
                         
                         if (data.type === 'event') {
                             const evt = data.data;
                             const payload = evt.payload || {};
+                            console.log('[WebSocket] Event type:', evt.event_type);
+                            console.log('[WebSocket] Event payload:', payload);
                             
                             // Update progress based on event type
                             if (evt.event_type === 'ScanStarted') {
+                                console.log('[WebSocket] ScanStarted event - updating clone step');
                                 updateProgressStep('step-clone', 'active', 'Klonowanie z ' + (payload.repo_url || 'repozytorium'));
                             } else if (evt.event_type === 'ScanProgress') {
                                 const phase = payload.phase;
                                 const percent = payload.progress_percent || 0;
                                 const message = payload.message || '';
+                                console.log('[WebSocket] ScanProgress event - phase:', phase, 'percent:', percent, 'message:', message);
                                 
                                 if (phase === 'clone') {
                                     updateProgressStep('step-clone', 'active', message + ` (${percent}%)`);
                                 } else if (phase === 'analyze') {
+                                    console.log('[WebSocket] Completing clone step, starting analyze');
                                     updateProgressStep('step-clone', 'completed', 'Zakonczone');
                                     updateProgressStep('step-analyze', 'active', message + ` (${percent}%)`);
                                 } else if (phase === 'complete') {
+                                    console.log('[WebSocket] Completing analyze and metrics, starting templates');
                                     updateProgressStep('step-analyze', 'completed', 'Zakonczone');
                                     updateProgressStep('step-metrics', 'completed', 'Zakonczone');
                                     updateProgressStep('step-templates', 'active', message + ` (${percent}%)`);
                                 }
                             } else if (evt.event_type === 'ScanCompleted') {
+                                console.log('[WebSocket] ScanCompleted event - all steps completed');
                                 updateProgressStep('step-templates', 'completed', 'Zakonczone');
                             } else if (evt.event_type === 'ScanFailed') {
+                                console.error('[WebSocket] ScanFailed event:', payload.error_message);
                                 updateProgressStep('step-clone', 'error', 'Blad: ' + (payload.error_message || 'Nieznany blad'));
                             }
                             
                             // Add to debug events
-                            const line = document.createElement('div');
-                            line.style.marginBottom = '4px';
-                            line.innerHTML = `<span style="color: #666;">${new Date().toLocaleTimeString()}</span> <strong>${evt.event_type}</strong>: ${JSON.stringify(payload).substring(0, 100)}`;
-                            eventsDiv.insertBefore(line, eventsDiv.firstChild);
+                            if (eventsDiv) {
+                                const line = document.createElement('div');
+                                line.style.marginBottom = '4px';
+                                line.innerHTML = `<span style="color: #666;">${new Date().toLocaleTimeString()}</span> <strong>${evt.event_type}</strong>: ${JSON.stringify(payload).substring(0, 100)}`;
+                                eventsDiv.insertBefore(line, eventsDiv.firstChild);
+                            }
                         } else if (data.type === 'connection.established') {
+                            console.log('[WebSocket] Connection established');
                             const line = document.createElement('div');
                             line.style.color = 'green';
                             line.textContent = '>>> Polaczono z CQRS Event Store';
-                            eventsDiv.insertBefore(line, eventsDiv.firstChild);
+                            if (eventsDiv) {
+                                eventsDiv.insertBefore(line, eventsDiv.firstChild);
+                            }
+                        } else {
+                            console.log('[WebSocket] Unknown message type:', data.type);
                         }
                     };
                     
@@ -1259,64 +1124,5 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
         <?php endif; ?>
     </div>
     
-    <script>
-        function showTab(tabName) {
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(el => {
-                el.classList.add('hidden');
-            });
-            // Show selected
-            document.getElementById(tabName).classList.remove('hidden');
-            
-            // Update tab styles
-            document.querySelectorAll('.tab').forEach(el => {
-                el.classList.remove('active');
-            });
-            event.target.classList.add('active');
-        }
-        
-        function copyToClipboard(elementId) {
-            const text = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                const btn = event.target;
-                const originalText = btn.innerText;
-                btn.innerText = 'OK Skopiowano!';
-                btn.style.background = '#2196f3';
-                setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.style.background = '#4caf50';
-                }, 2000);
-            });
-        }
-        
-        function downloadMarkdown() {
-            // Get current form data and add format=md parameter
-            const form = document.querySelector('form');
-            const formData = new FormData(form);
-            formData.append('format', 'md');
-            
-            // Create form submission with format parameter
-            const url = new URL(window.location.href);
-            url.searchParams.set('format', 'md');
-            
-            // Submit form to get markdown
-            fetch(url.toString(), {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.blob())
-            .then(blob => {
-                const downloadUrl = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = downloadUrl;
-                a.download = 'redsl_outreach_report.md';
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                window.URL.revokeObjectURL(downloadUrl);
-            })
-            .catch(error => console.error('Download error:', error));
-        }
-    </script>
 </body>
 </html>

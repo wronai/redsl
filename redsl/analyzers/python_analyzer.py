@@ -86,6 +86,10 @@ class PythonAnalyzer:
         result.total_lines = sum(m.module_lines for m in result.metrics if not m.function_name)
         result.critical_count = sum(1 for a in result.alerts if a.get("severity", 0) >= 2)
 
+        logger.info(f"PythonAnalyzer: alerts_count={len(result.alerts)}, critical_count={result.critical_count}")
+        if result.alerts:
+            logger.info(f"PythonAnalyzer: sample_alerts={result.alerts[:2]}")
+
         # T008: Enhance metrics with radon CC if available
         enhance_metrics_with_radon(result.metrics, project_dir)
 
@@ -197,7 +201,9 @@ class PythonAnalyzer:
                                 "severity": 3 if cc > 20 else 2,
                                 "value": cc,
                                 "limit": 10,
+                                "message": f"Funkcja {item.name} ma CC={cc} (limit: 10)"
                             })
+                            logger.debug(f"Added alert for function {item.name}: cc={cc}")
             elif isinstance(top, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 func_count += 1
                 cc = ast_cyclomatic_complexity(top)
@@ -220,7 +226,9 @@ class PythonAnalyzer:
                         "severity": 3 if cc > 20 else 2,
                         "value": cc,
                         "limit": 10,
+                        "message": f"Funkcja {top.name} ma CC={cc} (limit: 10)"
                     })
+                    logger.debug(f"Added alert for function {top.name}: cc={cc}")
 
         return func_count, class_count, max_cc, max_depth, high_cc_funcs, alerts
 
