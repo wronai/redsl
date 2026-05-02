@@ -155,7 +155,7 @@ echo ""
 echo "=== Connection Checks ==="
 check_http "$BASE_URL/" "200" "Landing page loads"
 # Admin returns 500 when not configured (safety), 401 when auth required
-check_http "$BASE_URL/admin/" "500" "Admin safety (500=unconfigured, 401=needs auth)"
+check_http "$BASE_URL/admin/" "401" "Admin auth required (401=needs auth, 500=unconfigured)"
 
 echo ""
 echo "=== Content Checks ==="

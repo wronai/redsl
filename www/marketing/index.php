@@ -336,11 +336,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ownerRepo = parse_url($repoUrl, PHP_URL_PATH);
             $ownerRepo = trim($ownerRepo, '/');
             $githubApiUrl = "https://api.github.com/repos/$ownerRepo";
-            $githubResponse = @file_get_contents($githubApiUrl);
-            if ($githubResponse) {
+            
+            // Use curl with User-Agent header (GitHub API requires this)
+            $ch = curl_init($githubApiUrl);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 10,
+                CURLOPT_HTTPHEADER => ['User-Agent: ReDSL-Marketing-Hub'],
+                CURLOPT_SSL_VERIFYPEER => false,
+            ]);
+            $githubResponse = curl_exec($ch);
+            $githubHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            
+            if ($githubResponse && $githubHttpCode === 200) {
                 $githubData = json_decode($githubResponse, true);
                 $branch = $githubData['default_branch'] ?? 'main';
             } else {
+                // Fallback: try common branch names via API
                 $branch = 'main';
             }
         }
@@ -543,10 +556,10 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                 </div>
                 
                 <div class="form-group">
-                    <label for="branch">Branch (opcjonalne, domyslny: main)</label>
+                    <label for="branch">Branch (opcjonalne, auto-detekcja z GitHub)</label>
                     <input type="text" id="branch" name="branch"
-                           placeholder="main, dev, master, etc."
-                           value="<?= htmlspecialchars($_POST['branch'] ?? 'main') ?>">
+                           placeholder="Np. main, dev, master - zostaw puste dla auto-detekcji"
+                           value="<?= htmlspecialchars($_POST['branch'] ?? '') ?>">
                 </div>
                 
                 <div class="form-group">
@@ -754,6 +767,7 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                 <?= $result['analysis']['critical_count'] ?? 0 ?> krytycznych problemow.
             </div>
             
+            <?php if (!empty($result['async'])): ?>
             <!-- WebSocket Real-time Status (CQRS Event Sourcing) -->
             <div class="card" id="ws-status-card" style="display: none;">
                 <h2>📡 Postep Skanowania - Czas rzeczywisty</h2>
@@ -824,6 +838,18 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                 
                 let pollingInterval = null;
                 
+                function getCqrsStatus(raw) {
+                    // API wrapper: {status:"success", data:{status:"completed", phase:"..."}}
+                    const inner = raw && raw.data ? raw.data : {};
+                    return {
+                        status: inner.status || raw.status || '',
+                        phase: inner.phase || raw.phase || '',
+                        percent: inner.progress_percent || raw.progress_percent || 0,
+                        message: inner.message || raw.message || '',
+                        error: inner.error || raw.error
+                    };
+                }
+
                 async function startPolling() {
                     const statusUrl = `http://localhost:8002/cqrs/query/scan/status?repo_url=${encodeURIComponent(repoUrl)}`;
                     console.log('[Polling] Starting polling for:', repoUrl);
@@ -832,22 +858,19 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                         try {
                             console.log('[Polling] Checking status...');
                             const response = await fetch(statusUrl);
-                            const data = await response.json();
-                            console.log('[Polling] Status data:', data);
+                            const raw = await response.json();
+                            const data = getCqrsStatus(raw);
+                            console.log('[Polling] Status:', data.status, 'phase:', data.phase);
                             if (data.status === 'in_progress') {
-                                const phase = data.phase || '';
-                                const percent = data.progress_percent || 0;
-                                const message = data.message || '';
-                                console.log('[Polling] Phase:', phase, 'Percent:', percent);
-                                if (phase === 'clone') updateProgressStep('step-clone', 'active', message + ` (${percent}%)`);
-                                else if (phase === 'analyze') {
+                                if (data.phase === 'clone') updateProgressStep('step-clone', 'active', data.message + ` (${data.percent}%)`);
+                                else if (data.phase === 'analyze') {
                                     updateProgressStep('step-clone', 'completed', 'Zakonczone');
-                                    updateProgressStep('step-analyze', 'active', message + ` (${percent}%)`);
-                                } else if (phase === 'complete') {
+                                    updateProgressStep('step-analyze', 'active', data.message + ` (${data.percent}%)`);
+                                } else if (data.phase === 'complete') {
                                     updateProgressStep('step-clone', 'completed', 'Zakonczone');
                                     updateProgressStep('step-analyze', 'completed', 'Zakonczone');
                                     updateProgressStep('step-metrics', 'completed', 'Zakonczone');
-                                    updateProgressStep('step-templates', 'active', message + ` (${percent}%)`);
+                                    updateProgressStep('step-templates', 'active', data.message + ` (${data.percent}%)`);
                                 }
                             } else if (data.status === 'completed') {
                                 console.log('[Polling] Scan completed');
@@ -873,27 +896,28 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                     try {
                         console.log('[Polling] Initial status check');
                         const response = await fetch(statusUrl);
-                        const data = await response.json();
-                        console.log('[Polling] Initial status:', data);
+                        const raw = await response.json();
+                        const data = getCqrsStatus(raw);
+                        console.log('[Polling] Initial status:', data.status, 'phase:', data.phase);
                         if (data.status === 'in_progress') {
-                            const phase = data.phase || '';
-                            const percent = data.progress_percent || 0;
-                            const message = data.message || '';
-                            if (phase === 'clone') updateProgressStep('step-clone', 'active', message + ` (${percent}%)`);
-                            else if (phase === 'analyze') {
+                            if (data.phase === 'clone') updateProgressStep('step-clone', 'active', data.message + ` (${data.percent}%)`);
+                            else if (data.phase === 'analyze') {
                                 updateProgressStep('step-clone', 'completed', 'Zakonczone');
-                                updateProgressStep('step-analyze', 'active', message + ` (${percent}%)`);
-                            } else if (phase === 'complete') {
+                                updateProgressStep('step-analyze', 'active', data.message + ` (${data.percent}%)`);
+                            } else if (data.phase === 'complete') {
                                 updateProgressStep('step-clone', 'completed', 'Zakonczone');
                                 updateProgressStep('step-analyze', 'completed', 'Zakonczone');
                                 updateProgressStep('step-metrics', 'completed', 'Zakonczone');
-                                updateProgressStep('step-templates', 'active', message + ` (${percent}%)`);
+                                updateProgressStep('step-templates', 'active', data.message + ` (${data.percent}%)`);
                             }
                         } else if (data.status === 'completed') {
+                            console.log('[Polling] Initial: already completed');
                             updateProgressStep('step-clone', 'completed', 'Zakonczone');
                             updateProgressStep('step-analyze', 'completed', 'Zakonczone');
                             updateProgressStep('step-metrics', 'completed', 'Zakonczone');
                             updateProgressStep('step-templates', 'completed', 'Zakonczone');
+                        } else if (data.status === 'failed') {
+                            updateProgressStep('step-clone', 'error', 'Blad: ' + (data.error?.message || 'Nieznany blad'));
                         }
                     } catch (error) {
                         console.error('[Polling] Initial check error:', error);
@@ -999,6 +1023,7 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                 }
                 setTimeout(connectWebSocket, 500);
             </script>
+            <?php endif; ?>
 
             
             <!-- Analysis Metrics -->

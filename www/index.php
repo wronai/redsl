@@ -7,64 +7,15 @@ session_start();
 //  Single-file PHP router: landing, contact form, GitHub OAuth
 // =============================================================
 
-/** Simple .env loader (no composer dependency) */
-function load_env(string $path): void {
-    if (!is_readable($path)) return;
-    foreach (file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-        $line = trim($line);
-        if ($line === '' || str_starts_with($line, '#')) continue;
-        if (!str_contains($line, '=')) continue;
-        [$k, $v] = array_map('trim', explode('=', $line, 2));
-        $v = trim($v, "\"'");
-        $_ENV[$k] = $v;
-    }
-}
-load_env(__DIR__ . '/.env');
+require __DIR__ . '/bootstrap.php';
 
-function env(string $key, string $default = ''): string {
-    return (string)($_ENV[$key] ?? getenv($key) ?: $default);
-}
-
-// ---- i18n ----
-$i18n = require __DIR__ . '/lib/i18n.php';
-$t = $i18n['t'];
-$lang = $i18n['lang']();
-$getLangUrls = $i18n['getLangUrls'];
-$getLangName = $i18n['getLangName'];
-$formatPrice = $i18n['formatPrice'];
-$getPricing = $i18n['getPricing'];
-$th = $i18n['th'];
-
-// WORKAROUND: Override currency config based on URL language parameter
-// (PHP OPcache prevents updates to i18n.php, so we detect currency here)
+// Currency override kept here (landing-page specific, not in shared bootstrap)
 $currencyConfig = [
     'pl' => ['code' => 'PLN', 'symbol' => 'zł', 'rate' => 4.0, 'locale' => 'pl_PL'],
     'en' => ['code' => 'USD', 'symbol' => '$', 'rate' => 1.0, 'locale' => 'en_US'],
     'de' => ['code' => 'EUR', 'symbol' => '€', 'rate' => 0.92, 'locale' => 'de_DE'],
 ];
 $getCurrencyConfig = fn(): array => $currencyConfig[$lang] ?? $currencyConfig['en'];
-
-// ---- Logger ----
-if (is_readable(__DIR__ . '/lib/Logger.php')) {
-    require_once __DIR__ . '/lib/Logger.php';
-    Logger::setLogDir(__DIR__ . '/var/logs');
-    Logger::enableDebug(env('APP_DEBUG') === '1' || env('APP_ENV') === 'dev');
-}
-
-function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES | ENT_HTML5, 'UTF-8'); }
-
-function csrf_token(): string {
-    if (empty($_SESSION['csrf'])) $_SESSION['csrf'] = bin2hex(random_bytes(16));
-    return $_SESSION['csrf'];
-}
-
-function check_rate_limit(): bool {
-    $now = time();
-    $last = $_SESSION['last_submit'] ?? 0;
-    if ($now - (int)$last < 60) return false;
-    $_SESSION['last_submit'] = $now;
-    return true;
-}
 
 function send_notification(string $subject, string $body): bool {
     $to = env('CONTACT_EMAIL');
