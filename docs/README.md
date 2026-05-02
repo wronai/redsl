@@ -514,11 +514,11 @@ redsl/
             ├── README
                 ├── toon
     ├── prompt
+        ├── toon
     ├── context
         ├── toon
-        ├── toon
-        ├── toon
     ├── README
+        ├── toon
         ├── toon
     ├── calls
         ├── toon
@@ -2578,7 +2578,7 @@ redsl/
 📄 `project.context`
 📄 `project.duplication.toon`
 📄 `project.evolution.toon`
-📄 `project.map.toon` (6992 functions)
+📄 `project.map.toon` (10007 functions)
 📄 `project.project.toon`
 📄 `project.prompt`
 📄 `project.validation.toon`
