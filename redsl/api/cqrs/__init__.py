@@ -30,6 +30,8 @@ from redsl.api.cqrs.queries import (
     QueryHandler,
     ScanResultQuery,
     ProjectHealthQuery,
+    RecentEventsQuery,
+    AggregateHistoryQuery,
     query_bus,
 )
 from redsl.api.cqrs.projections import (
@@ -64,6 +66,8 @@ __all__ = [
     "QueryHandler",
     "ScanResultQuery",
     "ProjectHealthQuery",
+    "RecentEventsQuery",
+    "AggregateHistoryQuery",
     "query_bus",
     # Projections
     "Projection",

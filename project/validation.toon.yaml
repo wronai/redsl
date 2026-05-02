@@ -1,9 +1,9 @@
-# vallm batch | 470f | 0✓ 348⚠ 0✗ | 2026-05-02
+# vallm batch | 471f | 0✓ 349⚠ 0✗ | 2026-05-02
 
 SUMMARY:
-  scanned: 470  passed: 0 (0.0%)  warnings: 348  errors: 0  unsupported: 0
+  scanned: 471  passed: 0 (0.0%)  warnings: 349  errors: 0  unsupported: 0
 
-WARNINGS[348]{path,score}:
+WARNINGS[349]{path,score}:
   redsl/cli/events.py,0.68
     issues[4]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
@@ -258,6 +258,9 @@ WARNINGS[348]{path,score}:
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
   redsl/api/__init__.py,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
+  redsl/api/cqrs/__init__.py,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
   redsl/api/debug_routes.py,0.78

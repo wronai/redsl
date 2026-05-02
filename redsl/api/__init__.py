@@ -1,7 +1,7 @@
 """
 ReDSL REST API — FastAPI endpoints mirroring CLI commands.
 
-Endpoints:
+Standard Endpoints:
 - POST /refactor            — Run refactoring on a project
 - POST /batch/semcod        — Batch refactor semcod projects
 - POST /batch/hybrid        — Hybrid quality refactoring (no LLM)
@@ -13,6 +13,16 @@ Endpoints:
 - POST /examples/run        — Run a packaged example scenario
 - GET  /examples/{name}/yaml — Get raw YAML data for an example
 - GET  /health              — Health check
+
+CQRS/ES Endpoints:
+- POST /cqrs/scan/remote    — Start remote scan (async command)
+- POST /cqrs/refactor       — Start refactoring (async command)
+- GET  /cqrs/query/scan/status      — Query scan projection
+- GET  /cqrs/query/project/health   — Query project health projection
+- GET  /cqrs/query/events/recent    — Query event store
+- GET  /cqrs/query/aggregate/history — Query aggregate events
+- GET  /cqrs/events/stream    — Server-Sent Events stream
+- WS   /ws/cqrs/events      — WebSocket real-time events
 """
 
 from __future__ import annotations
@@ -38,6 +48,7 @@ def create_app():
     from fastapi import FastAPI
     from fastapi.middleware.cors import CORSMiddleware
 
+    from redsl.api.cqrs_routes import _register_cqrs_routes
     from redsl.api.debug_routes import _register_debug_routes
     from redsl.api.example_routes import _register_example_routes
     from redsl.api.health_routes import _register_health_route
@@ -66,6 +77,7 @@ def create_app():
     _register_webhook_routes(app)
     _register_example_routes(app)
     _register_scan_routes(app)
+    _register_cqrs_routes(app)
     return app
 
 
