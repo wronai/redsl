@@ -43,6 +43,7 @@ def create_app():
     from redsl.api.health_routes import _register_health_route
     from redsl.api.pyqual_routes import _register_pyqual_routes
     from redsl.api.refactor_routes import _register_refactor_routes
+    from redsl.api.scan_routes import _register_scan_routes
     from redsl.api.webhook_routes import _register_webhook_routes
 
     app = FastAPI(
@@ -64,6 +65,7 @@ def create_app():
     _register_pyqual_routes(app)
     _register_webhook_routes(app)
     _register_example_routes(app)
+    _register_scan_routes(app)
     return app
 
 

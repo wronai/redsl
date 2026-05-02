@@ -33,10 +33,10 @@ services:
     container_name: redsl-db
     <<: *default-env
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS:-rootsecret}
-      MYSQL_DATABASE: ${DB_NAME:-redsl}
-      MYSQL_USER: ${DB_USER:-redsl_user}
-      MYSQL_PASSWORD: ${DB_PASS:-change_me_in_production}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
     volumes:
       - db_data:/var/lib/mysql
       - ./migrations:/docker-entrypoint-initdb.d:ro
@@ -44,7 +44,7 @@ services:
       - "3306:3306"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASS:-rootsecret}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASS}"]
       interval: 10s
       timeout: 5s
       retries: 5
