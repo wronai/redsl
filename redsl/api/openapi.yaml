@@ -1,0 +1,264 @@
+openapi: 3.0.3
+info:
+  title: Conscious Refactor Agent API
+  description: |
+    Autonomiczny system refaktoryzacji kodu z LLM, pamięcią i DSL.
+    
+    ## Wersjonowanie API
+    - **v1** - Aktualna wersja produkcyjna
+    - Wszystkie endpointy są dostępne pod `/v1/`
+    - Legacy endpointy (bez wersjonowania) są dostępne dla kompatybilności wstecznej
+    
+    ## Autoryzacja
+    Aktualnie API nie wymaga autoryzacji, ale w przyszłości zostanie dodany JWT.
+  version: 1.0.0
+  contact:
+    name: ReDSL Team
+    url: https://github.com/semcod/redsl
+
+servers:
+  - url: http://localhost:8002
+    description: Local development server
+  - url: http://localhost:8002/v1
+    description: API v1 (wersjonowane)
+
+tags:
+  - name: health
+    description: Endpointy zdrowia systemu
+  - name: scan
+    description: Skanowanie repozytoriów
+  - name: cqrs
+    description: CQRS/ES - komendy, zapytania i zdarzenia
+  - name: refactor
+    description: Refaktoryzacja kodu
+  - name: pyqual
+    description: Analiza jakości kodu Python
+  - name: examples
+    description: Przykładowe scenariusze
+  - name: debug
+    description: Endpointy diagnostyczne
+  - name: webhook
+    description: Webhooki GitHub
+
+paths:
+  /v1/health:
+    get:
+      tags:
+        - health
+      summary: Health check
+      description: Sprawdza czy API działa poprawnie
+      responses:
+        '200':
+          description: API działa poprawnie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+                  version:
+                    type: string
+                    example: 1.0.0
+
+  /v1/cqrs/scan/remote:
+    post:
+      tags:
+        - cqrs
+        - scan
+      summary: Skanuj zdalne repozytorium
+      description: Rozpoczyna skanowanie repozytorium Git. Może działać synchronicznie lub asynchronicznie.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - repo_url
+              properties:
+                repo_url:
+                  type: string
+                  format: uri
+                  description: URL repozytorium Git (https://github.com/owner/repo)
+                branch:
+                  type: string
+                  default: main
+                  description: Branch do checkout (domyślnie wykrywany z GitHub API)
+                depth:
+                  type: integer
+                  default: 1
+                  description: Głębokość klonowania (1 = tylko ostatni commit)
+                async_mode:
+                  type: boolean
+                  default: false
+                  description: Tryb asynchroniczny - zwraca ID i sprawdza status przez query API
+      responses:
+        '200':
+          description: Skan rozpoczęty lub zakończony
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success, accepted, error]
+                  aggregate_id:
+                    type: string
+                    description: ID agregatu (tylko w trybie async)
+                  correlation_id:
+                    type: string
+                    description: ID korelacji (tylko w trybie async)
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    description: Wyniki skanu (tylko w trybie sync)
+                    properties:
+                      total_files:
+                        type: integer
+                      total_lines:
+                        type: integer
+                      avg_cc:
+                        type: number
+                      critical_count:
+                        type: integer
+                      alerts:
+                        type: array
+                        items:
+                          type: object
+                      top_issues:
+                        type: array
+                        items:
+                          type: object
+                      summary:
+                        type: string
+
+  /v1/cqrs/query/scan/status:
+    get:
+      tags:
+        - cqrs
+        - scan
+      summary: Pobierz status skanu
+      description: Pobiera aktualny status skanu dla danego repozytorium
+      parameters:
+        - name: repo_url
+          in: query
+          required: true
+          schema:
+            type: string
+          description: URL repozytorium Git
+      responses:
+        '200':
+          description: Status skanu
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [in_progress, completed, failed, not_found]
+                  phase:
+                    type: string
+                    enum: [clone, analyze, complete]
+                  progress_percent:
+                    type: integer
+                    minimum: 0
+                    maximum: 100
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      total_files:
+                        type: integer
+                      total_lines:
+                        type: integer
+                      avg_cc:
+                        type: number
+                      critical_count:
+                        type: integer
+
+  /v1/cqrs/query/project/health:
+    get:
+      tags:
+        - cqrs
+      summary: Zdrowie projektu
+      description: Pobiera metryki zdrowia projektu
+      parameters:
+        - name: repo_url
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Metryki zdrowia
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+
+  /v1/refactor:
+    post:
+      tags:
+        - refactor
+      summary: Refaktoryzuj projekt
+      description: Uruchamia refaktoryzację projektu z użyciem LLM
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_dir:
+                  type: string
+                max_actions:
+                  type: integer
+                  default: 3
+      responses:
+        '200':
+          description: Wyniki refaktoryzacji
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/pyqual/analyze:
+    post:
+      tags:
+        - pyqual
+      summary: Analiza jakości Python
+      description: Analizuje jakość kodu Python bez LLM
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_dir:
+                  type: string
+      responses:
+        '200':
+          description: Wyniki analizy
+          content:
+            application/json:
+              schema:
+                type: object
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

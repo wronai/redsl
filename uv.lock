@@ -3287,7 +3287,7 @@ wheels = [
 
 [[package]]
 name = "redsl"
-version = "1.2.59"
+version = "1.2.60"
 source = { editable = "." }
 dependencies = [
     { name = "chromadb" },

@@ -330,10 +330,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $asyncMode = !empty($_POST['async_mode']);
     
     if ($repoUrl) {
+        // Auto-detect default branch from GitHub API if not specified
+        $branch = $_POST['branch'] ?? '';
+        if (empty($branch)) {
+            $ownerRepo = parse_url($repoUrl, PHP_URL_PATH);
+            $ownerRepo = trim($ownerRepo, '/');
+            $githubApiUrl = "https://api.github.com/repos/$ownerRepo";
+            $githubResponse = @file_get_contents($githubApiUrl);
+            if ($githubResponse) {
+                $githubData = json_decode($githubResponse, true);
+                $branch = $githubData['default_branch'] ?? 'main';
+            } else {
+                $branch = 'main';
+            }
+        }
+        
         // Use CQRS endpoint /cqrs/scan/remote (async command)
         $apiResult = callRedslApi('/cqrs/scan/remote', [
             'repo_url' => $repoUrl,
-            'branch' => 'main',
+            'branch' => $branch,
             'depth' => 1,
             'async_mode' => $asyncMode  // Async mode based on checkbox
         ]);
@@ -465,7 +480,49 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReDSL Marketing Hub - Cold Email & LinkedIn Outreach</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <script>
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabName).classList.remove('hidden');
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.innerText;
+                btn.innerText = 'OK Skopiowano!';
+                btn.style.background = '#2196f3';
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.background = '#4caf50';
+                }, 2000);
+            });
+        }
+        
+        function downloadMarkdown() {
+            const form = document.querySelector('form');
+            const formData = new FormData(form);
+            formData.append('format', 'md');
+            const url = new URL(window.location.href);
+            url.searchParams.set('format', 'md');
+            fetch(url.toString(), {method: 'POST', body: formData})
+                .then(response => response.blob())
+                .then(blob => {
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = 'redsl_outreach_report.md';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(downloadUrl);
+                })
+                .catch(error => console.error('Download error:', error));
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -483,6 +540,13 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                     <input type="url" id="repo_url" name="repo_url" required 
                            placeholder="https://github.com/owner/repo"
                            value="<?= htmlspecialchars($_POST['repo_url'] ?? '') ?>">
+                </div>
+                
+                <div class="form-group">
+                    <label for="branch">Branch (opcjonalne, domyslny: main)</label>
+                    <input type="text" id="branch" name="branch"
+                           placeholder="main, dev, master, etc."
+                           value="<?= htmlspecialchars($_POST['branch'] ?? 'main') ?>">
                 </div>
                 
                 <div class="form-group">
@@ -629,7 +693,59 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                 </div>
             </div>
             
-            <script src="async-polling.js"></script>
+            <script>
+                const asyncAggregateId = '<?= htmlspecialchars($result['aggregate_id']) ?>';
+                const asyncRepoUrl = '<?= htmlspecialchars($result['repo']) ?>';
+                let pollingInterval = null;
+                
+                function updateAsyncProgressStep(stepId, status, message) {
+                    const step = document.getElementById(stepId);
+                    if (!step) return;
+                    step.classList.remove('active', 'completed', 'error');
+                    step.style.opacity = '1';
+                    if (status === 'active') step.classList.add('active');
+                    else if (status === 'completed') step.classList.add('completed');
+                    else if (status === 'error') step.classList.add('error');
+                    const statusDiv = step.querySelector('.step-status');
+                    if (statusDiv) statusDiv.textContent = message || status;
+                }
+                
+                async function pollScanStatus() {
+                    const statusUrl = 'http://localhost:8002/cqrs/query/scan/status?repo_url=' + encodeURIComponent(asyncRepoUrl);
+                    try {
+                        const response = await fetch(statusUrl);
+                        const data = await response.json();
+                        const statusDiv = document.getElementById('async-status-message');
+                        statusDiv.textContent = `Status: ${data.status} (${data.progress_percent || 0}%) - ${data.phase || ''}`;
+                        if (data.status === 'in_progress') {
+                            const phase = data.phase || '';
+                            const percent = data.progress_percent || 0;
+                            if (phase === 'clone') updateAsyncProgressStep('async-step-clone', 'active', `Klonowanie (${percent}%)`);
+                            else if (phase === 'analyze') {
+                                updateAsyncProgressStep('async-step-clone', 'completed', 'Zakonczone');
+                                updateAsyncProgressStep('async-step-analyze', 'active', `Analiza (${percent}%)`);
+                            } else if (phase === 'complete') {
+                                updateAsyncProgressStep('async-step-clone', 'completed', 'Zakonczone');
+                                updateAsyncProgressStep('async-step-analyze', 'completed', 'Zakonczone');
+                                updateAsyncProgressStep('async-step-metrics', 'completed', 'Zakonczone');
+                                updateAsyncProgressStep('async-step-templates', 'active', `Generowanie (${percent}%)`);
+                            }
+                        } else if (data.status === 'completed') {
+                            updateAsyncProgressStep('async-step-templates', 'completed', 'Zakonczone');
+                            statusDiv.textContent = '✅ Skan zakonczony! Odswiez strone aby zobaczyc wyniki.';
+                            clearInterval(pollingInterval);
+                        } else if (data.status === 'failed') {
+                            updateAsyncProgressStep('async-step-clone', 'error', 'Blad: ' + (data.error?.message || 'Nieznany blad'));
+                            clearInterval(pollingInterval);
+                        }
+                    } catch (error) {
+                        console.error('Polling error:', error);
+                    }
+                }
+                
+                pollingInterval = setInterval(pollScanStatus, 2000);
+                pollScanStatus();
+            </script>
 
             
         <?php elseif ($result): ?>
@@ -682,52 +798,10 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                 </div>
             </div>
             
-            <style>
-                .progress-step {
-                    display: flex;
-                    align-items: center;
-                    padding: 15px;
-                    margin-bottom: 10px;
-                    background: #f8f9fa;
-                    border-radius: 8px;
-                    border-left: 4px solid #ddd;
-                    transition: all 0.3s;
-                }
-                .progress-step.active {
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
-                    border-left-color: #667eea;
-                }
-                .progress-step.completed {
-                    background: #e8f5e9;
-                    border-left-color: #4caf50;
-                }
-                .progress-step.error {
-                    background: #ffebee;
-                    border-left-color: #f44336;
-                }
-                .step-icon {
-                    font-size: 24px;
-                    margin-right: 15px;
-                    width: 40px;
-                    text-align: center;
-                }
-                .step-info {
-                    flex: 1;
-                }
-                .step-title {
-                    font-weight: 600;
-                    margin-bottom: 5px;
-                }
-                .step-status {
-                    font-size: 14px;
-                    opacity: 0.8;
-                }
-            </style>
             <script>
-                // WebSocket connection for real-time CQRS events
                 const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
                 const wsUrl = wsProtocol + '//localhost:8002/ws/cqrs/events';
+                const repoUrl = '<?= htmlspecialchars($repoUrl) ?>';
                 let ws = null;
                 let wsConnected = false;
                 
@@ -737,58 +811,36 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                         console.error('[Progress] Step element not found:', stepId);
                         return;
                     }
-                    
                     console.log('[Progress] Updating step:', stepId, 'status:', status, 'message:', message);
-                    
                     step.classList.remove('active', 'completed', 'error');
                     step.style.opacity = '1';
-                    
-                    if (status === 'active') {
-                        step.classList.add('active');
-                    } else if (status === 'completed') {
-                        step.classList.add('completed');
-                    } else if (status === 'error') {
-                        step.classList.add('error');
-                    }
-                    
+                    if (status === 'active') step.classList.add('active');
+                    else if (status === 'completed') step.classList.add('completed');
+                    else if (status === 'error') step.classList.add('error');
                     const statusDiv = step.querySelector('.step-status');
-                    if (statusDiv) {
-                        statusDiv.textContent = message || status;
-                    } else {
-                        console.error('[Progress] Status div not found for step:', stepId);
-                    }
+                    if (statusDiv) statusDiv.textContent = message || status;
+                    else console.error('[Progress] Status div not found for step:', stepId);
                 }
                 
                 let pollingInterval = null;
                 
                 async function startPolling() {
-                    const repoUrl = '<?= htmlspecialchars($repoUrl) ?>';
                     const statusUrl = `http://localhost:8002/cqrs/query/scan/status?repo_url=${encodeURIComponent(repoUrl)}`;
-                    
                     console.log('[Polling] Starting polling for:', repoUrl);
-                    
-                    if (pollingInterval) {
-                        clearInterval(pollingInterval);
-                    }
-                    
+                    if (pollingInterval) clearInterval(pollingInterval);
                     pollingInterval = setInterval(async () => {
                         try {
                             console.log('[Polling] Checking status...');
                             const response = await fetch(statusUrl);
                             const data = await response.json();
-                            
                             console.log('[Polling] Status data:', data);
-                            
                             if (data.status === 'in_progress') {
                                 const phase = data.phase || '';
                                 const percent = data.progress_percent || 0;
                                 const message = data.message || '';
-                                
                                 console.log('[Polling] Phase:', phase, 'Percent:', percent);
-                                
-                                if (phase === 'clone') {
-                                    updateProgressStep('step-clone', 'active', message + ` (${percent}%)`);
-                                } else if (phase === 'analyze') {
+                                if (phase === 'clone') updateProgressStep('step-clone', 'active', message + ` (${percent}%)`);
+                                else if (phase === 'analyze') {
                                     updateProgressStep('step-clone', 'completed', 'Zakonczone');
                                     updateProgressStep('step-analyze', 'active', message + ` (${percent}%)`);
                                 } else if (phase === 'complete') {
@@ -813,29 +865,22 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                             console.error('[Polling] Error:', error);
                         }
                     }, 2000);
-                    
-                    // Initial check
                     pollScanStatus();
                 }
                 
                 async function pollScanStatus() {
-                    const repoUrl = '<?= htmlspecialchars($repoUrl) ?>';
                     const statusUrl = `http://localhost:8002/cqrs/query/scan/status?repo_url=${encodeURIComponent(repoUrl)}`;
-                    
                     try {
                         console.log('[Polling] Initial status check');
                         const response = await fetch(statusUrl);
                         const data = await response.json();
                         console.log('[Polling] Initial status:', data);
-                        
                         if (data.status === 'in_progress') {
                             const phase = data.phase || '';
                             const percent = data.progress_percent || 0;
                             const message = data.message || '';
-                            
-                            if (phase === 'clone') {
-                                updateProgressStep('step-clone', 'active', message + ` (${percent}%)`);
-                            } else if (phase === 'analyze') {
+                            if (phase === 'clone') updateProgressStep('step-clone', 'active', message + ` (${percent}%)`);
+                            else if (phase === 'analyze') {
                                 updateProgressStep('step-clone', 'completed', 'Zakonczone');
                                 updateProgressStep('step-analyze', 'active', message + ` (${percent}%)`);
                             } else if (phase === 'complete') {
@@ -858,54 +903,39 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                 function connectWebSocket() {
                     console.log('[WebSocket] Attempting to connect to:', wsUrl);
                     ws = new WebSocket(wsUrl);
-                    
                     ws.onopen = function() {
                         console.log('[WebSocket] Connection opened');
                         wsConnected = true;
-                        
                         const statusCard = document.getElementById('ws-status-card');
                         const statusElement = document.getElementById('ws-status');
-                        
                         if (statusCard) {
                             statusCard.style.display = 'block';
                             console.log('[WebSocket] Status card displayed');
                         } else {
                             console.error('[WebSocket] ws-status-card element not found');
                         }
-                        
                         if (statusElement) {
                             statusElement.innerHTML = '<span style="color: green;">● Polaczono (CQRS Event Stream)</span>';
                             console.log('[WebSocket] Status updated');
                         } else {
                             console.error('[WebSocket] ws-status element not found');
                         }
-                        
-                        // Subscribe to scan aggregate
-                        const aggregateId = 'scan:<?= htmlspecialchars($repoUrl) ?>';
+                        const aggregateId = 'scan:' + repoUrl;
                         console.log('[WebSocket] Subscribing to aggregate:', aggregateId);
                         ws.send(JSON.stringify({type: 'subscribe', aggregate_id: aggregateId}));
-                        
-                        // Initialize progress
                         updateProgressStep('step-clone', 'active', 'Rozpoczynanie...');
-                        
-                        // Start polling as fallback
                         startPolling();
                     };
-                    
                     ws.onmessage = function(event) {
                         console.log('[WebSocket] Message received, raw data:', event.data);
                         const data = JSON.parse(event.data);
                         const eventsDiv = document.getElementById('ws-events');
-                        
                         console.log('[WebSocket] Parsed data type:', data.type);
-                        
                         if (data.type === 'event') {
                             const evt = data.data;
                             const payload = evt.payload || {};
                             console.log('[WebSocket] Event type:', evt.event_type);
                             console.log('[WebSocket] Event payload:', payload);
-                            
-                            // Update progress based on event type
                             if (evt.event_type === 'ScanStarted') {
                                 console.log('[WebSocket] ScanStarted event - updating clone step');
                                 updateProgressStep('step-clone', 'active', 'Klonowanie z ' + (payload.repo_url || 'repozytorium'));
@@ -914,10 +944,8 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                                 const percent = payload.progress_percent || 0;
                                 const message = payload.message || '';
                                 console.log('[WebSocket] ScanProgress event - phase:', phase, 'percent:', percent, 'message:', message);
-                                
-                                if (phase === 'clone') {
-                                    updateProgressStep('step-clone', 'active', message + ` (${percent}%)`);
-                                } else if (phase === 'analyze') {
+                                if (phase === 'clone') updateProgressStep('step-clone', 'active', message + ` (${percent}%)`);
+                                else if (phase === 'analyze') {
                                     console.log('[WebSocket] Completing clone step, starting analyze');
                                     updateProgressStep('step-clone', 'completed', 'Zakonczone');
                                     updateProgressStep('step-analyze', 'active', message + ` (${percent}%)`);
@@ -934,8 +962,6 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                                 console.error('[WebSocket] ScanFailed event:', payload.error_message);
                                 updateProgressStep('step-clone', 'error', 'Blad: ' + (payload.error_message || 'Nieznany blad'));
                             }
-                            
-                            // Add to debug events
                             if (eventsDiv) {
                                 const line = document.createElement('div');
                                 line.style.marginBottom = '4px';
@@ -947,36 +973,27 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                             const line = document.createElement('div');
                             line.style.color = 'green';
                             line.textContent = '>>> Polaczono z CQRS Event Store';
-                            if (eventsDiv) {
-                                eventsDiv.insertBefore(line, eventsDiv.firstChild);
-                            }
+                            if (eventsDiv) eventsDiv.insertBefore(line, eventsDiv.firstChild);
                         } else {
                             console.log('[WebSocket] Unknown message type:', data.type);
                         }
                     };
-                    
                     ws.onerror = function(error) {
                         console.error('[WebSocket] Error:', error);
                         const statusElement = document.getElementById('ws-status');
-                        if (statusElement) {
-                            statusElement.innerHTML = '<span style="color: red;">● Blad polaczenia WebSocket</span>';
-                        }
+                        if (statusElement) statusElement.innerHTML = '<span style="color: red;">● Blad polaczenia WebSocket</span>';
                         updateProgressStep('step-clone', 'error', 'Blad polaczenia');
                     };
-                    
                     ws.onclose = function() {
                         console.log('[WebSocket] Connection closed');
                         wsConnected = false;
                         const statusElement = document.getElementById('ws-status');
-                        if (statusElement) {
-                            statusElement.innerHTML = '<span style="color: orange;">● Rozlaczono</span>';
-                        }
+                        if (statusElement) statusElement.innerHTML = '<span style="color: orange;">● Rozlaczono</span>';
                     };
                 }
-                
-                // Auto-connect on page load
                 setTimeout(connectWebSocket, 500);
             </script>
+
             
             <!-- Analysis Metrics -->
             <div class="card">

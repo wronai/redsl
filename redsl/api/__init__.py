@@ -58,9 +58,12 @@ def create_app():
     from redsl.api.webhook_routes import _register_webhook_routes
 
     app = FastAPI(
-        title="Conscious Refactor Agent",
+        title="Conscious Refactor Agent API",
         description="Autonomiczny system refaktoryzacji kodu z LLM, pamięcią i DSL",
         version="1.0.0",
+        docs_url="/docs",
+        redoc_url="/redoc",
+        openapi_url="/openapi.json",
     )
     app.add_middleware(
         CORSMiddleware,
@@ -69,7 +72,41 @@ def create_app():
         allow_headers=["*"],
     )
 
+    # API Versioning - v1
+    v1_app = FastAPI(
+        title="Conscious Refactor Agent API v1",
+        description="API v1 - Wersja produkcyjna",
+        version="1.0.0",
+    )
+    v1_app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
     orchestrator = _build_api_orchestrator()
+    
+    # Register v1 routes
+    _register_health_route(v1_app, orchestrator)
+    _register_refactor_routes(v1_app, orchestrator)
+    _register_debug_routes(v1_app, orchestrator)
+    _register_pyqual_routes(v1_app)
+    _register_webhook_routes(v1_app)
+    _register_example_routes(v1_app)
+    _register_scan_routes(v1_app)
+    _register_cqrs_routes(v1_app)
+    
+    # Mount v1 under /v1
+    app.mount("/v1", v1_app)
+    
+    # Add redirect from / to /v1/docs
+    @app.get("/", include_in_schema=False)
+    def redirect_to_docs():
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url="/v1/docs")
+    
+    # Legacy routes (without versioning) for backward compatibility
     _register_health_route(app, orchestrator)
     _register_refactor_routes(app, orchestrator)
     _register_debug_routes(app, orchestrator)
@@ -78,6 +115,7 @@ def create_app():
     _register_example_routes(app)
     _register_scan_routes(app)
     _register_cqrs_routes(app)
+    
     return app
 
 
