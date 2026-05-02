@@ -256,17 +256,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $buyerType = $_POST['buyer_type'] ?? 'tech_lead';
     $contactName = $_POST['contact_name'] ?? 'Tam';
     $senderName = $_POST['sender_name'] ?? 'Tomek';
+    $asyncMode = !empty($_POST['async_mode']);
     
     if ($repoUrl) {
-        // Use new /scan/remote endpoint
-        $apiResult = callRedslApi('/scan/remote', [
+        // Use CQRS endpoint /cqrs/scan/remote (async command)
+        $apiResult = callRedslApi('/cqrs/scan/remote', [
             'repo_url' => $repoUrl,
             'branch' => 'main',
-            'depth' => 1
+            'depth' => 1,
+            'async_mode' => $asyncMode  // Async mode based on checkbox
         ]);
         
-        if ($apiResult['ok']) {
-            $scanResult = $apiResult['data'];
+        // Handle async mode response (accepted, not completed yet)
+        if ($apiResult['ok'] && $asyncMode) {
+            $responseData = $apiResult['data'];
+            $aggregateId = $responseData['aggregate_id'] ?? 'scan:' . $repoUrl;
+            $correlationId = $responseData['correlation_id'] ?? '';
+            
+            // Show async accepted message with instructions
+            $result = [
+                'async' => true,
+                'aggregate_id' => $aggregateId,
+                'correlation_id' => $correlationId,
+                'repo' => $repoUrl,
+                'message' => 'Scan rozpoczety w tle (CQRS Command)',
+                'check_status_url' => '/cqrs/query/scan/status?repo_url=' . urlencode($repoUrl),
+                'websocket' => 'ws://localhost:8001/ws/cqrs/events'
+            ];
+        } elseif ($apiResult['ok']) {
+            // Sync mode - process results immediately
+            // CQRS response: {status: "success", data: {actual results}}
+            $responseData = $apiResult['data'];
+            
+            // Handle both sync response (data nested) and direct result
+            if (isset($responseData['data']) && is_array($responseData['data'])) {
+                $scanResult = $responseData['data'];  // Sync mode with nested data
+            } else {
+                $scanResult = $responseData;  // Direct result
+            }
             
             // Convert to analysis format expected by templates
             $analysis = [
@@ -342,7 +369,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'templates' => $generatedTemplates
             ];
         } else {
-            $error = 'API Error: ' . ($apiResult['data']['detail'] ?? $apiResult['data']['error'] ?? 'Unknown error');
+            $errorDetail = $apiResult['data']['detail'] ?? $apiResult['data']['error'] ?? 'Unknown error';
+            // Add context for common errors
+            if (strpos($errorDetail, 'clone') !== false) {
+                $errorDetail .= ' (Repository may be large or network timeout. Try a smaller repo like https://github.com/psf/requests)';
+            }
+            $error = 'API Error: ' . $errorDetail;
         }
     }
 }
@@ -583,6 +615,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </select>
                 </div>
                 
+                <div class="form-group" style="background: #f0f4ff; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" name="async_mode" value="1" <?= ($_POST['async_mode'] ?? '') ? 'checked' : '' ?> style="margin-right: 10px; width: auto;">
+                        <span><strong>Tryb Async (CQRS)</strong> - Zwroc ID i sprawdz status pozniej przez WebSocket/Query API</span>
+                    </label>
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        Włączone: natychmiastowy zwrot aggregate_id, status sprawdzisz przez 
+                        <code>/cqrs/query/scan/status?repo_url=...</code> lub WebSocket
+                    </small>
+                </div>
+                
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="form-group">
                         <label for="contact_name">Imie Odbiorcy</label>
@@ -621,11 +664,105 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
         
-        <?php if ($result): ?>
+        <?php if ($result && ($result['async'] ?? false)): ?>
+            <!-- Async Mode Result -->
+            <div class="success" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <strong>✅ CQRS Command Accepted!</strong><br>
+                <?= htmlspecialchars($result['message']) ?><br>
+                <small>Aggregate ID: <?= htmlspecialchars($result['aggregate_id']) ?></small>
+            </div>
+            
+            <div class="card" style="background: #f0f4ff;">
+                <h2>⏳ Sprawdz status skanu (CQRS Query)</h2>
+                <p>Skan jest wykonywany asynchronicznie. Użyj jednej z metod:</p>
+                
+                <div style="margin: 15px 0;">
+                    <strong>1. REST API Query:</strong><br>
+                    <code style="background: #333; color: #0f0; padding: 10px; display: block; border-radius: 4px; margin: 5px 0;">
+                        GET <?= htmlspecialchars($result['check_status_url']) ?>
+                    </code>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <strong>2. WebSocket Real-time:</strong><br>
+                    <code style="background: #333; color: #0f0; padding: 10px; display: block; border-radius: 4px; margin: 5px 0;">
+                        WS <?= htmlspecialchars($result['websocket']) ?><br>
+                        {"type": "subscribe", "aggregate_id": "<?= htmlspecialchars($result['aggregate_id']) ?>"}
+                    </code>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <a href="http://localhost:8001<?= htmlspecialchars($result['check_status_url']) ?>" 
+                       target="_blank" 
+                       style="display: inline-block; background: #667eea; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none;">
+                        🔍 Sprawdz status teraz
+                    </a>
+                </div>
+            </div>
+            
+        <?php elseif ($result): ?>
             <div class="success">
                 OK Skan zakonczony! Znaleziono <?= $result['analysis']['total_files'] ?? 0 ?> plikow, 
                 <?= $result['analysis']['critical_count'] ?? 0 ?> krytycznych problemow.
             </div>
+            
+            <!-- WebSocket Real-time Status (CQRS Event Sourcing) -->
+            <div class="card" id="ws-status-card" style="display: none;">
+                <h2>📡 WebSocket - Postep w czasie rzeczywistym (CQRS/ES)</h2>
+                <div id="ws-status">Laczenie...</div>
+                <div id="ws-events" style="max-height: 200px; overflow-y: auto; background: #f5f5f5; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px;"></div>
+            </div>
+            <script>
+                // WebSocket connection for real-time CQRS events
+                const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = wsProtocol + '//localhost:8001/ws/cqrs/events';
+                let ws = null;
+                let wsConnected = false;
+                
+                function connectWebSocket() {
+                    ws = new WebSocket(wsUrl);
+                    
+                    ws.onopen = function() {
+                        wsConnected = true;
+                        document.getElementById('ws-status-card').style.display = 'block';
+                        document.getElementById('ws-status').innerHTML = '<span style="color: green;">● Polaczono (CQRS Event Stream)</span>';
+                        
+                        // Subscribe to scan aggregate
+                        const aggregateId = 'scan:<?= htmlspecialchars($repoUrl) ?>';
+                        ws.send(JSON.stringify({type: 'subscribe', aggregate_id: aggregateId}));
+                    };
+                    
+                    ws.onmessage = function(event) {
+                        const data = JSON.parse(event.data);
+                        const eventsDiv = document.getElementById('ws-events');
+                        
+                        if (data.type === 'event') {
+                            const evt = data.data;
+                            const line = document.createElement('div');
+                            line.style.marginBottom = '4px';
+                            line.innerHTML = `<span style="color: #666;">${new Date().toLocaleTimeString()}</span> <strong>${evt.event_type}</strong>: ${JSON.stringify(evt.payload).substring(0, 100)}`;
+                            eventsDiv.insertBefore(line, eventsDiv.firstChild);
+                        } else if (data.type === 'connection.established') {
+                            const line = document.createElement('div');
+                            line.style.color = 'green';
+                            line.textContent = '>>> Polaczono z CQRS Event Store';
+                            eventsDiv.insertBefore(line, eventsDiv.firstChild);
+                        }
+                    };
+                    
+                    ws.onerror = function(error) {
+                        document.getElementById('ws-status').innerHTML = '<span style="color: red;">● Blad polaczenia WebSocket</span>';
+                    };
+                    
+                    ws.onclose = function() {
+                        wsConnected = false;
+                        document.getElementById('ws-status').innerHTML = '<span style="color: orange;">● Rozlaczono</span>';
+                    };
+                }
+                
+                // Auto-connect on page load
+                setTimeout(connectWebSocket, 500);
+            </script>
             
             <!-- Analysis Metrics -->
             <div class="card">

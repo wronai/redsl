@@ -1,10 +1,12 @@
 ## AI Cost Tracking
 
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-yellow) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fopenai%2Fgpt-5-mini-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-1.2.56-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-41.3h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fopenai%2Fgpt--5--mini-lightgrey)
 
-This project uses AI-generated code. Total cost: **$7.5000** with **101** AI commits.
+- 🤖 **LLM usage:** $7.5000 (108 commits)
+- 👤 **Human dev:** ~$4134 (41.3h @ $100/h, 30min dedup)
 
-Generated on 2026-04-20 using [openrouter/openai/gpt-5-mini](https://openrouter.ai/models/openrouter/openai/gpt-5-mini)
+Generated on 2026-05-02 using [openrouter/openai/gpt-5-mini](https://openrouter.ai/openai/gpt-5-mini)
 
 ---
 
@@ -12,9 +14,10 @@ Generated on 2026-04-20 using [openrouter/openai/gpt-5-mini](https://openrouter.
 
 > ⚠️ **To nie jest zwykły DSL do wymagań. To autonomiczny system operacyjny dla AI-driven software engineering.**
 
-ReDSL to eksperymentalny framework łączący LLM, formalny runtime DSL, CI/CD i pętlę samorefaktoryzacji w jeden autonomiczny cykl życia kodu.
+ReDSL to eksperymentalny framework łączący LLM, 
+formalny runtime DSL, CI/CD i pętlę samorefaktoryzacji w jeden autonomiczny cykl życia kodu.
 
-![Version](https://img.shields.io/badge/version-1.2.55-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-571%20passing-green) ![E2E](https://img.shields.io/badge/e2e-18%20tests-green) [![Docs](https://img.shields.io/badge/docs-29%20projektów-green)](./docs/)
+![Version](https://img.shields.io/badge/version-1.2.56-blue) ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![Tests](https://img.shields.io/badge/tests-776%20passing-green) ![E2E](https://img.shields.io/badge/e2e-18%20tests-green) [![Docs](https://img.shields.io/badge/docs-29%20projektów-green)](./docs/)
 
 ---
 
@@ -68,32 +71,32 @@ SUMD → DOQL → taskfile → pyqual → testQL → LLM refactor loop → deplo
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                    AUTONOMICZNY CYKL ŻYCIA KODU                      │
-│                                                                       │
-│   🧾 SUMD ──► ⚙️ DOQL ──► 🔄 taskfile ──► 🧪 pyqual ──► 🤖 LLM       │
-│       │          │           │            │           │               │
-│       ▼          ▼           ▼            ▼           ▼               │
-│   [Spec]    [Runtime]   [DevOps]    [Quality]   [Refactor]            │
-│       │          │           │            │           │               │
-│       └──────────┴──────────┴────────────┴───────────┘                │
-│                          │                                            │
-│                          ▼                                            │
-│   ┌─────────────────────────────────────────┐                          │
-│   │  REFACTOR ORCHESTRATOR                 │                          │
-│   │  PERCEIVE → DECIDE → PLAN → EXECUTE    │                          │
-│   │       ↓                    ↓          │                          │
-│   │  REFLECT → REMEMBER → IMPROVE        │                          │
-│   └─────────────────────────────────────────┘                          │
-│                          │                                            │
-│                          ▼                                            │
-│   ┌─────────────────────────────────────────┐                          │
-│   │  VALIDATION LAYER                      │                          │
-│   │  regix (regresja) │ vallm │ sandbox   │                          │
-│   └─────────────────────────────────────────┘                          │
-│                          │                                            │
-│                          ▼                                            │
+│                    AUTONOMICZNY CYKL ŻYCIA KODU                     │
+│                                                                     │
+│   🧾 SUMD ──► ⚙️ DOQL ──► 🔄 taskfile ──► 🧪 pyqual ──► 🤖 LLM         │
+│       │          │           │            │           │             │
+│       ▼          ▼           ▼            ▼           ▼             │
+│   [Spec]    [Runtime]   [DevOps]    [Quality]   [Refactor]          │
+│       │          │           │            │           │             │
+│       └──────────┴───────────┴────────────┴───────────┘             │
+│                            │                                        │
+│                            ▼                                        │
+│   ┌─────────────────────────────────────────┐                       │
+│   │  REFACTOR ORCHESTRATOR                  │                       │
+│   │  PERCEIVE → DECIDE → PLAN → EXECUTE     │                       │
+│   │       ↓                    ↓            │                       │
+│   │  REFLECT → REMEMBER → IMPROVE           │                       │
+│   └─────────────────────────────────────────┘                       │
+│                          │                                          │
+│                          ▼                                          │
+│   ┌─────────────────────────────────────────┐                       │
+│   │  VALIDATION LAYER                       │                       │
+│   │  regix (regresja) │ vallm │ sandbox     │                       │
+│   └─────────────────────────────────────────┘                       │
+│                          │                                          │
+│                          ▼                                          │
 │   [deployment] ◄── CI/CD ◄── quality gates ◄── auto-PR              │
-│                                                                       │
+│                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -295,7 +298,58 @@ curl -X POST http://localhost:8000/rules \
   -d '{"rules": [{"name": "my-rule", "condition": {"metric": "cc", "operator": ">", "threshold": 10}, "action": "refactor", "priority": 0.9}]}'
 ```
 
-Dokumentacja interaktywna (Swagger UI) dostępna pod `http://localhost:8000/docs` po uruchomieniu serwera.
+### Skanowanie zdalnego repozytorium (Marketing / Outreach)
+
+```bash
+# Skan repozytorium przez URL — zwraca metryki i top issues
+curl -s -X POST http://localhost:8000/scan/remote \
+  -H "Content-Type: application/json" \
+  -d '{"repo_url":"https://github.com/semcod/pyqual","branch":"main","depth":1}' | jq .
+
+# CQRS: asynchroniczny skan (zwraca correlation_id, status via query)
+curl -s -X POST http://localhost:8000/cqrs/scan/remote \
+  -H "Content-Type: application/json" \
+  -d '{"repo_url":"https://github.com/semcod/pyqual","branch":"main","async_mode":true}' | jq .
+
+# Query status skanu
+curl -s "http://localhost:8000/cqrs/query/scan/status?repo_url=https://github.com/semcod/pyqual" | jq .
+
+# CQRS: rozpocznij refaktoryzację
+curl -s -X POST http://localhost:8000/cqrs/refactor \
+  -H "Content-Type: application/json" \
+  -d '{"project_dir":"./my-project","dry_run":true,"max_actions":5}' | jq .
+
+# WebSocket: stream zdarzeń w czasie rzeczywistym (wymaga wscat lub websocat)
+websocat ws://localhost:8000/ws/cqrs/events
+```
+
+## Marketing Hub (Cold Email & LinkedIn Outreach)
+
+ReDSL zawiera stronę marketingową (`www/marketing/`) do generowania personalizowanych wiadomości outreach na podstawie skanu repozytorium:
+
+| Funkcja | Endpoint | Opis |
+|---------|----------|------|
+| **Formularz skanu** | `POST /marketing/` | Wklej URL repo → generuje szablony email/LinkedIn/GitHub |
+| **Tech Lead** | Email | "Znalazłem 3 rzeczy w [repo] które spowalniają development" |
+| **CEO** | Email | "Wasz projekt — znalazłem coś co spowalnia team" |
+| **PM Agencji** | Email | "Jak pokazujecie klientom postęp w jakości kodu?" |
+| **LinkedIn** | Post | Hook na ból, kontrintuicja AI, case study przed/po |
+| **GitHub** | Issue | Cold outreach do OSS project |
+
+```bash
+# Uruchomienie lokalne (wymaga PHP + ReDSL API na porcie 8001)
+cd www && php -S localhost:9999 -t .
+# Otwórz: http://localhost:9999/marketing/
+```
+
+**Testy Marketing Hub:**
+```bash
+# E2E Playwright (3 przeglądarki × 17 testów)
+cd www/tests/e2e && npx playwright test marketing-hub.spec.js --reporter=line
+
+# PHP Unit tests (wymaga rozszerzeń dom, xml, xmlwriter)
+php vendor/bin/phpunit tests/MarketingHubTest.php
+```
 
 ## ⚖️ Markdown + AI vs ReDSL — Porównanie
 
@@ -427,14 +481,16 @@ pytest tests/test_e2e.py -v
 ```
 
 **Struktura testów:**
-- **533 fast tests** — testy jednostkowe i integracyjne (~2 min)
+- **776+ collected tests** — testy jednostkowe i integracyjne (~20s z pytest-xdist)
 - **18 e2e tests** — pełne przepływy CLI i API na realnych projektach
 - **20 integration tests** — integracja z semcod ecosystem (code2llm, regix, pyqual)
+- **15 Playwright tests** — E2E GUI (Marketing Hub, 3 przeglądarki)
 
 **Pokrycie e2e:**
 - CLI: `refactor`, `history`, `ecosystem`, `scan`, `batch pyqual-run`
-- API: `/health`, `/refactor`, `/analyze`, `/decide`, `/rules`, `/memory/stats`, `/debug/config`, `/debug/decisions`, `/examples`
+- API: `/health`, `/refactor`, `/analyze`, `/decide`, `/rules`, `/memory/stats`, `/debug/config`, `/debug/decisions`, `/examples`, `/scan/remote`, CQRS commands/queries
 - Autonomy: quality gate workflow
+- GUI: Marketing Hub form, tabs, copy buttons, responsive design
 
 ## Obserwowalność i historia decyzji
 
@@ -577,7 +633,7 @@ redsl/
 │   ├── orchestrator.py  # Główny koordynator pipeline
 │   ├── cli.py           # Punkt wejścia CLI
 │   └── config.py        # AgentConfig, LLMConfig
-├── tests/               # 571 testów (533 fast + 18 e2e + 20 integration)
+├── tests/               # 776+ testów (fast + e2e + integration + Playwright)
 ├── examples/            # Przykłady użycia
 ├── config/              # Domyślna konfiguracja reguł DSL
 └── pyproject.toml       # Packaging i zależności
@@ -657,9 +713,6 @@ Szczegółowa dokumentacja projektów ekosystemu **semcod** dostępna w katalogu
 ## License
 
 Licensed under Apache-2.0.
-
-<!-- taskill:status:start -->
-
 ## Status
 
 _Last updated by [taskill](https://github.com/oqlos/taskill) at 2026-04-25 13:46 UTC_

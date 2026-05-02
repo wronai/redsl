@@ -1,6 +1,6 @@
 # reDSL Project Scan Report
 
-> Generated: **2026-04-19 18:52**  
+> Generated: **2026-05-02 12:48**  
 > Folder: `/home/tom/github/semcod/redsl`  
 > Projects found: **6** (6 analysed, 0 errors)
 
@@ -10,11 +10,11 @@
 
 | # | Project | Tier | Files | LoC | Avg CC | Max CC | Critical | Tests | Commits/30d |
 |---|---------|------|------:|----:|-------:|-------:|---------:|:-----:|------------:|
-| 1 | `redsl` | 🔴 Critical | 209 | 31,971 | 8.5 | 32 | 30 | ✅ | 86 |
-| 2 | `tests` | 🔴 Critical | 35 | 9,348 | 9.3 | 19 | 11 | ✅ | 86 |
-| 3 | `test_refactor_bad` | 🔴 Critical | 1 | 137 | 25.0 | 25 | 2 | ❌ | 86 |
-| 4 | `test_refactor_project` | 🟠 High | 1 | 24 | 5.0 | 5 | 0 | ❌ | 86 |
-| 5 | `app` | 🟠 High | 1 | 48 | 1.0 | 1 | 0 | ❌ | 86 |
+| 1 | `redsl` | 🔴 Critical | 246 | 39,647 | 8.6 | 44 | 35 | ✅ | 118 |
+| 2 | `tests` | 🔴 Critical | 44 | 10,860 | 8.8 | 19 | 11 | ✅ | 118 |
+| 3 | `test_refactor_bad` | 🔴 Critical | 1 | 137 | 25.0 | 25 | 2 | ❌ | 118 |
+| 4 | `test_refactor_project` | 🟠 High | 1 | 24 | 5.0 | 5 | 0 | ❌ | 118 |
+| 5 | `app` | 🟠 High | 1 | 48 | 1.0 | 1 | 0 | ❌ | 118 |
 | 6 | `test_sample_project` | 🟢 Low | 1 | 32 | 4.0 | 4 | 0 | ❌ | 3 |
 
 ---
@@ -26,23 +26,23 @@
 #### `redsl`
 
 - **Languages**: Python
-- **Python files**: 209  |  **LoC**: 31,971
-- **Avg CC**: 8.5  |  **Max CC**: 32  |  **Critical functions**: 30
-- **Recent activity**: 86 commits in last 30 days  |  Last commit: 0d ago
+- **Python files**: 246  |  **LoC**: 39,647
+- **Avg CC**: 8.6  |  **Max CC**: 44  |  **Critical functions**: 35
+- **Recent activity**: 118 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ✅ yes  |  **Toon files**: ❌ none
 - **Top hotspots** (CC):
-  - `commands/sumr_planfile.py` — CC 32
-  - `formatters/cycle.py` — CC 23
-  - `cli/planfile.py` — CC 20
-  - `cli/models.py` — CC 16
-  - `analyzers/toon_analyzer.py` — CC 14
+  - `cli/planfile.py` — CC 44
+  - `cli/events.py` — CC 25
+  - `execution/cycle.py` — CC 21
+  - `execution/planfile_updater.py` — CC 16
+  - `execution/deploy_detector.py` — CC 16
 
 #### `tests`
 
 - **Languages**: Python
-- **Python files**: 35  |  **LoC**: 9,348
-- **Avg CC**: 9.3  |  **Max CC**: 19  |  **Critical functions**: 11
-- **Recent activity**: 86 commits in last 30 days  |  Last commit: 0d ago
+- **Python files**: 44  |  **LoC**: 10,860
+- **Avg CC**: 8.8  |  **Max CC**: 19  |  **Critical functions**: 11
+- **Recent activity**: 118 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ✅ yes  |  **Toon files**: ❌ none
 - **Top hotspots** (CC):
   - `test_batch_pyqual.py` — CC 19
@@ -56,7 +56,7 @@
 - **Languages**: Python
 - **Python files**: 1  |  **LoC**: 137
 - **Avg CC**: 25.0  |  **Max CC**: 25  |  **Critical functions**: 2
-- **Recent activity**: 86 commits in last 30 days  |  Last commit: 0d ago
+- **Recent activity**: 118 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ❌ none found  |  **Toon files**: ❌ none
 - **Top hotspots** (CC):
   - `complex_code.py` — CC 25
@@ -68,7 +68,7 @@
 - **Languages**: Python
 - **Python files**: 1  |  **LoC**: 24
 - **Avg CC**: 5.0  |  **Max CC**: 5  |  **Critical functions**: 0
-- **Recent activity**: 86 commits in last 30 days  |  Last commit: 0d ago
+- **Recent activity**: 118 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ❌ none found  |  **Toon files**: ❌ none
 - **Top hotspots** (CC):
   - `bad_code.py` — CC 5
@@ -78,7 +78,7 @@
 - **Languages**: Python
 - **Python files**: 1  |  **LoC**: 48
 - **Avg CC**: 1.0  |  **Max CC**: 1  |  **Critical functions**: 0
-- **Recent activity**: 86 commits in last 30 days  |  Last commit: 0d ago
+- **Recent activity**: 118 commits in last 30 days  |  Last commit: 0d ago
 - **Tests**: ❌ none found  |  **Toon files**: ❌ none
 
 ### 🟢 Low (1 projects)
@@ -88,7 +88,7 @@
 - **Languages**: Python
 - **Python files**: 1  |  **LoC**: 32
 - **Avg CC**: 4.0  |  **Max CC**: 4  |  **Critical functions**: 0
-- **Recent activity**: 3 commits in last 30 days  |  Last commit: 5d ago
+- **Recent activity**: 3 commits in last 30 days  |  Last commit: 18d ago
 - **Tests**: ❌ none found  |  **Toon files**: ❌ none
 - **Top hotspots** (CC):
   - `sample.py` — CC 4

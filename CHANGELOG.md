@@ -3,6 +3,19 @@
 ## [Unreleased]
 
 ### Features
+- **Marketing Hub** (`www/marketing/`) — strona PHP do generowania personalizowanych wiadomości outreach (cold email, LinkedIn, GitHub) na podstawie skanu repozytorium przez API; 3 typy odbiorców, follow-up sequence, sekwencja 14-dniowa
+- **CQRS/ES API** — pełny system Event Sourcing: commands (`ScanRemoteCommand`, `RefactorCommand`), queries (`ScanResultQuery`, `ProjectHealthQuery`), projections, WebSocket `/ws/cqrs/events`, SSE `/cqrs/events/stream`
+- **`/scan/remote` endpoint** — skanowanie repozytorium przez URL (clone → analyze → metrics + alerts + top_issues), używane przez Marketing Hub
+- **Batch pyqual-run** — multi-project orchestration z opcjami `--limit`, `--include`, `--exclude`, `--profile`, `--publish`, `--fix-config`; raport `redsl_pyqual_report.md` z verdicts per-project
+- **Webhook → auto quality loop** — `task_on_push_quality_loop` + `process_push_event`; health check → snapshot → threshold check → reDSL cycle → auto PR
+- **Multi-project ecosystem dashboard** — `/api/ecosystem` + `/api/ecosystem/{owner}/{repo}/history`; React tab z summary cards, trend charts, priority ranking
+- **Scheduled health checks** — DB persistence + health drop notifications via `db_module.wrappers`
+- **Badge system unified** — `health_badge` i `scan_count_badge` z fallback do DB gdy cache pusty
+- **Config substrate** (`redsl.config_standard`) — Pydantic models, JSON Schema, secret redaction, `ConfigStore`, `ConfigApplier` z atomic writes, backups, audit history; CLI `redsl config init/validate/diff/history/apply/clone/show`
+- **Markdown reports auto-save** — `redsl_refactor_plan.md` (dry-run), `redsl_refactor_report.md` (executed), `redsl_batch_semcod_report.md`, `redsl_batch_hybrid_report.md`
+- **Autonomous PR abort** — `redsl autonomous-pr` kończy się non-zero gdy brak realnych zmian w kodzie źródłowym (filtruje tylko raporty/logs)
+- **10 example scenarios** — `01-basic-analysis` do `10-badge` z YAML-backed `memory_learning` example
+- **Test speed optimization** — 7× speedup (~20s): cache w `CliBridge.is_available()`, `@lru_cache` w bridges, `--import-mode=importlib`, `pytestmark slow` na subprocess-heavy tests
 - **`redsl events` CLI** — nowe subkomendy do przeglądania `.redsl/history.jsonl`:
   - `redsl events show <project>` — kolorowy widok ostatnich N zdarzeń; filtry `--type`, `--file`, `--cycle`, `--json`
   - `redsl events summary <project>` — statystyki: apply rate, rozkład typów, rollback count
@@ -17,8 +30,14 @@
 - `cycle_rollback` event zapisywany do history gdy cykl kończy się wyjątkiem i pliki są przywracane
 - `deploy_push`/`deploy_publish` — wynik (ok/error) zapisywany do history zamiast tylko do logów
 
+### Test
+- **E2E tests** — 18 testów pełnych przepływów CLI/API na realnych projektach (refactor dry-run, plan YAML, history, ecosystem, scan, batch pyqual, API /refactor, autonomy PR workflow)
+- **Playwright E2E** — 15 testów GUI Marketing Hub (page load, form submit, tab navigation, copy buttons, responsive design, API integration) na chromium/firefox/webkit
+- **Backend tests** — 327 backend tests (ecosystem, quality loop, marketplace, badge unified, webhook)
+- **pytest-xdist** — równoległe wykonywanie testów, 7× speedup (~20s vs 135s)
+
 ### Docs
-- **README.md** — dodano: workflow `--to-planfile`/`--from-planfile`, sekcja "Obserwowalność i historia decyzji", tabela typów zdarzeń, sekcja konfiguracji `redsl.yaml` z wszystkimi nowymi polami
+- **README.md** — dodano: przykłady `curl` dla `/scan/remote`, CQRS commands/queries, WebSocket; sekcja Marketing Hub; workflow `--to-planfile`/`--from-planfile`; sekcja "Obserwowalność i historia decyzji"; tabela typów zdarzeń; sekcja konfiguracji `redsl.yaml`
 
 ### Docs — Fundamentalna zmiana opisu projektu
 
@@ -39,6 +58,23 @@
 - chore: add pytest-xdist dependency and test optimizations
 - refactor: assorted internal refactorings (reduce CLI fan-out, reorganize modules)
 - fix(docs): add markdown output across docs and tests
+
+## [1.2.56] - 2026-05-02
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update TODO.md
+- Update redsl_scan_report.md
+
+### Other
+- Update redsl/api/scan_routes.py
+- Update uv.lock
+- Update www/marketing/index.php
+
+## [1.2.56] - 2026-05-02
+
+> Pełne szczegóły w sekcji `[Unreleased]` powyżej — zawiera wszystkie zmiany z tego release'u z opisami.
 
 ## [1.2.55] - 2026-04-20
 

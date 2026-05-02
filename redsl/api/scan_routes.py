@@ -37,38 +37,69 @@ class ScanRepoResponse(BaseModel):
 def _clone_repo(repo_url: str, branch: str = "main", depth: int = 1) -> Path | None:
     """Clone a repository to a temporary directory."""
     temp_dir = tempfile.mkdtemp(prefix="redsl_scan_")
+    logger.info("Starting clone of %s to %s", repo_url, temp_dir)
     try:
+        # Check if git is available
+        git_check = subprocess.run(["git", "--version"], capture_output=True, timeout=5)
+        if git_check.returncode != 0:
+            logger.error("Git not available: %s", git_check.stderr.decode()[:200])
+            return None
+        
         cmd = [
             "git", "clone",
             "--depth", str(depth),
             "--branch", branch,
             "--single-branch",
+            "--no-tags",
             repo_url,
             temp_dir
         ]
+        logger.info("Running: %s", " ".join(cmd))
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
-            timeout=60
+            timeout=300  # 5 minutes for larger repos
         )
         if result.returncode == 0:
+            logger.info("Clone successful: %s", temp_dir)
             return Path(temp_dir)
+        
+        logger.warning("Clone failed with rc=%d: %s", result.returncode, result.stderr[:500])
         
         # Try with 'master' branch if main fails
         if branch == "main":
+            logger.info("Trying 'master' branch instead of 'main'")
+            # Need to cleanup first
+            import shutil
+            shutil.rmtree(temp_dir, ignore_errors=True)
+            temp_dir = tempfile.mkdtemp(prefix="redsl_scan_")
             cmd[4] = "master"
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+            cmd[6] = temp_dir  # Update temp_dir index
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
             if result.returncode == 0:
+                logger.info("Clone with master branch successful")
                 return Path(temp_dir)
+            logger.error("Master branch also failed: %s", result.stderr[:500])
         
-        logger.error("Failed to clone %s: %s", repo_url, result.stderr)
+        # Try default branch (no --branch specified)
+        logger.info("Trying default branch (no --branch)")
+        import shutil
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        temp_dir = tempfile.mkdtemp(prefix="redsl_scan_")
+        cmd_default = ["git", "clone", "--depth", str(depth), repo_url, temp_dir]
+        result = subprocess.run(cmd_default, capture_output=True, text=True, timeout=300)
+        if result.returncode == 0:
+            logger.info("Clone with default branch successful")
+            return Path(temp_dir)
+        
+        logger.error("All clone attempts failed for %s: %s", repo_url, result.stderr[:500])
         return None
     except subprocess.TimeoutExpired:
-        logger.error("Clone timeout for %s", repo_url)
+        logger.error("Clone timeout for %s after 300s", repo_url)
         return None
     except Exception as e:
-        logger.error("Clone error for %s: %s", repo_url, e)
+        logger.exception("Clone error for %s", repo_url)
         return None
 
 
