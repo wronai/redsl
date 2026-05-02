@@ -193,9 +193,19 @@ class EventStore:
         self._subscribers: dict[str, list[EventHandler]] = {}
         self._lock = asyncio.Lock()
     
+    def _sanitize_filename(self, aggregate_id: str) -> str:
+        """Sanitize aggregate_id for safe filename use."""
+        import hashlib
+        # Hash the aggregate_id to avoid filesystem issues with special chars
+        hash_part = hashlib.md5(aggregate_id.encode()).hexdigest()[:12]
+        # Keep a shortened version for readability
+        safe_name = "".join(c if c.isalnum() or c in '-_' else '_' for c in aggregate_id)
+        safe_name = safe_name[:50]  # Limit length
+        return f"{safe_name}_{hash_part}.jsonl"
+    
     def _get_stream_path(self, aggregate_id: str) -> Path:
         """Get path to event stream for specific aggregate."""
-        return self.storage_dir / f"{aggregate_id}.jsonl"
+        return self.storage_dir / self._sanitize_filename(aggregate_id)
     
     async def append(self, event: DomainEvent) -> None:
         """Append event to store and notify subscribers."""
