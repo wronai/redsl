@@ -974,6 +974,12 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                             line.style.color = 'green';
                             line.textContent = '>>> Polaczono z CQRS Event Store';
                             if (eventsDiv) eventsDiv.insertBefore(line, eventsDiv.firstChild);
+                        } else if (data.type === 'subscription.confirmed') {
+                            console.log('[WebSocket] Subscription confirmed for:', data.aggregate_id);
+                            const line = document.createElement('div');
+                            line.style.color = 'blue';
+                            line.textContent = '>>> Subskrypcja potwierdzona: ' + data.aggregate_id;
+                            if (eventsDiv) eventsDiv.insertBefore(line, eventsDiv.firstChild);
                         } else {
                             console.log('[WebSocket] Unknown message type:', data.type);
                         }
