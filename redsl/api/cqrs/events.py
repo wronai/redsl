@@ -15,29 +15,27 @@ from typing import Any, Callable, Coroutine, Protocol
 logger = logging.getLogger(__name__)
 
 
+@dataclass
 class DomainEvent(ABC):
     """Base class for domain events."""
     
-    def __init__(
-        self,
-        event_id: str | None = None,
-        aggregate_id: str | None = None,
-        occurred_at: datetime | None = None,
-        metadata: dict[str, Any] | None = None
-    ) -> None:
-        self.event_id = event_id or str(uuid.uuid4())
-        self.aggregate_id = aggregate_id or ""
-        self.occurred_at = occurred_at or datetime.now(timezone.utc)
-        self.metadata = metadata or {}
+    event_id: str = ""
+    aggregate_id: str = ""
+    occurred_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    metadata: dict[str, Any] = field(default_factory=dict)
+    
+    def __post_init__(self) -> None:
+        if not self.event_id:
+            self.event_id = str(uuid.uuid4())
         self.event_type = self.__class__.__name__
     
     def to_dict(self) -> dict[str, Any]:
         """Serialize event to dictionary."""
         return {
             "event_id": self.event_id,
-            "event_type": self.event_type,
+            "event_type": getattr(self, 'event_type', self.__class__.__name__),
             "aggregate_id": self.aggregate_id,
-            "occurred_at": self.occurred_at.isoformat(),
+            "occurred_at": self.occurred_at.isoformat() if self.occurred_at else "",
             "metadata": self.metadata,
             "payload": self._get_payload(),
         }
