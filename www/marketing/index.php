@@ -1,6 +1,6 @@
 <?php
 /**
- * ReDSL Marketing Hub — Cold Email & LinkedIn Outreach Generator
+ * ReDSL Marketing Hub - Cold Email & LinkedIn Outreach Generator
  * 
  * Features:
  * - Repo scan via ReDSL API
@@ -12,163 +12,10 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../api/redsl.php'; // Use existing API proxy
-
 // Configuration
 $REDSL_API = getenv('REDSL_API_URL') ?: 'http://localhost:8001';
 
-// Template definitions
-$BUYER_TEMPLATES = [
-    'tech_lead' => [
-        'title' => 'Tech Lead — Code Review Bottleneck',
-        'subject' => 'Znalazłem 3 rzeczy w [repo] które spowalniają Wasz development',
-        'body' => "Cześć [imię],
-
-Przejrzałem Wasz projekt [repo-link].
-Znalazłem kilka rzeczy, które prawdopodobnie kosztują Was czas przy każdej zmianie:
-
-{issues}
-
-Mogę naprawić każdą z tych rzeczy jako osobny PR.
-Płacisz tylko za te, które zaakceptujesz i zmergeujesz. Odrzucony PR = 0 zł.
-
-Jeśli chcesz zobaczyć konkretne propozycje — napisz, przygotuję w 24h.
-
-[imię]"
-    ],
-    'ceo' => [
-        'title' => 'CEO/Founder — Team Productivity',
-        'subject' => 'Wasz projekt [nazwa] — znalazłem coś co spowalnia Wasz team',
-        'body' => "Cześć [imię],
-
-Przejrzałem Wasz kod na GitHubie.
-Mam wrażenie, że Wasi deweloperzy tracą sporo czasu na sprzątanie zamiast budowania nowych funkcji.
-
-Dostarczam PR-y które to naprawiają. Płacicie tylko za zmergowane — zero ryzyka.
-
-Mogę zacząć od darmowego skanu i pokazać Wam co znalazłem.
-
-Chcecie?
-
-[imię]"
-    ],
-    'pm_agency' => [
-        'title' => 'PM Agencji — Klient Reporting',
-        'subject' => 'Jak pokazujecie klientom postęp w jakości kodu?',
-        'body' => "Cześć [imię],
-
-Prowadzicie projekty dla klientów — prawdopodobnie znacie ten moment: klient pyta o postęp, developer mówi „to legacy, trudno powiedzieć ile zajmie".
-
-Mamy narzędzie które to zmienia:
-- Każda zmiana ma metryki przed i po
-- Trend jakości widoczny dla klienta
-- PR-y z dokumentacją
-
-PM może powiedzieć: „dług techniczny z poprzednich 2 lat zmniejszył się o 40%, tempo deliverables wzrośnie w Q3" — i poprzeć to liczbami.
-
-Czy to coś czego szukacie?
-Mogę przygotować przykładowy raport z jednego Waszego projektu — za 0 zł.
-
-[imię]"
-    ]
-];
-
-$LINKEDIN_TEMPLATES = [
-    'pain_hook' => [
-        'title' => 'Hook na ból — Policz to uczciwie',
-        'content' => "Policz to uczciwie.
-
-Ile godzin Twój senior spędził w tym tygodniu naprawiając to, co LLM lub junior narobił — zamiast budować nowe funkcje?
-
-Pomnóż przez jego stawkę godzinową.
-To jest miesięczny koszt nieuporządkowanego kodu.
-
-W większości małych firm IT: 5 000–15 000 zł miesięcznie.
-Nikt tego nie liczy. Wszyscy to czują.
-
----
-
-My robimy to inaczej: dostarczamy PR-y które ten czas odzyskują. Płacisz tylko za zmergowane. ~200 zł miesięcznie.
-
-Jeśli chcesz zobaczyć jak to wygląda na Twoim repo — napisz w komentarzu lub DM."
-    ],
-    'ai_contrarian' => [
-        'title' => 'Kontrintuicja o AI — LLM to gaz',
-        'content' => "Używasz GitHub Copilot? Cursor? ChatGPT do kodu?
-
-Dobra wiadomość: piszecie szybciej niż kiedykolwiek.
-Zła wiadomość: nikt nie widzi całości.
-
-LLM generuje kod lokalnie — na podstawie promptu, bez kontekstu całego projektu. Duplikaty powstają w różnych plikach. Zależności rosną. Funkcje puchną.
-
-Przez rok takie tempo to 3× więcej kodu i 2× więcej czasu na każdą zmianę.
-
----
-
-LLM to gaz. Ktoś musi pilnować układu hamulcowego.
-
-Tym kimś może być system, nie człowiek.
-Robimy to dla małych firm IT — od 200 zł miesięcznie."
-    ],
-    'case_study' => [
-        'title' => 'Case Study Format — Przed/Po',
-        'content' => "Co się dzieje z projektem po 2 latach bez refaktoryzacji:
-
-📁 plik server.py: 800 linii, funkcja z CC=19
-📦 moduł api.py: importowany w 23 miejscach
-🚫 senior mówi: „tego nie ruszaj, nie wiadomo co wybuchnie"
-😰 junior boi się commitować
-⏱️ code review trwa 3h zamiast 30min
-
-Znasz to?
-
----
-
-W zeszłym miesiącu pracowaliśmy z projektem dokładnie w tym stanie.
-
-6 tygodni, 24 PR-y, żadnej zmiany logiki biznesowej.
-
-Efekt:
-✅ CC średnie: 14 → 9
-✅ code review: 3h → 50min  
-✅ funkcje których „nie ruszamy": 3 → 0
-💰 Koszt: 240 zł.
-
----
-
-Jeśli masz projekt który wygląda podobnie — napisz. Zrobimy darmowy skan i pokażemy co znaleźliśmy."
-    ]
-];
-
-$GITHUB_TEMPLATE = [
-    'title' => 'GitHub Cold Outreach — OSS Project',
-    'issue_title' => 'Found some complexity issues that could slow down future contributions',
-    'body' => "Hi,
-
-I was going through the codebase and noticed a few things that might make future contributions harder:
-
-{issues}
-
-I can prepare 2–3 PRs that address these without touching any business logic.
-No cost — I'm building tooling around automated refactoring and use OSS projects for validation.
-
-If you're interested, let me know and I'll open draft PRs for review."
-];
-
-$FOLLOW_UP_TEMPLATE = [
-    'subject' => 'Re: [poprzedni temat]',
-    'body' => "Cześć [imię],
-
-Krótko — masz 2 minuty?
-
-Przygotowałem wstępną listę 5 rzeczy w [repo] które można naprawić bez ryzyka i bez zmiany logiki biznesowej.
-
-Wrzucam jeśli chcesz zobaczyć. Jeśli nie — żaden problem.
-
-[imię]"
-];
-
-// Helper functions
+// Helper function to call ReDSL API
 function callRedslApi(string $endpoint, array $payload): array {
     global $REDSL_API;
     
@@ -188,19 +35,171 @@ function callRedslApi(string $endpoint, array $payload): array {
     return ['ok' => $code >= 200 && $code < 300, 'code' => $code, 'data' => $decoded];
 }
 
+// Template definitions
+$BUYER_TEMPLATES = [
+    'tech_lead' => [
+        'title' => 'Tech Lead - Code Review Bottleneck',
+        'subject' => 'Znalazlem 3 rzeczy w [repo] ktore spowalniaja Wasz development',
+        'body' => "Czesc [imie],
+
+Przejrzalem Wasz projekt [repo-link].
+Znalazlem kilka rzeczy, ktore prawdopodobnie kosztuja Was czas przy kazdej zmianie:
+
+{issues}
+
+Moge naprawic kazda z tych rzeczy jako osobny PR.
+Placisz tylko za te, ktore zaakceptujesz i zmergeujesz. Odrzucony PR = 0 zl.
+
+Jesli chcesz zobaczyc konkretne propozycje - napisz, przygotuje w 24h.
+
+[imie]"
+    ],
+    'ceo' => [
+        'title' => 'CEO/Founder - Team Productivity',
+        'subject' => 'Wasz projekt [nazwa] - znalazlem cos co spowalnia Wasz team',
+        'body' => "Czesc [imie],
+
+Przejrzalem Wasz kod na GitHubie.
+Mam wrazenie, ze Wasi deweloperzy traca sporo czasu na sprzatanie zamiast budowania nowych funkcji.
+
+Dostarczam PR-y ktore to naprawiaja. Placicie tylko za zmergowane - zero ryzyka.
+
+Moge zaczac od darmowego skanu i pokazac Wam co znalazlem.
+
+Chcecie?
+
+[imie]"
+    ],
+    'pm_agency' => [
+        'title' => 'PM Agencji - Klient Reporting',
+        'subject' => 'Jak pokazujecie klientom postep w jakosci kodu?',
+        'body' => "Czesc [imie],
+
+Prowadzicie projekty dla klientow - prawdopodobnie znacie ten moment: klient pyta o postep, developer mowi 'to legacy, trudno powiedziec ile zajmie'.
+
+Mamy narzedzie ktore to zmienia:
+- Kazda zmiana ma metryki przed i po
+- Trend jakosci widoczny dla klienta
+- PR-y z dokumentacja
+
+PM moze powiedziec: 'dlug techniczny z poprzednich 2 lat zmniejszyl sie o 40%, tempo deliverables wzrosnie w Q3' - i poprzec to liczbami.
+
+Czy to cos czego szukacie?
+Moge przygotowac przykladowy raport z jednego Waszego projektu - za 0 zl.
+
+[imie]"
+    ]
+];
+
+$LINKEDIN_TEMPLATES = [
+    'pain_hook' => [
+        'title' => 'Hook na bol - Policz to uczciwie',
+        'content' => "Policz to uczciwie.
+
+Ile godzin Twoj senior spedzil w tym tygodniu naprawiajac to, co LLM lub junior narobil - zamiast budowac nowe funkcje?
+
+Pomnoz przez jego stawke godzinowa.
+To jest miesieczny koszt nieuporzadkowanego kodu.
+
+W wiekszosci malych firm IT: 5 000-15 000 zl miesiecznie.
+Nikt tego nie liczy. Wszyscy to czuja.
+
+---
+
+My robimy to inaczej: dostarczamy PR-y ktore ten czas odzyskuja. Placisz tylko za zmergowane. ~200 zl miesiecznie.
+
+Jesli chcesz zobaczyc jak to wyglada na Twoim repo - napisz w komentarzu lub DM."
+    ],
+    'ai_contrarian' => [
+        'title' => 'Kontrintuicja o AI - LLM to gaz',
+        'content' => "Uzywasz GitHub Copilot? Cursor? ChatGPT do kodu?
+
+Dobra wiadomosc: piszecie szybciej niz kiedykolwiek.
+Zla wiadomosc: nikt nie widzi calosci.
+
+LLM generuje kod lokalnie - na podstawie promptu, bez kontekstu calego projektu. Duplikaty powstaja w roznych plikach. Zaleznosci rosna. Funkcje puchna.
+
+Przez rok takie tempo to 3x wiecej kodu i 2x wiecej czasu na kazda zmiane.
+
+---
+
+LLM to gaz. Ktos musi pilnowac ukladu hamulcowego.
+
+Tym kims moze byc system, nie czlowiek.
+Robimy to dla malych firm IT - od 200 zl miesiecznie."
+    ],
+    'case_study' => [
+        'title' => 'Case Study Format - Przed/Po',
+        'content' => "Co sie dzieje z projektem po 2 latach bez refaktoryzacji:
+
+[PLIK] plik server.py: 800 linii, funkcja z CC=19
+[MODUL] modul api.py: importowany w 23 miejscach
+[BLOK] senior mowi: 'tego nie ruszaj, nie wiadomo co wybuchnie'
+[BLAD] junior boi sie commitowac
+[CZAS] code review trwa 3h zamiast 30min
+
+Znasz to?
+
+---
+
+W zeszlym miesiacu pracowalismy z projektem dokladnie w tym stanie.
+
+6 tygodni, 24 PR-y, zadnej zmiany logiki biznesowej.
+
+Efekt:
+[OK] CC srednie: 14 -> 9
+[OK] code review: 3h -> 50min  
+[OK] funkcje ktorych 'nie ruszamy': 3 -> 0
+[PLN] Koszt: 240 zl.
+
+---
+
+Jesli masz projekt ktory wyglada podobnie - napisz. Zrobimy darmowy skan i pokazemy co znalezlismy."
+    ]
+];
+
+$GITHUB_TEMPLATE = [
+    'title' => 'GitHub Cold Outreach - OSS Project',
+    'issue_title' => 'Found some complexity issues that could slow down future contributions',
+    'body' => "Hi,
+
+I was going through the codebase and noticed a few things that might make future contributions harder:
+
+{issues}
+
+I can prepare 2-3 PRs that address these without touching any business logic.
+No cost - I'm building tooling around automated refactoring and use OSS projects for validation.
+
+If you're interested, let me know and I'll open draft PRs for review."
+];
+
+$FOLLOW_UP_TEMPLATE = [
+    'subject' => 'Re: [poprzedni temat]',
+    'body' => "Czesc [imie],
+
+Krotko - masz 2 minuty?
+
+Przygotowalem wstepna liste 5 rzeczy w [repo] ktore mozna naprawic bez ryzyka i bez zmiany logiki biznesowej.
+
+Wrzucam jesli chcesz zobaczyc. Jesli nie - zaden problem.
+
+[imie]"
+];
+
+// Helper functions
 function formatIssuesForEmail(array $analysis): string {
     $lines = [];
     $alerts = array_slice($analysis['alerts'] ?? [], 0, 3);
     
     foreach ($alerts as $alert) {
         if ($alert['type'] === 'cc_exceeded') {
-            $lines[] = "• Funkcja `{$alert['name']}` ma złożoność CC={$alert['value']} (norma to max 10) — każda zmiana to ryzyko";
+            $lines[] = "• Funkcja `{$alert['name']}` ma zlozonosc CC={$alert['value']} (norma to max 10) - kazda zmiana to ryzyko";
         }
     }
     
     // Add file count line
     $files = $analysis['total_files'] ?? 0;
-    $lines[] = "• Projekt ma {$files} plików — typowy bottleneck przy code review";
+    $lines[] = "• Projekt ma {$files} plikow - typowy bottleneck przy code review";
     
     return implode("\n", $lines);
 }
@@ -211,13 +210,13 @@ function formatIssuesForGitHub(array $analysis): string {
     
     foreach ($alerts as $alert) {
         if ($alert['type'] === 'cc_exceeded') {
-            $lines[] = "- `{$alert['name']}` has cyclomatic complexity ~{$alert['value']} — hard to modify safely";
+            $lines[] = "- `{$alert['name']}` has cyclomatic complexity ~{$alert['value']} - hard to modify safely";
         }
     }
     
     $files = $analysis['total_files'] ?? 0;
     if ($files > 50) {
-        $lines[] = "- {$files} files total — this often becomes a bottleneck in code review";
+        $lines[] = "- {$files} files total - this often becomes a bottleneck in code review";
     }
     
     return implode("\n", $lines);
@@ -264,7 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Generate all templates
             foreach ($BUYER_TEMPLATES as $key => $template) {
                 $body = str_replace(
-                    ['[repo]', '[repo-link]', '[imię]', "{issues}"],
+                    ['[repo]', '[repo-link]', '[imie]', "{issues}"],
                     [$repoName, $repoUrl, $contactName, $issuesEmail],
                     $template['body']
                 );
@@ -303,7 +302,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Follow-up
             $followupBody = str_replace(
-                ['[repo]', '[imię]'],
+                ['[repo]', '[imie]'],
                 [$repoName, $contactName],
                 $FOLLOW_UP_TEMPLATE['body']
             );
@@ -329,7 +328,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReDSL Marketing Hub — Cold Email & LinkedIn Outreach</title>
+    <title>ReDSL Marketing Hub - Cold Email & LinkedIn Outreach</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -531,7 +530,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container">
         <header>
             <h1>ReDSL Marketing Hub</h1>
-            <p>Cold Email & LinkedIn Outreach Generator — Skanuj repo, generuj personalizowane wiadomości</p>
+            <p>Cold Email & LinkedIn Outreach Generator - Skanuj repo, generuj personalizowane wiadomosci</p>
         </header>
         
         <!-- Input Form -->
@@ -546,29 +545,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 
                 <div class="form-group">
-                    <label for="buyer_type">Typ Odbiorcy (główny)</label>
+                    <label for="buyer_type">Typ Odbiorcy (glowny)</label>
                     <select id="buyer_type" name="buyer_type">
                         <option value="tech_lead" <?= ($_POST['buyer_type'] ?? '') === 'tech_lead' ? 'selected' : '' ?>>
-                            Tech Lead — Code Review Bottleneck
+                            Tech Lead - Code Review Bottleneck
                         </option>
                         <option value="ceo" <?= ($_POST['buyer_type'] ?? '') === 'ceo' ? 'selected' : '' ?>>
-                            CEO/Founder — Team Productivity
+                            CEO/Founder - Team Productivity
                         </option>
                         <option value="pm_agency" <?= ($_POST['buyer_type'] ?? '') === 'pm_agency' ? 'selected' : '' ?>>
-                            PM Agencji — Klient Reporting
+                            PM Agencji - Klient Reporting
                         </option>
                     </select>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="form-group">
-                        <label for="contact_name">Imię Odbiorcy</label>
+                        <label for="contact_name">Imie Odbiorcy</label>
                         <input type="text" id="contact_name" name="contact_name" 
                                placeholder="Janek"
                                value="<?= htmlspecialchars($_POST['contact_name'] ?? '') ?>">
                     </div>
                     <div class="form-group">
-                        <label for="sender_name">Twoje Imię</label>
+                        <label for="sender_name">Twoje Imie</label>
                         <input type="text" id="sender_name" name="sender_name" 
                                placeholder="Tomek"
                                value="<?= htmlspecialchars($_POST['sender_name'] ?? '') ?>">
@@ -585,8 +584,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <?php if ($result): ?>
             <div class="success">
-                ✅ Skan zakończony! Znaleziono <?= $result['analysis']['total_files'] ?? 0 ?> plików, 
-                <?= $result['analysis']['critical_count'] ?? 0 ?> krytycznych problemów.
+                OK Skan zakonczony! Znaleziono <?= $result['analysis']['total_files'] ?? 0 ?> plikow, 
+                <?= $result['analysis']['critical_count'] ?? 0 ?> krytycznych problemow.
             </div>
             
             <!-- Analysis Metrics -->
@@ -603,7 +602,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="metric">
                         <div class="metric-value"><?= number_format($result['analysis']['avg_cc'], 1) ?></div>
-                        <div class="metric-label">Średnia CC</div>
+                        <div class="metric-label">Srednia CC</div>
                     </div>
                     <div class="metric">
                         <div class="metric-value"><?= $result['analysis']['critical_count'] ?></div>
@@ -700,9 +699,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h2>📅 Sekwencja Outreach (14 dni)</h2>
                 <table style="width: 100%; border-collapse: collapse;">
                     <tr style="background: #f5f7fa;">
-                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Dzień</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Dzien</th>
                         <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Akcja</th>
-                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Kanał</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Kanal</th>
                     </tr>
                     <tr>
                         <td style="padding: 12px; border-bottom: 1px solid #eee;">1</td>
@@ -721,7 +720,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </tr>
                     <tr>
                         <td style="padding: 12px; border-bottom: 1px solid #eee;">12</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">Ostatni kontakt — krótki, bez presji</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">Ostatni kontakt - krotki, bez presji</td>
                         <td style="padding: 12px; border-bottom: 1px solid #eee;">Email</td>
                     </tr>
                 </table>
@@ -750,7 +749,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             navigator.clipboard.writeText(text).then(() => {
                 const btn = event.target;
                 const originalText = btn.innerText;
-                btn.innerText = '✅ Skopiowano!';
+                btn.innerText = 'OK Skopiowano!';
                 btn.style.background = '#2196f3';
                 setTimeout(() => {
                     btn.innerText = originalText;
