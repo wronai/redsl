@@ -59,6 +59,16 @@
 - refactor: assorted internal refactorings (reduce CLI fan-out, reorganize modules)
 - fix(docs): add markdown output across docs and tests
 
+## [1.2.62] - 2026-05-03
+
+### Docs
+- Update README.md
+
+### Other
+- Update tree.sh
+- Update uv.lock
+- Update www/tree.sh
+
 ## [1.2.61] - 2026-05-03
 
 ### Docs
