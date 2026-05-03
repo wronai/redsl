@@ -4,7 +4,9 @@ vendor/
 .idea
 redsl*.log
 dist
-
+test_sample_project
+test_sample_project/logs
+test_sample_project/logs/
 .redsl
 refactor_output
 redsl-*
