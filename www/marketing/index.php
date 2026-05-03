@@ -18,8 +18,10 @@ $REDSL_API = getenv('REDSL_API_URL') ?: 'http://localhost:8002';
 // Helper function to call ReDSL API
 function callRedslApi(string $endpoint, array $payload): array {
     global $REDSL_API;
-    
+
     $url = $REDSL_API . $endpoint;
+    error_log('[marketing_api] Request to ' . $url . ' payload=' . json_encode($payload));
+
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
@@ -35,27 +37,36 @@ function callRedslApi(string $endpoint, array $payload): array {
     $curlError = curl_error($ch);
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-    
+
     if ($resp === false) {
+        error_log('[marketing_api] CURL failed: ' . $curlError . ' url=' . $url);
         return [
-            'ok' => false, 
-            'code' => 0, 
+            'ok' => false,
+            'code' => 0,
             'data' => ['error' => 'CURL Error: ' . $curlError, 'url' => $url],
             'curl_error' => $curlError
         ];
     }
-    
+
     $decoded = json_decode($resp ?: '{}', true);
     if (json_last_error() !== JSON_ERROR_NONE) {
+        error_log('[marketing_api] JSON decode error code=' . $code . ' msg=' . json_last_error_msg());
         return [
-            'ok' => false, 
-            'code' => $code, 
+            'ok' => false,
+            'code' => $code,
             'data' => ['error' => 'JSON decode error: ' . json_last_error_msg(), 'response' => substr($resp, 0, 500)],
             'raw_response' => $resp
         ];
     }
-    
-    return ['ok' => $code >= 200 && $code < 300, 'code' => $code, 'data' => $decoded];
+
+    $ok = $code >= 200 && $code < 300;
+    if (!$ok) {
+        error_log('[marketing_api] Non-2xx response code=' . $code . ' url=' . $url);
+    } else {
+        error_log('[marketing_api] Success code=' . $code . ' url=' . $url);
+    }
+
+    return ['ok' => $ok, 'code' => $code, 'data' => $decoded];
 }
 
 // Template definitions
@@ -494,17 +505,20 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
     <title>ReDSL Marketing Hub - Cold Email & LinkedIn Outreach</title>
     <link rel="stylesheet" href="style.css">
     <script>
-        function showTab(tabName) {
+        function showTab(tabName, tabElement) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(tabName).classList.remove('hidden');
             document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-            event.target.classList.add('active');
+            if (tabElement) {
+                tabElement.classList.add('active');
+            }
         }
         
-        function copyToClipboard(elementId) {
+        function copyToClipboard(elementId, triggerButton) {
             const text = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(text).then(() => {
-                const btn = event.target;
+                const btn = triggerButton;
+                if (!btn) return;
                 const originalText = btn.innerText;
                 btn.innerText = 'OK Skopiowano!';
                 btn.style.background = '#2196f3';
@@ -552,26 +566,26 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                     <label for="repo_url">URL Repozytorium (GitHub)</label>
                     <input type="url" id="repo_url" name="repo_url" required 
                            placeholder="https://github.com/owner/repo"
-                           value="<?= htmlspecialchars($_POST['repo_url'] ?? '') ?>">
+                           value="<?= htmlspecialchars($_GET['url'] ?? $_GET['repo_url'] ?? $_POST['repo_url'] ?? '') ?>">
                 </div>
                 
                 <div class="form-group">
                     <label for="branch">Branch (opcjonalne, auto-detekcja z GitHub)</label>
                     <input type="text" id="branch" name="branch"
                            placeholder="Np. main, dev, master - zostaw puste dla auto-detekcji"
-                           value="<?= htmlspecialchars($_POST['branch'] ?? '') ?>">
+                           value="<?= htmlspecialchars($_GET['branch'] ?? $_POST['branch'] ?? '') ?>">
                 </div>
                 
                 <div class="form-group">
                     <label for="buyer_type">Typ Odbiorcy (glowny)</label>
                     <select id="buyer_type" name="buyer_type">
-                        <option value="tech_lead" <?= ($_POST['buyer_type'] ?? '') === 'tech_lead' ? 'selected' : '' ?>>
+                        <option value="tech_lead" <?= ($_GET['buyer_type'] ?? $_POST['buyer_type'] ?? '') === 'tech_lead' ? 'selected' : '' ?>>
                             Tech Lead - Code Review Bottleneck
                         </option>
-                        <option value="ceo" <?= ($_POST['buyer_type'] ?? '') === 'ceo' ? 'selected' : '' ?>>
+                        <option value="ceo" <?= ($_GET['buyer_type'] ?? $_POST['buyer_type'] ?? '') === 'ceo' ? 'selected' : '' ?>>
                             CEO/Founder - Team Productivity
                         </option>
-                        <option value="pm_agency" <?= ($_POST['buyer_type'] ?? '') === 'pm_agency' ? 'selected' : '' ?>>
+                        <option value="pm_agency" <?= ($_GET['buyer_type'] ?? $_POST['buyer_type'] ?? '') === 'pm_agency' ? 'selected' : '' ?>>
                             PM Agencji - Klient Reporting
                         </option>
                     </select>
@@ -579,7 +593,7 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                 
                 <div class="form-group" style="background: #f0f4ff; padding: 15px; border-radius: 8px; margin: 15px 0;">
                     <label style="display: flex; align-items: center; cursor: pointer;">
-                        <input type="checkbox" name="async_mode" value="1" <?= ($_POST['async_mode'] ?? '') ? 'checked' : '' ?> style="margin-right: 10px; width: auto;">
+                        <input type="checkbox" name="async_mode" value="1" <?= ($_GET['async_mode'] ?? $_POST['async_mode'] ?? '') ? 'checked' : '' ?> style="margin-right: 10px; width: auto;">
                         <span><strong>Tryb Async (CQRS)</strong> - Zwroc ID i sprawdz status pozniej przez WebSocket/Query API</span>
                     </label>
                     <small style="color: #666; display: block; margin-top: 5px;">
@@ -593,13 +607,13 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                         <label for="contact_name">Imie Odbiorcy</label>
                         <input type="text" id="contact_name" name="contact_name" 
                                placeholder="Janek"
-                               value="<?= htmlspecialchars($_POST['contact_name'] ?? '') ?>">
+                               value="<?= htmlspecialchars($_GET['contact_name'] ?? $_POST['contact_name'] ?? '') ?>">
                     </div>
                     <div class="form-group">
                         <label for="sender_name">Twoje Imie</label>
                         <input type="text" id="sender_name" name="sender_name" 
                                placeholder="Tomek"
-                               value="<?= htmlspecialchars($_POST['sender_name'] ?? '') ?>">
+                               value="<?= htmlspecialchars($_GET['sender_name'] ?? $_POST['sender_name'] ?? '') ?>">
                     </div>
                 </div>
                 
@@ -1081,10 +1095,10 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                 </div>
                 
                 <div class="tabs">
-                    <div class="tab active" onclick="showTab('email')">Cold Email</div>
-                    <div class="tab" onclick="showTab('linkedin')">LinkedIn</div>
-                    <div class="tab" onclick="showTab('github')">GitHub</div>
-                    <div class="tab" onclick="showTab('followup')">Follow-up</div>
+                    <div class="tab active" onclick="showTab('email', this)">Cold Email</div>
+                    <div class="tab" onclick="showTab('linkedin', this)">LinkedIn</div>
+                    <div class="tab" onclick="showTab('github', this)">GitHub</div>
+                    <div class="tab" onclick="showTab('followup', this)">Follow-up</div>
                 </div>
                 
                 <!-- Email Templates -->
@@ -1097,7 +1111,7 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                             <h4><?= $tpl['title'] ?></h4>
                             <div class="template-subject">Temat: <?= htmlspecialchars($tpl['subject']) ?></div>
                             <div class="template-body" id="email-<?= $type ?>"><?= htmlspecialchars($tpl['body']) ?></div>
-                            <button class="copy-btn" onclick="copyToClipboard('email-<?= $type ?>')">📋 Kopiuj</button>
+                            <button class="copy-btn" onclick="copyToClipboard('email-<?= $type ?>', this)">📋 Kopiuj</button>
                         </div>
                     <?php endif; endforeach; ?>
                 </div>
@@ -1111,7 +1125,7 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                         <div class="template-card">
                             <h4><?= $tpl['title'] ?></h4>
                             <div class="linkedin-content" id="linkedin-<?= $type ?>"><?= htmlspecialchars($tpl['content']) ?></div>
-                            <button class="copy-btn" onclick="copyToClipboard('linkedin-<?= $type ?>')">📋 Kopiuj</button>
+                            <button class="copy-btn" onclick="copyToClipboard('linkedin-<?= $type ?>', this)">📋 Kopiuj</button>
                         </div>
                     <?php endif; endforeach; ?>
                 </div>
@@ -1125,7 +1139,7 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                             <h4><?= $tpl['title'] ?></h4>
                             <div class="template-subject">Issue Title: <?= htmlspecialchars($tpl['issue_title']) ?></div>
                             <div class="template-body" id="github-body"><?= htmlspecialchars($tpl['body']) ?></div>
-                            <button class="copy-btn" onclick="copyToClipboard('github-body')">📋 Kopiuj</button>
+                            <button class="copy-btn" onclick="copyToClipboard('github-body', this)">📋 Kopiuj</button>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -1139,7 +1153,7 @@ if ($format === 'md' && $result && !($result['async'] ?? false)) {
                             <h4><?= $tpl['title'] ?></h4>
                             <div class="template-subject">Temat: <?= htmlspecialchars($tpl['subject']) ?></div>
                             <div class="template-body" id="followup-body"><?= htmlspecialchars($tpl['body']) ?></div>
-                            <button class="copy-btn" onclick="copyToClipboard('followup-body')">📋 Kopiuj</button>
+                            <button class="copy-btn" onclick="copyToClipboard('followup-body', this)">📋 Kopiuj</button>
                         </div>
                     <?php endif; ?>
                 </div>

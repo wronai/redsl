@@ -4,8 +4,8 @@ path: /home/tom/github/semcod/redsl
 
 <!-- code2docs:start --># redsl
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-4586-green)
-> **4586** functions | **251** classes | **453** files | CC̄ = 3.9
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-4659-green)
+> **4659** functions | **288** classes | **459** files | CC̄ = 3.9
 
 > Auto-generated project documentation from source code analysis.
 
@@ -112,6 +112,7 @@ redsl/
     ├── goal-automatyczny-git-push
     ├── redup-detekcja-duplikacji
     ├── toonic-format-toon
+    ├── API
     ├── clickmd-markdown-terminal
     ├── CONFIG_MIGRATION
     ├── heal-zdrowie-wellness
@@ -199,10 +200,11 @@ redsl/
     ├── nda-form
     ├── nda-wzor
     ├── smoke-test
-    ├── debug
     ├── README_CONFIG
     ├── DEPLOY_CHECKLIST
     ├── README_PROPozycje
+    ├── Makefile
+    ├── bootstrap
     ├── config-editor
     ├── README-PLESK
     ├── email-notifications
@@ -252,7 +254,7 @@ redsl/
             ├── toon
         ├── invoice-generator
         ├── scan-worker
-        ├── redsl
+        ├── index
         ├── toon
     ├── default_rules
         ├── vallm-pre-commit
@@ -344,6 +346,7 @@ redsl/
         ├── core
         ├── profiles
         ├── secrets
+    ├── debug
         ├── workflow
         ├── full_pipeline
         ├── basic_analysis
@@ -504,9 +507,17 @@ redsl/
         ├── refactor_routes
         ├── scan_routes
         ├── models
+        ├── cqrs_routes
         ├── webhook_routes
+        ├── openapi
         ├── debug_routes
         ├── example_routes
+            ├── commands
+            ├── events
+        ├── cqrs/
+            ├── websocket_manager
+            ├── queries
+            ├── projections
         ├── engine
     ├── dsl/
         ├── rule_generator
@@ -514,12 +525,13 @@ redsl/
             ├── README
                 ├── toon
     ├── prompt
-        ├── toon
     ├── context
+        ├── toon
         ├── toon
     ├── README
         ├── toon
         ├── toon
+        ├── redsl
     ├── calls
         ├── toon
 ```
@@ -755,6 +767,43 @@ redsl/
 - **`DecisionResponse`** — —
 - **`CycleRequest`** — —
 - **`CycleResponse`** — —
+- **`ScanRemoteRequest`** — Request to scan remote repository.
+- **`ScanRemoteResponse`** — Response from scan operation.
+- **`RefactorRequest`** — Request to run refactoring.
+- **`QueryResponse`** — Generic query response.
+- **`EventStreamRequest`** — Request for event stream subscription.
+- **`Command`** — Base command.
+- **`ScanRemoteCommand`** — Command to scan remote repository.
+- **`RefactorCommand`** — Command to run refactoring cycle.
+- **`CommandHandler`** — Base command handler.
+- **`ScanRemoteHandler`** — Handler for ScanRemoteCommand.
+- **`RefactorHandler`** — Handler for RefactorCommand.
+- **`CommandBus`** — Command Bus - dispatches commands to handlers.
+- **`DomainEvent`** — Base class for domain events.
+- **`ScanStarted`** — Event emitted when remote scan starts.
+- **`ScanProgress`** — Event emitted during scan progress.
+- **`ScanCompleted`** — Event emitted when scan completes successfully.
+- **`ScanFailed`** — Event emitted when scan fails.
+- **`RefactorStarted`** — Event emitted when refactoring starts.
+- **`RefactorProgress`** — Event emitted during refactoring.
+- **`RefactorCompleted`** — Event emitted when refactoring completes.
+- **`EventStore`** — Append-only event store with file-based persistence.
+- **`WebSocketManager`** — Manages WebSocket connections for real-time event streaming.
+- **`Query`** — Base query.
+- **`ScanResultQuery`** — Query for scan results.
+- **`ProjectHealthQuery`** — Query for project health metrics.
+- **`RecentEventsQuery`** — Query for recent events.
+- **`AggregateHistoryQuery`** — Query for aggregate event history.
+- **`QueryHandler`** — Base query handler.
+- **`ScanResultHandler`** — Handler for ScanResultQuery - reads from projection.
+- **`ProjectHealthHandler`** — Handler for ProjectHealthQuery.
+- **`RecentEventsHandler`** — Handler for RecentEventsQuery - reads from event store.
+- **`AggregateHistoryHandler`** — Handler for AggregateHistoryQuery.
+- **`QueryBus`** — Query Bus - dispatches queries to handlers.
+- **`Projection`** — Base class for read model projections.
+- **`ScanProjection`** — Projection for scan results.
+- **`ProjectHealthProjection`** — Projection for project health over time.
+- **`ProjectionManager`** — Manages projections and rebuilds them from events.
 - **`Operator`** — —
 - **`RefactorAction`** — —
 - **`Condition`** — Pojedynczy warunek DSL.
@@ -1212,10 +1261,6 @@ redsl/
 - `process_data(data, mode, threshold, callback)` — Very complex function with high CC.
 - `process_data_copy(data, mode, threshold, callback)` — Copy of process_data - exact duplicate.
 - `calculate(x, y, z)` — —
-- `load_env_pl()` — —
-- `env_pl()` — —
-- `parseSelection_pl()` — —
-- `h_pl()` — —
 - `fetchCompanyData()` — —
 - `h()` — —
 - `extractNip()` — —
@@ -1235,6 +1280,10 @@ redsl/
 - `check_directories()` — —
 - `check_admin_auth()` — —
 - `check_cron_scripts()` — —
+- `env()` — —
+- `h()` — —
+- `csrf_token()` — —
+- `check_rate_limit()` — —
 - `h_ce()` — —
 - `loadConfig()` — —
 - `saveConfig()` — —
@@ -1244,16 +1293,9 @@ redsl/
 - `sendProposalEmail()` — —
 - `generateAccessToken()` — —
 - `verifyAccessToken()` — —
-- `load_env()` — —
-- `env()` — —
 - `parseSelection()` — —
 - `h()` — —
 - `h_pp()` — —
-- `load_env()` — —
-- `env()` — —
-- `h()` — —
-- `csrf_token()` — —
-- `check_rate_limit()` — —
 - `send_notification()` — —
 - `send_notification_smtp()` — —
 - `check_status()` — —
@@ -1288,10 +1330,16 @@ redsl/
 - `headline()` — —
 - `y()` — —
 - `callRedslApi()` — —
+- `generateMarkdownReport()` — —
 - `formatIssuesForEmail()` — —
 - `formatIssuesForGitHub()` — —
 - `showTab()` — —
 - `copyToClipboard()` — —
+- `downloadMarkdown()` — —
+- `updateAsyncProgressStep()` — —
+- `updateProgressStep()` — —
+- `getCqrsStatus()` — —
+- `connectWebSocket()` — —
 - `h()` — —
 - `h()` — —
 - `classForLevel()` — —
@@ -1333,9 +1381,6 @@ redsl/
 - `getNestedValue()` — —
 - `getRiskLevel()` — —
 - `parseSelection()` — —
-- `redsl_curl()` — —
-- `json_out()` — —
-- `resolve_project()` — —
 - `main()` — Run pre-commit validation.
 - `parse_sumr()` — —
 - `toon_to_tasks()` — —
@@ -1930,6 +1975,10 @@ redsl/
 - `enhance_metrics_with_radon(metrics, project_dir)` — Uzupełnij metryki o dokładne CC z radon (jeśli dostępne).
 - `handle_push_webhook(payload)` — Process a GitHub push webhook payload.
 - `create_app()` — Tworzenie aplikacji FastAPI.
+- `redsl_curl()` — —
+- `json_out()` — —
+- `resolve_project()` — —
+- `build_mcp_subscription_payload()` — —
 - `planfile_group()` — —
 - `planfile_sync()` — —
 - `planfile_show()` — —
@@ -1949,6 +1998,17 @@ redsl/
 - `events_show()` — —
 - `events_summary()` — —
 - `events_cycles()` — —
+- `callRedslApi()` — —
+- `generateMarkdownReport()` — —
+- `formatIssuesForEmail()` — —
+- `formatIssuesForGitHub()` — —
+- `showTab()` — —
+- `copyToClipboard()` — —
+- `downloadMarkdown()` — —
+- `updateAsyncProgressStep()` — —
+- `updateProgressStep()` — —
+- `getCqrsStatus()` — —
+- `connectWebSocket()` — —
 - `run_cycle()` — —
 - `run_from_toon_content()` — —
 - `masthead()` — —
@@ -2001,17 +2061,6 @@ redsl/
 - `check_testql_available()` — —
 - `ast_max_nesting_depth()` — —
 - `ast_cyclomatic_complexity()` — —
-- `fetchCompanyData()` — —
-- `h()` — —
-- `extractNip()` — —
-- `handleStep1()` — —
-- `buildClientData()` — —
-- `saveClient()` — —
-- `createNdaContract()` — —
-- `saveNdaToDatabase()` — —
-- `storeStep2Data()` — —
-- `handleStep2()` — —
-- `generateNDAText()` — —
 - `extract_refactor_decisions()` — —
 - `extract_complexity_layers()` — —
 - `extract_duplications()` — —
@@ -2041,6 +2090,17 @@ redsl/
 - `git_push()` — —
 - `tune()` — —
 - `analyze_with_sumd()` — —
+- `fetchCompanyData()` — —
+- `h()` — —
+- `extractNip()` — —
+- `handleStep1()` — —
+- `buildClientData()` — —
+- `saveClient()` — —
+- `createNdaContract()` — —
+- `saveNdaToDatabase()` — —
+- `storeStep2Data()` — —
+- `handleStep2()` — —
+- `generateNDAText()` — —
 - `render_markdown()` — —
 - `create_ticket()` — —
 - `list_tickets()` — —
@@ -2217,20 +2277,8 @@ redsl/
 - `demo_list_allowed()` — —
 - `demo_safe_completion()` — —
 - `demo_strict_mode()` — —
-- `load_env_pl()` — —
-- `env_pl()` — —
-- `parseSelection_pl()` — —
-- `h_pl()` — —
-- `load_env()` — —
-- `env()` — —
-- `parseSelection()` — —
-- `csrf_token()` — —
-- `check_rate_limit()` — —
-- `send_notification()` — —
-- `send_notification_smtp()` — —
 - `classForLevel()` — —
 - `fmtSize()` — —
-- `validateCsrfToken()` — —
 - `main_loop()` — —
 - `run_multi_analysis()` — —
 - `get_risk_level()` — —
@@ -2242,16 +2290,10 @@ redsl/
 - `read_toon_contents()` — —
 - `analyze_with_code2llm()` — —
 - `maybe_analyze()` — —
-- `callRedslApi()` — —
-- `formatIssuesForEmail()` — —
-- `formatIssuesForGitHub()` — —
-- `showTab()` — —
-- `copyToClipboard()` — —
+- `send_notification()` — —
+- `send_notification_smtp()` — —
+- `validateCsrfToken()` — —
 - `calculate()` — —
-- `h_ce()` — —
-- `saveConfig()` — —
-- `getNestedValue()` — —
-- `getRiskLevel()` — —
 - `run_semcod_batch()` — —
 - `apply_refactor()` — —
 - `measure_todo_reduction()` — —
@@ -2284,6 +2326,10 @@ redsl/
 - `invalidate_selector()` — —
 - `extract_json_block()` — —
 - `handle_push_webhook()` — —
+- `h_ce()` — —
+- `saveConfig()` — —
+- `getNestedValue()` — —
+- `getRiskLevel()` — —
 - `export_proposal_schema()` — —
 - `proposal_to_yaml()` — —
 - `run_basic_analysis_example()` — —
@@ -2301,11 +2347,14 @@ redsl/
 - `batch_pyqual_run()` — —
 - `register_batch()` — —
 - `select_model_for_operation()` — —
+- `env()` — —
+- `csrf_token()` — —
+- `check_rate_limit()` — —
+- `parseSelection()` — —
 - `run_api_integration_example()` — —
 - `track_model_selection()` — —
 - `check_cost_per_call()` — —
 - `is_tool_available()` — —
-- `h_pp()` — —
 - `build_default_config()` — —
 - `config_doc_to_yaml()` — —
 - `export_config_schema()` — —
@@ -2314,6 +2363,7 @@ redsl/
 - `pyqual_fix()` — —
 - `register_pyqual()` — —
 - `cli()` — —
+- `h_pp()` — —
 - `create_app()` — —
 - `record()` — —
 - `record_event()` — —
@@ -2439,7 +2489,6 @@ redsl/
 - `test_cli_planfile_sync_dry_run()` — —
 - `test_cli_planfile_show()` — —
 - `test_cli_planfile_sync_json_format()` — —
-- `OPENROUTER_API_KEY()` — —
 - `print()` — —
 - `validate()` — —
 - `store()` — —
@@ -2452,6 +2501,12 @@ redsl/
 - `pad()` — —
 - `verify()` — —
 - `generate_token()` — —
+- `load_env_pl()` — —
+- `env_pl()` — —
+- `parseSelection_pl()` — —
+- `h_pl()` — —
+- `load_env()` — —
+- `OPENROUTER_API_KEY()` — —
 - `generate_readme()` — —
 - `check_http()` — —
 - `check_content()` — —
@@ -2491,6 +2546,7 @@ redsl/
 📄 `app.models` (3 classes)
 📄 `config.default_rules`
 📄 `docker-compose`
+📄 `docs.API`
 📄 `docs.CONFIG_CHEATSHEET`
 📄 `docs.CONFIG_MIGRATION`
 📄 `docs.CONFIG_STANDARD`
@@ -2578,7 +2634,7 @@ redsl/
 📄 `project.context`
 📄 `project.duplication.toon`
 📄 `project.evolution.toon`
-📄 `project.map.toon` (10007 functions)
+📄 `project.map.toon` (13024 functions)
 📄 `project.project.toon`
 📄 `project.prompt`
 📄 `project.validation.toon`
@@ -2614,10 +2670,18 @@ redsl/
 📄 `redsl.analyzers.toon_analyzer` (13 functions, 1 classes)
 📄 `redsl.analyzers.utils` (9 functions)
 📦 `redsl.api` (2 functions)
+📦 `redsl.api.cqrs`
+📄 `redsl.api.cqrs.commands` (6 functions, 7 classes)
+📄 `redsl.api.cqrs.events` (19 functions, 9 classes)
+📄 `redsl.api.cqrs.projections` (17 functions, 4 classes)
+📄 `redsl.api.cqrs.queries` (8 functions, 11 classes)
+📄 `redsl.api.cqrs.websocket_manager` (11 functions, 1 classes)
+📄 `redsl.api.cqrs_routes` (1 functions, 5 classes)
 📄 `redsl.api.debug_routes` (1 functions)
 📄 `redsl.api.example_routes` (4 functions)
 📄 `redsl.api.health_routes` (1 functions)
 📄 `redsl.api.models` (13 classes)
+📄 `redsl.api.openapi`
 📄 `redsl.api.pyqual_routes` (1 functions)
 📄 `redsl.api.refactor_routes` (8 functions)
 📄 `redsl.api.scan_routes` (6 functions, 2 classes)
@@ -2861,12 +2925,13 @@ redsl/
 📄 `vallm_text.validation`
 📄 `www.DEPLOY_CHECKLIST`
 📄 `www.Dockerfile`
+📄 `www.Makefile`
 📄 `www.README`
 📄 `www.README-PLESK`
 📄 `www.README_CONFIG`
 📄 `www.README_NDA`
 📄 `www.README_PROPozycje`
-📄 `www.admin.auth` (1 functions)
+📄 `www.admin.auth` (2 functions)
 📄 `www.admin.clients`
 📄 `www.admin.contracts`
 📄 `www.admin.index`
@@ -2875,9 +2940,10 @@ redsl/
 📄 `www.admin.projects`
 📄 `www.admin.scans`
 📄 `www.admin.tickets`
-📄 `www.api.redsl` (3 functions)
+📄 `www.api.redsl` (4 functions)
 📄 `www.app` (15 functions)
 📄 `www.blog.index`
+📄 `www.bootstrap` (5 functions)
 📄 `www.client.index` (1 functions)
 📄 `www.composer`
 📄 `www.config-api` (15 functions)
@@ -2892,9 +2958,10 @@ redsl/
 📄 `www.i18n.de`
 📄 `www.i18n.en`
 📄 `www.i18n.pl`
-📄 `www.index` (7 functions)
+📄 `www.index` (2 functions)
 📄 `www.install-plesk`
-📄 `www.marketing.index` (5 functions)
+📄 `www.klient.index`
+📄 `www.marketing.index` (11 functions)
 📄 `www.mock-github.access_token`
 📄 `www.mock-github.authorize`
 📄 `www.mock-github.user`
@@ -2912,8 +2979,8 @@ redsl/
 📄 `www.project.map.toon` (38 functions)
 📄 `www.project.project.toon`
 📄 `www.project.prompt`
-📄 `www.proposals` (4 functions)
-📄 `www.propozycje` (4 functions)
+📄 `www.proposals` (2 functions)
+📄 `www.propozycje`
 📄 `www.regulamin` (1 functions)
 📄 `www.smoke-test` (8 functions)
 📄 `www.test-plesk` (3 functions)

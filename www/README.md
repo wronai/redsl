@@ -39,6 +39,10 @@ Dodaje serwis **`mock-github`** na `http://localhost:8181` — symuluje GitHub O
 ```env
 GITHUB_OAUTH_BASE=http://mock-github
 GITHUB_API_BASE=http://mock-github
+
+# opcjonalnie: API MCP do odsprzedaży subskrypcji miesięcznej
+MCP_API_URL=http://mcp-api:9000
+MCP_API_KEY=your-mcp-api-key
 ```
 
 ### Przebudowanie po zmianach kodu
@@ -297,6 +301,12 @@ npm install
 npm run install:browsers
 npm run test               # headless
 npm run test:ui            # interaktywny tryb
+
+# Scenariusz klienta end-to-end (repo -> NDA -> tickety -> subskrypcja)
+npx playwright test client-commercial-flow.spec.js --project=chromium
+
+# Kontrakt API (w tym MCP subscription)
+npx playwright test api-mcp-subscription.spec.js --project=chromium
 ```
 
 Szczegóły w [`tests/README_TESTS.md`](tests/README_TESTS.md).
@@ -307,6 +317,7 @@ Szczegóły w [`tests/README_TESTS.md`](tests/README_TESTS.md).
 |--------|-----|------|
 | **Config Editor** | `/config-editor.php` | Edytor YAML konfiguracji z walidacją i backupami |
 | **Config API** | `/config-api.php` | REST API do walidacji, historii, diff |
+| **ReDSL API Proxy** | `/api/redsl.php` | Proxy do redsl-api + endpointy MCP (`mcp_health`, `mcp_subscription`) |
 | **Propozycje (PL)** | `/propozycje` | Panel wyboru ticketów — wersja polska |
 | **Proposals (EN)** | `/proposals` | Panel wyboru ticketów — wersja angielska |
 | **NDA** | `/nda-form.php` | Automatyczne generowanie umowy NDA (NIP → dane firmy) |
@@ -321,6 +332,19 @@ Szczegóły w [`tests/README_TESTS.md`](tests/README_TESTS.md).
 - Automatyczne backupy przy zapisie
 - Wskaźniki poziomów ryzyka
 - Walidacja YAML + schema
+
+### CQRS + Event Sourcing (inkrementalnie)
+- Kontekst `Klienci` (`/admin/clients.php`) działa przez warstwę command/query (`lib/CQRS/Client/*`)
+- Zdarzenia domenowe (`ClientCreated`, `ClientUpdated`, `ClientArchived`) są zapisywane append-only w `audit_log`
+- Widok szczegółów klienta pokazuje historię eventów (event stream)
+- Pozostałe moduły (`projekty`, `umowy`, `faktury`) mogą być migrowane etapowo tym samym wzorcem
+
+### API MCP — subskrypcja miesięczna (reseller)
+- Endpoint: `POST /api/redsl.php?action=mcp_subscription`
+- Endpoint health: `GET /api/redsl.php?action=mcp_health`
+- Domyślnie działa w trybie `dry_run` (bez wysyłki do zewnętrznego MCP)
+- Aby wysłać do MCP, ustaw `MCP_API_URL` + opcjonalnie `MCP_API_KEY` i przekaż `dispatch_to_mcp=true`
+- Kalkulacja miesięczna obejmuje plan, miejsca developerskie, kredyty ticketowe i opłatę MCP
 
 ### Wybór propozycji
 - Klient otrzymuje email z linkiem

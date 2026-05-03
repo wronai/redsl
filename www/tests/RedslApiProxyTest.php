@@ -171,6 +171,36 @@ class RedslApiProxyTest extends TestCase
         $this->assertArrayNotHasKey('project_path', $payload);
     }
 
+    // ── MCP subscription pricing ─────────────────────────────────
+
+    public function testMcpSubscriptionPricingIsDeterministic(): void
+    {
+        $planPricing = ['starter' => 299.0, 'pro' => 799.0, 'enterprise' => 1899.0];
+
+        $plan = 'pro';
+        $seats = 2;
+        $ticketsPerMonth = 3;
+        $seatPricePln = 49.0;
+        $ticketPricePln = 39.0;
+        $mcpMarginPercent = 12.5;
+
+        $subtotalPln = round($planPricing[$plan] + ($seats * $seatPricePln) + ($ticketsPerMonth * $ticketPricePln), 2);
+        $mcpFeePln = round($subtotalPln * ($mcpMarginPercent / 100), 2);
+        $monthlyTotalPln = round($subtotalPln + $mcpFeePln, 2);
+
+        $this->assertSame(1014.0, $subtotalPln);
+        $this->assertSame(126.75, $mcpFeePln);
+        $this->assertSame(1140.75, $monthlyTotalPln);
+    }
+
+    public function testMcpSubscriptionRequiresValidEmail(): void
+    {
+        $invalidEmail = 'invalid-email';
+        $isValid = filter_var($invalidEmail, FILTER_VALIDATE_EMAIL) !== false;
+
+        $this->assertFalse($isValid);
+    }
+
     // ── live redsl API (skipped if not available) ─────────────────
 
     public function testLiveHealthEndpoint(): void

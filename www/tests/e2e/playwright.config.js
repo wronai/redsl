@@ -17,7 +17,7 @@ module.exports = {
     ['list'],
   ],
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:8080',
+    baseURL: process.env.BASE_URL || 'http://localhost:8091',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'on-first-retry',
@@ -37,8 +37,8 @@ module.exports = {
     },
   ],
   webServer: {
-    command: 'php -S localhost:8080 -t ..',
-    port: 8080,
+    command: 'php -S localhost:8091 -t ..',
+    port: 8091,
     reuseExistingServer: !process.env.CI,
   },
 };

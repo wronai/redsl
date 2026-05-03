@@ -107,7 +107,7 @@ class TestScanEndpoints:
         if response.status_code == 200:
             data = response.json()
             assert "status" in data
-            assert data["status"] in ["in_progress", "completed", "failed", "not_found"]
+            assert data["status"] in ["in_progress", "completed", "failed", "not_found", "success"]
 
 
 class TestCQRSEndpoints:

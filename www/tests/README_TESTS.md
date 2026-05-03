@@ -14,6 +14,8 @@ www/tests/
 │   ├── smoke-path.spec.js        # E2E: Smoke test (main paths)
 │   ├── admin-panel.spec.js       # E2E: Admin panel
 │   ├── github-login-full-flow.spec.js  # E2E: GitHub OAuth full flow
+│   ├── client-commercial-flow.spec.js   # E2E: Wejście klienta → repo test → NDA → tickety → quote subskrypcji
+│   ├── api-mcp-subscription.spec.js     # E2E API: /api/redsl.php + MCP subscription
 │   ├── config-editor.spec.js.disabled
 │   ├── proposals.spec.js.disabled
 │   └── nda-form.spec.js.disabled
@@ -169,6 +171,12 @@ composer test:e2e:debug
 
 # Specific test file
 npx playwright test e2e/config-editor.spec.js
+
+# Client commercial path only
+npx playwright test e2e/client-commercial-flow.spec.js
+
+# MCP API contract only
+npx playwright test e2e/api-mcp-subscription.spec.js
 ```
 
 ### E2E Test Coverage
@@ -214,6 +222,19 @@ npx playwright test e2e/config-editor.spec.js
 - Have upload zone
 - Validate email format
 - Mobile responsiveness
+
+**client-commercial-flow.spec.js**
+- Symuluje ścieżkę klienta: wejście na stronę, test repo (Marketing Hub)
+- Rejestracja/NDA: krok 1 (NIP) → krok 2 (dane) → krok 3 (podgląd umowy)
+- Wybór ticketów w `/proposals` i walidacja komunikatu zamówienia
+- Symulacja płatności subskrypcji miesięcznej przez `action=mcp_subscription`
+- Alternatywne scenariusze GUI: błędny NIP, `under_15`, dostęp do `/klient/` bez sesji
+
+**api-mcp-subscription.spec.js**
+- Waliduje kontrakt istniejącego API `action=health` i fallback `Unknown action`
+- Testuje `action=mcp_health` (tryb skonfigurowany i dry-run)
+- Testuje walidację `action=mcp_subscription` (brak email)
+- Sprawdza deterministyczną kalkulację miesięcznej subskrypcji (subtotal, opłata MCP, total)
 
 ### Environment Variables
 
@@ -317,7 +338,7 @@ npx playwright install
 If port 8080 is in use, change in `playwright.config.js`:
 ```javascript
 webServer: {
-  command: 'php -S localhost:8081 -t ..',
+  command: 'php -S localhost:8081 -t ../..',
   port: 8081,
 }
 ```
@@ -334,8 +355,16 @@ webServer: {
 | PHPUnit: PlaceholderTest | ✅ Pass | 1 test (skipped) |
 | **PHPUnit Total** | **✅ 53/53 pass** | **53 tests** |
 | Playwright E2E (active) | ✅ Ready | 3 suites |
+| Playwright E2E (client + MCP) | ✅ Ready | 2 suites |
 | Playwright E2E (disabled) | ⏸ Disabled | 3 suites |
 | **Python (redsl core)** | **✅ 690/690 pass** | **690 tests, 12 skipped** |
+
+### Uwagi do nowych testów (Playwright GUI + MCP API)
+
+- **client-commercial-flow.spec.js**: Symuluje pełną ścieżkę klienta (wejście → test repo → NDA → wybór ticketów → subskrypcja miesięczna). Wymaga działającego PHP serwera i przeglądarki.
+- **api-mcp-subscription.spec.js**: Testy kontraktu API dla MCP subscription. Działają w trybie dry-run bez zewnętrznego MCP API.
+- **Konfiguracja portów**: Jeśli port 8080 jest zajęty, zmień w `playwright.config.js` na inny (np. 8090) i ustaw `reuseExistingServer: !process.env.CI`.
+- **Instalacja przeglądarek**: Przy pierwszym uruchomieniu GUI testów uruchom `npx playwright install`.
 
 ### Znane problemy
 

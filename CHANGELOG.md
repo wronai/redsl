@@ -59,6 +59,33 @@
 - refactor: assorted internal refactorings (reduce CLI fan-out, reorganize modules)
 - fix(docs): add markdown output across docs and tests
 
+## [1.2.61] - 2026-05-03
+
+### Docs
+- Update README.md
+- Update docs/README.md
+- Update project/README.md
+- Update project/context.md
+- Update redsl/dsl/project/README.md
+- Update www/README.md
+- Update www/tests/README_TESTS.md
+
+### Test
+- Update tests/api/test_api_v1.py
+
+### Other
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.png
+- Update project/calls.toon.yaml
+- Update project/calls.yaml
+- Update project/compact_flow.mmd
+- Update project/compact_flow.png
+- Update project/duplication.toon.yaml
+- Update project/evolution.toon.yaml
+- Update project/flow.mmd
+- ... and 22 more files
+
 ## [1.2.60] - 2026-05-02
 
 ### Docs

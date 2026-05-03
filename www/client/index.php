@@ -69,7 +69,7 @@ function h(string $s): string {
         <div class="sidebar-section">
             <span class="sidebar-section-label">Konto</span>
             <ul class="sidebar-nav">
-                <li><a href="/client/" class="active"><span class="nav-icon">◈</span> Dashboard</a></li>
+                <li><a href="/klient/" class="active"><span class="nav-icon">◈</span> Dashboard</a></li>
                 <li><a href="/propozycje"><span class="nav-icon">↗</span> Propozycje</a></li>
             </ul>
         </div>

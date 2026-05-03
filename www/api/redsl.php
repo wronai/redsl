@@ -7,15 +7,19 @@ declare(strict_types=1);
  * Forwards requests from the www frontend to the redsl-api service.
  * Endpoints:
  *   GET  /api/redsl.php?action=health
+ *   GET  /api/redsl.php?action=mcp_health
  *   POST /api/redsl.php?action=scan      body: {"project": "goal"}
  *   POST /api/redsl.php?action=refactor  body: {"project": "goal", "dry_run": true, "max_actions": 5}
  *   POST /api/redsl.php?action=analyze   body: {"project": "goal"}
+ *   POST /api/redsl.php?action=mcp_subscription body: {"client_email": "...", "plan": "starter"}
  */
 
 // ── Config ───────────────────────────────────────────────────────
 $REDSL_API = getenv('REDSL_API_URL') ?: 'http://redsl-api:8000';
 $WORKSPACE = getenv('WORKSPACE_ROOT') ?: '/workspace';
 $API_SECRET = getenv('REDSL_API_SECRET') ?: '';
+$MCP_API = getenv('MCP_API_URL') ?: '';
+$MCP_API_KEY = getenv('MCP_API_KEY') ?: '';
 
 header('Content-Type: application/json; charset=UTF-8');
 header('X-Content-Type-Options: nosniff');
@@ -31,12 +35,17 @@ if ($API_SECRET !== '') {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────
-function redsl_curl(string $method, string $url, ?array $body = null): array {
+function redsl_curl(string $method, string $url, ?array $body = null, array $headers = []): array {
+    $httpHeaders = array_merge(
+        ['Content-Type: application/json', 'Accept: application/json'],
+        $headers
+    );
+
     $ch = curl_init($url);
     $opts = [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT        => 120,
-        CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Accept: application/json'],
+        CURLOPT_HTTPHEADER     => $httpHeaders,
     ];
     if ($method === 'POST') {
         $opts[CURLOPT_POST]       = true;
@@ -69,6 +78,63 @@ function resolve_project(string $name): string|false {
     return $path;
 }
 
+function build_mcp_subscription_payload(array $body): array {
+    $planPricing = [
+        'starter' => 299.0,
+        'pro' => 799.0,
+        'enterprise' => 1899.0,
+    ];
+
+    $email = trim((string)($body['client_email'] ?? ''));
+    if ($email === '' || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+        throw new InvalidArgumentException('Missing or invalid: client_email');
+    }
+
+    $clientName = trim((string)($body['client_name'] ?? ''));
+    if ($clientName === '') {
+        throw new InvalidArgumentException('Missing: client_name');
+    }
+
+    $plan = strtolower(trim((string)($body['plan'] ?? 'starter')));
+    if (!isset($planPricing[$plan])) {
+        throw new InvalidArgumentException('Invalid plan. Allowed: starter, pro, enterprise');
+    }
+
+    $seats = max(1, (int)($body['seats'] ?? 1));
+    $ticketsPerMonth = max(0, (int)($body['tickets_per_month'] ?? 0));
+    $ticketPricePln = max(1.0, (float)($body['ticket_price_pln'] ?? 39.0));
+    $seatPricePln = max(0.0, (float)($body['seat_price_pln'] ?? 49.0));
+    $mcpMarginPercent = max(0.0, (float)($body['mcp_margin_percent'] ?? 12.5));
+
+    $basePlanPln = $planPricing[$plan];
+    $subtotalPln = round($basePlanPln + ($seats * $seatPricePln) + ($ticketsPerMonth * $ticketPricePln), 2);
+    $mcpFeePln = round($subtotalPln * ($mcpMarginPercent / 100), 2);
+    $monthlyTotalPln = round($subtotalPln + $mcpFeePln, 2);
+
+    return [
+        'subscription_id' => 'sub_' . bin2hex(random_bytes(6)),
+        'currency' => 'PLN',
+        'billing_cycle' => 'monthly',
+        'plan' => $plan,
+        'client' => [
+            'name' => $clientName,
+            'email' => $email,
+            'repo_url' => trim((string)($body['repo_url'] ?? '')),
+        ],
+        'line_items' => [
+            ['code' => 'plan_' . $plan, 'label' => 'Plan miesięczny', 'qty' => 1, 'unit_price_pln' => $basePlanPln],
+            ['code' => 'developer_seat', 'label' => 'Miejsce developerskie', 'qty' => $seats, 'unit_price_pln' => $seatPricePln],
+            ['code' => 'ticket_credits', 'label' => 'Kredyty ticketowe / m-c', 'qty' => $ticketsPerMonth, 'unit_price_pln' => $ticketPricePln],
+            ['code' => 'mcp_reseller_fee', 'label' => 'Opłata MCP reseller', 'qty' => 1, 'unit_price_pln' => $mcpFeePln],
+        ],
+        'pricing' => [
+            'subtotal_pln' => $subtotalPln,
+            'mcp_fee_pln' => $mcpFeePln,
+            'monthly_total_pln' => $monthlyTotalPln,
+        ],
+    ];
+}
+
 // ── Router ────────────────────────────────────────────────────────
 $action = $_GET['action'] ?? '';
 $rawBody = file_get_contents('php://input');
@@ -81,6 +147,30 @@ if ($action === 'health') {
         json_out(502, ['status' => 'redsl-api unreachable', 'error' => $r['error']]);
     }
     json_out(200, array_merge(['status' => 'ok'], $r['body'] ?? []));
+}
+
+// ── GET /api/redsl.php?action=mcp_health ─────────────────────────
+if ($action === 'mcp_health') {
+    if ($MCP_API === '') {
+        json_out(200, [
+            'status' => 'ok',
+            'mcp' => [
+                'configured' => false,
+                'message' => 'MCP_API_URL not configured (dry-run only)',
+            ],
+        ]);
+    }
+
+    $mcpBase = rtrim($MCP_API, '/');
+    $headers = [];
+    if ($MCP_API_KEY !== '') {
+        $headers[] = 'Authorization: Bearer ' . $MCP_API_KEY;
+    }
+    $r = redsl_curl('GET', "$mcpBase/health", null, $headers);
+    if (!$r['ok']) {
+        json_out(502, ['status' => 'mcp-api unreachable', 'error' => $r['error'], 'code' => $r['code']]);
+    }
+    json_out(200, ['status' => 'ok', 'mcp' => ['configured' => true], 'upstream' => $r['body'] ?? []]);
 }
 
 // ── POST /api/redsl.php?action=scan ──────────────────────────────
@@ -130,8 +220,51 @@ if ($action === 'batch' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     json_out($r['ok'] ? 200 : 502, $r['body'] ?? ['error' => $r['error']]);
 }
 
+// ── POST /api/redsl.php?action=mcp_subscription ──────────────────
+if ($action === 'mcp_subscription' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        $subscription = build_mcp_subscription_payload($body);
+    } catch (InvalidArgumentException $e) {
+        json_out(400, ['error' => $e->getMessage()]);
+    }
+
+    $dispatchToMcp = (bool)($body['dispatch_to_mcp'] ?? false);
+    if (!$dispatchToMcp || $MCP_API === '') {
+        json_out(200, [
+            'status' => 'ok',
+            'mode' => 'dry_run',
+            'dispatch_possible' => $MCP_API !== '',
+            'subscription' => $subscription,
+        ]);
+    }
+
+    $mcpBase = rtrim($MCP_API, '/');
+    $headers = ['X-MCP-Reseller: redsl'];
+    if ($MCP_API_KEY !== '') {
+        $headers[] = 'Authorization: Bearer ' . $MCP_API_KEY;
+    }
+
+    $r = redsl_curl('POST', "$mcpBase/subscriptions", ['subscription' => $subscription], $headers);
+    if (!$r['ok']) {
+        json_out(502, [
+            'status' => 'mcp-api unreachable',
+            'mode' => 'live',
+            'error' => $r['error'],
+            'code' => $r['code'],
+            'subscription' => $subscription,
+        ]);
+    }
+
+    json_out(200, [
+        'status' => 'ok',
+        'mode' => 'live',
+        'subscription' => $subscription,
+        'upstream' => $r['body'] ?? [],
+    ]);
+}
+
 // ── Fallback ──────────────────────────────────────────────────────
 json_out(400, [
     'error'   => 'Unknown action',
-    'actions' => ['health', 'scan', 'refactor', 'batch'],
+    'actions' => ['health', 'mcp_health', 'scan', 'refactor', 'batch', 'mcp_subscription'],
 ]);

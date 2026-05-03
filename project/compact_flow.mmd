@@ -15,7 +15,7 @@ flowchart TD
     examples__11_model_policy["examples.11-model-policy<br/>6 funcs"]
     project__map["project.map<br/>1198 funcs"]
     redsl__analyzers["redsl.analyzers<br/>168 funcs"]
-    redsl__api["redsl.api<br/>24 funcs"]
+    redsl__api["redsl.api<br/>86 funcs"]
     redsl__autonomy["redsl.autonomy<br/>83 funcs"]
     redsl__awareness["redsl.awareness<br/>100 funcs"]
     redsl__bridges["redsl.bridges<br/>12 funcs"]
@@ -43,8 +43,8 @@ flowchart TD
     redsl__main ==>|45| docs__model_policy_quickstart
     redsl__cli ==>|45| SUMD
     redsl__examples ==>|32| SUMD
+    redsl__api ==>|26| SUMD
     redsl__execution ==>|25| SUMD
-    redsl__api ==>|20| SUMD
     redsl__config_standard ==>|19| SUMD
     redsl__execution ==>|17| project__map
     redsl__analyzers ==>|17| SUMD
@@ -55,10 +55,12 @@ flowchart TD
     redsl__autonomy ==>|7| redsl__analyzers
     redsl__llm ==>|7| SUMD
     redsl__commands ==>|6| redsl__analyzers
+    redsl__api ==>|6| redsl__analyzers
     redsl__llm ==>|5| redsl__analyzers
     redsl__llm ==>|5| project__map
     redsl__refactors ==>|5| docs__model_policy_quickstart
     redsl__refactors ==>|5| redsl__analyzers
+    redsl__api ==>|5| project__map
     test_refactor_project__bad_code ==>|4| docs__model_policy_quickstart
     examples__11_model_policy -->|3| SUMD
     redsl__consciousness_loop -->|3| SUMD
@@ -89,6 +91,5 @@ flowchart TD
     redsl__validation -->|1| redsl__bridges
     redsl__validation -->|1| redsl__analyzers
     redsl__integrations -->|1| SUMR
-    redsl__api -->|1| project__map
     redsl__dsl -->|1| redsl__analyzers
     redsl__dsl -->|1| SUMD

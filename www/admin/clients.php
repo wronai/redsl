@@ -4,13 +4,23 @@ declare(strict_types=1);
 require __DIR__ . '/auth.php';
 require __DIR__ . '/../lib/Database.php';
 require __DIR__ . '/../lib/Repository/ClientRepository.php';
+require __DIR__ . '/../lib/CQRS/EventStore/AuditLogEventStore.php';
+require __DIR__ . '/../lib/CQRS/Client/ClientProjector.php';
+require __DIR__ . '/../lib/CQRS/Client/ClientCommandBus.php';
+require __DIR__ . '/../lib/CQRS/Client/ClientQueryService.php';
 
 $db = Database::connection();
-$repo = new ClientRepository($db);
+$clientsRepository = new ClientRepository($db);
+$queryService = new ClientQueryService($clientsRepository);
+$eventStore = new AuditLogEventStore($db);
+$projector = new ClientProjector($clientsRepository);
+$commandBus = new ClientCommandBus($db, $clientsRepository, $projector, $eventStore);
 
 $action = $_GET['action'] ?? 'list';
 $error = '';
 $success = '';
+$actor = $_SERVER['PHP_AUTH_USER'] ?? 'admin';
+$ipAddress = $_SERVER['REMOTE_ADDR'] ?? null;
 
 // Handle POST actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -44,10 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             try {
                 if ($id > 0) {
-                    $repo->update($id, $data);
+                    $commandBus->updateClient($id, $data, $actor, $ipAddress);
                     $success = 'Klient zaktualizowany';
                 } else {
-                    $id = $repo->create($data);
+                    $id = $commandBus->createClient($data, $actor, $ipAddress);
                     $success = 'Klient dodany (ID: ' . $id . ')';
                 }
                 // Redirect to prevent resubmission
@@ -60,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($action === 'delete' && $id > 0) {
         try {
             // Soft delete - archive instead
-            $repo->archive($id);
+            $commandBus->archiveClient($id, $actor, $ipAddress);
             $success = 'Klient zarchiwizowany';
             header('Location: clients.php?success=' . urlencode($success));
             exit;
@@ -77,8 +87,12 @@ if (isset($_GET['success'])) {
 
 // Get client for edit
 $client = null;
+$clientEvents = [];
 if (($action === 'edit' || $action === 'view') && isset($_GET['id'])) {
-    $client = $repo->find((int)$_GET['id']);
+    $client = $queryService->find((int)$_GET['id']);
+    if ($action === 'view' && $client) {
+        $clientEvents = $eventStore->load('client', (int)$client['id'], 20);
+    }
 }
 
 // List clients
@@ -88,10 +102,10 @@ $page = max(1, (int)($_GET['page'] ?? 1));
 $perPage = 20;
 
 if (!empty($search)) {
-    $clients = $repo->search($search, $perPage);
+    $clients = $queryService->search($search, $perPage);
     $total = count($clients);
 } else {
-    $clients = $repo->list($statusFilter, $perPage, ($page - 1) * $perPage);
+    $clients = $queryService->list($statusFilter, $perPage, ($page - 1) * $perPage);
     // Approximate total for pagination (in production, use COUNT query)
     $total = count($clients) + (($page - 1) * $perPage);
 }
@@ -157,6 +171,12 @@ $statuses = ['lead' => 'Lead', 'active' => 'Aktywny', 'suspended' => 'Zawieszony
         .detail-item dt { font-weight: 600; color: #666; font-size: 12px; text-transform: uppercase; }
         .detail-item dd { margin: 5px 0 0 0; font-size: 16px; }
         .actions-bar { display: flex; gap: 10px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+        .events-list { margin-top: 20px; display: grid; gap: 10px; }
+        .event-item { border: 1px solid #eceff3; border-radius: 8px; padding: 10px 12px; background: #fafbfd; }
+        .event-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+        .event-type { font-weight: 600; color: #1a1a2e; }
+        .event-meta { font-size: 12px; color: #666; }
+        .event-payload { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; margin: 0; white-space: pre-wrap; color: #2f3542; }
     </style>
 </head>
 <body>
@@ -333,6 +353,27 @@ $statuses = ['lead' => 'Lead', 'active' => 'Aktywny', 'suspended' => 'Zawieszony
                     <a href="contracts.php?client_id=<?= $client['id'] ?>" class="btn">Umowy</a>
                     <a href="projects.php?client_id=<?= $client['id'] ?>" class="btn">Projekty</a>
                     <a href="clients.php" class="btn secondary">Powrót</a>
+                </div>
+
+                <div style="margin-top: 24px; border-top: 1px solid #eee; padding-top: 20px;">
+                    <h3 style="margin: 0 0 10px 0;">Historia zdarzeń (Event Store)</h3>
+                    <?php if (empty($clientEvents)): ?>
+                        <p style="color: #666; margin: 0;">Brak zdarzeń dla tego klienta.</p>
+                    <?php else: ?>
+                        <div class="events-list">
+                            <?php foreach ($clientEvents as $evt): ?>
+                                <article class="event-item">
+                                    <div class="event-top">
+                                        <span class="event-type"><?= htmlspecialchars((string)$evt['action']) ?></span>
+                                        <span class="event-meta">
+                                            #<?= (int)$evt['id'] ?> • <?= htmlspecialchars((string)$evt['created_at']) ?> • <?= htmlspecialchars((string)$evt['actor']) ?>
+                                        </span>
+                                    </div>
+                                    <pre class="event-payload"><?= htmlspecialchars(json_encode($evt['payload'] ?? [], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) ?: '{}') ?></pre>
+                                </article>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
             

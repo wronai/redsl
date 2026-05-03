@@ -16,6 +16,8 @@
         "test:gui": "phpunit tests/ --filter 'ConfigEditor|ProposalSelection|NdaForm|ConfigApi'",
         "test:e2e": "npx playwright test",
         "test:e2e:ui": "npx playwright test --ui",
-        "test:e2e:debug": "npx playwright test --debug"
+        "test:e2e:debug": "npx playwright test --debug",
+        "test:e2e:client": "npx playwright test tests/e2e/client-commercial-flow.spec.js --project=chromium",
+        "test:e2e:api-mcp": "npx playwright test tests/e2e/api-mcp-subscription.spec.js --project=chromium"
     }
 }

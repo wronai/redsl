@@ -1,15 +1,20 @@
-# vallm batch | 471f | 0✓ 349⚠ 0✗ | 2026-05-02
+# vallm batch | 478f | 0✓ 352⚠ 0✗ | 2026-05-03
 
 SUMMARY:
-  scanned: 471  passed: 0 (0.0%)  warnings: 349  errors: 0  unsupported: 0
+  scanned: 478  passed: 0 (0.0%)  warnings: 352  errors: 0  unsupported: 0
 
-WARNINGS[349]{path,score}:
+WARNINGS[352]{path,score}:
   redsl/cli/events.py,0.68
     issues[4]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
       complexity.lizard_cc,warning,events_show: CC=25 exceeds limit 15,41
       complexity.lizard_cc,warning,events_summary: CC=21 exceeds limit 15,112
       complexity.lizard_cc,warning,events_cycles: CC=19 exceeds limit 15,150
+  redsl/api/cqrs/commands.py,0.71
+    issues[3]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
+      complexity.lizard_cc,warning,handle: CC=21 exceeds limit 15,67
+      complexity.lizard_length,warning,handle: 130 lines exceeds limit 100,67
   redsl/cli/planfile.py,0.71
     issues[3]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
@@ -28,8 +33,8 @@ WARNINGS[349]{path,score}:
   www/nda-form.php,0.71
     issues[3]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
-      complexity.lizard_cc,warning,buildClientData: CC=19 exceeds limit 15,80
-      complexity.lizard_cc,warning,storeStep2Data: CC=21 exceeds limit 15,146
+      complexity.lizard_cc,warning,buildClientData: CC=19 exceeds limit 15,82
+      complexity.lizard_cc,warning,storeStep2Data: CC=21 exceeds limit 15,148
   redsl/execution/deploy_detector.py,0.74
     issues[2]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
@@ -38,6 +43,10 @@ WARNINGS[349]{path,score}:
     issues[2]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
       complexity.lizard_cc,warning,add_decision_tasks: CC=16 exceeds limit 15,273
+  www/api/redsl.php,0.74
+    issues[2]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
+      complexity.lizard_cc,warning,build_mcp_subscription_payload: CC=23 exceeds limit 15,81
   .goal/pre-commit-hook.py,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
@@ -263,6 +272,21 @@ WARNINGS[349]{path,score}:
   redsl/api/cqrs/__init__.py,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
+  redsl/api/cqrs/events.py,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
+  redsl/api/cqrs/projections.py,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
+  redsl/api/cqrs/queries.py,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
+  redsl/api/cqrs/websocket_manager.py,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
+  redsl/api/cqrs_routes.py,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
   redsl/api/debug_routes.py,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
@@ -275,6 +299,9 @@ WARNINGS[349]{path,score}:
   redsl/api/models.py,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
+  redsl/api/openapi.yaml,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse YAML: Download error: Language 'YAML' not available for download. Available groups: [""all""]",
   redsl/api/pyqual_routes.py,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
@@ -959,13 +986,13 @@ WARNINGS[349]{path,score}:
   www/admin/tickets.php,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
-  www/api/redsl.php,0.78
-    issues[1]{rule,severity,message,line}:
-      syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
   www/app.js,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse JAVASCRIPT: Download error: Language 'JAVASCRIPT' not available for download. Available groups: [""all""]",
   www/blog/index.php,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
+  www/bootstrap.php,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
   www/client/index.php,0.78
@@ -986,12 +1013,6 @@ WARNINGS[349]{path,score}:
   www/cron/scan-worker.php,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
-  www/debug.php,0.78
-    issues[1]{rule,severity,message,line}:
-      syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
-  www/debug_lang.php,0.78
-    issues[1]{rule,severity,message,line}:
-      syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
   www/email-notifications.php,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
@@ -1010,6 +1031,9 @@ WARNINGS[349]{path,score}:
   www/install-plesk.sh,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse BASH: Download error: Language 'BASH' not available for download. Available groups: [""all""]",
+  www/klient/index.php,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
   www/marketing/index.php,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
@@ -1052,16 +1076,4 @@ WARNINGS[349]{path,score}:
   www/test-plesk.sh,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse BASH: Download error: Language 'BASH' not available for download. Available groups: [""all""]",
-  www/test_currency.php,0.78
-    issues[1]{rule,severity,message,line}:
-      syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
-  www/test_get.php,0.78
-    issues[1]{rule,severity,message,line}:
-      syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
-  www/test_http_lang.php,0.78
-    issues[1]{rule,severity,message,line}:
-      syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
-  www/test_instance.php,0.78
-    issues[1]{rule,severity,message,line}:
-      syntax.unsupported,warning,"Could not parse PHP: Download error: Language 'PHP' not available for download. Available groups: [""all""]",
 
